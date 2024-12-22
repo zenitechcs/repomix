@@ -13,6 +13,7 @@ import {
   repomixConfigMergedSchema,
 } from './configSchema.js';
 import { getGlobalDirectory } from './globalDirectory.js';
+import stripJsonComments from 'strip-json-comments';
 
 const defaultConfigPath = 'repomix.config.json';
 
@@ -67,7 +68,7 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
 const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFile> => {
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    const config = JSON.parse(fileContent);
+    const config = JSON.parse(stripJsonComments(fileContent));
     return repomixConfigFileSchema.parse(config);
   } catch (error) {
     rethrowValidationErrorIfZodError(error, 'Invalid config schema');
