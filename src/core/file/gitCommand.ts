@@ -23,15 +23,15 @@ export const isGitInstalled = async (
 export const execGitShallowClone = async (
   url: string,
   directory: string,
-  branch?: string,
+  remoteBranch?: string,
   deps = {
     execAsync,
   },
 ) => {
-  if (branch) {
+  if (remoteBranch) {
     await deps.execAsync(`git -C ${directory} init`);
     await deps.execAsync(`git -C ${directory} remote add origin ${url}`);
-    await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${branch}`);
+    await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
     await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
     await fs.rm(path.join(directory, '.git'), { recursive: true, force: true });
   } else {

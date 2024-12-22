@@ -40,55 +40,63 @@ describe('gitCommand', () => {
   });
 
   describe('execGitShallowClone', () => {
-    test('should execute git clone with correct parameters', async () => {
+    test('should execute without branch option if not specified by user', async () => {
       const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
-      const branch = undefined;
+      const remoteBranch = undefined;
 
-      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
+      await execGitShallowClone(url, directory, remoteBranch, { execAsync: mockExecAsync });
 
       expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
-
     test('should throw error when git clone fails', async () => {
       const mockExecAsync = vi.fn().mockRejectedValue(new Error('Authentication failed'));
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
-      const branch = undefined;
+      const remoteBranch = undefined;
 
-      await expect(execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync })).rejects.toThrow(
+      await expect(execGitShallowClone(url, directory, remoteBranch, { execAsync: mockExecAsync })).rejects.toThrow(
         'Authentication failed',
       );
 
       expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
     });
-
-    test('should execute without branch option if not specified by user', async () => {
-      const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
-      const url = 'https://github.com/user/repo.git';
-      const directory = '/tmp/repo';
-      const branch = undefined;
-
-      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
-
-      expect(mockExecAsync).toHaveBeenCalledWith(`git clone --depth 1 ${url} ${directory}`);
-    });
-
-    test('should initialize a shallow clone with a specific branch', async () => {
+    test('should execute commands correctly when branch is specified', async () => {
       const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
 
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
-      const branch = 'main';
+      const remoteBranch = 'main';
 
-      await execGitShallowClone(url, directory, branch, { execAsync: mockExecAsync });
+      await execGitShallowClone(url, directory, remoteBranch, { execAsync: mockExecAsync });
 
       expect(mockExecAsync).toHaveBeenCalledTimes(4);
       expect(mockExecAsync).toHaveBeenNthCalledWith(1, `git -C ${directory} init`);
       expect(mockExecAsync).toHaveBeenNthCalledWith(2, `git -C ${directory} remote add origin ${url}`);
-      expect(mockExecAsync).toHaveBeenNthCalledWith(3, `git -C ${directory} fetch --depth 1 origin ${branch}`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(3, `git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
       expect(mockExecAsync).toHaveBeenNthCalledWith(4, `git -C ${directory} checkout FETCH_HEAD`);
+    });
+
+    test('should throw error when git fetch fails', async () => {
+      const mockExecAsync = vi
+        .fn()
+        .mockResolvedValueOnce('Success on first call')
+        .mockResolvedValueOnce('Success on second call')
+        .mockRejectedValueOnce(new Error('Authentication failed'));
+
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+      const remoteBranch = 'b188a6cb39b512a9c6da7235b880af42c78ccd0d';
+
+      await expect(execGitShallowClone(url, directory, remoteBranch, { execAsync: mockExecAsync })).rejects.toThrow(
+        'Authentication failed',
+      );
+      expect(mockExecAsync).toHaveBeenCalledTimes(3);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(1, `git -C ${directory} init`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(2, `git -C ${directory} remote add origin ${url}`);
+      expect(mockExecAsync).toHaveBeenLastCalledWith(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
+      // The fourth call (e.g., git checkout) won't be made due to the error on the third call
     });
   });
 });
