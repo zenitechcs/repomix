@@ -1,5 +1,6 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import stripJsonComments from 'strip-json-comments';
 import { z } from 'zod';
 import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
@@ -13,7 +14,6 @@ import {
   repomixConfigMergedSchema,
 } from './configSchema.js';
 import { getGlobalDirectory } from './globalDirectory.js';
-import stripJsonComments from 'strip-json-comments';
 
 const defaultConfigPath = 'repomix.config.json';
 
