@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, expect, vi } from "vitest";
 import { RawFile } from "../../../src/core/file/fileTypes.js";
 import { SuspiciousFileResult } from "../../../src/core/security/securityCheck.js";
-import { validateFileSafety } from "../../../src/core/packager/validateFileSafety.js";
+import { validateFileSafety } from "../../../src/core/security/validateFileSafety.js";
 import { RepomixConfigMerged } from "../../../src/config/configSchema.js";
 
 describe("validateFileSafety", () => {

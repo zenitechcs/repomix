@@ -3,7 +3,7 @@ import { type RawFile } from "../file/fileTypes.js";
 import {
   runSecurityCheck,
   type SuspiciousFileResult,
-} from "../security/securityCheck.js";
+} from "./securityCheck.js";
 import { logger } from "../../shared/logger.js";
 import { RepomixConfigMerged } from "../../config/configSchema.js";
 

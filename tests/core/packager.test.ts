@@ -9,7 +9,7 @@ import type { generateOutput } from "../../src/core/output/outputGenerate.js";
 import { pack } from "../../src/core/packager.js";
 import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
 import { createMockConfig } from "../testing/testUtils.js";
-import { validateFileSafety } from "../../src/core/packager/validateFileSafety.js";
+import { validateFileSafety } from "../../src/core/security/validateFileSafety.js";
 
 vi.mock("node:fs/promises");
 vi.mock("fs/promises");

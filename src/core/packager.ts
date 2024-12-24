@@ -12,7 +12,7 @@ import { collectFiles } from "./file/fileCollect.js";
 import { processFiles } from "./file/fileProcess.js";
 import { searchFiles } from "./file/fileSearch.js";
 import { generateOutput } from "./output/outputGenerate.js";
-import { validateFileSafety } from "./packager/validateFileSafety.js";
+import { validateFileSafety } from "./security/validateFileSafety.js";
 import { type SuspiciousFileResult } from "./security/securityCheck.js";
 import { TokenCounter } from "./tokenCount/tokenCount.js";
 
