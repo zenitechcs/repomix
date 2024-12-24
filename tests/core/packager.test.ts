@@ -7,14 +7,12 @@ import type { processFiles } from "../../src/core/file/fileProcess.js";
 import type { searchFiles } from "../../src/core/file/fileSearch.js";
 import type { generateOutput } from "../../src/core/output/outputGenerate.js";
 import { pack } from "../../src/core/packager.js";
-import type { runSecurityCheck } from "../../src/core/security/securityCheck.js";
 import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
 import { createMockConfig } from "../testing/testUtils.js";
-import { getSafeFiles } from "../../src/core/packager/getSafeFiles.js";
+import { validateFileSafety } from "../../src/core/packager/validateFileSafety.js";
 
 vi.mock("node:fs/promises");
 vi.mock("fs/promises");
-vi.mock("../../src/core/security/securityCheck");
 vi.mock("../../src/core/tokenCount/tokenCount");
 vi.mock("clipboardy", () => ({
   default: {
@@ -27,7 +25,7 @@ describe("packager", () => {
     searchFiles: typeof searchFiles;
     collectFiles: typeof collectFiles;
     processFiles: typeof processFiles;
-    getSafeFiles: typeof getSafeFiles;
+    validateFileSafety: typeof validateFileSafety;
     generateOutput: typeof generateOutput;
   };
 
@@ -47,7 +45,7 @@ describe("packager", () => {
         { path: "file1.txt", content: "processed content 1" },
         { path: file2Path, content: "processed content 2" },
       ]),
-      getSafeFiles: vi.fn().mockResolvedValue({
+      validateFileSafety: vi.fn().mockResolvedValue({
         safeFilePaths: ["file1.txt", file2Path],
         safeRawFiles: [
           { path: "file1.txt", content: "safed content 1" },
@@ -73,12 +71,12 @@ describe("packager", () => {
       ["file1.txt", file2Path],
       "root"
     );
-    expect(mockDeps.getSafeFiles).toHaveBeenCalled();
+    expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(fs.writeFile).toHaveBeenCalled();
 
-    expect(mockDeps.getSafeFiles).toHaveBeenCalledWith(
+    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(
       [
         expect.objectContaining({
           content: "raw content 1",

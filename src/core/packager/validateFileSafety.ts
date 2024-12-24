@@ -7,7 +7,17 @@ import {
 import { logger } from "../../shared/logger.js";
 import { RepomixConfigMerged } from "../../config/configSchema.js";
 
-export const getSafeFiles = async (
+const filterOutSuspiciousFiles = (
+  rawFiles: RawFile[],
+  suspiciousFilesResults: SuspiciousFileResult[]
+) =>
+  rawFiles.filter(
+    (rawFile) =>
+      !suspiciousFilesResults.some((result) => result.filePath === rawFile.path)
+  );
+
+// marks which files are suspicious and which are safe
+export const validateFileSafety = async (
   rawFiles: RawFile[],
   progressCallback: RepomixProgressCallback,
   config: RepomixConfigMerged,
@@ -19,12 +29,7 @@ export const getSafeFiles = async (
   if (config.security.enableSecurityCheck) {
     progressCallback("Running security check...");
     suspiciousFilesResults = await checkSecurity(rawFiles, progressCallback);
-    safeRawFiles = rawFiles.filter(
-      (rawFile) =>
-        !suspiciousFilesResults.some(
-          (result) => result.filePath === rawFile.path
-        )
-    );
+    safeRawFiles = filterOutSuspiciousFiles(rawFiles, suspiciousFilesResults);
   }
 
   const safeFilePaths = safeRawFiles.map((file) => file.path);

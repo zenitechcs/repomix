@@ -12,7 +12,7 @@ import { collectFiles } from "./file/fileCollect.js";
 import { processFiles } from "./file/fileProcess.js";
 import { searchFiles } from "./file/fileSearch.js";
 import { generateOutput } from "./output/outputGenerate.js";
-import { getSafeFiles } from "./packager/getSafeFiles.js";
+import { validateFileSafety } from "./packager/validateFileSafety.js";
 import { type SuspiciousFileResult } from "./security/securityCheck.js";
 import { TokenCounter } from "./tokenCount/tokenCount.js";
 
@@ -34,7 +34,7 @@ export const pack = async (
     collectFiles,
     processFiles,
     generateOutput,
-    getSafeFiles,
+    validateFileSafety,
   }
 ): Promise<PackResult> => {
   // Get all file paths considering the config
@@ -46,7 +46,7 @@ export const pack = async (
   const rawFiles = await deps.collectFiles(filePaths, rootDir);
 
   const { safeFilePaths, safeRawFiles, suspiciousFilesResults } =
-    await deps.getSafeFiles(rawFiles, progressCallback, config);
+    await deps.validateFileSafety(rawFiles, progressCallback, config);
 
   // Process files (remove comments, etc.)
   progressCallback("Processing files...");

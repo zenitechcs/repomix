@@ -1,10 +1,10 @@
 import { describe, it, beforeEach, expect, vi } from "vitest";
 import { RawFile } from "../../../src/core/file/fileTypes.js";
 import { SuspiciousFileResult } from "../../../src/core/security/securityCheck.js";
-import { getSafeFiles } from "../../../src/core/packager/getSafeFiles.js";
+import { validateFileSafety } from "../../../src/core/packager/validateFileSafety.js";
 import { RepomixConfigMerged } from "../../../src/config/configSchema.js";
 
-describe("getSafeFiles", () => {
+describe("validateFileSafety", () => {
   const mockRawFiles: RawFile[] = [
     { path: "file1.txt", content: "content1" },
     { path: "file2.txt", content: "content2" },
@@ -26,7 +26,7 @@ describe("getSafeFiles", () => {
         enableSecurityCheck: false,
       },
     } as unknown as RepomixConfigMerged;
-    const result = await getSafeFiles(
+    const result = await validateFileSafety(
       mockRawFiles,
       mockProgressCallback,
       mockConfig
@@ -49,7 +49,7 @@ describe("getSafeFiles", () => {
       .fn()
       .mockResolvedValue(mockSuspiciousFilesResults);
 
-    const result = await getSafeFiles(
+    const result = await validateFileSafety(
       mockRawFiles,
       mockProgressCallback,
       mockConfig,
