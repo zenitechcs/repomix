@@ -1,13 +1,6 @@
 import path from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import type { collectFiles } from "../../src/core/file/fileCollect.js";
-import type { processFiles } from "../../src/core/file/fileProcess.js";
-import type { searchFiles } from "../../src/core/file/fileSearch.js";
-import type { generateOutput } from "../../src/core/output/outputGenerate.js";
 import { pack } from "../../src/core/packager.js";
-import { copyToClipboardIfEnabled } from "../../src/core/packager/copyToClipboardIfEnabled.js";
-import { writeOutputToDisk } from "../../src/core/packager/writeOutputToDisk.js";
-import { validateFileSafety } from "../../src/core/security/validateFileSafety.js";
 import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
 import { createMockConfig } from "../testing/testUtils.js";
 
@@ -21,115 +14,99 @@ vi.mock("clipboardy", () => ({
 }));
 
 describe("packager", () => {
-  let mockDeps: {
-    searchFiles: typeof searchFiles;
-    collectFiles: typeof collectFiles;
-    processFiles: typeof processFiles;
-    validateFileSafety: typeof validateFileSafety;
-    generateOutput: typeof generateOutput;
-    writeOutputToDisk: typeof writeOutputToDisk;
-    copyToClipboardIfEnabled: typeof copyToClipboardIfEnabled;
-  };
-
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+
+  test("pack should orchestrate packing files and generating output", async () => {
     const file2Path = path.join("dir1", "file2.txt");
-    mockDeps = {
+    const mockRawFiles = [
+      { path: "file1.txt", content: "raw content 1" },
+      { path: file2Path, content: "raw content 2" },
+    ];
+    const mockSafeRawFiles = [
+      { path: "file1.txt", content: "safed content 1" },
+      { path: file2Path, content: "safed content 2" },
+    ];
+    const mockProcessedFiles = [
+      { path: "file1.txt", content: "processed content 1" },
+      { path: file2Path, content: "processed content 2" },
+    ];
+    const mockOutput = "mock output";
+    const mockFilePaths = ["file1.txt", file2Path];
+
+    const mockDeps = {
       searchFiles: vi.fn().mockResolvedValue({
-        filePaths: ["file1.txt", file2Path],
+        filePaths: mockFilePaths,
         emptyDirPaths: [],
       }),
-      collectFiles: vi.fn().mockResolvedValue([
-        { path: "file1.txt", content: "raw content 1" },
-        { path: file2Path, content: "raw content 2" },
-      ]),
-      processFiles: vi.fn().mockReturnValue([
-        { path: "file1.txt", content: "processed content 1" },
-        { path: file2Path, content: "processed content 2" },
-      ]),
+      collectFiles: vi.fn().mockResolvedValue(mockRawFiles),
+      processFiles: vi.fn().mockReturnValue(mockProcessedFiles),
       validateFileSafety: vi.fn().mockResolvedValue({
-        safeFilePaths: ["file1.txt", file2Path],
-        safeRawFiles: [
-          { path: "file1.txt", content: "safed content 1" },
-          { path: file2Path, content: "safed content 2" },
-        ],
+        safeFilePaths: mockFilePaths,
+        safeRawFiles: mockSafeRawFiles,
         suspiciousFileResults: [],
       }),
-      generateOutput: vi.fn().mockResolvedValue("mock output"),
+      generateOutput: vi.fn().mockResolvedValue(mockOutput),
       writeOutputToDisk: vi.fn().mockResolvedValue(undefined),
       copyToClipboardIfEnabled: vi.fn().mockResolvedValue(undefined),
+      calculateMetrics: vi.fn().mockResolvedValue({
+        totalFiles: 2,
+        totalCharacters: 11,
+        totalTokens: 10,
+        fileCharCounts: {
+          "file1.txt": 19,
+          [file2Path]: 19,
+        },
+        fileTokenCounts: {
+          "file1.txt": 10,
+          [file2Path]: 10,
+        },
+      }),
     };
 
     vi.mocked(TokenCounter.prototype.countTokens).mockReturnValue(10);
-  });
 
-  test("pack should process files and generate output", async () => {
     const mockConfig = createMockConfig();
     const progressCallback = vi.fn();
     const result = await pack("root", mockConfig, progressCallback, mockDeps);
 
-    const file2Path = path.join("dir1", "file2.txt");
-
     expect(mockDeps.searchFiles).toHaveBeenCalledWith("root", mockConfig);
-    expect(mockDeps.collectFiles).toHaveBeenCalledWith(
-      ["file1.txt", file2Path],
-      "root"
-    );
+    expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, "root");
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
+    expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
     expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(
-      [
-        expect.objectContaining({
-          content: "raw content 1",
-          path: "file1.txt",
-        }),
-        expect.objectContaining({
-          content: "raw content 2",
-          path: file2Path,
-        }),
-      ],
+      mockRawFiles,
       progressCallback,
       mockConfig
     );
     expect(mockDeps.processFiles).toHaveBeenCalledWith(
-      [
-        expect.objectContaining({
-          content: "safed content 1",
-          path: "file1.txt",
-        }),
-        expect.objectContaining({
-          content: "safed content 2",
-          path: file2Path,
-        }),
-      ],
+      mockSafeRawFiles,
       mockConfig
     );
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
       "root",
       mockConfig,
-      [
-        expect.objectContaining({
-          content: "processed content 1",
-          path: "file1.txt",
-        }),
-        expect.objectContaining({
-          content: "processed content 2",
-          path: file2Path,
-        }),
-      ],
-      ["file1.txt", file2Path]
+      mockProcessedFiles,
+      mockFilePaths
     );
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(
-      "mock output",
+      mockOutput,
       mockConfig
     );
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(
-      "mock output",
+      mockOutput,
       progressCallback,
       mockConfig
+    );
+    expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
+      mockProcessedFiles,
+      mockOutput,
+      progressCallback
     );
 
     // Check the result of pack function
