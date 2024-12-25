@@ -1,6 +1,4 @@
 import clipboard from "clipboardy";
-import fs from "node:fs/promises";
-import path from "node:path";
 import { setTimeout } from "node:timers/promises";
 import pMap from "p-map";
 import pc from "picocolors";
@@ -12,8 +10,9 @@ import { collectFiles } from "./file/fileCollect.js";
 import { processFiles } from "./file/fileProcess.js";
 import { searchFiles } from "./file/fileSearch.js";
 import { generateOutput } from "./output/outputGenerate.js";
-import { validateFileSafety } from "./security/validateFileSafety.js";
+import { writeOutputToDisk } from "./packager/writeOutputToDisk.js";
 import { type SuspiciousFileResult } from "./security/securityCheck.js";
+import { validateFileSafety } from "./security/validateFileSafety.js";
 import { TokenCounter } from "./tokenCount/tokenCount.js";
 
 export interface PackResult {
@@ -35,6 +34,7 @@ export const pack = async (
     processFiles,
     generateOutput,
     validateFileSafety,
+    writeOutputToDisk,
   }
 ): Promise<PackResult> => {
   // Get all file paths considering the config
@@ -63,9 +63,7 @@ export const pack = async (
 
   // Write output to file. path is relative to the cwd
   progressCallback("Writing output file...");
-  const outputPath = path.resolve(config.cwd, config.output.filePath);
-  logger.trace(`Writing output to: ${outputPath}`);
-  await fs.writeFile(outputPath, output);
+  await deps.writeOutputToDisk(output, config);
 
   if (config.output.copyToClipboard) {
     // Additionally copy to clipboard if flag is raised

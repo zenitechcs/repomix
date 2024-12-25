@@ -10,6 +10,7 @@ import { pack } from "../../src/core/packager.js";
 import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
 import { createMockConfig } from "../testing/testUtils.js";
 import { validateFileSafety } from "../../src/core/security/validateFileSafety.js";
+import { writeOutputToDisk } from "../../src/core/packager/writeOutputToDisk.js";
 
 vi.mock("node:fs/promises");
 vi.mock("fs/promises");
@@ -27,6 +28,7 @@ describe("packager", () => {
     processFiles: typeof processFiles;
     validateFileSafety: typeof validateFileSafety;
     generateOutput: typeof generateOutput;
+    writeOutputToDisk: typeof writeOutputToDisk;
   };
 
   beforeEach(() => {
@@ -54,6 +56,7 @@ describe("packager", () => {
         suspiciousFileResults: [],
       }),
       generateOutput: vi.fn().mockResolvedValue("mock output"),
+      writeOutputToDisk: vi.fn().mockResolvedValue(undefined),
     };
 
     vi.mocked(TokenCounter.prototype.countTokens).mockReturnValue(10);
@@ -73,8 +76,8 @@ describe("packager", () => {
     );
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
-    expect(fs.writeFile).toHaveBeenCalled();
 
     expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(
       [
@@ -101,6 +104,10 @@ describe("packager", () => {
           path: file2Path,
         }),
       ],
+      mockConfig
+    );
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(
+      "mock output",
       mockConfig
     );
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
