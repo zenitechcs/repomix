@@ -1,16 +1,15 @@
-import * as fs from "node:fs/promises";
 import path from "node:path";
-import clipboardy from "clipboardy";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { collectFiles } from "../../src/core/file/fileCollect.js";
 import type { processFiles } from "../../src/core/file/fileProcess.js";
 import type { searchFiles } from "../../src/core/file/fileSearch.js";
 import type { generateOutput } from "../../src/core/output/outputGenerate.js";
 import { pack } from "../../src/core/packager.js";
+import { copyToClipboardIfEnabled } from "../../src/core/packager/copyToClipboardIfEnabled.js";
+import { writeOutputToDisk } from "../../src/core/packager/writeOutputToDisk.js";
+import { validateFileSafety } from "../../src/core/security/validateFileSafety.js";
 import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
 import { createMockConfig } from "../testing/testUtils.js";
-import { validateFileSafety } from "../../src/core/security/validateFileSafety.js";
-import { writeOutputToDisk } from "../../src/core/packager/writeOutputToDisk.js";
 
 vi.mock("node:fs/promises");
 vi.mock("fs/promises");
@@ -29,6 +28,7 @@ describe("packager", () => {
     validateFileSafety: typeof validateFileSafety;
     generateOutput: typeof generateOutput;
     writeOutputToDisk: typeof writeOutputToDisk;
+    copyToClipboardIfEnabled: typeof copyToClipboardIfEnabled;
   };
 
   beforeEach(() => {
@@ -57,6 +57,7 @@ describe("packager", () => {
       }),
       generateOutput: vi.fn().mockResolvedValue("mock output"),
       writeOutputToDisk: vi.fn().mockResolvedValue(undefined),
+      copyToClipboardIfEnabled: vi.fn().mockResolvedValue(undefined),
     };
 
     vi.mocked(TokenCounter.prototype.countTokens).mockReturnValue(10);
@@ -106,10 +107,6 @@ describe("packager", () => {
       ],
       mockConfig
     );
-    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(
-      "mock output",
-      mockConfig
-    );
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
       "root",
       mockConfig,
@@ -125,6 +122,15 @@ describe("packager", () => {
       ],
       ["file1.txt", file2Path]
     );
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(
+      "mock output",
+      mockConfig
+    );
+    expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(
+      "mock output",
+      progressCallback,
+      mockConfig
+    );
 
     // Check the result of pack function
     expect(result.totalFiles).toBe(2);
@@ -138,16 +144,5 @@ describe("packager", () => {
       "file1.txt": 10,
       [file2Path]: 10,
     });
-  });
-
-  test("pack should copy to clipboard when enabled", async () => {
-    const mockConfig = createMockConfig({
-      output: {
-        copyToClipboard: true,
-      },
-    });
-
-    await pack("root", mockConfig, () => {}, mockDeps);
-    expect(clipboardy.write).toHaveBeenCalled();
   });
 });

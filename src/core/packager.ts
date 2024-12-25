@@ -14,6 +14,7 @@ import { writeOutputToDisk } from "./packager/writeOutputToDisk.js";
 import { type SuspiciousFileResult } from "./security/securityCheck.js";
 import { validateFileSafety } from "./security/validateFileSafety.js";
 import { TokenCounter } from "./tokenCount/tokenCount.js";
+import { copyToClipboardIfEnabled } from "./packager/copyToClipboardIfEnabled.js";
 
 export interface PackResult {
   totalFiles: number;
@@ -35,6 +36,7 @@ export const pack = async (
     generateOutput,
     validateFileSafety,
     writeOutputToDisk,
+    copyToClipboardIfEnabled,
   }
 ): Promise<PackResult> => {
   // Get all file paths considering the config
@@ -61,16 +63,10 @@ export const pack = async (
     safeFilePaths
   );
 
-  // Write output to file. path is relative to the cwd
   progressCallback("Writing output file...");
   await deps.writeOutputToDisk(output, config);
 
-  if (config.output.copyToClipboard) {
-    // Additionally copy to clipboard if flag is raised
-    progressCallback("Copying to clipboard...");
-    logger.trace("Copying output to clipboard");
-    await clipboard.write(output);
-  }
+  await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
   // Setup token counter
   const tokenCounter = new TokenCounter();
