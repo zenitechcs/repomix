@@ -1,39 +1,39 @@
-import path from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { pack } from "../../src/core/packager.js";
-import { TokenCounter } from "../../src/core/tokenCount/tokenCount.js";
-import { createMockConfig } from "../testing/testUtils.js";
+import path from 'node:path';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { pack } from '../../src/core/packager.js';
+import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
+import { createMockConfig } from '../testing/testUtils.js';
 
-vi.mock("node:fs/promises");
-vi.mock("fs/promises");
-vi.mock("../../src/core/tokenCount/tokenCount");
-vi.mock("clipboardy", () => ({
+vi.mock('node:fs/promises');
+vi.mock('fs/promises');
+vi.mock('../../src/core/tokenCount/tokenCount');
+vi.mock('clipboardy', () => ({
   default: {
     write: vi.fn(),
   },
 }));
 
-describe("packager", () => {
+describe('packager', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  test("pack should orchestrate packing files and generating output", async () => {
-    const file2Path = path.join("dir1", "file2.txt");
+  test('pack should orchestrate packing files and generating output', async () => {
+    const file2Path = path.join('dir1', 'file2.txt');
     const mockRawFiles = [
-      { path: "file1.txt", content: "raw content 1" },
-      { path: file2Path, content: "raw content 2" },
+      { path: 'file1.txt', content: 'raw content 1' },
+      { path: file2Path, content: 'raw content 2' },
     ];
     const mockSafeRawFiles = [
-      { path: "file1.txt", content: "safed content 1" },
-      { path: file2Path, content: "safed content 2" },
+      { path: 'file1.txt', content: 'safed content 1' },
+      { path: file2Path, content: 'safed content 2' },
     ];
     const mockProcessedFiles = [
-      { path: "file1.txt", content: "processed content 1" },
-      { path: file2Path, content: "processed content 2" },
+      { path: 'file1.txt', content: 'processed content 1' },
+      { path: file2Path, content: 'processed content 2' },
     ];
-    const mockOutput = "mock output";
-    const mockFilePaths = ["file1.txt", file2Path];
+    const mockOutput = 'mock output';
+    const mockFilePaths = ['file1.txt', file2Path];
 
     const mockDeps = {
       searchFiles: vi.fn().mockResolvedValue({
@@ -55,11 +55,11 @@ describe("packager", () => {
         totalCharacters: 11,
         totalTokens: 10,
         fileCharCounts: {
-          "file1.txt": 19,
+          'file1.txt': 19,
           [file2Path]: 19,
         },
         fileTokenCounts: {
-          "file1.txt": 10,
+          'file1.txt': 10,
           [file2Path]: 10,
         },
       }),
@@ -69,56 +69,33 @@ describe("packager", () => {
 
     const mockConfig = createMockConfig();
     const progressCallback = vi.fn();
-    const result = await pack("root", mockConfig, progressCallback, mockDeps);
+    const result = await pack('root', mockConfig, progressCallback, mockDeps);
 
-    expect(mockDeps.searchFiles).toHaveBeenCalledWith("root", mockConfig);
-    expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, "root");
+    expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
+    expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root');
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
-    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(
-      mockRawFiles,
-      progressCallback,
-      mockConfig
-    );
-    expect(mockDeps.processFiles).toHaveBeenCalledWith(
-      mockSafeRawFiles,
-      mockConfig
-    );
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
-      "root",
-      mockConfig,
-      mockProcessedFiles,
-      mockFilePaths
-    );
-    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(
-      mockOutput,
-      mockConfig
-    );
-    expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(
-      mockOutput,
-      progressCallback,
-      mockConfig
-    );
-    expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
-      mockProcessedFiles,
-      mockOutput,
-      progressCallback
-    );
+    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
+    expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig);
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, mockProcessedFiles, mockFilePaths);
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
+    expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
+    expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(mockProcessedFiles, mockOutput, progressCallback);
 
     // Check the result of pack function
     expect(result.totalFiles).toBe(2);
     expect(result.totalCharacters).toBe(11);
     expect(result.totalTokens).toBe(10);
     expect(result.fileCharCounts).toEqual({
-      "file1.txt": 19,
+      'file1.txt': 19,
       [file2Path]: 19,
     });
     expect(result.fileTokenCounts).toEqual({
-      "file1.txt": 10,
+      'file1.txt': 10,
       [file2Path]: 10,
     });
   });

@@ -1,12 +1,12 @@
-import type { ProcessedFile } from "../file/fileTypes.js";
-import type { TokenCounter } from "../tokenCount/tokenCount.js";
-import type { FileMetrics } from "./calculateIndividualFileMetrics.js";
+import type { ProcessedFile } from '../file/fileTypes.js';
+import type { TokenCounter } from '../tokenCount/tokenCount.js';
+import type { FileMetrics } from './calculateIndividualFileMetrics.js';
 
 export const aggregateMetrics = (
   fileMetrics: FileMetrics[],
   processedFiles: ProcessedFile[],
   output: string,
-  tokenCounter: TokenCounter
+  tokenCounter: TokenCounter,
 ) => {
   const totalFiles = processedFiles.length;
   const totalCharacters = output.length;

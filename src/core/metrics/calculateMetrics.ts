@@ -1,8 +1,8 @@
-import { RepomixProgressCallback } from "../../shared/types.js";
-import { type ProcessedFile } from "../file/fileTypes.js";
-import { TokenCounter } from "../tokenCount/tokenCount.js";
-import { aggregateMetrics } from "./aggregateMetrics.js";
-import { calculateAllFileMetrics } from "./calculateAllFileMetrics.js";
+import type { RepomixProgressCallback } from '../../shared/types.js';
+import type { ProcessedFile } from '../file/fileTypes.js';
+import { TokenCounter } from '../tokenCount/tokenCount.js';
+import { aggregateMetrics } from './aggregateMetrics.js';
+import { calculateAllFileMetrics } from './calculateAllFileMetrics.js';
 
 export interface CalculateMetricsResult {
   totalFiles: number;
@@ -15,23 +15,14 @@ export interface CalculateMetricsResult {
 export const calculateMetrics = async (
   processedFiles: ProcessedFile[],
   output: string,
-  progressCallback: RepomixProgressCallback
+  progressCallback: RepomixProgressCallback,
 ): Promise<CalculateMetricsResult> => {
   const tokenCounter = new TokenCounter();
 
-  progressCallback("Calculating metrics...");
-  const fileMetrics = await calculateAllFileMetrics(
-    processedFiles,
-    tokenCounter,
-    progressCallback
-  );
+  progressCallback('Calculating metrics...');
+  const fileMetrics = await calculateAllFileMetrics(processedFiles, tokenCounter, progressCallback);
 
-  const result = aggregateMetrics(
-    fileMetrics,
-    processedFiles,
-    output,
-    tokenCounter
-  );
+  const result = aggregateMetrics(fileMetrics, processedFiles, output, tokenCounter);
 
   tokenCounter.free();
 

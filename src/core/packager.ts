@@ -1,14 +1,14 @@
-import type { RepomixConfigMerged } from "../config/configSchema.js";
-import type { RepomixProgressCallback } from "../shared/types.js";
-import { collectFiles } from "./file/fileCollect.js";
-import { processFiles } from "./file/fileProcess.js";
-import { searchFiles } from "./file/fileSearch.js";
-import { calculateMetrics } from "./metrics/calculateMetrics.js";
-import { generateOutput } from "./output/outputGenerate.js";
-import { copyToClipboardIfEnabled } from "./packager/copyToClipboardIfEnabled.js";
-import { writeOutputToDisk } from "./packager/writeOutputToDisk.js";
-import type { SuspiciousFileResult } from "./security/securityCheck.js";
-import { validateFileSafety } from "./security/validateFileSafety.js";
+import type { RepomixConfigMerged } from '../config/configSchema.js';
+import type { RepomixProgressCallback } from '../shared/types.js';
+import { collectFiles } from './file/fileCollect.js';
+import { processFiles } from './file/fileProcess.js';
+import { searchFiles } from './file/fileSearch.js';
+import { calculateMetrics } from './metrics/calculateMetrics.js';
+import { generateOutput } from './output/outputGenerate.js';
+import { copyToClipboardIfEnabled } from './packager/copyToClipboardIfEnabled.js';
+import { writeOutputToDisk } from './packager/writeOutputToDisk.js';
+import type { SuspiciousFileResult } from './security/securityCheck.js';
+import { validateFileSafety } from './security/validateFileSafety.js';
 
 export interface PackResult {
   totalFiles: number;
@@ -32,39 +32,33 @@ export const pack = async (
     writeOutputToDisk,
     copyToClipboardIfEnabled,
     calculateMetrics,
-  }
+  },
 ): Promise<PackResult> => {
-  progressCallback("Searching for files...");
+  progressCallback('Searching for files...');
   const { filePaths } = await deps.searchFiles(rootDir, config);
 
-  progressCallback("Collecting files...");
+  progressCallback('Collecting files...');
   const rawFiles = await deps.collectFiles(filePaths, rootDir);
 
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults } =
-    await deps.validateFileSafety(rawFiles, progressCallback, config);
-
-  // Process files (remove comments, etc.)
-  progressCallback("Processing files...");
-  const processedFiles = await deps.processFiles(safeRawFiles, config);
-
-  progressCallback("Generating output...");
-  const output = await deps.generateOutput(
-    rootDir,
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults } = await deps.validateFileSafety(
+    rawFiles,
+    progressCallback,
     config,
-    processedFiles,
-    safeFilePaths
   );
 
-  progressCallback("Writing output file...");
+  // Process files (remove comments, etc.)
+  progressCallback('Processing files...');
+  const processedFiles = await deps.processFiles(safeRawFiles, config);
+
+  progressCallback('Generating output...');
+  const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);
+
+  progressCallback('Writing output file...');
   await deps.writeOutputToDisk(output, config);
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
-  const metrics = await deps.calculateMetrics(
-    processedFiles,
-    output,
-    progressCallback
-  );
+  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback);
 
   return {
     ...metrics,
