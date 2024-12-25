@@ -1,37 +1,29 @@
+import { type RepomixConfigMerged } from "../../config/configSchema.js";
+import { logger } from "../../shared/logger.js";
 import { type RepomixProgressCallback } from "../../shared/types.js";
 import { type RawFile } from "../file/fileTypes.js";
-import {
-  runSecurityCheck,
-  type SuspiciousFileResult,
-} from "./securityCheck.js";
-import { logger } from "../../shared/logger.js";
-import { RepomixConfigMerged } from "../../config/configSchema.js";
-
-const filterOutSuspiciousFiles = (
-  rawFiles: RawFile[],
-  suspiciousFilesResults: SuspiciousFileResult[]
-) =>
-  rawFiles.filter(
-    (rawFile) =>
-      !suspiciousFilesResults.some((result) => result.filePath === rawFile.path)
-  );
+import { filterOutUntrustedFiles } from "./filterOutUntrustedFiles.js";
+import { runSecurityCheckIfEnabled } from "./runSecurityCheckIfEnabled.js";
 
 // marks which files are suspicious and which are safe
 export const validateFileSafety = async (
   rawFiles: RawFile[],
   progressCallback: RepomixProgressCallback,
   config: RepomixConfigMerged,
-  checkSecurity = runSecurityCheck
-) => {
-  let safeRawFiles = rawFiles;
-  let suspiciousFilesResults: SuspiciousFileResult[] = [];
-
-  if (config.security.enableSecurityCheck) {
-    progressCallback("Running security check...");
-    suspiciousFilesResults = await checkSecurity(rawFiles, progressCallback);
-    safeRawFiles = filterOutSuspiciousFiles(rawFiles, suspiciousFilesResults);
+  deps = {
+    runSecurityCheckIfEnabled,
+    filterOutUntrustedFiles,
   }
-
+) => {
+  const suspiciousFilesResults = await deps.runSecurityCheckIfEnabled(
+    rawFiles,
+    config,
+    progressCallback
+  );
+  const safeRawFiles = deps.filterOutUntrustedFiles(
+    rawFiles,
+    suspiciousFilesResults
+  );
   const safeFilePaths = safeRawFiles.map((file) => file.path);
   logger.trace("Safe files count:", safeRawFiles.length);
 
