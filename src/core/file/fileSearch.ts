@@ -42,6 +42,7 @@ const findEmptyDirectories = async (
   return emptyDirs;
 };
 
+// Get all file paths considering the config
 export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<FileSearchResult> => {
   // First check directory permissions
   const permissionCheck = await checkDirectoryPermissions(rootDir);
