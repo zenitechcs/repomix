@@ -44,7 +44,7 @@ describe('calculateMetrics', () => {
         'file2.txt': 20,
       },
     };
-    (aggregateMetrics as unknown as vi.Mock).mockReturnValue(aggregatedResult);
+    (aggregateMetrics as unknown as Mock).mockReturnValue(aggregatedResult);
 
     const result = await calculateMetrics(processedFiles, output, progressCallback);
 

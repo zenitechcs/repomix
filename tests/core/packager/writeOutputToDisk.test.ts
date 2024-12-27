@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import path from 'path';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { writeOutputToDisk } from '../../../src/core/packager/writeOutputToDisk.js';
