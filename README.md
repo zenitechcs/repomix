@@ -95,6 +95,14 @@ To initialize a new configuration file (`repomix.config.json`):
 repomix --init
 ```
 
+### 🐳 Docker
+
+Run Repomix using Docker
+
+```bash
+docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://github.com/yamadashy/repomix
+```
+
 Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
 
 ### Prompt Examples
