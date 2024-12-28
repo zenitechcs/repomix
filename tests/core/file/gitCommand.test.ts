@@ -98,5 +98,20 @@ describe('gitCommand', () => {
       expect(mockExecAsync).toHaveBeenLastCalledWith(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
       // The fourth call (e.g., git checkout) won't be made due to the error on the third call
     });
+
+    test('should handle short SHA correctly', async () => {
+      const mockExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: '' });
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+      const shortSha = 'ce9b621';
+
+      await execGitShallowClone(url, directory, shortSha, { execAsync: mockExecAsync });
+
+      expect(mockExecAsync).toHaveBeenCalledTimes(4);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(1, `git -C ${directory} init`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(2, `git -C ${directory} remote add origin ${url}`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(3, `git -C ${directory} fetch origin`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(4, `git -C ${directory} checkout ${shortSha}`);
+    });
   });
 });
