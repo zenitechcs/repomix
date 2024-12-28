@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { FileMetrics } from '../../../lib/core/metrics/calculateIndividualFileMetrics.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { aggregateMetrics } from '../../../src/core/metrics/aggregateMetrics.js';
+import type { FileMetrics } from '../../../src/core/metrics/calculateIndividualFileMetrics.js';
 import type { TokenCounter } from '../../../src/core/tokenCount/tokenCount.js';
 
 describe('aggregateMetrics', () => {
