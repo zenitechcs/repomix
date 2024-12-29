@@ -5,14 +5,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+RUN mkdir /repomix
+WORKDIR /repomix
 
+# Install dependencies
 COPY package*.json ./
-
 RUN npm install
 
+# Build and link repomix
 COPY . .
+RUN npm install \
+    && npm run build \
+    && npm link
 
-RUN npm run build
+WORKDIR /app
 
-ENTRYPOINT ["npx", "repomix"]
+ENTRYPOINT ["repomix"]

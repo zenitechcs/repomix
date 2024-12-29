@@ -12,6 +12,8 @@ on:
       - "*"
     paths:
       - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/docker.yml"
   workflow_dispatch:
   release:
     types: [published, edited]
