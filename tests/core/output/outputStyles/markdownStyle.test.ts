@@ -7,8 +7,8 @@ describe('markdownStyle', () => {
     test('should return valid markdown template', () => {
       const template = getMarkdownTemplate();
       expect(template).toContain('# File Summary');
-      expect(template).toContain('# Repository Structure');
-      expect(template).toContain('# Repository Files');
+      expect(template).toContain('# Directory Structure');
+      expect(template).toContain('# Files');
       expect(template).toContain('{{#if instruction}}');
       expect(template).toContain('# Instruction');
     });
@@ -30,6 +30,8 @@ describe('markdownStyle', () => {
             content: 'console.log("Hello");',
           },
         ],
+        fileSummaryEnabled: true,
+        directoryStructureEnabled: true,
       };
 
       const result = compiledTemplate(data);
@@ -51,6 +53,8 @@ describe('markdownStyle', () => {
       const data = {
         headerText: 'Custom Header Text',
         processedFiles: [],
+        fileSummaryEnabled: true,
+        directoryStructureEnabled: true,
       };
 
       const result = compiledTemplate(data);
@@ -64,6 +68,8 @@ describe('markdownStyle', () => {
       const compiledTemplate = Handlebars.compile(template);
       const data = {
         processedFiles: [],
+        fileSummaryEnabled: true,
+        directoryStructureEnabled: true,
       };
 
       const result = compiledTemplate(data);
@@ -77,6 +83,8 @@ describe('markdownStyle', () => {
       const data = {
         instruction: 'Custom Instruction Text',
         processedFiles: [],
+        fileSummaryEnabled: true,
+        directoryStructureEnabled: true,
       };
 
       const result = compiledTemplate(data);

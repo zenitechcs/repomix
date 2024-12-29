@@ -13,7 +13,7 @@ or other automated processes.
 The content is organized as follows:
 1. This summary section
 2. Repository information
-3. Repository structure
+3. Directory structure
 4. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file
@@ -47,7 +47,7 @@ For more information about Repomix, visit: https://github.com/yamadashy/repomix
 
 </file_summary>
 
-<repository_structure>
+<directory_structure>
 resources/
   .repomixignore
   data.txt
@@ -58,9 +58,9 @@ src/
 package.json
 README.md
 repomix.config.json
-</repository_structure>
+</directory_structure>
 
-<repository_files>
+<files>
 This section contains the contents of the repository's files.
 
 <file path="resources/.repomixignore">
@@ -144,4 +144,4 @@ This will output a greeting message to the console.
 }
 </file>
 
-</repository_files>
+</files>
