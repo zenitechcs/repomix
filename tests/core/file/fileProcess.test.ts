@@ -25,7 +25,7 @@ describe('fileProcess', () => {
         removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
-      const result = await processFiles(mockRawFiles, config);
+      const result = await processFiles(mockRawFiles, config, () => {});
 
       expect(result).toEqual([
         { path: 'file1.js', content: 'const a = 1;' },

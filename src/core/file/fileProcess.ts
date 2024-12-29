@@ -1,16 +1,32 @@
+import { setTimeout } from 'node:timers/promises';
 import pMap from 'p-map';
+import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
+import type { RepomixProgressCallback } from '../../shared/types.js';
 import { getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';
 
-export const processFiles = async (rawFiles: RawFile[], config: RepomixConfigMerged): Promise<ProcessedFile[]> => {
+export const processFiles = async (
+  rawFiles: RawFile[],
+  config: RepomixConfigMerged,
+  progressCallback: RepomixProgressCallback,
+): Promise<ProcessedFile[]> => {
   return pMap(
     rawFiles,
-    async (rawFile) => ({
-      path: rawFile.path,
-      content: await processContent(rawFile.content, rawFile.path, config),
-    }),
+    async (rawFile, index) => {
+      const resultContent = await processContent(rawFile.content, rawFile.path, config);
+
+      progressCallback(`Processing file... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
+
+      // Sleep for a short time to prevent blocking the event loop
+      await setTimeout(1);
+
+      return {
+        path: rawFile.path,
+        content: resultContent,
+      };
+    },
     {
       concurrency: getProcessConcurrency(),
     },
