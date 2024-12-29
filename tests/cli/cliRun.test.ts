@@ -47,6 +47,8 @@ describe('cliRun', () => {
         output: {
           filePath: 'repomix-output.txt',
           style: 'plain',
+          fileSummary: true,
+          directoryStructure: true,
           topFilesLength: 5,
           showLineNumbers: false,
           removeComments: false,

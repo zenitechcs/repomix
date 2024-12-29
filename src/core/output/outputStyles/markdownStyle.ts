@@ -4,6 +4,7 @@ export const getMarkdownTemplate = () => {
   return /* md */ `
 {{{generationHeader}}}
 
+{{#if fileSummaryEnabled}}
 # File Summary
 
 ## Purpose
@@ -28,11 +29,14 @@ export const getMarkdownTemplate = () => {
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
+{{/if}}
 
+{{#if directoryStructureEnabled}}
 # Directory Structure
 \`\`\`
 {{{treeString}}}
 \`\`\`
+{{/if}}
 
 # Files
 

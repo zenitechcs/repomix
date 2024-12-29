@@ -26,8 +26,8 @@ describe('plainStyle', () => {
     const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
     expect(output).toContain('File Summary');
-    expect(output).toContain('Repository Structure');
+    expect(output).toContain('Directory Structure');
     expect(output).toContain('Custom header text');
-    expect(output).toContain('Repository Files');
+    expect(output).toContain('Files');
   });
 });

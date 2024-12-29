@@ -64,6 +64,8 @@ describe('configSchema', () => {
         output: {
           filePath: 'output.txt',
           style: 'plain',
+          fileSummary: true,
+          directoryStructure: true,
           removeComments: false,
           removeEmptyLines: false,
           topFilesLength: 5,
@@ -142,6 +144,8 @@ describe('configSchema', () => {
         output: {
           filePath: 'merged-output.txt',
           style: 'plain',
+          fileSummary: true,
+          directoryStructure: true,
           removeComments: true,
           removeEmptyLines: false,
           topFilesLength: 10,

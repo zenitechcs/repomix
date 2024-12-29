@@ -162,7 +162,7 @@ File Summary
 (Metadata and usage AI instructions)
 
 ================================================================
-Repository Structure
+Directory Structure
 ================================================================
 src/
   cli/
@@ -174,7 +174,7 @@ src/
 (...remaining directories)
 
 ================================================================
-Repository Files
+Files
 ================================================================
 
 ================
@@ -211,22 +211,22 @@ This file is a merged representation of the entire codebase, combining all repos
 (Metadata and usage AI instructions)
 </file_summary>
 
-<repository_structure>
+<directory_structure>
 src/
   cli/
     cliOutput.ts
     index.ts
 
 (...remaining directories)
-</repository_structure>
+</directory_structure>
 
-<repository_files>
+<files>
 <file path="src/index.js">
 // File contents here
 </file>
 
 (...remaining files)
-</repository_files>
+</files>
 
 <instruction>
 (Custom instructions from `output.instructionFilePath`)
@@ -358,6 +358,8 @@ Here's an explanation of the configuration options:
 |`output.style`| The style of the output (`plain`, `xml`, `markdown`) |`"plain"`|
 |`output.headerText`| Custom text to include in the file header |`null`|
 |`output.instructionFilePath`| Path to a file containing detailed custom instructions |`null`|
+|`output.fileSummary`| Whether to include a summary section at the beginning of the output |`true`|
+|`output.directoryStructure`| Whether to include the directory structure in the output |`true`|
 |`output.removeComments`| Whether to remove comments from supported file types | `false` |
 |`output.removeEmptyLines`| Whether to remove empty lines from the output | `false` |
 |`output.showLineNumbers`| Whether to add line numbers to each line in the output |`false`|
@@ -378,6 +380,8 @@ Example configuration:
     "filePath": "repomix-output.xml",
     "style": "xml",
     "headerText": "Custom header information for the packed file.",
+    "fileSummary": true,
+    "directoryStructure": true,
     "removeComments": false,
     "removeEmptyLines": false,
     "showLineNumbers": false,

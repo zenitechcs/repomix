@@ -5,6 +5,7 @@ export const getPlainTemplate = () => {
   return `
 {{{generationHeader}}}
 
+{{#if fileSummaryEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 File Summary
 ${PLAIN_LONG_SEPARATOR}
@@ -40,11 +41,14 @@ User Provided Header:
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
+{{/if}}
 
+{{#if directoryStructureEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Directory Structure
 ${PLAIN_LONG_SEPARATOR}
 {{{treeString}}}
+{{/if}}
 
 ${PLAIN_LONG_SEPARATOR}
 Files

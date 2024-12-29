@@ -2,6 +2,7 @@ export const getXmlTemplate = () => {
   return /* xml */ `
 {{{generationHeader}}}
 
+{{#if fileSummaryEnabled}}
 <file_summary>
 This section contains a summary of this file.
 
@@ -35,10 +36,13 @@ This section contains a summary of this file.
 </additional_info>
 
 </file_summary>
+{{/if}}
 
+{{#if directoryStructureEnabled}}
 <directory_structure>
 {{{treeString}}}
 </directory_structure>
+{{/if}}
 
 <files>
 This section contains the contents of the repository's files.

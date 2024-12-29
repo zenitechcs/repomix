@@ -34,6 +34,8 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
     processedFiles: outputGeneratorContext.processedFiles,
+    fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
+    directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
   };
 };
 

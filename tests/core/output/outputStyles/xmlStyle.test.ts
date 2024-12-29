@@ -26,8 +26,8 @@ describe('xmlStyle', () => {
     const output = await generateOutput(process.cwd(), mockConfig, [], []);
 
     expect(output).toContain('file_summary');
-    expect(output).toContain('repository_structure');
+    expect(output).toContain('directory_structure');
     expect(output).toContain('Custom header text');
-    expect(output).toContain('repository_files');
+    expect(output).toContain('files');
   });
 });
