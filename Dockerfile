@@ -8,15 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN mkdir /repomix
 WORKDIR /repomix
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Build and link repomix
+# Install dependencies and build repomix, then link the package to the global scope
 COPY . .
-RUN npm install \
+RUN npm ci \
     && npm run build \
-    && npm link
+    && npm link \
+    && npm ci --omit=dev \
+    && npm cache clean --force
 
 WORKDIR /app
 
