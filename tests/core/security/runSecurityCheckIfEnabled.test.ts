@@ -17,7 +17,9 @@ describe('runSecurityCheckIfEnabled', () => {
     const progressCallback: RepomixProgressCallback = vi.fn();
     const checkSecurity = vi.fn().mockResolvedValue([{ filePath: 'file1.txt' }] as SuspiciousFileResult[]);
 
-    const result = await runSecurityCheckIfEnabled(rawFiles, config, progressCallback, checkSecurity);
+    const result = await runSecurityCheckIfEnabled(rawFiles, config, progressCallback, {
+      runSecurityCheck: checkSecurity,
+    });
 
     expect(progressCallback).toHaveBeenCalledWith('Running security check...');
     expect(checkSecurity).toHaveBeenCalledWith(rawFiles, progressCallback);
@@ -35,7 +37,9 @@ describe('runSecurityCheckIfEnabled', () => {
     const progressCallback: RepomixProgressCallback = vi.fn();
     const checkSecurity = vi.fn();
 
-    const result = await runSecurityCheckIfEnabled(rawFiles, config, progressCallback, checkSecurity);
+    const result = await runSecurityCheckIfEnabled(rawFiles, config, progressCallback, {
+      runSecurityCheck: checkSecurity,
+    });
 
     expect(progressCallback).not.toHaveBeenCalled();
     expect(checkSecurity).not.toHaveBeenCalled();

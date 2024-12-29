@@ -7,11 +7,13 @@ export const runSecurityCheckIfEnabled = async (
   rawFiles: RawFile[],
   config: RepomixConfigMerged,
   progressCallback: RepomixProgressCallback,
-  checkSecurity = runSecurityCheck,
+  deps = {
+    runSecurityCheck,
+  },
 ): Promise<SuspiciousFileResult[]> => {
   if (config.security.enableSecurityCheck) {
     progressCallback('Running security check...');
-    return await checkSecurity(rawFiles, progressCallback);
+    return await deps.runSecurityCheck(rawFiles, progressCallback);
   }
   return [];
 };

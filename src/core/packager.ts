@@ -48,7 +48,7 @@ export const pack = async (
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
-  const processedFiles = await deps.processFiles(safeRawFiles, config);
+  const processedFiles = await deps.processFiles(safeRawFiles, config, progressCallback);
 
   progressCallback('Generating output...');
   const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);

@@ -80,7 +80,7 @@ describe('packager', () => {
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
     expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
-    expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig);
+    expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig, progressCallback);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, mockProcessedFiles, mockFilePaths);
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
