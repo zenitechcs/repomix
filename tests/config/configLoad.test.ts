@@ -83,6 +83,28 @@ describe('configLoad', () => {
 
       await expect(loadFileConfig(process.cwd(), 'test-config.json')).rejects.toThrow('Invalid JSON');
     });
+
+    test('should parse config file with comments', async () => {
+      const configWithComments = `{
+        // Output configuration
+        "output": {
+          "filePath": "test-output.txt"
+        },
+        /* Ignore configuration */
+        "ignore": {
+          "useGitignore": true // Use .gitignore file
+        }
+      }`;
+
+      vi.mocked(fs.readFile).mockResolvedValue(configWithComments);
+      vi.mocked(fs.stat).mockResolvedValue({ isFile: () => true } as Stats);
+
+      const result = await loadFileConfig(process.cwd(), 'test-config.json');
+      expect(result).toEqual({
+        output: { filePath: 'test-output.txt' },
+        ignore: { useGitignore: true },
+      });
+    });
   });
 
   describe('mergeConfigs', () => {

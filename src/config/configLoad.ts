@@ -1,5 +1,6 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import stripJsonComments from 'strip-json-comments';
 import { z } from 'zod';
 import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
@@ -67,7 +68,7 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
 const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFile> => {
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    const config = JSON.parse(fileContent);
+    const config = JSON.parse(stripJsonComments(fileContent));
     return repomixConfigFileSchema.parse(config);
   } catch (error) {
     rethrowValidationErrorIfZodError(error, 'Invalid config schema');
