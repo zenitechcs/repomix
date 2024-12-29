@@ -372,7 +372,7 @@ Here's an explanation of the configuration options:
 
 Example configuration:
 
-```json
+```json5
 {
   "output": {
     "filePath": "repomix-output.xml",
@@ -389,6 +389,7 @@ Example configuration:
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
+    // Patterns can also be specified in .repomixignore
     "customPatterns": ["additional-folder", "**/*.log"]
   },
   "security": {
