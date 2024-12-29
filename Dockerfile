@@ -14,7 +14,8 @@ RUN npm ci \
     && npm run build \
     && npm link \
     && npm ci --omit=dev \
-    && npm cache clean --force
+    && npm cache clean --force \
+    && repomix --help
 
 WORKDIR /app
 
