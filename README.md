@@ -95,11 +95,13 @@ To initialize a new configuration file (`repomix.config.json`):
 repomix --init
 ```
 
-### 🐳 Docker
-
-Run Repomix using Docker
+You can run it using Docker 🐳
 
 ```bash
+# Basic usage (current directory)
+docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix
+
+# Process a remote repository and output to a `output` directory
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://github.com/yamadashy/repomix
 ```
 

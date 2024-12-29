@@ -38,6 +38,19 @@ To run Repomix locally:
 npm run cli-run
 ```
 
+### Docker Usage
+You can also run Repomix using Docker. Here's how:
+
+First, build the Docker image:
+```bash
+docker build -t repomix .
+```
+
+Then, run the Docker container:
+```bash
+docker run -v ./:/app -it --rm repomix
+```
+
 ### Coding Style
 
 We use [Biome](https://biomejs.dev/) for linting and formatting. Please make sure your code follows the style guide by running:
