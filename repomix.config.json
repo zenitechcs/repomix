@@ -14,6 +14,7 @@
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
+    // ignore is specified in .repomixignore
     "customPatterns": []
   },
   "security": {
