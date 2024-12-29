@@ -42,12 +42,12 @@ User Provided Header:
 {{{summaryAdditionalInfo}}}
 
 ${PLAIN_LONG_SEPARATOR}
-Repository Structure
+Directory Structure
 ${PLAIN_LONG_SEPARATOR}
 {{{treeString}}}
 
 ${PLAIN_LONG_SEPARATOR}
-Repository Files
+Files
 ${PLAIN_LONG_SEPARATOR}
 
 {{#each processedFiles}}

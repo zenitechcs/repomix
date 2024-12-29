@@ -36,11 +36,11 @@ This section contains a summary of this file.
 
 </file_summary>
 
-<repository_structure>
+<directory_structure>
 {{{treeString}}}
-</repository_structure>
+</directory_structure>
 
-<repository_files>
+<files>
 This section contains the contents of the repository's files.
 
 {{#each processedFiles}}
@@ -49,7 +49,7 @@ This section contains the contents of the repository's files.
 </file>
 
 {{/each}}
-</repository_files>
+</files>
 
 {{#if instruction}}
 <instruction>

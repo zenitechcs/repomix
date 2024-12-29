@@ -20,7 +20,7 @@ export const generateSummaryFileFormat = (): string => {
 The content is organized as follows:
 1. This summary section
 2. Repository information
-3. Repository structure
+3. Directory structure
 `.trim();
 };
 

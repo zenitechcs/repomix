@@ -29,12 +29,12 @@ export const getMarkdownTemplate = () => {
 
 {{{summaryAdditionalInfo}}}
 
-# Repository Structure
+# Directory Structure
 \`\`\`
 {{{treeString}}}
 \`\`\`
 
-# Repository Files
+# Files
 
 {{#each processedFiles}}
 ## File: {{{this.path}}}
