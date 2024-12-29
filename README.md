@@ -95,7 +95,9 @@ To initialize a new configuration file (`repomix.config.json`):
 repomix --init
 ```
 
-You can run it using Docker 🐳
+### Docker Usage
+You can also run Repomix using Docker 🐳  
+This is useful if you want to run Repomix in an isolated environment or prefer using containers.
 
 ```bash
 # Basic usage (current directory)
