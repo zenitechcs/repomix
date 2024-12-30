@@ -2,13 +2,8 @@ name: Docker
 
 on:
   push:
-    branches:
-      - "main"
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-    paths-ignore:
-      - "**.md"
-      - LICENSE
   pull_request:
     branches:
       - "*"
@@ -43,7 +38,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=raw,value=latest
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
