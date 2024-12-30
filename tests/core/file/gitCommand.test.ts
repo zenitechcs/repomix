@@ -122,5 +122,27 @@ describe('gitCommand', () => {
       expect(mockExecAsync).toHaveBeenNthCalledWith(4, `git -C ${directory} fetch origin`);
       expect(mockExecAsync).toHaveBeenLastCalledWith(`git -C ${directory} checkout ${shortSha}`);
     });
+
+    test("should throw error when couldn't find remote ref even though it's not due to short SHA", async () => {
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+      const remoteBranch = 'b188a6cb39b512a9c6da7235b880af42c78ccd0d';
+      const errMessage = `Command failed: git fetch --depth 1 origin ${remoteBranch}\nfatal: couldn't find remote ref ${remoteBranch}`;
+
+      const mockExecAsync = vi
+        .fn()
+        .mockResolvedValueOnce('Success on first call')
+        .mockResolvedValueOnce('Success on second call')
+        .mockRejectedValueOnce(new Error(errMessage));
+
+      await expect(execGitShallowClone(url, directory, remoteBranch, { execAsync: mockExecAsync })).rejects.toThrow(
+        errMessage,
+      );
+      expect(mockExecAsync).toHaveBeenCalledTimes(3);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(1, `git -C ${directory} init`);
+      expect(mockExecAsync).toHaveBeenNthCalledWith(2, `git -C ${directory} remote add origin ${url}`);
+      expect(mockExecAsync).toHaveBeenLastCalledWith(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
+      // The fourth call (e.g., git checkout) won't be made due to the error on the third call
+    });
   });
 });
