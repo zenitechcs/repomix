@@ -18,6 +18,10 @@ on:
   release:
     types: [published, edited]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-and-publish-image:
     runs-on: ubuntu-latest
