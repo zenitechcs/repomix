@@ -39,15 +39,14 @@ export const execGitShallowClone = async (
       // If the string matches this regex, it MIGHT be a short SHA
       // If the string doesn't match, it is DEFINITELY NOT a short SHA
       const isNotShortSHA = !remoteBranch.match(/^[0-9a-f]{4,39}$/i);
-      if (isNotShortSHA) {
-        // If it's not a valid short SHA, rethrow the error as no further action can be taken
-        throw err;
-      }
+
+      // git fetch --depth 1 origin <short SHA> always throws "couldn't find remote ref" error
       const isRefNotfoundError =
         err instanceof Error && err.message.includes(`couldn't find remote ref ${remoteBranch}`);
 
-      if (!isRefNotfoundError) {
-        // If the error is not related to a missing remote reference, it could be due to authentication failure, network issues, or other errors
+      if (!isRefNotfoundError || isNotShortSHA) {
+        // Error is not related to a missing remote reference || Not a short SHA
+        // -> Rethrow error as nothing else we can do
         throw err;
       }
 
