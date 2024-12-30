@@ -38,17 +38,18 @@ export const execGitShallowClone = async (
       // Short SHA detection - matches 4-40 character hex string
       const maybeShortSha = remoteBranch?.match(/^[0-9a-f]{4,39}$/i);
       if (!maybeShortSha) {
-        // It's not even short SHA, there's nothing else we can do
+        // If it's not a short SHA, rethrow the error as we can't do anything further
         throw err;
       }
       const isRefNotfoundError =
         err instanceof Error && err.message.includes(`couldn't find remote ref ${remoteBranch}`);
 
       if (!isRefNotfoundError) {
-        // It's fetch failed error or something irrelevant to the commit hash
+        // If the error is not related to a missing remote reference, it could be due to authentication failure, network issues, or other errors
         throw err;
       }
-      // Maybe it fails because user used short SHA, let's try again
+
+      // Maybe the error is due to a short SHA, let's try again
       // Can't use --depth 1 here as we need to fetch the specific commit
       await deps.execAsync(`git -C ${directory} fetch origin`);
       await deps.execAsync(`git -C ${directory} checkout ${remoteBranch}`);
