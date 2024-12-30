@@ -35,10 +35,12 @@ export const execGitShallowClone = async (
       await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
       await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
     } catch (err: unknown) {
-      // Short SHA detection - matches 4-40 character hex string
-      const maybeShortSha = remoteBranch?.match(/^[0-9a-f]{4,39}$/i);
-      if (!maybeShortSha) {
-        // If it's not a short SHA, rethrow the error as we can't do anything further
+      // Short SHA detection - matches a hexadecimal string of 4 to 39 characters
+      // If the string matches this regex, it MIGHT be a short SHA
+      // If the string doesn't match, it is DEFINITELY NOT a short SHA
+      const isNotShortSHA = !remoteBranch.match(/^[0-9a-f]{4,39}$/i);
+      if (isNotShortSHA) {
+        // If it's not a valid short SHA, rethrow the error as no further action can be taken
         throw err;
       }
       const isRefNotfoundError =
