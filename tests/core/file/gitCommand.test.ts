@@ -108,7 +108,7 @@ describe('gitCommand', () => {
         .mockResolvedValueOnce('Success on first call')
         .mockResolvedValueOnce('Success on second call')
         .mockRejectedValueOnce(
-          new Error(`Command failed: git fetch origin ${shortSha}\nfatal: couldn't find remote ref ${shortSha}`),
+          new Error(`Command failed: git fetch --depth 1 origin ${shortSha}\nfatal: couldn't find remote ref ${shortSha}`),
         );
 
       await execGitShallowClone(url, directory, shortSha, { execAsync: mockExecAsync });
