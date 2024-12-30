@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "main"
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
     paths-ignore:
       - "**.md"
       - LICENSE
@@ -28,6 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Docker metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -40,6 +43,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
