@@ -73,7 +73,7 @@ export const buildOutputGeneratorContext = async (
   let repositoryInstruction = '';
 
   if (config.output.instructionFilePath) {
-    const instructionPath = path.resolve(rootDir, config.output.instructionFilePath);
+    const instructionPath = path.resolve(config.cwd, config.output.instructionFilePath);
     try {
       repositoryInstruction = await fs.readFile(instructionPath, 'utf-8');
     } catch {
