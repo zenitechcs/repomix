@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process';
+import { ExecException, exec } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -31,17 +31,27 @@ export const execGitShallowClone = async (
   if (remoteBranch) {
     await deps.execAsync(`git -C ${directory} init`);
     await deps.execAsync(`git -C ${directory} remote add origin ${url}`);
+    try {
+      await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
+      await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
+    } catch (err: unknown) {
+      // Short SHA detection - matches 4-40 character hex string
+      const maybeShortSha = remoteBranch?.match(/^[0-9a-f]{4,39}$/i);
+      if (!maybeShortSha) {
+        // It's not even short SHA, there's nothing else we can do
+        throw err;
+      }
+      const isRefNotfoundError =
+        err instanceof Error && err.message.includes(`couldn't find remote ref ${remoteBranch}`);
 
-    // Short SHA detection - matches 4-40 character hex string
-    const maybeShortSha = remoteBranch?.match(/^[0-9a-f]{4,39}$/i);
-
-    if (maybeShortSha) {
+      if (!isRefNotfoundError) {
+        // It's fetch failed error or something irrelevant to the commit hash
+        throw err;
+      }
+      // Maybe it fails because user used short SHA, let's try again
       // Can't use --depth 1 here as we need to fetch the specific commit
       await deps.execAsync(`git -C ${directory} fetch origin`);
       await deps.execAsync(`git -C ${directory} checkout ${remoteBranch}`);
-    } else {
-      await deps.execAsync(`git -C ${directory} fetch --depth 1 origin ${remoteBranch}`);
-      await deps.execAsync(`git -C ${directory} checkout FETCH_HEAD`);
     }
   } else {
     await deps.execAsync(`git clone --depth 1 ${url} ${directory}`);
