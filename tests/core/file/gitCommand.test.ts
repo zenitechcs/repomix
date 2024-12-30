@@ -123,7 +123,7 @@ describe('gitCommand', () => {
       expect(mockExecAsync).toHaveBeenLastCalledWith(`git -C ${directory} checkout ${shortSha}`);
     });
 
-    test("should throw error when couldn't find remote ref even though it's not due to short SHA", async () => {
+    test("should throw error when remote ref is not found, and it's not due to short SHA", async () => {
       const url = 'https://github.com/user/repo.git';
       const directory = '/tmp/repo';
       const remoteBranch = 'b188a6cb39b512a9c6da7235b880af42c78ccd0d';
