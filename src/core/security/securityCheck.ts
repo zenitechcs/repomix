@@ -23,9 +23,17 @@ export const runSecurityCheck = async (
   const results = await pMap(
     rawFiles,
     async (rawFile, index) => {
-      const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
-
       progressCallback(`Running security check... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
+
+      logger.trace(`Checking security on ${rawFile.path}`);
+
+      const processStartAt = process.hrtime.bigint();
+      const secretLintResult = await runSecretLint(rawFile.path, rawFile.content, secretLintConfig);
+      const processEndAt = process.hrtime.bigint();
+
+      logger.trace(
+        `Checked security on ${rawFile.path}. Took: ${(Number(processEndAt - processStartAt) / 1e6).toFixed(2)}ms`,
+      );
 
       // Sleep for a short time to prevent blocking the event loop
       await setTimeout(1);
