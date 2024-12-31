@@ -82,11 +82,14 @@ To pack a remote repository:
 ```bash
 repomix --remote https://github.com/yamadashy/repomix
 
-# You can specify the branch name, tag, or commit hash:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch master
-
 # You can also use GitHub shorthand:
 repomix --remote yamadashy/repomix
+
+# You can specify the branch name, tag, or commit hash:
+repomix --remote https://github.com/yamadashy/repomix --remote-branch main
+
+# Or use a specific commit hash:
+repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
 ```
 
 To initialize a new configuration file (`repomix.config.json`):
@@ -323,7 +326,7 @@ repomix -o custom-output.txt
 repomix -i "*.log,tmp" -v
 repomix -c ./custom-config.json
 repomix --style xml
-repomix --remote https://github.com/user/repo.git
+repomix --remote https://github.com/user/repo
 npx repomix src
 ```
 
@@ -349,21 +352,25 @@ Repomix supports processing remote Git repositories without the need for manual 
 To process a remote repository, use the `--remote` option followed by the repository URL:
 
 ```bash
-repomix --remote https://github.com/user/repo.git
-```
-
-You can specify the branch name, tag, or commit hash:
-
-```bash
-repomix --remote https://github.com/yamadashy/repomix --remote-branch master
+repomix --remote https://github.com/yamadashy/repomix
 ```
 
 You can also use GitHub's shorthand format:
 
 ```bash
-repomix --remote user/repo
+repomix --remote yamadashy/repomix
 ```
 
+You can specify the branch name, tag, or commit hash:
+
+```bash
+repomix --remote https://github.com/yamadashy/repomix --remote-branch main
+```
+
+Or use a specific commit hash:
+```bash
+repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+```
 
 ## ⚙️ Configuration
 
