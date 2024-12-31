@@ -115,6 +115,18 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.securityCheck !== undefined) {
     cliConfig.security = { enableSecurityCheck: options.securityCheck };
   }
+  if (options.fileSummary !== undefined) {
+    cliConfig.output = { ...cliConfig.output, fileSummary: options.fileSummary };
+  }
+  if (options.directoryStructure !== undefined) {
+    cliConfig.output = { ...cliConfig.output, directoryStructure: options.directoryStructure };
+  }
+  if (options.removeComments !== undefined) {
+    cliConfig.output = { ...cliConfig.output, removeComments: options.removeComments };
+  }
+  if (options.removeEmptyLines !== undefined) {
+    cliConfig.output = { ...cliConfig.output, removeEmptyLines: options.removeEmptyLines };
+  }
 
   try {
     return repomixConfigCliSchema.parse(cliConfig);

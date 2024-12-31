@@ -312,6 +312,10 @@ This format provides a clean, readable structure that is both human-friendly and
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
+- `--no-file-summary`: Disable file summary section output
+- `--no-directory-structure`: Disable directory structure section output
+- `--remove-comments`: Remove comments from supported file types
+- `--remove-empty-lines`: Remove empty lines from the output
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--copy`: Additionally copy generated output to system clipboard
