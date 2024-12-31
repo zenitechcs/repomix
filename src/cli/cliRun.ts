@@ -26,6 +26,10 @@ export interface CliOptions extends OptionValues {
   remote?: string;
   remoteBranch?: string;
   securityCheck?: boolean;
+  fileSummary?: boolean;
+  directoryStructure?: boolean;
+  removeComments?: boolean; // 追加
+  removeEmptyLines?: boolean; // 追加
 }
 
 export const run = async () => {
@@ -42,6 +46,10 @@ export const run = async () => {
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
+      .option('--no-file-summary', 'disable file summary section output')
+      .option('--no-directory-structure', 'disable directory structure section output')
+      .option('--remove-comments', 'remove comments')
+      .option('--remove-empty-lines', 'remove empty lines')
       .option('--verbose', 'enable verbose logging for detailed output')
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')

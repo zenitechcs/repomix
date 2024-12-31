@@ -163,4 +163,156 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('fileSummary flag', () => {
+    it('should handle --no-file-summary flag', async () => {
+      const options: CliOptions = {
+        fileSummary: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            fileSummary: false,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --file-summary flag', async () => {
+      const options: CliOptions = {
+        fileSummary: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            fileSummary: true,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('directoryStructure flag', () => {
+    it('should handle --no-directory-structure flag', async () => {
+      const options: CliOptions = {
+        directoryStructure: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            directoryStructure: false,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --directory-structure flag', async () => {
+      const options: CliOptions = {
+        directoryStructure: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            directoryStructure: true,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('removeComments flag', () => {
+    it('should handle --remove-comments flag', async () => {
+      const options: CliOptions = {
+        removeComments: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            removeComments: true,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --no-remove-comments flag', async () => {
+      const options: CliOptions = {
+        removeComments: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            removeComments: false,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('removeEmptyLines flag', () => {
+    it('should handle --remove-empty-lines flag', async () => {
+      const options: CliOptions = {
+        removeEmptyLines: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            removeEmptyLines: true,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --no-remove-empty-lines flag', async () => {
+      const options: CliOptions = {
+        removeEmptyLines: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            removeEmptyLines: false,
+          },
+        }),
+      );
+    });
+  });
 });
