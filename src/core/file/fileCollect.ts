@@ -33,7 +33,7 @@ const readRawFile = async (filePath: string): Promise<string | null> => {
     return null;
   }
 
-  logger.trace(`Processing file: ${filePath}`);
+  logger.trace(`Reading file: ${filePath}`);
 
   try {
     const buffer = await fs.readFile(filePath);

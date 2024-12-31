@@ -2,6 +2,7 @@ import { setTimeout } from 'node:timers/promises';
 import pMap from 'p-map';
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
+import { logger } from '../../shared/logger.js';
 import { getProcessConcurrency } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import { getFileManipulator } from './fileManipulate.js';
@@ -15,9 +16,9 @@ export const processFiles = async (
   return pMap(
     rawFiles,
     async (rawFile, index) => {
-      const resultContent = await processContent(rawFile.content, rawFile.path, config);
-
       progressCallback(`Processing file... (${index + 1}/${rawFiles.length}) ${pc.dim(rawFile.path)}`);
+
+      const resultContent = await processContent(rawFile.content, rawFile.path, config);
 
       // Sleep for a short time to prevent blocking the event loop
       await setTimeout(1);
@@ -41,6 +42,10 @@ export const processContent = async (
   let processedContent = content;
   const manipulator = getFileManipulator(filePath);
 
+  logger.trace(`Processing file: ${filePath}`);
+
+  const processStartAt = process.hrtime.bigint();
+
   if (config.output.removeComments && manipulator) {
     processedContent = manipulator.removeComments(processedContent);
   }
@@ -57,6 +62,10 @@ export const processContent = async (
     const numberedLines = lines.map((line, index) => `${(index + 1).toString().padStart(padding)}: ${line}`);
     processedContent = numberedLines.join('\n');
   }
+
+  const processEndAt = process.hrtime.bigint();
+
+  logger.trace(`Processed file: ${filePath}. Took: ${(Number(processEndAt - processStartAt) / 1e6).toFixed(2)}ms`);
 
   return processedContent;
 };
