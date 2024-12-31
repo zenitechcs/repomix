@@ -73,7 +73,7 @@ export const createTempDirectory = async (): Promise<string> => {
 export const cloneRepository = async (
   url: string,
   directory: string,
-  branch?: string,
+  remoteBranch?: string,
   deps = {
     execGitShallowClone,
   },
@@ -82,7 +82,7 @@ export const cloneRepository = async (
   logger.log('');
 
   try {
-    await deps.execGitShallowClone(url, directory, branch);
+    await deps.execGitShallowClone(url, directory, remoteBranch);
   } catch (error) {
     throw new RepomixError(`Failed to clone repository: ${(error as Error).message}`);
   }
