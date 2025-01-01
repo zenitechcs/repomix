@@ -1,17 +1,9 @@
-# Repomix Development Instructions
-
-Repomix is a tool that packs repository contents into a single file for AI analysis. When modifying or adding code:
-
-## Development Standards
-- Use TypeScript with strict type checking and proper error handling via RepomixError class
-- Support cross-platform compatibility (Windows/Unix paths)
-- Use logger utility for console output and picocolors for colored text
-
-## Core Architecture
-- /src/core: Main file processing and packing logic
-- /src/cli: Command-line interface components
-- /src/config: Configuration management (Zod schemas)
-- /src/shared: Common utilities and types
+# Coding Guidelines
+- Follow the Airbnb JavaScript Style Guide
+- Suggest splitting files into smaller, focused units when appropriate
+  - Keep code files under 250 lines, if the file is over 250 lines, split it into multiple files based on the functionality.
+- Add comments for non-obvious logic. Keep all text in English
+- All new features should have corresponding unit tests
 
 ## Dependencies and Testing
 - Inject dependencies through a deps object parameter for testability
