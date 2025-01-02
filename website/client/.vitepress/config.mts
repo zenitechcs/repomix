@@ -12,5 +12,6 @@ export default defineConfig({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024 Kazuki Yamada'
     }
-  }
+  },
+  head: [['link', { rel: 'icon', href: '/repomix-logo.svg' }]],
 })

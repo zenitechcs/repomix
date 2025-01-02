@@ -6,9 +6,9 @@ import './custom.css'
 
 export default {
   extends: DefaultTheme,
-  Layout: () => {
-    return h(DefaultTheme.Layout, null, {
-      'home-hero-after': () => h(Home)
-    })
-  }
+  // Layout: () => {
+  //   return h(DefaultTheme.Layout, null, {
+  //     'home-hero-after': () => h(Home)
+  //   })
+  // }
 } satisfies Theme

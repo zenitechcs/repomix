@@ -1,9 +1,19 @@
 ---
 layout: home
 title: Repomix
-titleTemplate: Transform repositories into AI-friendly formats
+titleTemplate: Packs your entire repository into AI-friendly formats
 aside: false
 editLink: false
+hero:
+  name: Repomix
+  text: Packs your entire repository into <br>AI-friendly formats
+  image:
+    src: /repomix-logo.svg
+    alt: Repomix
+  actions:
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/yamadashy/repomix
 
 features:
   - icon: 🤖
@@ -24,18 +34,8 @@ features:
 
 ---
 
-
-<div class="cli-note">
-  <p>
-    As a developer, you might prefer our CLI tool.
-    <a href="https://github.com/yamadashy/repomix#installation" target="_blank" rel="noopener">Give it a try!</a>
-  </p>
-</div>
-
 <style>
-.cli-note {
-  background-color: #f6f6f7;
-  padding: 2rem;
-  margin: 2rem 0;
+.hero-description__accent {
+  color: var(--vp-c-brand-1);
 }
 </style>
