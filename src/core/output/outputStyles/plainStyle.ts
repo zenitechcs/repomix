@@ -41,15 +41,15 @@ User Provided Header:
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
-{{/if}}
 
+{{/if}}
 {{#if directoryStructureEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Directory Structure
 ${PLAIN_LONG_SEPARATOR}
 {{{treeString}}}
-{{/if}}
 
+{{/if}}
 ${PLAIN_LONG_SEPARATOR}
 Files
 ${PLAIN_LONG_SEPARATOR}

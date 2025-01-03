@@ -36,14 +36,14 @@ This section contains a summary of this file.
 </additional_info>
 
 </file_summary>
-{{/if}}
 
+{{/if}}
 {{#if directoryStructureEnabled}}
 <directory_structure>
 {{{treeString}}}
 </directory_structure>
-{{/if}}
 
+{{/if}}
 <files>
 This section contains the contents of the repository's files.
 
