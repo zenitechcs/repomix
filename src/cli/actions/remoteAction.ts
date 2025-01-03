@@ -7,7 +7,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
-import { runDefaultAction } from './defaultAction.js';
+import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
 
 export const runRemoteAction = async (
   repoUrl: string,
@@ -16,7 +16,7 @@ export const runRemoteAction = async (
     isGitInstalled,
     execGitShallowClone,
   },
-): Promise<void> => {
+): Promise<DefaultActionRunnerResult> => {
   if (!(await deps.isGitInstalled())) {
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
@@ -24,6 +24,7 @@ export const runRemoteAction = async (
   const spinner = new Spinner('Cloning repository...');
 
   const tempDirPath = await createTempDirectory();
+  let result: DefaultActionRunnerResult;
 
   try {
     spinner.start();
@@ -37,7 +38,7 @@ export const runRemoteAction = async (
     logger.log('');
 
     // Run the default action on the cloned repository
-    const result = await runDefaultAction(tempDirPath, tempDirPath, options);
+    result = await runDefaultAction(tempDirPath, tempDirPath, options);
     await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
   } catch (error) {
     spinner.fail('Error during repository cloning. cleanup...');
@@ -46,6 +47,8 @@ export const runRemoteAction = async (
     // Cleanup the temporary directory
     await cleanupTempDirectory(tempDirPath);
   }
+
+  return result;
 };
 
 export const formatGitUrl = (url: string): string => {

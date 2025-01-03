@@ -75,7 +75,39 @@ describe('cliRun', () => {
       } satisfies PackResult,
     });
     vi.mocked(initAction.runInitAction).mockResolvedValue();
-    vi.mocked(remoteAction.runRemoteAction).mockResolvedValue();
+    vi.mocked(remoteAction.runRemoteAction).mockResolvedValue({
+      config: {
+        cwd: process.cwd(),
+        output: {
+          filePath: 'repomix-output.txt',
+          style: 'plain',
+          fileSummary: true,
+          directoryStructure: true,
+          topFilesLength: 5,
+          showLineNumbers: false,
+          removeComments: false,
+          removeEmptyLines: false,
+          copyToClipboard: false,
+        },
+        include: [],
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+        security: {
+          enableSecurityCheck: true,
+        },
+      } satisfies RepomixConfigMerged,
+      packResult: {
+        totalFiles: 0,
+        totalCharacters: 0,
+        totalTokens: 0,
+        fileCharCounts: {},
+        fileTokenCounts: {},
+        suspiciousFilesResults: [],
+      } satisfies PackResult,
+    });
     vi.mocked(versionAction.runVersionAction).mockResolvedValue();
   });
 
