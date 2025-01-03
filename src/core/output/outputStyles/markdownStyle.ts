@@ -29,15 +29,15 @@ export const getMarkdownTemplate = () => {
 {{/if}}
 
 {{{summaryAdditionalInfo}}}
-{{/if}}
 
+{{/if}}
 {{#if directoryStructureEnabled}}
 # Directory Structure
 \`\`\`
 {{{treeString}}}
 \`\`\`
-{{/if}}
 
+{{/if}}
 # Files
 
 {{#each processedFiles}}
