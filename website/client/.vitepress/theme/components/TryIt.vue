@@ -14,6 +14,7 @@ const removeEmptyLines = ref(false);
 const showLineNumbers = ref(false);
 const fileSummary = ref(true);
 const directoryStructure = ref(true);
+const includePatterns = ref('');
 const ignorePatterns = ref('');
 
 // Processing states
@@ -26,14 +27,6 @@ const hasExecuted = ref(false);
 const isValidUrl = computed(() => {
   if (!url.value) return false;
   return validateGitHubUrl(url.value.trim());
-});
-
-const ignorePatternList = computed(() => {
-  if (!ignorePatterns.value) return [];
-  return ignorePatterns.value
-    .split(',')
-    .map((pattern) => pattern.trim())
-    .filter(Boolean);
 });
 
 const TIMEOUT_MS = 30000;
@@ -75,6 +68,7 @@ async function handleSubmit() {
         showLineNumbers: showLineNumbers.value,
         fileSummary: fileSummary.value,
         directoryStructure: directoryStructure.value,
+        includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
         ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
       },
       signal: currentRequest.signal,
@@ -146,6 +140,11 @@ function handleFileSummaryToggle(enabled: boolean) {
 function handleDirectoryStructureToggle(enabled: boolean) {
   directoryStructure.value = enabled;
   analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_DIRECTORY_STRUCTURE, enabled);
+}
+
+function handleIncludePatternsUpdate(patterns: string) {
+  includePatterns.value = patterns;
+  analyticsUtils.trackIncludePatternsUpdate(patterns);
 }
 
 function handleIgnorePatternsUpdate(patterns: string) {
@@ -243,6 +242,18 @@ function handleKeydown(event: KeyboardEvent) {
                 Plain
               </button>
             </div>
+          </div>
+
+          <div class="option-section">
+            <p class="option-label">Include Patterns  (using <a href="https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax" target="_blank" rel="noopener noreferrer">glob patterns</a>)</p>
+            <input
+                v-model="includePatterns"
+                @input="handleIncludePatternsUpdate($event.target.value)"
+                type="text"
+                class="repository-input"
+                placeholder="Comma-separated patterns to include. e.g., src/**/*.ts"
+                aria-label="Include patterns"
+            />
           </div>
 
           <div class="option-section">
@@ -420,13 +431,23 @@ function handleKeydown(event: KeyboardEvent) {
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .option-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
+}
+
+.option-section input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  transition: border-color 0.2s;
 }
 
 .option-label {
@@ -434,6 +455,14 @@ function handleKeydown(event: KeyboardEvent) {
   font-weight: 500;
   margin: 0;
   color: var(--vp-c-text-2);
+}
+
+.option-label a {
+  color: var(--vp-c-brand-1);
+}
+
+.option-label a:hover {
+  text-decoration: underline;
 }
 
 .format-buttons {

@@ -24,6 +24,7 @@ export const AnalyticsAction = {
   TOGGLE_LINE_NUMBERS: 'toggle_line_numbers',
   TOGGLE_FILE_SUMMARY: 'toggle_file_summary',
   TOGGLE_DIRECTORY_STRUCTURE: 'toggle_directory_structure',
+  UPDATE_INCLUDE_PATTERNS: 'update_include_patterns',
   UPDATE_IGNORE_PATTERNS: 'update_ignore_patterns',
 
   // Output events
@@ -104,6 +105,14 @@ export const analyticsUtils = {
       category: AnalyticsCategory.OPTIONS,
       action: action,
       label: enabled ? 'enabled' : 'disabled',
+    });
+  },
+
+  trackIncludePatternsUpdate(patterns: string): void {
+    trackEvent({
+      category: AnalyticsCategory.OPTIONS,
+      action: AnalyticsAction.UPDATE_INCLUDE_PATTERNS,
+      label: patterns,
     });
   },
 

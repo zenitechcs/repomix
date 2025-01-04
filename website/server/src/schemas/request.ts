@@ -14,6 +14,11 @@ export const packOptionsSchema = z
     showLineNumbers: z.boolean().optional(),
     fileSummary: z.boolean().optional(),
     directoryStructure: z.boolean().optional(),
+    includePatterns: z
+      .string()
+      .max(1000, 'Include patterns too long')
+      .optional()
+      .transform((val) => val?.trim()),
     ignorePatterns: z
       .string()
       .regex(ignorePatternRegex, 'Invalid characters in ignore patterns')

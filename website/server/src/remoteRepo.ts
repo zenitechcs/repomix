@@ -6,7 +6,7 @@ import type { PackOptions, PackResult } from './types.js';
 import { RequestCache, generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
 import { RateLimiter } from './utils/rateLimit.js';
-import { sanitizeIgnorePattern, validateRequest } from './utils/validation.js';
+import { sanitizePattern, validateRequest } from './utils/validation.js';
 
 // Create instances of cache and rate limiter
 const cache = new RequestCache<PackResult>(180); // 3 minutes cache
@@ -41,7 +41,8 @@ export async function processRemoteRepo(
   }
 
   // Sanitize ignore patterns
-  const sanitizedIgnorePatterns = sanitizeIgnorePattern(validatedData.options.ignorePatterns);
+  const sanitizedIncludePatterns = sanitizePattern(validatedData.options.includePatterns);
+  const sanitizedIgnorePatterns = sanitizePattern(validatedData.options.ignorePatterns);
 
   const outputFilePath = `repomix-output-${randomUUID()}.txt`;
 
@@ -56,6 +57,7 @@ export async function processRemoteRepo(
     directoryStructure: validatedData.options.directoryStructure,
     securityCheck: false,
     topFilesLen: 10,
+    include: sanitizedIncludePatterns,
     ignore: sanitizedIgnorePatterns,
   } as CliOptions;
 
