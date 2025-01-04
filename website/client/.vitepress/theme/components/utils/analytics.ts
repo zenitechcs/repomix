@@ -77,7 +77,7 @@ export const analyticsUtils = {
       category: AnalyticsCategory.REPOSITORY,
       action: AnalyticsAction.PACK_SUCCESS_CHARS,
       label: `${repoUrl}_chars`,
-      value: totalFiles,
+      value: totalChars,
     });
   },
 
