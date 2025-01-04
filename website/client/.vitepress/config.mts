@@ -28,7 +28,7 @@ export default defineConfig({
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Repomix' }],
     ['meta', { property: 'og:site_name', content: 'Repomix' }],
-    ['meta', { property: 'og:image', content: 'https://repomix.com/images/og-image.png' }],
+    ['meta', { property: 'og:image', content: 'https://repomix.com/images/og-image-large.png' }],
     ['meta', { property: 'og:url', content: 'https://repomix.com' }],
     ['meta', { property: 'og:description', content: 'Packs your entire repository into AI-friendly formats' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
@@ -36,8 +36,8 @@ export default defineConfig({
     ['meta', { property: 'twitter:url', content: 'https://repomix.com' }],
     ['meta', { name: 'twitter:title', content: 'Repomix' }],
     ['meta', { name: 'twitter:description', content: 'Packs your entire repository into AI-friendly formats' }],
-    ['meta', { name: 'twitter:image', content: 'https://repomix.com/images/og-image.png' }],
-    ['meta', { name: 'thumbnail', content: 'https://repomix.com/images/og-image.png' }],
+    ['meta', { name: 'twitter:image', content: 'https://repomix.com/images/og-image-large.png' }],
+    ['meta', { name: 'thumbnail', content: 'https://repomix.com/images/og-image-large.png' }],
 
     // PWA
     ['meta', { name: 'theme-color', content: '#f97316' }],
