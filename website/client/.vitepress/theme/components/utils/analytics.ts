@@ -11,6 +11,8 @@ export const AnalyticsAction = {
   // Repository events
   PACK_START: 'pack_start',
   PACK_SUCCESS: 'pack_success',
+  PACK_SUCCESS_FILES: 'pack_success_files',
+  PACK_SUCCESS_CHARS: 'pack_success_chars',
   PACK_ERROR: 'pack_error',
 
   // Format events
@@ -67,8 +69,14 @@ export const analyticsUtils = {
   trackPackSuccess(repoUrl: string, totalFiles: number, totalChars: number): void {
     trackEvent({
       category: AnalyticsCategory.REPOSITORY,
-      action: AnalyticsAction.PACK_SUCCESS,
-      label: repoUrl,
+      action: AnalyticsAction.PACK_SUCCESS_FILES,
+      label: `${repoUrl}_files`,
+      value: totalFiles,
+    });
+    trackEvent({
+      category: AnalyticsCategory.REPOSITORY,
+      action: AnalyticsAction.PACK_SUCCESS_CHARS,
+      label: `${repoUrl}_chars`,
       value: totalFiles,
     });
   },

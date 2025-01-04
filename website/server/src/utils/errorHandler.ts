@@ -16,15 +16,17 @@ export function handlePackError(error: unknown): AppError {
   }
 
   if (error instanceof Error) {
-    if (error.message.includes('Repository not found')) {
+    const errorMessage = error.message || '';
+
+    if (errorMessage.includes('Repository not found')) {
       return new AppError('Repository not found', 404);
     }
 
-    if (error.message.includes('Failed to clone repository')) {
+    if (errorMessage.includes('Failed to clone repository')) {
       return new AppError('Failed to clone repository', 422);
     }
 
-    if (error.message.includes('circular') || error.message.includes('Converting circular structure to JSON')) {
+    if (errorMessage.includes('circular') || errorMessage.includes('Converting circular structure to JSON')) {
       return new AppError(
         'Failed to process repository: circular dependency detected in the repository structure',
         422,

@@ -13,8 +13,8 @@ export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): T {
   }
 }
 
-export function sanitizeIgnorePatterns(patterns: string | undefined): string[] {
-  if (!patterns) return [];
+export function sanitizeIgnorePattern(patterns: string | undefined): string {
+  if (!patterns) return '';
 
   return (
     patterns
@@ -33,5 +33,6 @@ export function sanitizeIgnorePatterns(patterns: string | undefined): string[] {
         if (p.includes('`') || p.includes('$(')) return false;
         return true;
       })
+      .join(',')
   );
 }

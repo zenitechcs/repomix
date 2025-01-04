@@ -36,8 +36,17 @@ const ignorePatternList = computed(() => {
     .filter(Boolean);
 });
 
+const TIMEOUT_MS = 30000;
+let currentRequest: AbortController | null = null;
+
 async function handleSubmit() {
   if (!isValidUrl.value) return;
+
+  // Cancel any pending request
+  if (currentRequest) {
+    currentRequest.abort();
+  }
+  currentRequest = new AbortController();
 
   loading.value = true;
   error.value = null;
@@ -50,6 +59,13 @@ async function handleSubmit() {
   analyticsUtils.trackPackStart(processedUrl);
 
   try {
+    const timeoutId = setTimeout(() => {
+      if (currentRequest) {
+        currentRequest.abort();
+        throw new Error('Request timed out');
+      }
+    }, TIMEOUT_MS);
+
     const response = await packRepository({
       url: processedUrl,
       format: format.value,
@@ -61,7 +77,10 @@ async function handleSubmit() {
         directoryStructure: directoryStructure.value,
         ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
       },
+      signal: currentRequest.signal,
     });
+
+    clearTimeout(timeoutId);
 
     // Set result
     result.value = {
@@ -83,13 +102,18 @@ async function handleSubmit() {
         response.metadata.summary.totalCharacters,
       );
     }
-  } catch (err) {
+  } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+    if (errorMessage === 'AbortError') {
+      error.value = 'Request was cancelled';
+      return;
+    }
     error.value = errorMessage;
     analyticsUtils.trackPackError(processedUrl, errorMessage);
     console.error('Error processing repository:', err);
   } finally {
     loading.value = false;
+    currentRequest = null;
   }
 }
 

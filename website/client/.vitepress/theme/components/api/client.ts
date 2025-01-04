@@ -11,6 +11,7 @@ export interface PackRequest {
   url: string;
   format: 'xml' | 'markdown' | 'plain';
   options: PackOptions;
+  signal?: AbortSignal;
 }
 
 export interface PackResult {
@@ -51,6 +52,7 @@ export async function packRepository(request: PackRequest): Promise<PackResult> 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(request),
+    signal: request.signal,
   });
 
   const data = await response.json();

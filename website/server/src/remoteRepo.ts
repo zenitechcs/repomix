@@ -5,7 +5,7 @@ import type { PackOptions, PackResult } from './types.js';
 import { RequestCache, generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
 import { RateLimiter } from './utils/rateLimit.js';
-import { sanitizeIgnorePatterns, validateRequest } from './utils/validation.js';
+import { sanitizeIgnorePattern, validateRequest } from './utils/validation.js';
 
 // Create instances of cache and rate limiter
 const cache = new RequestCache<PackResult>(180); // 3 minutes cache
@@ -40,7 +40,7 @@ export async function processRemoteRepo(
   }
 
   // Sanitize ignore patterns
-  const sanitizedIgnorePatterns = sanitizeIgnorePatterns(validatedData.options.ignorePatterns);
+  const sanitizedIgnorePatterns = sanitizeIgnorePattern(validatedData.options.ignorePatterns);
 
   // Create CLI options with correct mapping
   const cliOptions = {
@@ -53,7 +53,7 @@ export async function processRemoteRepo(
     directoryStructure: validatedData.options.directoryStructure,
     securityCheck: false,
     topFilesLen: 10,
-    ignore: options.ignorePatterns,
+    ignore: sanitizedIgnorePatterns,
   } as CliOptions;
 
   try {
@@ -94,7 +94,10 @@ export async function processRemoteRepo(
     return packResultData;
   } catch (error) {
     console.error('Error in remote action:', error);
-    throw error;
+    if (error instanceof Error) {
+      throw new AppError(`Remote action failed: ${error.message}`, 500);
+    }
+    throw new AppError('Remote action failed with unknown error', 500);
   } finally {
     // Clean up the output file
     try {
