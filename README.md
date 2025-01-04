@@ -10,12 +10,13 @@
 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
-## 📢 Repomix Website and Community Discord are Now Live!
+## 🎉 New: Repomix Website & Discord Community!
 
-We're excited to announce the launch of our official website and community Discord server!
+Try Repomix in your browser at [repomix.com](https://repomix.com/)
 
-- Visit our website: [repomix.com](https://repomix.com/)
-- Join our Discord server: [https://discord.gg/wNYzTwZFku](https://discord.gg/wNYzTwZFku)
+Join our Discord [discord.gg/wNYzTwZFku](https://discord.gg/wNYzTwZFku) for support and discussion
+
+We look forward to seeing you there!
 
 ## 🌟 Features
 
