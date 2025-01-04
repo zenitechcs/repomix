@@ -431,13 +431,23 @@ function handleKeydown(event: KeyboardEvent) {
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .option-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
+}
+
+.option-section input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  transition: border-color 0.2s;
 }
 
 .option-label {
