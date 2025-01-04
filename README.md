@@ -9,9 +9,17 @@
 
 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
+
 > [!NOTE]
 > Due to legal considerations, this project has been renamed from "Repopack" to "Repomix". Only the name is changing; Repomix all functionality and maintainer ([@yamadashy](https://github.com/yamadashy)) remain the same.
 > For detailed information about this transition and migration guide, please visit our [Discussion](https://github.com/yamadashy/repomix/discussions/188).
+
+## 📢 Repomix Website and Community Discord are Now Live!
+
+We're excited to announce the launch of our official website and community Discord server!
+
+- Visit our website: [repomix.com](https://repomix.com/)
+- Join our Discord server: [https://discord.gg/wNYzTwZFku](https://discord.gg/wNYzTwZFku)
 
 ## 🌟 Features
 
