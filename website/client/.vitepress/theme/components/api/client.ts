@@ -4,6 +4,7 @@ export interface PackOptions {
   showLineNumbers: boolean;
   fileSummary?: boolean;
   directoryStructure?: boolean;
+  includePatterns?: string;
   ignorePatterns?: string;
 }
 

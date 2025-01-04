@@ -13,7 +13,7 @@ export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): T {
   }
 }
 
-export function sanitizeIgnorePattern(patterns: string | undefined): string {
+export function sanitizePattern(patterns: string | undefined): string {
   if (!patterns) return '';
 
   return (
