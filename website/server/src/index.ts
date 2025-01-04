@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
 import { timeout } from 'hono/timeout';
-import { logger } from 'hono/logger'
 import { processRemoteRepo } from './remoteRepo.js';
 import type { ErrorResponse } from './types.js';
 import { handlePackError } from './utils/errorHandler.js';
