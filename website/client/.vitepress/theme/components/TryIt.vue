@@ -390,6 +390,7 @@ function handleKeydown(event: KeyboardEvent) {
 .pack-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 12px 24px;
   font-size: 16px;
