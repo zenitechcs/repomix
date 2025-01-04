@@ -12,8 +12,8 @@ export default defineConfig({
   },
   themeConfig: {
     logo: { src: '/images/repomix-logo.svg', width: 24, height: 24 },
-    nav: [{ text: 'GitHub', link: 'https://github.com/yamadashy/repomix' }],
-    socialLinks: [{ icon: 'discord', link: 'https://discord.gg/wNYzTwZFku' }],
+    nav: [{ text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/yamadashy/repomix' }],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024 Kazuki Yamada',
