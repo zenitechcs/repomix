@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
 import { timeout } from 'hono/timeout';
 import { processRemoteRepo } from './remoteRepo.js';
 import type { ErrorResponse } from './types.js';
@@ -27,6 +28,9 @@ app.use(compress());
 
 // Set up timeout middleware for /api routes
 app.use('/api', timeout(30000));
+
+// Set up logger middleware
+app.use(logger());
 
 // GET /health
 app.get('/health', (c) => c.text('OK'));
