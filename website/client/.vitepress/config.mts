@@ -20,16 +20,29 @@ export default defineConfig({
     },
   },
   head: [
+    // Favicon
     ['link', { rel: 'icon', href: '/images/repomix-logo.svg' }],
+
+    // OGP
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Repomix' }],
     ['meta', { property: 'og:site_name', content: 'Repomix' }],
-    ['meta', { property: 'og:image', content: 'http://repomix.com/images/og-image.png' }],
-    ['meta', { property: 'og:url', content: 'http://repomix.com/' }],
+    ['meta', { property: 'og:image', content: 'https://repomix.com/images/og-image.png' }],
+    ['meta', { property: 'og:url', content: 'https://repomix.com' }],
     ['meta', { property: 'og:description', content: 'Packs your entire repository into AI-friendly formats' }],
-    ['link', { rel: 'icon', type: 'image/png', href: '/favicon/favicon-96x96.png', sizes: '96x96' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { property: 'twitter:domain', content: 'https://repomix.com' }],
+    ['meta', { property: 'twitter:url', content: 'https://repomix.com' }],
+    ['meta', { name: 'twitter:title', content: 'Repomix' }],
+    ['meta', { name: 'twitter:description', content: 'Packs your entire repository into AI-friendly formats' }],
+    ['meta', { name: 'twitter:image', content: 'https://repomix.com/images/og-image.png' }],
+    ['meta', { name: 'thumbnail', content: 'https://repomix.com/images/og-image.png' }],
+
+    // PWA
     ['meta', { name: 'theme-color', content: '#f97316' }],
+
+    // Google Analytics
     [
       'script',
       {
