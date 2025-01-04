@@ -6,6 +6,7 @@ import { RequestCache, generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
 import { RateLimiter } from './utils/rateLimit.js';
 import { sanitizeIgnorePattern, validateRequest } from './utils/validation.js';
+import { randomUUID } from 'crypto';
 
 // Create instances of cache and rate limiter
 const cache = new RequestCache<PackResult>(180); // 3 minutes cache
@@ -42,9 +43,11 @@ export async function processRemoteRepo(
   // Sanitize ignore patterns
   const sanitizedIgnorePatterns = sanitizeIgnorePattern(validatedData.options.ignorePatterns);
 
+  const outputFilePath = `repomix-output-${randomUUID()}.txt`;
+
   // Create CLI options with correct mapping
   const cliOptions = {
-    output: 'repomix-output.txt',
+    output: outputFilePath,
     style: validatedData.format,
     removeComments: validatedData.options.removeComments,
     removeEmptyLines: validatedData.options.removeEmptyLines,
@@ -62,8 +65,7 @@ export async function processRemoteRepo(
     const { packResult } = result;
 
     // Read the generated file
-    const outputPath = 'repomix-output.txt';
-    const content = await fs.readFile(outputPath, 'utf-8');
+    const content = await fs.readFile(outputFilePath, 'utf-8');
 
     // Create pack result
     const packResultData: PackResult = {
@@ -101,7 +103,7 @@ export async function processRemoteRepo(
   } finally {
     // Clean up the output file
     try {
-      await fs.unlink('repomix-output.txt');
+      await fs.unlink(outputFilePath);
     } catch (err) {
       // Ignore file deletion errors
       console.warn('Failed to cleanup output file:', err);
