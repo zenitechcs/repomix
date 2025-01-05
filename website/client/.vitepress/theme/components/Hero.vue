@@ -10,7 +10,7 @@ const { site } = useData();
       {{ site.title }}
     </h1>
     <p class="hero-description">
-      Packs your entire repository into <span class="hero-description__accent">AI-friendly</span> formats
+      Pack your codebase into <span class="hero-description__accent">AI-friendly</span> formats
     </p>
   </section>
 </template>
