@@ -81,6 +81,9 @@ describe('configSchema', () => {
         security: {
           enableSecurityCheck: true,
         },
+        tokenCount: {
+          encoding: 'o200k_base',
+        },
       };
       expect(repomixConfigDefaultSchema.parse(validConfig)).toEqual(validConfig);
     });
@@ -160,6 +163,9 @@ describe('configSchema', () => {
         },
         security: {
           enableSecurityCheck: true,
+        },
+        tokenCount: {
+          encoding: 'o200k_base',
         },
       };
       expect(repomixConfigMergedSchema.parse(validConfig)).toEqual(validConfig);

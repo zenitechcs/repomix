@@ -84,7 +84,12 @@ describe('packager', () => {
     expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, mockProcessedFiles, mockFilePaths);
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
-    expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(mockProcessedFiles, mockOutput, progressCallback);
+    expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
+      mockProcessedFiles,
+      mockOutput,
+      progressCallback,
+      mockConfig,
+    );
 
     // Check the result of pack function
     expect(result.totalFiles).toBe(2);

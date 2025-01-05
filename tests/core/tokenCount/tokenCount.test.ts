@@ -27,7 +27,7 @@ describe('TokenCounter', () => {
     vi.mocked(get_encoding).mockReturnValue(mockEncoder as unknown as Tiktoken);
 
     // Create new TokenCounter instance
-    tokenCounter = new TokenCounter();
+    tokenCounter = new TokenCounter('o200k_base');
   });
 
   afterEach(() => {
@@ -35,8 +35,8 @@ describe('TokenCounter', () => {
     vi.resetAllMocks();
   });
 
-  test('should initialize with cl100k_base encoding', () => {
-    expect(get_encoding).toHaveBeenCalledWith('cl100k_base');
+  test('should initialize with o200k_base encoding', () => {
+    expect(get_encoding).toHaveBeenCalledWith('o200k_base');
   });
 
   test('should correctly count tokens for simple text', () => {

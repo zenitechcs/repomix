@@ -1,12 +1,12 @@
-import { type Tiktoken, get_encoding } from 'tiktoken';
+import { type Tiktoken, type TiktokenEncoding, get_encoding } from 'tiktoken';
 import { logger } from '../../shared/logger.js';
 
 export class TokenCounter {
   private encoding: Tiktoken;
 
-  constructor() {
-    // Setup encoding
-    this.encoding = get_encoding('cl100k_base');
+  constructor(encodingName: TiktokenEncoding) {
+    // Setup encoding with the specified model
+    this.encoding = get_encoding(encodingName);
   }
 
   public countTokens(content: string, filePath?: string): number {

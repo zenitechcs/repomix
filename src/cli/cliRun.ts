@@ -28,8 +28,9 @@ export interface CliOptions extends OptionValues {
   securityCheck?: boolean;
   fileSummary?: boolean;
   directoryStructure?: boolean;
-  removeComments?: boolean; // 追加
-  removeEmptyLines?: boolean; // 追加
+  removeComments?: boolean;
+  removeEmptyLines?: boolean;
+  tokenCountEncoding?: string;
 }
 
 export const run = async () => {
@@ -54,6 +55,7 @@ export const run = async () => {
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
+      .option('--token-count-encoding <encoding>', 'specify token count encoding (e.g., o200k_base, cl100k_base)')
       .option(
         '--remote-branch <name>',
         'specify the remote branch name, tag, or commit hash (defaults to repository default branch)',

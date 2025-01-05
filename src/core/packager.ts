@@ -58,7 +58,7 @@ export const pack = async (
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
-  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback);
+  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config);
 
   return {
     ...metrics,

@@ -327,6 +327,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--remote <url>`: Process a remote Git repository
 - `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
 - `--no-security-check`: Disable security check
+- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
 - `--verbose`: Enable verbose logging
 
 Examples:
@@ -409,6 +410,7 @@ Here's an explanation of the configuration options:
 |`ignore.useDefaultPatterns`| Whether to use default ignore patterns |`true`|
 |`ignore.customPatterns`| Additional patterns to ignore (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) |`[]`|
 |`security.enableSecurityCheck`| Whether to perform security checks on files |`true`|
+|`tokenCount.encoding`| Token count encoding for AI model context limits (e.g., `o200k_base`, `cl100k_base`) |`"o200k_base"`|
 
 Example configuration:
 
@@ -436,6 +438,9 @@ Example configuration:
   },
   "security": {
     "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
   }
 }
 ```

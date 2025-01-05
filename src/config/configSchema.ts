@@ -1,3 +1,4 @@
+import type { TiktokenEncoding } from 'tiktoken';
 import { z } from 'zod';
 
 // Output style enum
@@ -42,6 +43,11 @@ export const repomixConfigBaseSchema = z.object({
       enableSecurityCheck: z.boolean().optional(),
     })
     .optional(),
+  tokenCount: z
+    .object({
+      encoding: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Default config schema with default values
@@ -73,6 +79,14 @@ export const repomixConfigDefaultSchema = z.object({
   security: z
     .object({
       enableSecurityCheck: z.boolean().default(true),
+    })
+    .default({}),
+  tokenCount: z
+    .object({
+      encoding: z
+        .string()
+        .default('o200k_base')
+        .transform((val) => val as TiktokenEncoding),
     })
     .default({}),
 });
