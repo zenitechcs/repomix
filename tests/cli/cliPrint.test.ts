@@ -14,6 +14,7 @@ vi.mock('picocolors', () => ({
     yellow: (str: string) => `YELLOW:${str}`,
     red: (str: string) => `RED:${str}`,
     cyan: (str: string) => `CYAN:${str}`,
+    underline: (str: string) => `UNDERLINE:${str}`,
   },
 }));
 
