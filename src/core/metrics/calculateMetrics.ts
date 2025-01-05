@@ -1,3 +1,5 @@
+import { TiktokenEncoding } from 'tiktoken';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import { TokenCounter } from '../tokenCount/tokenCount.js';
@@ -16,8 +18,9 @@ export const calculateMetrics = async (
   processedFiles: ProcessedFile[],
   output: string,
   progressCallback: RepomixProgressCallback,
+  config: RepomixConfigMerged,
 ): Promise<CalculateMetricsResult> => {
-  const tokenCounter = new TokenCounter();
+  const tokenCounter = new TokenCounter(config.tokenCount.encoding);
 
   progressCallback('Calculating metrics...');
   const fileMetrics = await calculateAllFileMetrics(processedFiles, tokenCounter, progressCallback);

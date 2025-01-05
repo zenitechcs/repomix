@@ -64,6 +64,9 @@ describe('cliRun', () => {
         security: {
           enableSecurityCheck: true,
         },
+        tokenCount: {
+          encoding: 'o200k_base',
+        },
       } satisfies RepomixConfigMerged,
       packResult: {
         totalFiles: 0,
@@ -97,6 +100,9 @@ describe('cliRun', () => {
         },
         security: {
           enableSecurityCheck: true,
+        },
+        tokenCount: {
+          encoding: 'o200k_base',
         },
       } satisfies RepomixConfigMerged,
       packResult: {

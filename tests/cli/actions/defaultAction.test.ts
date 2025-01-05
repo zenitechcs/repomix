@@ -38,6 +38,9 @@ describe('defaultAction', () => {
       security: {
         enableSecurityCheck: true,
       },
+      tokenCount: {
+        encoding: 'o200k_base',
+      },
     });
     vi.mocked(packager.pack).mockResolvedValue({
       totalFiles: 10,

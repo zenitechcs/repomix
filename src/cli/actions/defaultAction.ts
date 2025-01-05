@@ -127,6 +127,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.removeEmptyLines !== undefined) {
     cliConfig.output = { ...cliConfig.output, removeEmptyLines: options.removeEmptyLines };
   }
+  if (options.tokenCountEncoding) {
+    cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
+  }
 
   try {
     return repomixConfigCliSchema.parse(cliConfig);

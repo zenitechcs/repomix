@@ -5,6 +5,7 @@ import { calculateAllFileMetrics } from '../../../src/core/metrics/calculateAllF
 import { calculateMetrics } from '../../../src/core/metrics/calculateMetrics.js';
 import { TokenCounter } from '../../../src/core/tokenCount/tokenCount.js';
 import type { RepomixProgressCallback } from '../../../src/shared/types.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('../../../src/core/tokenCount/tokenCount.js');
 vi.mock('../../../src/core/metrics/aggregateMetrics.js');
@@ -46,7 +47,9 @@ describe('calculateMetrics', () => {
     };
     (aggregateMetrics as unknown as Mock).mockReturnValue(aggregatedResult);
 
-    const result = await calculateMetrics(processedFiles, output, progressCallback);
+    const config = createMockConfig();
+
+    const result = await calculateMetrics(processedFiles, output, progressCallback, config);
 
     expect(progressCallback).toHaveBeenCalledWith('Calculating metrics...');
     expect(calculateAllFileMetrics).toHaveBeenCalledWith(processedFiles, mockTokenCounter, progressCallback);
