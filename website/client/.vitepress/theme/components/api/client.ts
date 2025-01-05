@@ -65,14 +65,24 @@ export async function packRepository(request: PackRequest): Promise<PackResult> 
   return data as PackResult;
 }
 
-export function validateGitHubUrl(url: string): boolean {
-  // Check the direct form of the GitHub URL
+export function isValidateRemoteUrl(url: string): boolean {
+  // Check the direct form of the GitHub URL. e.g. https://github.com/yamadashy/repomix
   const githubUrlRegex = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
   if (githubUrlRegex.test(url)) {
     return true;
   }
 
-  // Check the short form of the GitHub URL
+  // Check the short form of the GitHub URL. e.g. yamadashy/repomix
   const shortFormRegex = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
-  return shortFormRegex.test(url);
+  if (shortFormRegex.test(url)) {
+    return true;
+  }
+
+  // Check the direct form of the GitHub Gist URL. e.g. https://gist.github.com/yamadashy/1234567890abcdef
+  const githubGistUrlRegex = /^https:\/\/gist\.github\.com\/[a-zA-Z0-9_-]+\/[a-f0-9]+$/;
+  if (githubGistUrlRegex.test(url)) {
+    return true;
+  }
+
+  return false;
 }

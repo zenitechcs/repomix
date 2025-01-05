@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-// Validate GitHub repository pattern (support both URL and short format)
-const githubRepoPattern = /^(?:https:\/\/github\.com\/)?([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)$/;
-
 // Regular expression to validate ignore patterns
 // Allowed characters: alphanumeric, *, ?, /, -, _, ., space, comma
 const ignorePatternRegex = /^[a-zA-Z0-9*?\/\-_., ]*$/;
@@ -34,17 +31,33 @@ export const packRequestSchema = z
       .string()
       .min(1, 'Repository URL is required')
       .max(200, 'Repository URL is too long')
-      .regex(githubRepoPattern, 'Invalid GitHub repository format')
-      .transform((val) => {
-        const trimmed = val.trim();
-        const match = trimmed.match(githubRepoPattern);
-        if (!match) return trimmed;
-        // match[1] contains owner/repo
-        return match[1];
-      }),
+      .transform((val) => val.trim())
+      .refine((val) => isValidateRemoteUrl(val), { message: 'Invalid repository URL' }),
     format: z.enum(['xml', 'markdown', 'plain']),
     options: packOptionsSchema,
   })
   .strict();
+
+export function isValidateRemoteUrl(url: string): boolean {
+  // Check the direct form of the GitHub URL. e.g. https://github.com/yamadashy/repomix
+  const githubUrlRegex = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
+  if (githubUrlRegex.test(url)) {
+    return true;
+  }
+
+  // Check the short form of the GitHub URL. e.g. yamadashy/repomix
+  const shortFormRegex = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
+  if (shortFormRegex.test(url)) {
+    return true;
+  }
+
+  // Check the direct form of the GitHub Gist URL. e.g. https://gist.github.com/yamadashy/1234567890abcdef
+  const githubGistUrlRegex = /^https:\/\/gist\.github\.com\/[a-zA-Z0-9_-]+\/[a-f0-9]+$/;
+  if (githubGistUrlRegex.test(url)) {
+    return true;
+  }
+
+  return false;
+}
 
 export type PackRequest = z.infer<typeof packRequestSchema>;
