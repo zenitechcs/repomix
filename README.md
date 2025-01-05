@@ -12,6 +12,11 @@
 <p align="center">
   <a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
   <i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
+  <ul>
+    <li>Get help with configuration and usage</li>
+    <li>Share your experience and tips</li>
+    <li>Stay updated on new features</li>
+  </ul>
 </p>
 
 <hr />
@@ -72,6 +77,12 @@ That's it! Repomix will generate a `repomix-output.txt` file in your current dir
 
 ### Using The Website
 Want to try it quickly? Visit the official website at [repomix.com](https://repomix.com). Simply enter your repository name, fill in any optional details, and click the **Pack** button to see your generated output.
+
+#### Available Options
+The website offers several convenient features:
+- Customizable output format (Plain Text, XML, or Markdown)
+- Instant token count estimation
+- Much more!
 
 
 ## 📊 Usage
