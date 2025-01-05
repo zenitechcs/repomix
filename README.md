@@ -10,8 +10,8 @@
 <hr />
 
 <p align="center">
-<a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
-<i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
+  <a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
+  <i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
 </p>
 
 <hr />
@@ -28,11 +28,10 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 
 ## 🎉 New: Repomix Website & Discord Community!
 
-Try Repomix in your browser at [repomix.com](https://repomix.com/)
+- Try Repomix in your browser at [repomix.com](https://repomix.com/)
+- Join our [Discord Server](https://discord.gg/wNYzTwZFku) for support and discussion
 
-Join our Discord [discord.gg/wNYzTwZFku](https://discord.gg/wNYzTwZFku) for support and discussion
-
-We look forward to seeing you there!
+**We look forward to seeing you there!**
 
 ## 🌟 Features
 
