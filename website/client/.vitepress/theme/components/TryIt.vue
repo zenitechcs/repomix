@@ -2,7 +2,7 @@
 import { AlertTriangle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ResultViewer from './ResultViewer.vue';
-import { packRepository, validateGitHubUrl } from './api/client';
+import { isValidateRemoteUrl, packRepository } from './api/client';
 import type { PackResult } from './api/client';
 import { AnalyticsAction, analyticsUtils } from './utils/analytics';
 
@@ -26,7 +26,7 @@ const hasExecuted = ref(false);
 // URL validation
 const isValidUrl = computed(() => {
   if (!url.value) return false;
-  return validateGitHubUrl(url.value.trim());
+  return isValidateRemoteUrl(url.value.trim());
 });
 
 const TIMEOUT_MS = 30000;
@@ -178,7 +178,7 @@ function handleKeydown(event: KeyboardEvent) {
               @input="handleUrlInput"
               @keydown="handleKeydown"
               type="text"
-              placeholder="GitHub repository URL (e.g., yamadashy/repomix)"
+              placeholder="GitHub repository URL or user/repo (e.g., yamadashy/repomix)"
               class="repository-input"
               :class="{ 'invalid': url && !isValidUrl }"
               aria-label="GitHub repository URL"
