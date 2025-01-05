@@ -1,4 +1,8 @@
-# 📦 Repomix ([formerly Repopack](https://github.com/yamadashy/repomix/discussions/188))
+<div align="center">
+  <a href="https://repomix.com">
+    <img src="website/client/public/images/repomix-title.png" alt="Repomix" width="500" height="auto" />
+  </a>
+</div>
 
 [![Actions Status](https://github.com/yamadashy/repomix/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repomix/actions?query=workflow%3A"ci")
 [![npm](https://img.shields.io/npm/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
@@ -7,7 +11,7 @@
 [![node](https://img.shields.io/node/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
 [![codecov](https://codecov.io/github/yamadashy/repomix/graph/badge.svg)](https://codecov.io/github/yamadashy/repomix)
 
-Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
+📦 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file.  
 It is perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like Claude, ChatGPT, and Gemini.
 
 ## 🎉 New: Repomix Website & Discord Community!
