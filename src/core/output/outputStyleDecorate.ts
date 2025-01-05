@@ -48,9 +48,3 @@ ${config.output.removeComments ? '- Code comments have been removed.\n' : ''}
 ${config.output.showLineNumbers ? '- Line numbers have been added to the beginning of each line.\n' : ''}
 `.trim();
 };
-
-export const generateSummaryAdditionalInfo = (): string => {
-  return `
-For more information about Repomix, visit: https://github.com/yamadashy/repomix
-`.trim();
-};

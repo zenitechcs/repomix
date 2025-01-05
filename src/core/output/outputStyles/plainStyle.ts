@@ -40,8 +40,6 @@ User Provided Header:
 {{{headerText}}}
 {{/if}}
 
-{{{summaryAdditionalInfo}}}
-
 {{/if}}
 {{#if directoryStructureEnabled}}
 ${PLAIN_LONG_SEPARATOR}

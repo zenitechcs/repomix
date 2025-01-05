@@ -32,7 +32,6 @@ This section contains a summary of this file.
 </user_provided_header>
 {{/if}}
 
-{{{summaryAdditionalInfo}}}
 </additional_info>
 
 </file_summary>

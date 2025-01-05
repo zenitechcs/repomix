@@ -9,7 +9,6 @@ import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
 import {
   generateHeader,
-  generateSummaryAdditionalInfo,
   generateSummaryFileFormat,
   generateSummaryNotes,
   generateSummaryPurpose,
@@ -29,7 +28,6 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
       outputGeneratorContext.instruction,
     ),
     summaryNotes: generateSummaryNotes(outputGeneratorContext.config),
-    summaryAdditionalInfo: generateSummaryAdditionalInfo(),
     headerText: outputGeneratorContext.config.output.headerText,
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
