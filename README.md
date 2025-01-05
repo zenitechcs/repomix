@@ -2,7 +2,19 @@
   <a href="https://repomix.com">
     <img src="website/client/public/images/repomix-title.png" alt="Repomix" width="500" height="auto" />
   </a>
+  <p align="center">
+    <b>Pack your codebase into AI-friendly formats</b>
+  </p>
 </div>
+
+<hr />
+
+<p align="center">
+<a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
+<i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
+</p>
+
+<hr />
 
 [![Actions Status](https://github.com/yamadashy/repomix/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repomix/actions?query=workflow%3A"ci")
 [![npm](https://img.shields.io/npm/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)

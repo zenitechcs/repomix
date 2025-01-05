@@ -1,7 +1,7 @@
 ---
 layout: home
 title: Repomix
-titleTemplate: Packs your entire repository into AI-friendly formats
+titleTemplate: Pack your codebase into AI-friendly formats
 aside: false
 editLink: false
 

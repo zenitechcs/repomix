@@ -4,7 +4,7 @@ const googleAnalyticsTag = 'G-7PTT4PLC69';
 
 export default defineConfig({
   title: 'Repomix',
-  description: 'Packs your entire repository into AI-friendly formats',
+  description: 'Pack your codebase into AI-friendly formats',
   lastUpdated: true,
   metaChunk: true,
   sitemap: {
@@ -30,12 +30,12 @@ export default defineConfig({
     ['meta', { property: 'og:site_name', content: 'Repomix' }],
     ['meta', { property: 'og:image', content: 'https://repomix.com/images/og-image-large.png' }],
     ['meta', { property: 'og:url', content: 'https://repomix.com' }],
-    ['meta', { property: 'og:description', content: 'Packs your entire repository into AI-friendly formats' }],
+    ['meta', { property: 'og:description', content: 'Pack your codebase into AI-friendly formats' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { property: 'twitter:domain', content: 'https://repomix.com' }],
     ['meta', { property: 'twitter:url', content: 'https://repomix.com' }],
     ['meta', { name: 'twitter:title', content: 'Repomix' }],
-    ['meta', { name: 'twitter:description', content: 'Packs your entire repository into AI-friendly formats' }],
+    ['meta', { name: 'twitter:description', content: 'Pack your codebase into AI-friendly formats' }],
     ['meta', { name: 'twitter:image', content: 'https://repomix.com/images/og-image-large.png' }],
     ['meta', { name: 'thumbnail', content: 'https://repomix.com/images/og-image-large.png' }],
 
