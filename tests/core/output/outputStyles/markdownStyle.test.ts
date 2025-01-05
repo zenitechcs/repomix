@@ -22,7 +22,6 @@ describe('markdownStyle', () => {
         summaryFileFormat: 'Test Format',
         summaryUsageGuidelines: 'Test Guidelines',
         summaryNotes: 'Test Notes',
-        summaryAdditionalInfo: 'Test Additional Info',
         treeString: 'src/\n  index.ts',
         processedFiles: [
           {
@@ -41,7 +40,6 @@ describe('markdownStyle', () => {
       expect(result).toContain('Test Format');
       expect(result).toContain('Test Guidelines');
       expect(result).toContain('Test Notes');
-      expect(result).toContain('Test Additional Info');
       expect(result).toContain('src/\n  index.ts');
       expect(result).toContain('## File: src/index.ts');
       expect(result).toContain('console.log("Hello");');

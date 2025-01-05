@@ -47,8 +47,6 @@ User Provided Header:
 -----------------------
 This repository is simple-project
 
-For more information about Repomix, visit: https://github.com/yamadashy/repomix
-
 ================================================================
 Directory Structure
 ================================================================

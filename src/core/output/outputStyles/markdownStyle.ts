@@ -28,8 +28,6 @@ export const getMarkdownTemplate = () => {
 {{{headerText}}}
 {{/if}}
 
-{{{summaryAdditionalInfo}}}
-
 {{/if}}
 {{#if directoryStructureEnabled}}
 # Directory Structure
