@@ -85,4 +85,7 @@ export const printTopFiles = (
 export const printCompletion = () => {
   logger.log(pc.green('🎉 All Done!'));
   logger.log(pc.white('Your repository has been successfully packed.'));
+
+  logger.log('');
+  logger.log(`💡 Repomix is now available in your browser! Try it at ${pc.underline('https://repomix.com')}`);
 };
