@@ -159,7 +159,7 @@ export const getIgnorePatterns = async (rootDir: string, config: RepomixConfigMe
 
   // Add repomix output file
   if (config.output.filePath) {
-    const absoluteOutputPath = path.resolve(process.cwd(), config.output.filePath);
+    const absoluteOutputPath = path.resolve(config.cwd, config.output.filePath);
     const relativeToTargetPath = path.relative(rootDir, absoluteOutputPath);
 
     logger.trace('Adding output file to ignore patterns:', relativeToTargetPath);
