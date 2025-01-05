@@ -46,7 +46,7 @@ We look forward to seeing you there!
 
 
 ## 🚀 Quick Start
-
+### Using the CLI Tool
 You can try Repomix instantly in your project directory without installation:
 
 ```bash
@@ -71,6 +71,8 @@ repomix
 
 That's it! Repomix will generate a `repomix-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
+### Using The Website
+Want to try it quickly? Visit the official website at [repomix.com](https://repomix.com). Simply enter your repository name, fill in any optional details, and click the **Pack** button to see your generated output.
 
 
 ## 📊 Usage
