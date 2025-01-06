@@ -12,7 +12,48 @@ export default defineConfig({
   },
   themeConfig: {
     logo: { src: '/images/repomix-logo.svg', width: 24, height: 24 },
-    nav: [{ text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' }],
+    search: {
+      provider: 'local',
+    },
+    nav: [
+      // guide
+      { text: 'Guide', link: '/guide/' },
+      { text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' },
+    ],
+    sidebar: {
+      '/guide/': [
+        {
+          text: 'Guide',
+          items: [
+            { text: 'Getting Started', link: '/guide/' },
+            { text: 'Installation', link: '/guide/installation' },
+            { text: 'Basic Usage', link: '/guide/usage' },
+            { text: 'Prompt Examples', link: '/guide/prompt-examples' },
+            { text: 'Output Formats', link: '/guide/output' },
+            { text: 'Command Line Options', link: '/guide/command-line-options' },
+            { text: 'Remote Repository Processing', link: '/guide/remote-repository-processing' },
+            { text: 'Configuration', link: '/guide/configuration' },
+            { text: 'Security', link: '/guide/security' },
+            {
+              text: 'Development',
+              items: [
+                { text: 'Contributing', link: '/guide/development/' },
+                { text: 'Setup', link: '/guide/development/setup' },
+              ],
+            },
+          ],
+        },
+      ],
+      '/development/': [
+        {
+          text: 'Development',
+          items: [
+            { text: 'Contributing', link: '/development/' },
+            { text: 'Setup', link: '/development/setup' },
+          ],
+        },
+      ],
+    },
     socialLinks: [{ icon: 'github', link: 'https://github.com/yamadashy/repomix' }],
     footer: {
       message: 'Released under the MIT License.',
