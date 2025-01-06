@@ -134,9 +134,9 @@ repomix --init
 
 Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
 
-### Docker Usage
+### Docker Usage 🐳
 
-You can also run Repomix using Docker 🐳  
+You can also run Repomix using Docker.  
 This is useful if you want to run Repomix in an isolated environment or prefer using containers.
 
 Basic usage (current directory):
