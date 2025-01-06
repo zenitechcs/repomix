@@ -10,8 +10,14 @@
 <hr />
 
 <p align="center">
-<a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
-<i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
+  <a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
+</p>
+
+<p align="center">
+  Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!<br>
+  <i>Share your experience and tips</i><br>
+  <i>Stay updated on new features</i><br>
+  <i>Get help with configuration and usage</i><br>
 </p>
 
 <hr />
@@ -28,11 +34,10 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 
 ## 🎉 New: Repomix Website & Discord Community!
 
-Try Repomix in your browser at [repomix.com](https://repomix.com/)
+- Try Repomix in your browser at [repomix.com](https://repomix.com/)
+- Join our [Discord Server](https://discord.gg/wNYzTwZFku) for support and discussion
 
-Join our Discord [discord.gg/wNYzTwZFku](https://discord.gg/wNYzTwZFku) for support and discussion
-
-We look forward to seeing you there!
+**We look forward to seeing you there!**
 
 ## 🌟 Features
 
@@ -46,7 +51,7 @@ We look forward to seeing you there!
 
 
 ## 🚀 Quick Start
-
+### Using the CLI Tool `>_`
 You can try Repomix instantly in your project directory without installation:
 
 ```bash
@@ -71,6 +76,14 @@ repomix
 
 That's it! Repomix will generate a `repomix-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
+### Using The Website 🌐
+Want to try it quickly? Visit the official website at [repomix.com](https://repomix.com). Simply enter your repository name, fill in any optional details, and click the **Pack** button to see your generated output.
+
+#### Available Options
+The website offers several convenient features:
+- Customizable output format (Plain Text, XML, or Markdown)
+- Instant token count estimation
+- Much more!
 
 
 ## 📊 Usage
@@ -121,9 +134,9 @@ repomix --init
 
 Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
 
-### Docker Usage
+### Docker Usage 🐳
 
-You can also run Repomix using Docker 🐳  
+You can also run Repomix using Docker.  
 This is useful if you want to run Repomix in an isolated environment or prefer using containers.
 
 Basic usage (current directory):
