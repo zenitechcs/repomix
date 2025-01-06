@@ -11,12 +11,13 @@
 
 <p align="center">
   <a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
-  <i>Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!</i>
-  <ul>
-    <li>Get help with configuration and usage</li>
-    <li>Share your experience and tips</li>
-    <li>Stay updated on new features</li>
-  </ul>
+</p>
+
+<p align="center">
+  Need discussion? Join us on <a href="https://discord.gg/wNYzTwZFku">Discord</a>!<br>
+  <i>Share your experience and tips</i><br>
+  <i>Stay updated on new features</i><br>
+  <i>Get help with configuration and usage</i><br>
 </p>
 
 <hr />
@@ -50,7 +51,7 @@ It is perfect for when you need to feed your codebase to Large Language Models (
 
 
 ## 🚀 Quick Start
-### Using the CLI Tool
+### Using the CLI Tool `>_`
 You can try Repomix instantly in your project directory without installation:
 
 ```bash
@@ -75,7 +76,7 @@ repomix
 
 That's it! Repomix will generate a `repomix-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
-### Using The Website
+### Using The Website 🌐
 Want to try it quickly? Visit the official website at [repomix.com](https://repomix.com). Simply enter your repository name, fill in any optional details, and click the **Pack** button to see your generated output.
 
 #### Available Options
