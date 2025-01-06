@@ -33,7 +33,13 @@ export default defineConfig({
             { text: 'Command Line Options', link: '/guide/command-line-options' },
             { text: 'Remote Repository Processing', link: '/guide/remote-repository-processing' },
             { text: 'Configuration', link: '/guide/configuration' },
+            { text: 'Custom Instructions', link: '/guide/custom-instructions' },
+            { text: 'Comment Removal', link: '/guide/comment-removal' },
             { text: 'Security', link: '/guide/security' },
+            {
+              text: 'Tips & Tricks',
+              items: [{ text: 'Best Practices', link: '/guide/tips/best-practices' }],
+            },
             {
               text: 'Development',
               items: [
