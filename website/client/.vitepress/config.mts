@@ -60,7 +60,10 @@ export default defineConfig({
         },
       ],
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/yamadashy/repomix' }],
+    socialLinks: [
+      { icon: 'discord', link: 'https://discord.gg/wNYzTwZFku' },
+      { icon: 'github', link: 'https://github.com/yamadashy/repomix' }
+    ],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024 Kazuki Yamada',
