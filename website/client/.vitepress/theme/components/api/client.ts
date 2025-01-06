@@ -65,7 +65,7 @@ export async function packRepository(request: PackRequest): Promise<PackResult> 
   return data as PackResult;
 }
 
-export function isValidateRemoteUrl(url: string): boolean {
+export function isValidRemoteUrl(url: string): boolean {
   // Check the direct form of the GitHub URL. e.g. https://github.com/yamadashy/repomix
   const githubUrlRegex = /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
   if (githubUrlRegex.test(url)) {
