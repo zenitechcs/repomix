@@ -85,6 +85,11 @@ The website offers several convenient features:
 - Instant token count estimation
 - Much more!
 
+### Alternative Tools 🛠️
+
+If you're using Python, you might want to check out `Gitingest`, which is better suited for Python ecosystem and data science workflows.
+
+https://github.com/cyclotruc/gitingest
 
 ## 📊 Usage
 
