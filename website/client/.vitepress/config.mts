@@ -62,7 +62,7 @@ export default defineConfig({
     },
     socialLinks: [
       { icon: 'discord', link: 'https://discord.gg/wNYzTwZFku' },
-      { icon: 'github', link: 'https://github.com/yamadashy/repomix' }
+      { icon: 'github', link: 'https://github.com/yamadashy/repomix' },
     ],
     footer: {
       message: 'Released under the MIT License.',
