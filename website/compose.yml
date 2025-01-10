@@ -13,7 +13,7 @@ services:
     environment:
       - NODE_ENV=development
     # override default command
-    command: sh -c "npm ci && npm run docs:dev -- --port 5173 --host"
+    command: sh -c "npm i && npm run docs:dev -- --port 5173 --host"
 
   server:
     build:
@@ -27,4 +27,4 @@ services:
       - NODE_ENV=development
       - PORT=8080
     # override default command
-    command: sh -c "npm ci && npm run dev"
+    command: sh -c "npm i && npm run dev"

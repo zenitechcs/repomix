@@ -2,7 +2,7 @@
 import { AlertTriangle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ResultViewer from './ResultViewer.vue';
-import { isValidRemoteUrl, packRepository } from './api/client';
+import { isValidRemoteValue, packRepository } from './api/client';
 import type { PackResult } from './api/client';
 import { AnalyticsAction, analyticsUtils } from './utils/analytics';
 
@@ -26,7 +26,7 @@ const hasExecuted = ref(false);
 // URL validation
 const isValidUrl = computed(() => {
   if (!url.value) return false;
-  return isValidRemoteUrl(url.value.trim());
+  return isValidRemoteValue(url.value.trim());
 });
 
 const TIMEOUT_MS = 30000;
