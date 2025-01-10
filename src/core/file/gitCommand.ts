@@ -2,25 +2,10 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 
 const execFileAsync = promisify(execFile);
-
-export function isValidRemoteUrl(url: string): boolean {
-  // Check the short form of the GitHub URL. e.g. yamadashy/repomix
-  const shortFormRegex = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/;
-  if (shortFormRegex.test(url)) {
-    return true;
-  }
-
-  // Check the direct form of the GitHub URL. e.g.  https://github.com/yamadashy/repomix or https://gist.github.com/yamadashy/1234567890abcdef
-  try {
-    new URL(url);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
 
 export const isGitInstalled = async (
   deps = {
@@ -44,8 +29,11 @@ export const execGitShallowClone = async (
     execFileAsync,
   },
 ) => {
-  if (!isValidRemoteUrl(url)) {
-    throw new Error('Invalid repository URL or user/repo format');
+  // Check if the URL is valid
+  try {
+    new URL(url);
+  } catch (error) {
+    throw new RepomixError(`Invalid repository URL. Please provide a valid URL. url: ${url}`);
   }
 
   if (remoteBranch) {
