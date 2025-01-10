@@ -9,6 +9,10 @@ import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
 
+// Check the short form of the GitHub URL. e.g. yamadashy/repomix
+const remoteNamePattern = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
+const remoteNamePatternRegex = new RegExp(`^${remoteNamePattern}/${remoteNamePattern}$`);
+
 export const runRemoteAction = async (
   repoUrl: string,
   options: CliOptions,
@@ -34,7 +38,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(formatGitUrl(repoUrl), tempDirPath, options.remoteBranch, {
+    await cloneRepository(formatRemoteValueToUrl(repoUrl), tempDirPath, options.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
@@ -55,9 +59,23 @@ export const runRemoteAction = async (
   return result;
 };
 
-export const formatGitUrl = (url: string): string => {
+export function isValidRemoteValue(remoteValue: string): boolean {
+  if (remoteNamePatternRegex.test(remoteValue)) {
+    return true;
+  }
+
+  // Check the direct form of the GitHub URL. e.g.  https://github.com/yamadashy/repomix or https://gist.github.com/yamadashy/1234567890abcdef
+  try {
+    new URL(remoteValue);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export const formatRemoteValueToUrl = (url: string): string => {
   // If the URL is in the format owner/repo, convert it to a GitHub URL
-  if (/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/.test(url)) {
+  if (remoteNamePatternRegex.test(url)) {
     logger.trace(`Formatting GitHub shorthand: ${url}`);
     return `https://github.com/${url}.git`;
   }
@@ -115,20 +133,3 @@ export const copyOutputToCurrentDirectory = async (
     throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
   }
 };
-
-export function isValidRemoteValue(remoteValue: string): boolean {
-  // Check the short form of the GitHub URL. e.g. yamadashy/repomix
-  const namePattern = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
-  const shortFormRegex = new RegExp(`^${namePattern}/${namePattern}$`);
-  if (shortFormRegex.test(remoteValue)) {
-    return true;
-  }
-
-  // Check the direct form of the GitHub URL. e.g.  https://github.com/yamadashy/repomix or https://gist.github.com/yamadashy/1234567890abcdef
-  try {
-    new URL(remoteValue);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
