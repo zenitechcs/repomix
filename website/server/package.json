@@ -6,14 +6,13 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "clean": "rimraf dist",
-    "cloud-deploy": "gcloud builds submit --config=cloudbuild.yaml .",
-    "docker-run": "docker build -t repomix-server . && docker run -p 8080:8080 repomix-server"
+    "cloud-deploy": "gcloud builds submit --config=cloudbuild.yaml ."
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
     "hono": "^4.6.16",
     "pako": "^2.1.0",
-    "repomix": "^0.2.16",
+    "repomix": "^0.2.19",
     "zod": "^3.24.1"
   },
   "devDependencies": {
