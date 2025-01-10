@@ -3,7 +3,7 @@ import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   copyOutputToCurrentDirectory,
-  formatGitUrl,
+  formatRemoteValueToUrl,
   isValidRemoteValue,
   runRemoteAction,
 } from '../../../src/cli/actions/remoteAction.js';
@@ -40,19 +40,20 @@ describe('remoteAction functions', () => {
 
   describe('formatGitUrl', () => {
     test('should convert GitHub shorthand to full URL', () => {
-      expect(formatGitUrl('user/repo')).toBe('https://github.com/user/repo.git');
-      expect(formatGitUrl('user-name/repo-name')).toBe('https://github.com/user-name/repo-name.git');
-      expect(formatGitUrl('user_name/repo_name')).toBe('https://github.com/user_name/repo_name.git');
+      expect(formatRemoteValueToUrl('user/repo')).toBe('https://github.com/user/repo.git');
+      expect(formatRemoteValueToUrl('user-name/repo-name')).toBe('https://github.com/user-name/repo-name.git');
+      expect(formatRemoteValueToUrl('user_name/repo_name')).toBe('https://github.com/user_name/repo_name.git');
+      expect(formatRemoteValueToUrl('a.b/a-b_c')).toBe('https://github.com/a.b/a-b_c.git');
     });
 
     test('should handle HTTPS URLs', () => {
-      expect(formatGitUrl('https://github.com/user/repo')).toBe('https://github.com/user/repo.git');
-      expect(formatGitUrl('https://github.com/user/repo.git')).toBe('https://github.com/user/repo.git');
+      expect(formatRemoteValueToUrl('https://github.com/user/repo')).toBe('https://github.com/user/repo.git');
+      expect(formatRemoteValueToUrl('https://github.com/user/repo.git')).toBe('https://github.com/user/repo.git');
     });
 
     test('should not modify SSH URLs', () => {
       const sshUrl = 'git@github.com:user/repo.git';
-      expect(formatGitUrl(sshUrl)).toBe(sshUrl);
+      expect(formatRemoteValueToUrl(sshUrl)).toBe(sshUrl);
     });
   });
 
