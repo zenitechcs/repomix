@@ -42,6 +42,21 @@ const findEmptyDirectories = async (
   return emptyDirs;
 };
 
+// Check if a path is a git worktree reference file
+const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
+  try {
+    const stats = await fs.stat(gitPath);
+    if (!stats.isFile()) {
+      return false;
+    }
+
+    const content = await fs.readFile(gitPath, "utf8");
+    return content.startsWith("gitdir:");
+  } catch {
+    return false;
+  }
+};
+
 // Get all file paths considering the config
 export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<FileSearchResult> => {
   // First check directory permissions
@@ -66,9 +81,24 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
     logger.trace('Ignore patterns:', ignorePatterns);
     logger.trace('Ignore file patterns:', ignoreFilePatterns);
 
+    // Check if .git is a worktree reference
+    const gitPath = path.join(rootDir, ".git");
+    const isWorktree = await isGitWorktreeRef(gitPath);
+
+    // Modify ignore patterns for git worktree
+    const adjustedIgnorePatterns = [...ignorePatterns];
+    if (isWorktree) {
+      // Remove '.git/**' pattern and add '.git' to ignore the reference file
+      const gitIndex = adjustedIgnorePatterns.indexOf(".git/**");
+      if (gitIndex !== -1) {
+        adjustedIgnorePatterns.splice(gitIndex, 1);
+        adjustedIgnorePatterns.push(".git");
+      }
+    }
+
     const filePaths = await globby(includePatterns, {
       cwd: rootDir,
-      ignore: [...ignorePatterns],
+      ignore: [...adjustedIgnorePatterns],
       ignoreFiles: [...ignoreFilePatterns],
       onlyFiles: true,
       absolute: false,
@@ -89,7 +119,7 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
     if (config.output.includeEmptyDirectories) {
       const directories = await globby(includePatterns, {
         cwd: rootDir,
-        ignore: [...ignorePatterns],
+        ignore: [...adjustedIgnorePatterns],
         ignoreFiles: [...ignoreFilePatterns],
         onlyDirectories: true,
         absolute: false,
@@ -97,7 +127,11 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
         followSymbolicLinks: false,
       });
 
-      emptyDirPaths = await findEmptyDirectories(rootDir, directories, ignorePatterns);
+      emptyDirPaths = await findEmptyDirectories(
+        rootDir,
+        directories,
+        adjustedIgnorePatterns
+      );
     }
 
     logger.trace(`Filtered ${filePaths.length} files`);
