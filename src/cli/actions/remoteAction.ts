@@ -21,6 +21,10 @@ export const runRemoteAction = async (
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
+  if (!isValidRemoteValue(repoUrl)) {
+    throw new RepomixError('Invalid repository URL or user/repo format');
+  }
+
   const spinner = new Spinner('Cloning repository...');
 
   const tempDirPath = await createTempDirectory();
@@ -111,3 +115,20 @@ export const copyOutputToCurrentDirectory = async (
     throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
   }
 };
+
+export function isValidRemoteValue(remoteValue: string): boolean {
+  // Check the short form of the GitHub URL. e.g. yamadashy/repomix
+  const namePattern = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
+  const shortFormRegex = new RegExp(`^${namePattern}/${namePattern}$`);
+  if (shortFormRegex.test(remoteValue)) {
+    return true;
+  }
+
+  // Check the direct form of the GitHub URL. e.g.  https://github.com/yamadashy/repomix or https://gist.github.com/yamadashy/1234567890abcdef
+  try {
+    new URL(remoteValue);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
