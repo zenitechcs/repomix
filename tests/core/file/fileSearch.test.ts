@@ -1,3 +1,4 @@
+import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
@@ -271,6 +272,74 @@ node_modules
       expect(result.filePaths).toEqual(mockFileStructure);
       expect(result.filePaths).toContain('root/subdir/ignored.js');
       expect(result.emptyDirPaths).toEqual([]);
+    });
+
+    test('should handle git worktree correctly', async () => {
+      // Mock .git file content for worktree
+      const gitWorktreeContent = 'gitdir: /path/to/main/repo/.git/worktrees/feature-branch';
+
+      // Mock fs.stat and fs.readFile for .git file
+      vi.mocked(fs.stat).mockResolvedValue({
+        isFile: () => true,
+      } as Stats);
+      vi.mocked(fs.readFile).mockResolvedValue(gitWorktreeContent);
+
+      // Mock globby to return some test files
+      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
+
+      const result = await searchFiles('/test/dir', mockConfig);
+
+      // Check that globby was called with correct ignore patterns
+      const globbyCall = vi.mocked(globby).mock.calls[0];
+      const ignorePatterns = globbyCall[1]?.ignore as string[];
+
+      // Verify .git file (not directory) is in ignore patterns
+      expect(ignorePatterns).toContain('.git');
+      // Verify .git/** is not in ignore patterns
+      expect(ignorePatterns).not.toContain('.git/**');
+
+      // Verify the files were returned correctly
+      expect(result.filePaths).toEqual(['file1.js', 'file2.js']);
+    });
+
+    test('should handle regular git repository correctly', async () => {
+      // Mock .git as a directory
+      vi.mocked(fs.stat).mockResolvedValue({
+        isFile: () => false,
+      } as Stats);
+
+      // Mock globby to return some test files
+      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+      });
+
+      const result = await searchFiles('/test/dir', mockConfig);
+
+      // Check that globby was called with correct ignore patterns
+      const globbyCall = vi.mocked(globby).mock.calls[0];
+      const ignorePatterns = globbyCall[1]?.ignore as string[];
+
+      // Verify .git/** is in ignore patterns for regular git repos
+      expect(ignorePatterns).toContain('.git/**');
+      // Verify just .git is not in ignore patterns
+      expect(ignorePatterns).not.toContain('.git');
+
+      // Verify the files were returned correctly
+      expect(result.filePaths).toEqual(['file1.js', 'file2.js']);
     });
   });
 });
