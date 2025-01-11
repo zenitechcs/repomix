@@ -1,3 +1,4 @@
+import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
@@ -280,7 +281,7 @@ node_modules
       // Mock fs.stat and fs.readFile for .git file
       vi.mocked(fs.stat).mockResolvedValue({
         isFile: () => true,
-      } as fs.Stats);
+      } as Stats);
       vi.mocked(fs.readFile).mockResolvedValue(gitWorktreeContent);
 
       // Mock globby to return some test files
@@ -313,7 +314,7 @@ node_modules
       // Mock .git as a directory
       vi.mocked(fs.stat).mockResolvedValue({
         isFile: () => false,
-      } as fs.Stats);
+      } as Stats);
 
       // Mock globby to return some test files
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);

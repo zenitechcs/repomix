@@ -50,8 +50,8 @@ const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
       return false;
     }
 
-    const content = await fs.readFile(gitPath, "utf8");
-    return content.startsWith("gitdir:");
+    const content = await fs.readFile(gitPath, 'utf8');
+    return content.startsWith('gitdir:');
   } catch {
     return false;
   }
@@ -82,17 +82,17 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
     logger.trace('Ignore file patterns:', ignoreFilePatterns);
 
     // Check if .git is a worktree reference
-    const gitPath = path.join(rootDir, ".git");
+    const gitPath = path.join(rootDir, '.git');
     const isWorktree = await isGitWorktreeRef(gitPath);
 
     // Modify ignore patterns for git worktree
     const adjustedIgnorePatterns = [...ignorePatterns];
     if (isWorktree) {
       // Remove '.git/**' pattern and add '.git' to ignore the reference file
-      const gitIndex = adjustedIgnorePatterns.indexOf(".git/**");
+      const gitIndex = adjustedIgnorePatterns.indexOf('.git/**');
       if (gitIndex !== -1) {
         adjustedIgnorePatterns.splice(gitIndex, 1);
-        adjustedIgnorePatterns.push(".git");
+        adjustedIgnorePatterns.push('.git');
       }
     }
 
@@ -127,11 +127,7 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
         followSymbolicLinks: false,
       });
 
-      emptyDirPaths = await findEmptyDirectories(
-        rootDir,
-        directories,
-        adjustedIgnorePatterns
-      );
+      emptyDirPaths = await findEmptyDirectories(rootDir, directories, adjustedIgnorePatterns);
     }
 
     logger.trace(`Filtered ${filePaths.length} files`);
