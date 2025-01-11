@@ -76,6 +76,21 @@ repomix
 
 That's it! Repomix will generate a `repomix-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
 
+You can then send this file to an AI assistant with a prompt like:
+
+```
+This file contains all the files in the repository combined into one.
+I want to refactor the code, so please review it first.
+```
+
+![Repomix File Usage 1](website/client/public/images/docs/repomix-file-usage-1.png)
+
+When you propose specific changes, the AI might be able to generate code accordingly. With features like Claude's Artifacts, you could potentially output multiple files, allowing for the generation of multiple interdependent pieces of code.
+
+![Repomix File Usage 2](website/client/public/images/docs/repomix-file-usage-2.png)
+
+Happy coding! 🚀
+
 ### Using The Website 🌐
 Want to try it quickly? Visit the official website at [repomix.com](https://repomix.com). Simply enter your repository name, fill in any optional details, and click the **Pack** button to see your generated output.
 
