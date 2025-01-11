@@ -1,7 +1,7 @@
 # ==============================================================================
 # Base image
 # ==============================================================================
-FROM node:22-alpine AS builder
+FROM node:23-alpine AS builder
 
 # Install git and other dependencies
 RUN apk add --no-cache \
@@ -23,7 +23,7 @@ RUN npm run build
 # ==============================================================================
 # Production image
 # ==============================================================================
-FROM node:22-alpine
+FROM node:23-alpine
 
 # Install git and other dependencies
 RUN apk add --no-cache \
