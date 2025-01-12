@@ -64,6 +64,7 @@ describe('configSchema', () => {
         output: {
           filePath: 'output.txt',
           style: 'plain',
+          parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
           removeComments: false,
@@ -147,6 +148,7 @@ describe('configSchema', () => {
         output: {
           filePath: 'merged-output.txt',
           style: 'plain',
+          parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
           removeComments: true,

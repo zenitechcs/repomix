@@ -1,12 +1,13 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { XMLBuilder } from 'fast-xml-parser';
 import Handlebars from 'handlebars';
-import type {RepomixConfigMerged} from '../../config/configSchema.js';
-import {RepomixError} from '../../shared/errorHandle.js';
-import {searchFiles} from '../file/fileSearch.js';
-import {generateTreeString} from '../file/fileTreeGenerate.js';
-import type {ProcessedFile} from '../file/fileTypes.js';
-import type {OutputGeneratorContext} from './outputGeneratorTypes.js';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
+import { RepomixError } from '../../shared/errorHandle.js';
+import { searchFiles } from '../file/fileSearch.js';
+import { generateTreeString } from '../file/fileTreeGenerate.js';
+import type { ProcessedFile } from '../file/fileTypes.js';
+import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
 import {
   generateHeader,
   generateSummaryFileFormat,
@@ -14,23 +15,22 @@ import {
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
 } from './outputStyleDecorate.js';
-import {getMarkdownTemplate} from './outputStyles/markdownStyle.js';
-import {getPlainTemplate} from './outputStyles/plainStyle.js';
-import {getXmlTemplate} from './outputStyles/xmlStyle.js';
-import {XMLBuilder} from "fast-xml-parser";
+import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
+import { getPlainTemplate } from './outputStyles/plainStyle.js';
+import { getXmlTemplate } from './outputStyles/xmlStyle.js';
 
 interface RenderContext {
-  readonly generationHeader: string,
-  readonly summaryPurpose: string,
-  readonly summaryFileFormat: string,
-  readonly summaryUsageGuidelines: string,
-  readonly summaryNotes: string,
-  readonly headerText: string | undefined,
-  readonly instruction: string,
-  readonly treeString: string,
-  readonly processedFiles: ReadonlyArray<ProcessedFile>,
-  readonly fileSummaryEnabled: boolean,
-  readonly directoryStructureEnabled: boolean,
+  readonly generationHeader: string;
+  readonly summaryPurpose: string;
+  readonly summaryFileFormat: string;
+  readonly summaryUsageGuidelines: string;
+  readonly summaryNotes: string;
+  readonly headerText: string | undefined;
+  readonly instruction: string;
+  readonly treeString: string;
+  readonly processedFiles: ReadonlyArray<ProcessedFile>;
+  readonly fileSummaryEnabled: boolean;
+  readonly directoryStructureEnabled: boolean;
 }
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
@@ -56,46 +56,45 @@ const generateParsableXmlOutput = async (
   config: RepomixConfigMerged,
   renderContext: RenderContext,
 ): Promise<string> => {
-  const xmlBuilder = new XMLBuilder({ignoreAttributes: false})
+  const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
   const xmlDocument = {
     repomix: {
       '#text': renderContext.generationHeader,
-      file_summary: renderContext.fileSummaryEnabled ? {
-        '#text': "This section contains a summary of this file.",
-        purpose: renderContext.summaryPurpose,
-        file_format: `${renderContext.summaryFileFormat}
+      file_summary: renderContext.fileSummaryEnabled
+        ? {
+            '#text': 'This section contains a summary of this file.',
+            purpose: renderContext.summaryPurpose,
+            file_format: `${renderContext.summaryFileFormat}
 4. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file`,
-        usage_guidelines: renderContext.summaryUsageGuidelines,
-        notes: renderContext.summaryNotes,
-        additional_info: {
-          user_provided_header: renderContext.headerText,
-        }
-      } : undefined,
-      directory_structure: renderContext.directoryStructureEnabled ?
-        renderContext.treeString : undefined,
+            usage_guidelines: renderContext.summaryUsageGuidelines,
+            notes: renderContext.summaryNotes,
+            additional_info: {
+              user_provided_header: renderContext.headerText,
+            },
+          }
+        : undefined,
+      directory_structure: renderContext.directoryStructureEnabled ? renderContext.treeString : undefined,
       files: {
         '#text': "This section contains the contents of the repository's files.",
         file: renderContext.processedFiles.map((file) => ({
-          '#text': file.content, '@_path': file.path
+          '#text': file.content,
+          '@_path': file.path,
         })),
       },
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
-    }
-  }
-  return xmlBuilder.build(xmlDocument)
-}
+    },
+  };
+  return xmlBuilder.build(xmlDocument);
+};
 
 const generateParsableMarkdownOutput = async (): Promise<string> => {
   // TODO
-  throw "TODO"
-}
+  throw 'TODO';
+};
 
-const generateHandlebarOutput = async (
-  config: RepomixConfigMerged,
-  renderContext: RenderContext,
-): Promise<string> => {
+const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContext: RenderContext): Promise<string> => {
   let template: string;
   switch (config.output.style) {
     case 'xml':
@@ -110,7 +109,7 @@ const generateHandlebarOutput = async (
 
   const compiledTemplate = Handlebars.compile(template);
   return `${compiledTemplate(renderContext).trim()}\n`;
-}
+};
 
 export const generateOutput = async (
   rootDir: string,
@@ -121,17 +120,15 @@ export const generateOutput = async (
   const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
   const renderContext = createRenderContext(outputGeneratorContext);
 
-  if (!config.output.parsableStyle || config.output.style == "plain") {
-    return generateHandlebarOutput(config, renderContext)
-  } else {
-    switch (config.output.style) {
-      case 'xml':
-        return generateParsableXmlOutput(config, renderContext)
-      case 'markdown':
-        return generateParsableMarkdownOutput()
-      default:
-        return generateHandlebarOutput(config, renderContext)
-    }
+  if (!config.output.parsableStyle || config.output.style === 'plain')
+    return generateHandlebarOutput(config, renderContext);
+  switch (config.output.style) {
+    case 'xml':
+      return generateParsableXmlOutput(config, renderContext);
+    case 'markdown':
+      return generateParsableMarkdownOutput();
+    default:
+      return generateHandlebarOutput(config, renderContext);
   }
 };
 

@@ -21,6 +21,7 @@ describe('defaultAction', () => {
       output: {
         filePath: 'output.txt',
         style: 'plain',
+        parsableStyle: false,
         fileSummary: true,
         directoryStructure: true,
         topFilesLength: 5,

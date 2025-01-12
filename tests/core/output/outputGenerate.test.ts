@@ -1,9 +1,9 @@
 import process from 'node:process';
-import {describe, expect, test} from 'vitest';
-import type {ProcessedFile} from '../../../src/core/file/fileTypes.js';
-import {generateOutput} from '../../../src/core/output/outputGenerate.js';
-import {createMockConfig} from '../../testing/testUtils.js';
-import {XMLParser} from "fast-xml-parser";
+import { XMLParser } from 'fast-xml-parser';
+import { describe, expect, test } from 'vitest';
+import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
+import { generateOutput } from '../../../src/core/output/outputGenerate.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('outputGenerate', () => {
   test('generateOutput should write correct content to file (plain style)', async () => {
@@ -18,8 +18,8 @@ describe('outputGenerate', () => {
       },
     });
     const mockProcessedFiles: ProcessedFile[] = [
-      {path: 'file1.txt', content: 'content1'},
-      {path: 'dir/file2.txt', content: 'content2'},
+      { path: 'file1.txt', content: 'content1' },
+      { path: 'dir/file2.txt', content: 'content2' },
     ];
 
     const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
@@ -44,19 +44,19 @@ describe('outputGenerate', () => {
       },
     });
     const mockProcessedFiles: ProcessedFile[] = [
-      {path: 'file1.txt', content: '<div>foo</div>'},
-      {path: 'dir/file2.txt', content: 'if (a && b)'},
+      { path: 'file1.txt', content: '<div>foo</div>' },
+      { path: 'dir/file2.txt', content: 'if (a && b)' },
     ];
 
     const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
 
-    const parser = new XMLParser({ignoreAttributes: false});
-    let parsedOutput = parser.parse(output);
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const parsedOutput = parser.parse(output);
 
     expect(parsedOutput.repomix.file_summary).not.toBeUndefined();
     expect(parsedOutput.repomix.files.file).toEqual([
-      {"#text": mockProcessedFiles[0].content, "@_path": mockProcessedFiles[0].path},
-      {"#text": mockProcessedFiles[1].content, "@_path": mockProcessedFiles[1].path},
+      { '#text': mockProcessedFiles[0].content, '@_path': mockProcessedFiles[0].path },
+      { '#text': mockProcessedFiles[1].content, '@_path': mockProcessedFiles[1].path },
     ]);
   });
 });
