@@ -56,6 +56,7 @@ export const repomixConfigDefaultSchema = z.object({
     .object({
       filePath: z.string().default(defaultFilePathMap.plain),
       style: repomixOutputStyleSchema.default('plain'),
+      parsableStyle: z.boolean().default(false),
       headerText: z.string().optional(),
       instructionFilePath: z.string().optional(),
       fileSummary: z.boolean().default(true),
