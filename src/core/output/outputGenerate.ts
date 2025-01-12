@@ -31,6 +31,8 @@ interface RenderContext {
   readonly processedFiles: ReadonlyArray<ProcessedFile>;
   readonly fileSummaryEnabled: boolean;
   readonly directoryStructureEnabled: boolean;
+  readonly escapeFileContent: boolean;
+  readonly markdownCodeBlockDelimiter: string;
 }
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
@@ -49,13 +51,26 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     processedFiles: outputGeneratorContext.processedFiles,
     fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
     directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
+    escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
+    markdownCodeBlockDelimiter: '`'.repeat(
+      Math.max(
+        3,
+        1 +
+          outputGeneratorContext.processedFiles
+            .map(
+              (file) =>
+                file.content
+                  .match(/`*/g)
+                  ?.map((s) => s.length)
+                  .reduce((acc, l) => (l > acc ? l : acc), 0) ?? 0,
+            )
+            .reduce((acc, l) => (l > acc ? l : acc), 0),
+      ),
+    ),
   };
 };
 
-const generateParsableXmlOutput = async (
-  config: RepomixConfigMerged,
-  renderContext: RenderContext,
-): Promise<string> => {
+const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<string> => {
   const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
   const xmlDocument = {
     repomix: {
@@ -89,11 +104,6 @@ const generateParsableXmlOutput = async (
   return xmlBuilder.build(xmlDocument);
 };
 
-const generateParsableMarkdownOutput = async (): Promise<string> => {
-  // TODO
-  throw 'TODO';
-};
-
 const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContext: RenderContext): Promise<string> => {
   let template: string;
   switch (config.output.style) {
@@ -120,13 +130,12 @@ export const generateOutput = async (
   const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
   const renderContext = createRenderContext(outputGeneratorContext);
 
-  if (!config.output.parsableStyle || config.output.style === 'plain')
-    return generateHandlebarOutput(config, renderContext);
+  if (!config.output.parsableStyle) return generateHandlebarOutput(config, renderContext);
   switch (config.output.style) {
     case 'xml':
-      return generateParsableXmlOutput(config, renderContext);
+      return generateParsableXmlOutput(renderContext);
     case 'markdown':
-      return generateParsableMarkdownOutput();
+      return generateHandlebarOutput(config, renderContext);
     default:
       return generateHandlebarOutput(config, renderContext);
   }

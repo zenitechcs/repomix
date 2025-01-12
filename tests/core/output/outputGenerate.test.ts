@@ -59,4 +59,30 @@ describe('outputGenerate', () => {
       { '#text': mockProcessedFiles[1].content, '@_path': mockProcessedFiles[1].path },
     ]);
   });
+
+  test('generateOutput should write correct content to file (parsable markdown style)', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'markdown',
+        parsableStyle: true,
+        topFilesLength: 2,
+        showLineNumbers: false,
+        removeComments: false,
+        removeEmptyLines: false,
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [
+      { path: 'file1.txt', content: 'content1' },
+      { path: 'dir/file2.txt', content: '```\ncontent2\n```' },
+    ];
+
+    const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
+
+    expect(output).toContain('# File Summary');
+    expect(output).toContain('## File: file1.txt');
+    expect(output).toContain('````\ncontent1\n````');
+    expect(output).toContain('## File: dir/file2.txt');
+    expect(output).toContain('````\n```\ncontent2\n```\n````');
+  });
 });

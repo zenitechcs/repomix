@@ -40,9 +40,9 @@ export const getMarkdownTemplate = () => {
 
 {{#each processedFiles}}
 ## File: {{{this.path}}}
-\`\`\`{{{getFileExtension this.path}}}
+{{{../markdownCodeBlockDelimiter}}}{{{getFileExtension this.path}}}
 {{{this.content}}}
-\`\`\`
+{{{../markdownCodeBlockDelimiter}}}
 
 {{/each}}
 
