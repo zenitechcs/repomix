@@ -1,64 +1,37 @@
 import { defineConfig } from 'vitepress';
+import { configEn } from './config/configEn';
 
 const googleAnalyticsTag = 'G-7PTT4PLC69';
 
+/**
+ * Vitepress Configuration
+ *
+ * Reference
+ * see: https://github.com/vuejs/vitepress/tree/main/docs
+ */
 export default defineConfig({
   title: 'Repomix',
-  description: 'Pack your codebase into AI-friendly formats',
+
+  srcDir: 'src',
+
+  rewrites: {
+    // rewrite to `en` locale
+    'en/:rest*': ':rest*',
+  },
+
   lastUpdated: true,
+  cleanUrls: true,
   metaChunk: true,
+
   sitemap: {
     hostname: 'http://repomix.com/',
   },
+
+  // Shared configuration
   themeConfig: {
     logo: { src: '/images/repomix-logo.svg', width: 24, height: 24 },
     search: {
       provider: 'local',
-    },
-    nav: [
-      // guide
-      { text: 'Guide', link: '/guide/' },
-      { text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' },
-    ],
-    sidebar: {
-      '/guide/': [
-        {
-          text: 'Guide',
-          items: [
-            { text: 'Getting Started', link: '/guide/' },
-            { text: 'Installation', link: '/guide/installation' },
-            { text: 'Basic Usage', link: '/guide/usage' },
-            { text: 'Prompt Examples', link: '/guide/prompt-examples' },
-            { text: 'Output Formats', link: '/guide/output' },
-            { text: 'Command Line Options', link: '/guide/command-line-options' },
-            { text: 'Remote Repository Processing', link: '/guide/remote-repository-processing' },
-            { text: 'Configuration', link: '/guide/configuration' },
-            { text: 'Custom Instructions', link: '/guide/custom-instructions' },
-            { text: 'Comment Removal', link: '/guide/comment-removal' },
-            { text: 'Security', link: '/guide/security' },
-            {
-              text: 'Tips & Tricks',
-              items: [{ text: 'Best Practices', link: '/guide/tips/best-practices' }],
-            },
-            {
-              text: 'Development',
-              items: [
-                { text: 'Contributing', link: '/guide/development/' },
-                { text: 'Setup', link: '/guide/development/setup' },
-              ],
-            },
-          ],
-        },
-      ],
-      '/development/': [
-        {
-          text: 'Development',
-          items: [
-            { text: 'Contributing', link: '/development/' },
-            { text: 'Setup', link: '/development/setup' },
-          ],
-        },
-      ],
     },
     socialLinks: [
       { icon: 'discord', link: 'https://discord.gg/wNYzTwZFku' },
@@ -69,6 +42,16 @@ export default defineConfig({
       copyright: 'Copyright © 2024 Kazuki Yamada',
     },
   },
+
+  // i18n configuration
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en-US',
+      ...configEn,
+    },
+  },
+
   head: [
     // Favicon
     ['link', { rel: 'icon', href: '/images/repomix-logo.svg' }],

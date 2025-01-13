@@ -39,10 +39,10 @@ Happy coding! 🚀
 
 ## What's Next?
 
-- [Installation Guide](./installation.md): Different ways to install Repomix
-- [Usage Guide](./usage.md): Learn about basic and advanced features
-- [Configuration](./configuration.md): Customize Repomix for your needs
-- [Security Features](./security.md): Learn about security checks
+- [Installation Guide](installation.md): Different ways to install Repomix
+- [Usage Guide](usage.md): Learn about basic and advanced features
+- [Configuration](configuration.md): Customize Repomix for your needs
+- [Security Features](security.md): Learn about security checks
 
 ## Community
 

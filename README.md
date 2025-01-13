@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://repomix.com">
-    <img src="website/client/public/images/repomix-title.png" alt="Repomix" width="500" height="auto" />
+    <img src="website/client/src/public/images/repomix-title.png" alt="Repomix" width="500" height="auto" />
   </a>
   <p align="center">
     <b>Pack your codebase into AI-friendly formats</b>
@@ -83,11 +83,11 @@ This file contains all the files in the repository combined into one.
 I want to refactor the code, so please review it first.
 ```
 
-![Repomix File Usage 1](website/client/public/images/docs/repomix-file-usage-1.png)
+![Repomix File Usage 1](website/client/src/public/images/docs/repomix-file-usage-1.png)
 
 When you propose specific changes, the AI might be able to generate code accordingly. With features like Claude's Artifacts, you could potentially output multiple files, allowing for the generation of multiple interdependent pieces of code.
 
-![Repomix File Usage 2](website/client/public/images/docs/repomix-file-usage-2.png)
+![Repomix File Usage 2](website/client/src/public/images/docs/repomix-file-usage-2.png)
 
 Happy coding! 🚀
 

@@ -1,7 +1,7 @@
 import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import { h } from 'vue';
-import Home from './components/Home.vue';
+import Home from '../../components/Home.vue';
 import './custom.css';
 
 export default {

@@ -11,7 +11,7 @@ tsconfig.build.json
 .eslintrc.js
 eslint.config.mjs
 prettier.config.mjs
-vite.config.mts
+vite.config.ts
 biome.json
 
 # Git files
