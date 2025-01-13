@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "@types/gtag.js": "^0.0.20",
-    "lucide-vue-next": "^0.469.0"
+    "lucide-vue-next": "^0.471.0"
   }
 }

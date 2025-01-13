@@ -12,7 +12,7 @@
     "@hono/node-server": "^1.13.7",
     "hono": "^4.6.16",
     "pako": "^2.1.0",
-    "repomix": "^0.2.19",
+    "repomix": "^0.2.20",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -20,6 +20,6 @@
     "@types/pako": "^2.0.3",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   }
 }
