@@ -60,7 +60,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@clack/prompts": "^0.9.0",
+    "@clack/prompts": "^0.9.1",
     "@secretlint/core": "^9.0.0",
     "@secretlint/secretlint-rule-preset-recommend": "^9.0.0",
     "cli-spinners": "^2.9.2",
@@ -87,7 +87,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "rimraf": "^6.0.1",
     "secretlint": "^9.0.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "vitest": "^2.1.8"
   },
   "engines": {
