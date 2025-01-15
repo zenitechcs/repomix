@@ -38,5 +38,5 @@ npm run lint
 
 ## サポートが必要な場合
 
-- [Issueを作成](https://github.com/yamadashy/repomix/issues)
+- [イシューを作成](https://github.com/yamadashy/repomix/issues)
 - [Discordに参加](https://discord.gg/wNYzTwZFku)

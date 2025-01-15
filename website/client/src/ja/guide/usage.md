@@ -1,151 +1,87 @@
 # 基本的な使い方
 
-Repomix は、コマンドラインインターフェース (CLI) を通じて操作します。このドキュメントでは、Repomix のインストールから基本的なコマンドの実行、設定ファイルの利用まで、Repomix を使い始めるために必要な手順を説明します。
+## クイックスタート
 
-## インストール
-
-Repomix を使用する前に、まずインストールが必要です。以下のいずれかの方法でインストールできます。
-
-### npm を使用する場合
-
-Node.js と npm がインストールされている環境では、以下のコマンドで Repomix をグローバルにインストールできます。
-
+リポジトリ全体をパッケージング
 ```bash
-npm install -g repomix
+repomix
 ```
 
-インストール後、ターミナルから `repomix` コマンドが使用できるようになります。
+## 一般的な使用例
 
-### yarn を使用する場合
-
-yarn を使用する場合は、以下のコマンドでインストールします。
-
+### 特定のディレクトリをパッケージング
 ```bash
-yarn global add repomix
+repomix path/to/directory
 ```
 
-## 基本的なコマンド
-
-Repomix の基本的なコマンドは、コードの分析と変更を行う `repomix` コマンドです。
-
-### ローカルファイルの処理
-
-ローカルファイルを処理するには、`repomix` コマンドに処理したいファイルのパスまたはディレクトリのパスを指定します。
-
+### 特定のファイルを含める
+[globパターン](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)を使用
 ```bash
-repomix src/index.ts
+repomix --include "src/**/*.ts,**/*.md"
 ```
 
-このコマンドは、`src/index.ts` ファイルを分析し、改善提案や変更を行います。ディレクトリを指定すると、そのディレクトリ内のすべての対応ファイルを再帰的に処理します。
-
+### ファイルを除外
 ```bash
-repomix src/
+repomix --ignore "**/*.log,tmp/"
 ```
 
-### リモートリポジトリの処理
-
-リモートリポジトリを処理するには、リポジトリの URL を指定します。
-
+### リモートリポジトリを処理
 ```bash
-repomix https://github.com/ユーザー名/リポジトリ名
+# GitHubのURLを使用
+repomix --remote https://github.com/user/repo
+
+# 省略形を使用
+repomix --remote user/repo
+
+# 特定のブランチ/タグ/コミット
+repomix --remote user/repo --remote-branch main
+repomix --remote user/repo --remote-branch 935b695
 ```
 
-詳細については、「リモートリポジトリの処理」のドキュメントを参照してください。
+## 出力フォーマット
 
-## オプション
-
-`repomix` コマンドには、さまざまなオプションを指定できます。主なオプションを以下に示します。
-
-- `--output-style <style>`: 出力形式を指定します (`plain`, `markdown`, `xml`)。
-- `--output-file <path>`: 出力先のファイルを指定します。
-- `--config <path>`: 設定ファイルのパスを指定します。
-- `--diff`: 変更内容を diff 形式で表示します。
-- `--version`: Repomix のバージョンを表示します。
-- `--help`: ヘルプメッセージを表示します。
-
-すべてのオプションについては、`repomix --help` コマンドで確認できます。
-
-### 例
-
-Markdown 形式で結果を `report.md` ファイルに出力する場合:
-
+### プレーンテキスト（デフォルト）
 ```bash
-repomix src/ --output-style markdown --output-file report.md
+repomix --style plain
 ```
 
-変更内容を diff 形式で表示する場合:
-
+### XML
 ```bash
-repomix src/ --diff
+repomix --style xml
 ```
 
-## 設定ファイル
-
-Repomix の設定は、設定ファイル (`repomix.config.json`) で行うことができます。設定ファイルを使用すると、コマンドラインオプションを毎回指定する手間を省き、一貫した設定で Repomix を実行できます。
-
-### 設定ファイルの作成
-
-プロジェクトのルートディレクトリに `repomix.config.json` という名前のファイルを作成し、JSON 形式で設定を記述します。
-
-```json
-{
-  "outputStyle": "markdown",
-  "ignore": ["node_modules/", "dist/"]
-}
-```
-
-### 設定項目の例
-
-- `outputStyle`: デフォルトの出力形式。
-- `outputFile`: デフォルトの出力先ファイル。
-- `ignore`: 処理対象から除外するファイルやディレクトリのパターン。
-- `promptExamples`: カスタムプロンプトの例。
-
-設定ファイルのすべての項目については、設定に関するドキュメントを参照してください。
-
-## ワークフローの例
-
-1. **コードの分析:** 最初に、Repomix を使用してコードベース全体を分析します。
-
-   ```bash
-   repomix src/
-   ```
-
-2. **出力の確認:** 標準出力または指定した出力ファイルで、Repomix の分析結果を確認します。
-
-3. **設定の調整:** 必要に応じて、設定ファイル (`repomix.config.json`) を編集し、出力形式や無視するファイルを調整します。
-
-4. **変更の適用:** Repomix の提案に基づいてコードを変更します。`--diff` オプションを使用して変更内容を確認することもできます。
-
-5. **再分析:** 変更後、再度 Repomix を実行し、改善点がないか確認します。
-
-## 高度な使い方
-
-Repomix は、より高度な使い方もサポートしています。
-
-### パイプラインでの利用
-
-Repomix の出力を他のコマンドにパイプ処理することで、より柔軟なワークフローを構築できます。
-
+### Markdown
 ```bash
-repomix src/ --output-style plain | grep "提案"
+repomix --style markdown
 ```
 
-### Git フックとの連携
+## その他のオプション
 
-Git フックと連携させることで、コミット前などに自動的に Repomix を実行できます。
+### コメントを削除
+```bash
+repomix --remove-comments
+```
 
-## トラブルシューティング
+### 行番号を表示
+```bash
+repomix --output-show-line-numbers
+```
 
-Repomix の使用中に問題が発生した場合は、以下の点を確認してください。
+### クリップボードにコピー
+```bash
+repomix --copy
+```
 
-- Repomix が正しくインストールされているか (`repomix --version` で確認)。
-- コマンドの構文が正しいか (`repomix --help` で確認)。
-- 設定ファイルの内容が正しいか。
-- 処理対象のファイルが存在し、読み取り権限があるか。
+### セキュリティチェックを無効化
+```bash
+repomix --no-security-check
+```
 
-詳細なトラブルシューティングについては、FAQ ドキュメントを参照してください。
+## 設定
 
-## まとめ
+設定ファイルを初期化
+```bash
+repomix --init
+```
 
-このドキュメントでは、Repomix のインストールから基本的なコマンドの実行、設定ファイルの利用までを説明しました。Repomix を使いこなして、より効率的な開発 workflow を実現しましょう。
+詳細な設定オプションについては[設定ガイド](/ja/guide/configuration)をご覧ください。

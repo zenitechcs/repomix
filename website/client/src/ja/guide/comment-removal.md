@@ -1,127 +1,53 @@
-# コメント削除
+# ソースコード中のコメント削除
 
-Repomix は、コードの可読性を向上させるために、不要なコメントを自動的に削除する機能を提供しています。このドキュメントでは、コメント削除機能の使い方と、削除対象となるコメントの種類について説明します。
+Repomixは、パッケージング時に、ソースコード中のコメントを自動的に削除する機能を提供します。これにより、出力ファイルからノイズを減らし、実際のコードに焦点を当てることができます。
 
-## コメント削除機能の有効化
+## 使用方法
 
-コメント削除機能は、コマンドラインオプションまたは設定ファイルを通じて有効にできます。
-
-### コマンドラインオプション
-
-コマンドラインから Repomix を実行する際に、`--comment-removal` オプションを指定することで、コメント削除機能を有効にできます。
-
-```bash
-repomix src/ --comment-removal
-```
-
-このコマンドを実行すると、`src/` ディレクトリ内のすべてのファイルからコメントが削除されます。
-
-### 設定ファイル
-
-設定ファイル (`repomix.config.json`) で `commentRemoval` オプションを `true` に設定することでも、コメント削除機能を有効にできます。
+コメントの削除を有効にするには、`repomix.config.json`で`removeComments`オプションを`true`に設定します。
 
 ```json
 {
-  "commentRemoval": true
-}
-```
-
-設定ファイルを有効にした場合、`--comment-removal` オプションを明示的に指定しなくても、Repomix は自動的にコメント削除を行います。
-
-## 削除対象となるコメントの種類
-
-Repomix は、以下の種類のコメントを削除対象とします。
-
-- **単一行コメント:** `//` で始まるコメント。
-  ```typescript
-  // これは単一行コメントです
-  const x = 10;
-  ```
-- **複数行コメント:** `/*` で始まり `*/` で終わるコメント。
-  ```typescript
-  /*
-   * これは複数行コメントです
-   * 複数行にわたる説明を記述できます
-   */
-  const y = 20;
-  ```
-- **JSDoc コメント:** `/**` で始まり `*/` で終わるドキュメンテーションコメント。
-  ```typescript
-  /**
-   * この関数は二つの数値を加算します。
-   * @param a 最初の数値
-   * @param b 二番目の数値
-   * @returns 合計
-   */
-  function add(a: number, b: number): number {
-    return a + b;
-  }
-  ```
-
-**注意:** JSDoc コメントは、設定によっては削除されない場合があります。設定ファイルで JSDoc コメントの削除を制御できます。
-
-## コメント削除の注意点
-
-- **コードの意図の喪失:** コメントは、コードの意図や背景を伝える重要な役割を果たしている場合があります。コメントを削除する際は、コードの可読性が損なわれないように注意してください。
-- **ドキュメントの喪失:** JSDoc コメントは、API ドキュメント生成に利用される場合があります。不用意に削除すると、ドキュメントが不足する可能性があります。
-- **バージョン管理:** コメント削除を行う前に、必ずバージョン管理システムにコミットしてください。これにより、必要に応じてコメントを復元できます。
-
-## コメント削除のカスタマイズ
-
-設定ファイルを使用すると、コメント削除の動作を細かくカスタマイズできます。
-
-```json
-{
-  "commentRemoval": {
-    "removeSingleLineComments": true,
-    "removeMultiLineComments": true,
-    "removeJSDocComments": false
+  "output": {
+    "removeComments": true
   }
 }
 ```
 
-- `removeSingleLineComments`: 単一行コメントを削除するかどうかを指定します。
-- `removeMultiLineComments`: 複数行コメントを削除するかどうかを指定します。
-- `removeJSDocComments`: JSDoc コメントを削除するかどうかを指定します。
+## サポートされている言語
 
-## 使用例
+Repomixは以下を含む多くのプログラミング言語のコメント削除をサポートしています。
 
-### 単一行コメントと複数行コメントを削除する
+- JavaScript/TypeScript (`//`, `/* */`)
+- Python (`#`, `"""`, `'''`)
+- Java (`//`, `/* */`)
+- C/C++ (`//`, `/* */`)
+- HTML (`<!-- -->`)
+- CSS (`/* */`)
+- その他多数の言語
 
-```bash
-repomix src/ --comment-removal
-```
+## 使用例と出力例
 
-または、設定ファイルで以下のように設定します。
+以下のようなJavaScriptコードがある場合
 
-```json
-{
-  "commentRemoval": {
-    "removeSingleLineComments": true,
-    "removeMultiLineComments": true,
-    "removeJSDocComments": false
-  }
+```javascript
+// これは単一行コメントです
+function test() {
+  /* これは
+     複数行コメントです */
+  return true;
 }
 ```
 
-### すべてのコメントを削除する
+コメント削除を有効にすると、出力は以下のようになります。
 
-```bash
-repomix src/ --comment-removal --custom-instructions 'remove all comments'
-```
-
-または、設定ファイルで以下のように設定します。
-
-```json
-{
-  "commentRemoval": {
-    "removeSingleLineComments": true,
-    "removeMultiLineComments": true,
-    "removeJSDocComments": true
-  }
+```javascript
+function test() {
+  return true;
 }
 ```
 
-## まとめ
+## 制限事項
 
-Repomix のコメント削除機能は、コードのクリーンアップに役立ちますが、削除するコメントの種類や影響範囲を十分に理解した上で使用することが重要です。設定ファイルを活用して、プロジェクトのニーズに合わせたコメント削除を行いましょう。
+- コメントの削除は、行番号の追加など、他の処理よりも先に行われます。
+- JSDocコメントなど、一部のコメントは削除されない場合があります。

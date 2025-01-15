@@ -1,98 +1,68 @@
 # リモートリポジトリの処理
 
-Repomix は、ローカルファイルだけでなく、GitHub などのリモートリポジトリにあるファイルも処理できます。この機能を利用することで、チームで共有しているコードベース全体に対して、Repomix の分析や変更を適用できます。このドキュメントでは、リモートリポジトリの指定方法、認証、および処理の注意点について説明します。
+## 基本的な使用方法
 
-## リモートリポジトリの指定
-
-Repomix でリモートリポジトリを処理するには、コマンドラインオプションでリポジトリの URL を指定します。現在、GitHub リポジトリのみがサポートされています。
-
+パブリックリポジトリを処理
 ```bash
-repomix https://github.com/ユーザー名/リポジトリ名
+# 完全なURLを使用
+repomix --remote https://github.com/user/repo
+
+# GitHubのショートハンド形式を使用
+repomix --remote user/repo
 ```
 
-または、ブランチを指定することもできます。
+## ブランチとコミットの選択
 
 ```bash
-repomix https://github.com/ユーザー名/リポジトリ名/tree/ブランチ名
+# 特定のブランチ
+repomix --remote user/repo --remote-branch main
+
+# タグ
+repomix --remote user/repo --remote-branch v1.0.0
+
+# コミットハッシュ
+repomix --remote user/repo --remote-branch 935b695
 ```
 
-特定のディレクトリのみを処理する場合は、リポジトリ URL の後にパスを追加します。
+## 必要条件
+
+- Gitがインストールされていること
+- インターネット接続があること
+- リポジトリへの読み取りアクセス権があること
+
+## 出力の制御
 
 ```bash
-repomix https://github.com/ユーザー名/リポジトリ名/tree/ブランチ名/src
+# 出力先のカスタマイズ
+repomix --remote user/repo -o custom-output.xml
+
+# XML形式で出力
+repomix --remote user/repo --style xml
+
+# コメントを削除
+repomix --remote user/repo --remove-comments
 ```
 
-## 認証
-
-プライベートリポジトリにアクセスする場合、Repomix は認証を必要とします。認証には、以下のいずれかの方法を使用できます。
-
-### GitHub Personal Access Token
-
-GitHub の Personal Access Token を使用して認証する方法です。トークンを作成し、`--github-token` オプションで Repomix に渡します。
+## Docker使用時
 
 ```bash
-repomix https://github.com/ユーザー名/プライベートリポジトリ --github-token YOUR_PERSONAL_ACCESS_TOKEN
+# カレントディレクトリに出力
+docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix \
+  --remote user/repo
+
+# 特定のディレクトリに出力
+docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix \
+  --remote user/repo
 ```
 
-Personal Access Token は、GitHub の設定画面で作成できます。`repo` スコープを付与してください。
+## 一般的な問題
 
-### 環境変数
+### アクセスの問題
+- リポジトリがパブリックであることを確認
+- Gitのインストールを確認
+- インターネット接続を確認
 
-`GITHUB_TOKEN` 環境変数に Personal Access Token を設定することもできます。
-
-```bash
-export GITHUB_TOKEN=YOUR_PERSONAL_ACCESS_TOKEN
-repomix https://github.com/ユーザー名/プライベートリポジトリ
-```
-
-環境変数を設定しておくと、コマンドラインオプションで毎回トークンを指定する必要がなくなります。
-
-## 処理の注意点
-
-- **ネットワーク:** リモートリポジトリの処理には、安定したインターネット接続が必要です。
-- **リポジトリのサイズ:** 大きなリポジトリを処理する場合、処理に時間がかかることがあります。
-- **変更のコミット:** Repomix はリモートリポジトリに直接変更をコミットしません。変更はローカルに適用されるため、必要に応じて自分でコミットしてください。
-- **読み取り専用:** Repomix はリモートリポジトリからファイルをダウンロードして処理しますが、リモートリポジトリの内容を直接変更することはありません。
-
-## リモートリポジトリ処理の例
-
-### パブリックリポジトリの処理
-
-```bash
-repomix https://github.com/facebook/react
-```
-
-このコマンドは、React リポジトリ全体を処理します。
-
-### 特定のブランチを処理
-
-```bash
-repomix https://github.com/vuejs/vue/tree/dev
-```
-
-このコマンドは、Vue.js リポジトリの `dev` ブランチを処理します。
-
-### 特定のディレクトリを処理
-
-```bash
-repomix https://github.com/angular/angular/tree/main/packages/core
-```
-
-このコマンドは、Angular リポジトリの `packages/core` ディレクトリのみを処理します。
-
-### プライベートリポジトリを処理 (トークンを使用)
-
-```bash
-repomix https://github.com/自分のユーザー名/自分のプライベートリポジトリ --github-token ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-### 環境変数を使用したプライベートリポジトリの処理
-
-```bash
-export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-repomix https://github.com/自分のユーザー名/自分のプライベートリポジトリ
-```
-
-## まとめ
-
-Repomix のリモートリポジトリ処理機能を活用することで、大規模なコードベースに対する分析や変更を効率的に行うことができます。認証方法を理解し、ネットワーク環境に注意して利用してください。
+### 大規模リポジトリの処理
+- `--include`で特定のパスを選択
+- `--remove-comments`を有効化
+- ブランチごとに個別に処理

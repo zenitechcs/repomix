@@ -1,75 +1,35 @@
-# Best Practices for AI-Assisted Development: A Modular Approach
+# AI-Assisted Development Best Practices: From My Experience
 
-Although I haven’t successfully completed a large-scale development project using AI, I can share my current perspective as a starting point. The key is to begin with core functionality and gradually expand, while maintaining a modular design.
+While I haven't successfully completed a large-scale project using AI yet, I'd like to share what I've learned so far from my experience working with AI in development.
 
-## 1. **Start Small and Focus on Core Functionality**
+## Basic Development Approach
 
-When working with AI, it’s crucial to start with the core functionality of your project. Trying to tackle too many features or domains at once can lead to unexpected and often incorrect code. AI models, while powerful, can struggle when asked to handle multiple interconnected domains simultaneously.
+When working with AI, attempting to implement all features at once can lead to unexpected issues and project stagnation. That's why it's more effective to start with core functionality and build each feature one at a time, ensuring solid implementation before moving forward.
 
-### Why This Works:
-- **Reduced Complexity**: By focusing on one core feature at a time, you minimize the risk of the AI producing convoluted or incorrect code.
-- **Easier Debugging**: Smaller, focused tasks are easier to debug and refine, both for you and the AI.
-- **Iterative Improvement**: Starting small allows you to iteratively build and improve your project, ensuring each component works as expected before moving on to the next.
+### The Power of Existing Code
 
-## 2. **Adopt a Modular Design**
+This approach is effective because implementing core functionality allows you to materialize your ideal design and coding style through actual code. The most effective way to communicate your project vision is through code that reflects your standards and preferences.
 
-One of the most effective strategies when working with AI is to adopt a **modular design**. Break your project into smaller, self-contained modules that can be developed and tested independently.
+By starting with core features and ensuring each component works properly before moving on, the entire project maintains consistency, making it easier for AI to generate more appropriate code.
 
-### Benefits of Modular Design:
-- **Clear Boundaries**: Each module has a well-defined purpose and interface, making it easier for the AI to generate correct and relevant code.
-- **Reusability**: Modular components can be reused across different parts of the project, reducing redundancy and improving consistency.
-- **Easier Maintenance**: When issues arise, they can be isolated to specific modules, making debugging and updates more manageable.
+## The Modular Approach
 
-### Example:
-Instead of asking the AI to generate an entire web application at once, break it down into modules like:
-- **Authentication Module**
-- **Database Interface Module**
-- **User Interface Components**
+Breaking code into smaller modules is crucial. In my experience, keeping files around 250 lines of code makes it easier to give clear instructions to AI and makes the trial-and-error process more efficient. While token count would be a more accurate metric, line count is more practical for human developers to work with, so we use that as a guideline.
 
-## 3. **Avoid Overlapping Domains**
+This modularization isn't just about separating frontend, backend, and database components - it's about breaking down functionality at a much finer level. For example, within a single feature, you might separate validation, error handling, and other specific functionalities into distinct modules. Of course, high-level separation is also important, and implementing this modular approach gradually helps maintain clear instructions and enables AI to generate more appropriate code. This approach is effective not just for AI but for human developers as well.
 
-In my experience, when you ask generative AI to handle multiple domains simultaneously (e.g., frontend, backend, and database logic), it often produces unexpected or incorrect code. Correcting these issues through dialogue can be extremely challenging.
+## Ensuring Quality Through Testing
 
-### Best Practice:
-- **Separate Concerns**: Clearly separate different domains (e.g., frontend, backend, database) and work on them independently.
-- **Use AI for Specific Tasks**: Instead of asking the AI to handle everything, use it for specific, well-defined tasks within a single domain.
+I consider testing to be crucial in AI-assisted development. Tests serve not only as quality assurance measures but also as documentation that clearly demonstrates code intentions. When asking AI to implement new features, existing test code effectively acts as a specification document.
 
-## 4. **Plan First, Code Later**
+Tests are also an excellent tool for validating the correctness of AI-generated code. For instance, when having AI implement new functionality for a module, writing test cases beforehand allows you to objectively evaluate whether the generated code behaves as expected. This aligns well with Test-Driven Development (TDD) principles and is particularly effective when collaborating with AI.
 
-For slightly larger-scale tasks, it can be effective to first consult with the AI about the overall plan. Have the AI help you compile the specifications and design the architecture before diving into coding.
+## Balancing Planning and Implementation
 
-### Steps:
-1. **Consult with AI**: Discuss the project requirements and goals with the AI to create a high-level plan.
-2. **Generate Specifications**: Use the AI to generate detailed specifications or pseudocode for each module.
-3. **Implement Separately**: Use the specifications to update the project in a separate chat or session. This ensures that the AI focuses on one task at a time.
+Before implementing large-scale features, I recommend first discussing the plan with AI. Organizing requirements and considering architecture leads to smoother implementation. A good practice is to compile requirements first, then move to a separate chat session for implementation work.
 
-### Why This Works:
-- **Clear Direction**: Having a well-defined plan reduces the risk of the AI going off-track.
-- **Better Quality**: The AI produces more accurate and relevant code when it has clear instructions.
-- **Easier Adjustments**: If the output isn’t perfect, it’s easier to make adjustments when you have a clear plan to refer to.
-
-## 5. **Human Oversight is Essential**
-
-While AI can significantly speed up development, the quality of its output is typically moderate and requires human adjustment. However, even with these adjustments, using AI is often faster than writing everything from scratch.
-
-### Best Practices for Human Oversight:
-- **Review AI Output**: Always review the code generated by the AI to ensure it meets your standards and requirements.
-- **Refine and Optimize**: Use your expertise to refine and optimize the AI-generated code.
-- **Iterate**: Work in iterations, continuously improving the codebase with each cycle.
-
-## 6. **Leverage AI for Repetitive Tasks**
-
-AI excels at handling repetitive or boilerplate tasks, such as:
-- Generating CRUD (Create, Read, Update, Delete) operations.
-- Writing unit tests.
-- Creating documentation.
-
-By offloading these tasks to the AI, you can focus on more complex and creative aspects of your project.
+It's essential to have human review of AI output and make adjustments as needed. While the quality of AI-generated code is generally moderate, it still accelerates development compared to writing everything from scratch.
 
 ## Conclusion
 
-AI-assisted development can be a powerful tool, but it requires a thoughtful and structured approach. By starting small, adopting a modular design, and planning ahead, you can maximize the effectiveness of AI while minimizing the risk of errors. Remember, human oversight is essential to ensure the final output meets your standards.
-
-While AI can’t replace human developers, it can significantly accelerate the development process, allowing you to focus on higher-level tasks and creative problem-solving. With these best practices in mind, you’ll be well-equipped to tackle your next project with AI as your assistant.
-
-Happy coding! 🚀
+By following these practices, you can leverage AI's strengths while building a consistent, high-quality codebase. Even as your project grows in size, each component remains well-defined and manageable.
