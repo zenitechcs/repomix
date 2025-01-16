@@ -190,25 +190,3 @@ Create a `repomix.config.json` for persistent settings:
 :::
 
 </div>
-
-<style>
-.hero-description__accent {
-  color: var(--vp-c-brand-1);
-}
-.cli-section {
-  padding-top: 64px;
-  margin-bottom: 32px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.cli-section h2 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(120deg, #f97316 30%, #ffb25c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-</style>

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress';
 
-export const configEn = defineConfig({
+export const configEnUs = defineConfig({
   lang: 'en-US',
   description: 'Pack your codebase into AI-friendly formats',
   themeConfig: {
