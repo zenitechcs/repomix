@@ -1,13 +1,13 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { XMLBuilder } from 'fast-xml-parser';
+import {XMLBuilder} from 'fast-xml-parser';
 import Handlebars from 'handlebars';
-import type { RepomixConfigMerged } from '../../config/configSchema.js';
-import { RepomixError } from '../../shared/errorHandle.js';
-import { searchFiles } from '../file/fileSearch.js';
-import { generateTreeString } from '../file/fileTreeGenerate.js';
-import type { ProcessedFile } from '../file/fileTypes.js';
-import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type {RepomixConfigMerged} from '../../config/configSchema.js';
+import {RepomixError} from '../../shared/errorHandle.js';
+import {searchFiles} from '../file/fileSearch.js';
+import {generateTreeString} from '../file/fileTreeGenerate.js';
+import type {ProcessedFile} from '../file/fileTypes.js';
+import type {OutputGeneratorContext} from './outputGeneratorTypes.js';
 import {
   generateHeader,
   generateSummaryFileFormat,
@@ -15,9 +15,9 @@ import {
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
 } from './outputStyleDecorate.js';
-import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
-import { getPlainTemplate } from './outputStyles/plainStyle.js';
-import { getXmlTemplate } from './outputStyles/xmlStyle.js';
+import {getMarkdownTemplate} from './outputStyles/markdownStyle.js';
+import {getPlainTemplate} from './outputStyles/plainStyle.js';
+import {getXmlTemplate} from './outputStyles/xmlStyle.js';
 
 interface RenderContext {
   readonly generationHeader: string;
@@ -34,6 +34,14 @@ interface RenderContext {
   readonly escapeFileContent: boolean;
   readonly markdownCodeBlockDelimiter: string;
 }
+
+const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string => {
+  const maxBackticks = files
+    .flatMap(file => file.content.match(/`*/g) ?? [])
+    .reduce((max, match) => Math.max(max, match.length), 0);
+  return '`'.repeat(Math.max(3, maxBackticks + 1));
+};
+
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
   return {
@@ -52,43 +60,29 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
     directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
     escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
-    markdownCodeBlockDelimiter: '`'.repeat(
-      Math.max(
-        3,
-        1 +
-          outputGeneratorContext.processedFiles
-            .map(
-              (file) =>
-                file.content
-                  .match(/`*/g)
-                  ?.map((s) => s.length)
-                  .reduce((acc, l) => (l > acc ? l : acc), 0) ?? 0,
-            )
-            .reduce((acc, l) => (l > acc ? l : acc), 0),
-      ),
-    ),
+    markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
   };
 };
 
 const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<string> => {
-  const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
+  const xmlBuilder = new XMLBuilder({ignoreAttributes: false});
   const xmlDocument = {
     repomix: {
       '#text': renderContext.generationHeader,
       file_summary: renderContext.fileSummaryEnabled
         ? {
-            '#text': 'This section contains a summary of this file.',
-            purpose: renderContext.summaryPurpose,
-            file_format: `${renderContext.summaryFileFormat}
+          '#text': 'This section contains a summary of this file.',
+          purpose: renderContext.summaryPurpose,
+          file_format: `${renderContext.summaryFileFormat}
 4. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file`,
-            usage_guidelines: renderContext.summaryUsageGuidelines,
-            notes: renderContext.summaryNotes,
-            additional_info: {
-              user_provided_header: renderContext.headerText,
-            },
-          }
+          usage_guidelines: renderContext.summaryUsageGuidelines,
+          notes: renderContext.summaryNotes,
+          additional_info: {
+            user_provided_header: renderContext.headerText,
+          },
+        }
         : undefined,
       directory_structure: renderContext.directoryStructureEnabled ? renderContext.treeString : undefined,
       files: {
@@ -101,7 +95,11 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
     },
   };
-  return xmlBuilder.build(xmlDocument);
+  try {
+    return xmlBuilder.build(xmlDocument);
+  } catch (error) {
+    throw new RepomixError(`Failed to generate XML output: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContext: RenderContext): Promise<string> => {
