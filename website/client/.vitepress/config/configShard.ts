@@ -58,6 +58,22 @@ export const configShard = defineConfig({
                 }
               }
             }
+          },
+          'zh-cn': {
+            translations: {
+              button: {
+                buttonText: '搜索',
+                buttonAriaLabel: '搜索'
+              },
+              modal: {
+                noResultsText: '未找到结果',
+                resetButtonTitle: '重置搜索',
+                footer: {
+                  selectText: '选择',
+                  navigateText: '导航'
+                }
+              }
+            }
           }
         }
       }
@@ -71,7 +87,7 @@ export const configShard = defineConfig({
       copyright: 'Copyright © 2024 Kazuki Yamada',
     },
     // Language selection
-    langMenuLabel: '言語',
+    langMenuLabel: 'Languages',
   },
 
   head: [
@@ -80,7 +96,6 @@ export const configShard = defineConfig({
 
     // OGP
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Repomix' }],
     ['meta', { property: 'og:site_name', content: 'Repomix' }],
     ['meta', { property: 'og:image', content: 'https://repomix.com/images/og-image-large.png' }],
