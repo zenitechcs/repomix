@@ -31,52 +31,52 @@ export const configShard = defineConfig({
             translations: {
               button: {
                 buttonText: 'Search',
-                buttonAriaLabel: 'Search'
+                buttonAriaLabel: 'Search',
               },
               modal: {
                 noResultsText: 'No results',
                 resetButtonTitle: 'Reset search',
                 footer: {
                   selectText: 'to select',
-                  navigateText: 'to navigate'
-                }
-              }
-            }
+                  navigateText: 'to navigate',
+                },
+              },
+            },
           },
           ja: {
             translations: {
               button: {
                 buttonText: '検索',
-                buttonAriaLabel: '検索'
+                buttonAriaLabel: '検索',
               },
               modal: {
                 noResultsText: '検索結果がありません',
                 resetButtonTitle: '検索をリセット',
                 footer: {
                   selectText: '選択',
-                  navigateText: '移動'
-                }
-              }
-            }
+                  navigateText: '移動',
+                },
+              },
+            },
           },
           'zh-cn': {
             translations: {
               button: {
                 buttonText: '搜索',
-                buttonAriaLabel: '搜索'
+                buttonAriaLabel: '搜索',
               },
               modal: {
                 noResultsText: '未找到结果',
                 resetButtonTitle: '重置搜索',
                 footer: {
                   selectText: '选择',
-                  navigateText: '导航'
-                }
-              }
-            }
-          }
-        }
-      }
+                  navigateText: '导航',
+                },
+              },
+            },
+          },
+        },
+      },
     },
     socialLinks: [
       { icon: 'discord', link: 'https://discord.gg/wNYzTwZFku' },

@@ -1,11 +1,11 @@
 import { defineConfig } from 'vitepress';
-import { configShard } from './config/configShard';
 import { configEnUs } from './config/configEnUs';
-import { configJa } from './config/configJa';
-import { configZhCn } from './config/configZhCn';
-import { configKo } from './config/configKo';
 import { configEs } from './config/configEs';
+import { configJa } from './config/configJa';
+import { configKo } from './config/configKo';
 import { configPtBr } from './config/configPtBr';
+import { configShard } from './config/configShard';
+import { configZhCn } from './config/configZhCn';
 
 export default defineConfig({
   ...configShard,

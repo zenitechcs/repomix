@@ -6,9 +6,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    ".vitepress/config.ts",
-    ".vitepress/config/**/*",
-    ".vitepress/theme/**/*",
-  ]
+  "include": [".vitepress/config.ts", ".vitepress/config/**/*", ".vitepress/theme/**/*"]
 }

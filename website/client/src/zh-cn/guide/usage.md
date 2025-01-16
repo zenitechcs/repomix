@@ -84,4 +84,4 @@ repomix --no-security-check
 repomix --init
 ```
 
-更多详细配置选项请参阅[配置指南](/zh-CN/guide/configuration)。
+更多详细配置选项请参阅[配置指南](/zh-cn/guide/configuration)。
