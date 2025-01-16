@@ -5,6 +5,7 @@ import { configJa } from './config/configJa';
 import { configZhCn } from './config/configZhCn';
 import { configKo } from './config/configKo';
 import { configEs } from './config/configEs';
+import { configPtBr } from './config/configPtBr';
 
 export default defineConfig({
   ...configShard,
@@ -13,6 +14,7 @@ export default defineConfig({
     'zh-cn': { label: '简体中文', ...configZhCn },
     ja: { label: '日本語', ...configJa },
     es: { label: 'Español', ...configEs },
+    'pt-br': { label: 'Português', ...configPtBr },
     ko: { label: '한국어', ...configKo },
   },
 });
