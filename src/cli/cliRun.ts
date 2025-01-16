@@ -21,6 +21,7 @@ export interface CliOptions extends OptionValues {
   topFilesLen?: number;
   outputShowLineNumbers?: boolean;
   style?: RepomixOutputStyle;
+  parsableStyle?: boolean;
   init?: boolean;
   global?: boolean;
   remote?: string;
@@ -47,6 +48,7 @@ export const run = async () => {
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
+      .option('--parsableStyle', 'by escaping and formatting, ensure the output is parsable as a document of its type')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')

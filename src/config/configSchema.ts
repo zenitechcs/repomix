@@ -18,6 +18,7 @@ export const repomixConfigBaseSchema = z.object({
     .object({
       filePath: z.string().optional(),
       style: repomixOutputStyleSchema.optional(),
+      parsableStyle: z.boolean().optional(),
       headerText: z.string().optional(),
       instructionFilePath: z.string().optional(),
       fileSummary: z.boolean().optional(),

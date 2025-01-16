@@ -158,6 +158,32 @@ describe('cliRun', () => {
     });
   });
 
+  describe('parsable style flag', () => {
+    test('should disable parsable style by default', async () => {
+      await executeAction('.', process.cwd(), {});
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.not.objectContaining({
+          parsableStyle: false,
+        }),
+      );
+    });
+
+    test('should handle --parsable-style flag', async () => {
+      await executeAction('.', process.cwd(), { parsableStyle: true });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          parsableStyle: true,
+        }),
+      );
+    });
+  });
+
   describe('security check flag', () => {
     test('should enable security check by default', async () => {
       await executeAction('.', process.cwd(), {});
