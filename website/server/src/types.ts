@@ -6,6 +6,7 @@ export interface PackOptions {
   directoryStructure?: boolean;
   includePatterns?: string;
   ignorePatterns?: string;
+  outputParsable?: boolean;
 }
 
 interface TopFile {

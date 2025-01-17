@@ -7,6 +7,7 @@ import { RequestCache, generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
 import { RateLimiter } from './utils/rateLimit.js';
 import { sanitizePattern, validateRequest } from './utils/validation.js';
+import type {DefaultActionRunnerResult} from "../../../src/cli/actions/defaultAction.js";
 
 // Create instances of cache and rate limiter
 const cache = new RequestCache<PackResult>(180); // 3 minutes cache
@@ -50,6 +51,7 @@ export async function processRemoteRepo(
   const cliOptions = {
     output: outputFilePath,
     style: validatedData.format,
+    parsableStyle: validatedData.options.outputParsable,
     removeComments: validatedData.options.removeComments,
     removeEmptyLines: validatedData.options.removeEmptyLines,
     outputShowLineNumbers: validatedData.options.showLineNumbers,
@@ -63,7 +65,7 @@ export async function processRemoteRepo(
 
   try {
     // Execute remote action
-    const result = await runRemoteAction(repoUrl, cliOptions);
+    const result: DefaultActionRunnerResult = await runRemoteAction(repoUrl, cliOptions);
     const { packResult } = result;
 
     // Read the generated file
