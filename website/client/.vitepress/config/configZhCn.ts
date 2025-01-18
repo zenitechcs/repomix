@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress';
+import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configZhCn = defineConfig({
   lang: 'zh-cn',
@@ -41,3 +41,25 @@ export const configZhCn = defineConfig({
     },
   },
 });
+
+export const configZhCnSearch: DefaultTheme.LocalSearchOptions['locales'] = {
+  'zh-cn': {
+    translations: {
+      button: {
+        buttonText: '搜索',
+        buttonAriaLabel: '搜索',
+      },
+      modal: {
+        noResultsText: '无结果',
+        resetButtonTitle: '重置搜索',
+        backButtonTitle: '返回',
+        displayDetails: '显示详情',
+        footer: {
+          selectText: '选择',
+          navigateText: '导航',
+          closeText: '关闭',
+        },
+      },
+    },
+  },
+};

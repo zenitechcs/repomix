@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitepress';
+import { configEsSearch } from './configEs';
+import { configJaSearch } from './configJa';
+import { configKoSearch } from './configKo';
+import { configPtBrSearch } from './configPtBr';
+import { configZhCnSearch } from './configZhCn';
 
 const googleAnalyticsTag = 'G-7PTT4PLC69';
 
@@ -27,54 +32,11 @@ export const configShard = defineConfig({
       provider: 'local',
       options: {
         locales: {
-          root: {
-            translations: {
-              button: {
-                buttonText: 'Search',
-                buttonAriaLabel: 'Search',
-              },
-              modal: {
-                noResultsText: 'No results',
-                resetButtonTitle: 'Reset search',
-                footer: {
-                  selectText: 'to select',
-                  navigateText: 'to navigate',
-                },
-              },
-            },
-          },
-          ja: {
-            translations: {
-              button: {
-                buttonText: '検索',
-                buttonAriaLabel: '検索',
-              },
-              modal: {
-                noResultsText: '検索結果がありません',
-                resetButtonTitle: '検索をリセット',
-                footer: {
-                  selectText: '選択',
-                  navigateText: '移動',
-                },
-              },
-            },
-          },
-          'zh-cn': {
-            translations: {
-              button: {
-                buttonText: '搜索',
-                buttonAriaLabel: '搜索',
-              },
-              modal: {
-                noResultsText: '未找到结果',
-                resetButtonTitle: '重置搜索',
-                footer: {
-                  selectText: '选择',
-                  navigateText: '导航',
-                },
-              },
-            },
-          },
+          ...configJaSearch,
+          ...configZhCnSearch,
+          ...configKoSearch,
+          ...configPtBrSearch,
+          ...configEsSearch,
         },
       },
     },
