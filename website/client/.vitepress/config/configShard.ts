@@ -17,7 +17,7 @@ export const configShard = defineConfig({
   metaChunk: true,
 
   sitemap: {
-    hostname: 'http://repomix.com/',
+    hostname: 'https://repomix.com/',
   },
 
   // Shared configuration
