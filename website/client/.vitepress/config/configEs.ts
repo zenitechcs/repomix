@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress';
+import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configEs = defineConfig({
   lang: 'es',
@@ -42,3 +42,25 @@ export const configEs = defineConfig({
     },
   },
 });
+
+export const configEsSearch: DefaultTheme.LocalSearchOptions['locales'] = {
+  es: {
+    translations: {
+      button: {
+        buttonText: 'Buscar',
+        buttonAriaLabel: 'Buscar',
+      },
+      modal: {
+        noResultsText: 'Sin resultados',
+        resetButtonTitle: 'Restablecer búsqueda',
+        backButtonTitle: 'Volver',
+        displayDetails: 'Mostrar detalles',
+        footer: {
+          selectText: 'Seleccionar',
+          navigateText: 'Navegar',
+          closeText: 'Cerrar',
+        },
+      },
+    },
+  },
+};

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress';
+import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configJa = defineConfig({
   lang: 'ja',
@@ -41,3 +41,25 @@ export const configJa = defineConfig({
     },
   },
 });
+
+export const configJaSearch: DefaultTheme.LocalSearchOptions['locales'] = {
+  ja: {
+    translations: {
+      button: {
+        buttonText: '検索',
+        buttonAriaLabel: '検索',
+      },
+      modal: {
+        noResultsText: '検索結果がありません',
+        resetButtonTitle: '検索をリセット',
+        backButtonTitle: '前に戻る',
+        displayDetails: '詳細を表示',
+        footer: {
+          selectText: '選択',
+          navigateText: '移動',
+          closeText: '閉じる',
+        },
+      },
+    },
+  },
+};

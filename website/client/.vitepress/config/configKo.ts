@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress';
+import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configKo = defineConfig({
   lang: 'ko-KR',
@@ -41,3 +41,25 @@ export const configKo = defineConfig({
     },
   },
 });
+
+export const configKoSearch: DefaultTheme.LocalSearchOptions['locales'] = {
+  ko: {
+    translations: {
+      button: {
+        buttonText: '검색',
+        buttonAriaLabel: '검색',
+      },
+      modal: {
+        noResultsText: '결과 없음',
+        resetButtonTitle: '검색 재설정',
+        backButtonTitle: '뒤로',
+        displayDetails: '세부 정보 표시',
+        footer: {
+          selectText: '선택',
+          navigateText: '이동',
+          closeText: '닫기',
+        },
+      },
+    },
+  },
+};
