@@ -37,7 +37,7 @@ interface RenderContext {
 
 const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string => {
   const maxBackticks = files
-    .flatMap((file) => file.content.match(/`*/g) ?? [])
+    .flatMap((file) => file.content.match(/`+/g) ?? [])
     .reduce((max, match) => Math.max(max, match.length), 0);
   return '`'.repeat(Math.max(3, maxBackticks + 1));
 };
@@ -112,12 +112,19 @@ const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContex
     case 'markdown':
       template = getMarkdownTemplate();
       break;
-    default:
+    case 'plain':
       template = getPlainTemplate();
+      break;
+    default:
+      throw new RepomixError(`Unknown output style: ${config.output.style}`);
   }
 
-  const compiledTemplate = Handlebars.compile(template);
-  return `${compiledTemplate(renderContext).trim()}\n`;
+  try {
+    const compiledTemplate = Handlebars.compile(template);
+    return `${compiledTemplate(renderContext).trim()}\n`;
+  } catch (error) {
+    throw new RepomixError(`Failed to compile template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 export const generateOutput = async (
