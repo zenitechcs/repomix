@@ -18,7 +18,7 @@ npm install -g repomix
 yarn global add repomix
 ```
 
-### Homebrew 安装（macOS）
+### Homebrew 安装（macOS/Linux）
 ```bash
 brew install repomix
 ```
