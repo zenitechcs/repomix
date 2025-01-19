@@ -23,6 +23,7 @@ export const packOptionsSchema = z
       .max(1000, 'Ignore patterns too long')
       .optional()
       .transform((val) => val?.trim()),
+    outputParsable: z.boolean().optional(),
   })
   .strict();
 

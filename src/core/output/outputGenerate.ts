@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { XMLBuilder } from 'fast-xml-parser';
 import Handlebars from 'handlebars';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
@@ -18,7 +19,30 @@ import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
 
-const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => {
+interface RenderContext {
+  readonly generationHeader: string;
+  readonly summaryPurpose: string;
+  readonly summaryFileFormat: string;
+  readonly summaryUsageGuidelines: string;
+  readonly summaryNotes: string;
+  readonly headerText: string | undefined;
+  readonly instruction: string;
+  readonly treeString: string;
+  readonly processedFiles: ReadonlyArray<ProcessedFile>;
+  readonly fileSummaryEnabled: boolean;
+  readonly directoryStructureEnabled: boolean;
+  readonly escapeFileContent: boolean;
+  readonly markdownCodeBlockDelimiter: string;
+}
+
+const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string => {
+  const maxBackticks = files
+    .flatMap((file) => file.content.match(/`+/g) ?? [])
+    .reduce((max, match) => Math.max(max, match.length), 0);
+  return '`'.repeat(Math.max(3, maxBackticks + 1));
+};
+
+const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
   return {
     generationHeader: generateHeader(outputGeneratorContext.generationDate),
     summaryPurpose: generateSummaryPurpose(),
@@ -34,7 +58,73 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext) => 
     processedFiles: outputGeneratorContext.processedFiles,
     fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
     directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
+    escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
+    markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
   };
+};
+
+const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<string> => {
+  const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
+  const xmlDocument = {
+    repomix: {
+      '#text': renderContext.generationHeader,
+      file_summary: renderContext.fileSummaryEnabled
+        ? {
+            '#text': 'This section contains a summary of this file.',
+            purpose: renderContext.summaryPurpose,
+            file_format: `${renderContext.summaryFileFormat}
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file`,
+            usage_guidelines: renderContext.summaryUsageGuidelines,
+            notes: renderContext.summaryNotes,
+            additional_info: {
+              user_provided_header: renderContext.headerText,
+            },
+          }
+        : undefined,
+      directory_structure: renderContext.directoryStructureEnabled ? renderContext.treeString : undefined,
+      files: {
+        '#text': "This section contains the contents of the repository's files.",
+        file: renderContext.processedFiles.map((file) => ({
+          '#text': file.content,
+          '@_path': file.path,
+        })),
+      },
+      instruction: renderContext.instruction ? renderContext.instruction : undefined,
+    },
+  };
+  try {
+    return xmlBuilder.build(xmlDocument);
+  } catch (error) {
+    throw new RepomixError(
+      `Failed to generate XML output: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
+};
+
+const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContext: RenderContext): Promise<string> => {
+  let template: string;
+  switch (config.output.style) {
+    case 'xml':
+      template = getXmlTemplate();
+      break;
+    case 'markdown':
+      template = getMarkdownTemplate();
+      break;
+    case 'plain':
+      template = getPlainTemplate();
+      break;
+    default:
+      throw new RepomixError(`Unknown output style: ${config.output.style}`);
+  }
+
+  try {
+    const compiledTemplate = Handlebars.compile(template);
+    return `${compiledTemplate(renderContext).trim()}\n`;
+  } catch (error) {
+    throw new RepomixError(`Failed to compile template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 export const generateOutput = async (
@@ -46,20 +136,15 @@ export const generateOutput = async (
   const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
   const renderContext = createRenderContext(outputGeneratorContext);
 
-  let template: string;
+  if (!config.output.parsableStyle) return generateHandlebarOutput(config, renderContext);
   switch (config.output.style) {
     case 'xml':
-      template = getXmlTemplate();
-      break;
+      return generateParsableXmlOutput(renderContext);
     case 'markdown':
-      template = getMarkdownTemplate();
-      break;
+      return generateHandlebarOutput(config, renderContext);
     default:
-      template = getPlainTemplate();
+      return generateHandlebarOutput(config, renderContext);
   }
-
-  const compiledTemplate = Handlebars.compile(template);
-  return `${compiledTemplate(renderContext).trim()}\n`;
 };
 
 export const buildOutputGeneratorContext = async (

@@ -21,6 +21,7 @@ describe('defaultAction', () => {
       output: {
         filePath: 'output.txt',
         style: 'plain',
+        parsableStyle: false,
         fileSummary: true,
         directoryStructure: true,
         topFilesLength: 5,
@@ -127,6 +128,44 @@ describe('defaultAction', () => {
     const options: CliOptions = {};
 
     await expect(runDefaultAction('.', process.cwd(), options)).rejects.toThrow('Test error');
+  });
+
+  describe('parsableStyle flag', () => {
+    it('should handle --parsable-style flag', async () => {
+      const options: CliOptions = {
+        parsableStyle: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            parsableStyle: true,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --no-parsable-style flag', async () => {
+      const options: CliOptions = {
+        parsableStyle: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            parsableStyle: false,
+          },
+        }),
+      );
+    });
   });
 
   describe('security check flag', () => {

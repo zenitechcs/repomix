@@ -50,6 +50,7 @@ export async function processRemoteRepo(
   const cliOptions = {
     output: outputFilePath,
     style: validatedData.format,
+    parsableStyle: validatedData.options.outputParsable,
     removeComments: validatedData.options.removeComments,
     removeEmptyLines: validatedData.options.removeEmptyLines,
     outputShowLineNumbers: validatedData.options.showLineNumbers,

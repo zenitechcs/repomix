@@ -47,6 +47,7 @@ describe('cliRun', () => {
         output: {
           filePath: 'repomix-output.txt',
           style: 'plain',
+          parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
           topFilesLength: 5,
@@ -84,6 +85,7 @@ describe('cliRun', () => {
         output: {
           filePath: 'repomix-output.txt',
           style: 'plain',
+          parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
           topFilesLength: 5,
@@ -153,6 +155,32 @@ describe('cliRun', () => {
 
       expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('yamadashy/repomix', expect.any(Object));
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('parsable style flag', () => {
+    test('should disable parsable style by default', async () => {
+      await executeAction('.', process.cwd(), {});
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.not.objectContaining({
+          parsableStyle: false,
+        }),
+      );
+    });
+
+    test('should handle --parsable-style flag', async () => {
+      await executeAction('.', process.cwd(), { parsableStyle: true });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          parsableStyle: true,
+        }),
+      );
     });
   });
 
