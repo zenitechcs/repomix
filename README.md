@@ -398,6 +398,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `-c, --config <path>`: Path to a custom config file
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
+- `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
 - `--no-file-summary`: Disable file summary section output
 - `--no-directory-structure`: Disable directory structure section output
 - `--remove-comments`: Remove comments from supported file types
