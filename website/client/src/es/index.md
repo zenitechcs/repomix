@@ -68,7 +68,7 @@ npm install -g repomix
 # Alternativamente usando yarn
 yarn global add repomix
 
-# Alternativamente usando Homebrew (macOS)
+# Alternativamente usando Homebrew (macOS/Linux)
 brew install repomix
 
 # Luego ejecutar en cualquier directorio de proyecto

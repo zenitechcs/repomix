@@ -70,7 +70,7 @@ npm install -g repomix
 # または、yarnを使用
 yarn global add repomix
 
-# または、Homebrewを使用（macOS）
+# または、Homebrewを使用（macOS/Linux）
 brew install repomix
 
 # その後、任意のプロジェクトディレクトリで実行
