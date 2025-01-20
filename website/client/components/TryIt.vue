@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AlertTriangle } from 'lucide-vue-next';
+import { HelpCircle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ResultViewer from './ResultViewer.vue';
 import { isValidRemoteValue, packRepository } from './api/client';
@@ -16,6 +17,7 @@ const fileSummary = ref(true);
 const directoryStructure = ref(true);
 const includePatterns = ref('');
 const ignorePatterns = ref('');
+const outputParsable = ref(false);
 
 // Processing states
 const loading = ref(false);
@@ -70,6 +72,7 @@ async function handleSubmit() {
         directoryStructure: directoryStructure.value,
         includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
         ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
+        outputParsable: outputParsable.value,
       },
       signal: currentRequest.signal,
     });
@@ -130,6 +133,11 @@ function handleRemoveEmptyLinesToggle(enabled: boolean) {
 function handleShowLineNumbersToggle(enabled: boolean) {
   showLineNumbers.value = enabled;
   analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_LINE_NUMBERS, enabled);
+}
+
+function handleOutputParsableToggle(enabled: boolean) {
+  outputParsable.value = enabled;
+  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_OUTPUT_PARSABLE, enabled);
 }
 
 function handleFileSummaryToggle(enabled: boolean) {
@@ -275,48 +283,70 @@ function handleKeydown(event: KeyboardEvent) {
             <div class="checkbox-group">
               <label class="checkbox-label">
                 <input
-                    v-model="fileSummary"
-                    @change="handleFileSummaryToggle($event.target.checked)"
-                    type="checkbox"
-                    class="checkbox-input"
+                  v-model="fileSummary"
+                  @change="handleFileSummaryToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
                 />
                 <span>Include File Summary</span>
               </label>
               <label class="checkbox-label">
                 <input
-                    v-model="directoryStructure"
-                    @change="handleDirectoryStructureToggle($event.target.checked)"
-                    type="checkbox"
-                    class="checkbox-input"
+                  v-model="directoryStructure"
+                  @change="handleDirectoryStructureToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
                 />
                 <span>Include Directory Structure</span>
               </label>
               <label class="checkbox-label">
                 <input
-                    v-model="removeComments"
-                    @change="handleRemoveCommentsToggle($event.target.checked)"
-                    type="checkbox"
-                    class="checkbox-input"
+                  v-model="removeComments"
+                  @change="handleRemoveCommentsToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
                 />
                 <span>Remove Comments</span>
               </label>
               <label class="checkbox-label">
                 <input
-                    v-model="removeEmptyLines"
-                    @change="handleRemoveEmptyLinesToggle($event.target.checked)"
-                    type="checkbox"
-                    class="checkbox-input"
+                  v-model="removeEmptyLines"
+                  @change="handleRemoveEmptyLinesToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
                 />
                 <span>Remove Empty Lines</span>
               </label>
               <label class="checkbox-label">
                 <input
-                    v-model="showLineNumbers"
-                    @change="handleShowLineNumbersToggle($event.target.checked)"
-                    type="checkbox"
-                    class="checkbox-input"
+                  v-model="showLineNumbers"
+                  @change="handleShowLineNumbersToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
                 />
                 <span>Show Line Numbers</span>
+              </label>
+              <label class="checkbox-label">
+                <input
+                  v-model="outputParsable"
+                  @change="handleOutputParsableToggle($event.target.checked)"
+                  type="checkbox"
+                  class="checkbox-input"
+                />
+                <div class="parsable-option">
+                  <span>Output Parsable Format</span>
+                  <div class="tooltip-container">
+                    <HelpCircle
+                      :size="16"
+                      class="help-icon"
+                      aria-label="More information about parsable format"
+                    />
+                    <div class="tooltip-content">
+                      Whether to escape the output based on the chosen style schema. Note that this can increase token count.
+                      <div class="tooltip-arrow"></div>
+                    </div>
+                  </div>
+                </div>
               </label>
             </div>
           </div>
@@ -512,6 +542,61 @@ function handleKeydown(event: KeyboardEvent) {
   width: 16px;
   height: 16px;
   accent-color: var(--vp-c-brand-1);
+}
+
+.parsable-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.help-icon {
+  color: #666;
+  cursor: help;
+  transition: color 0.2s;
+}
+
+.help-icon:hover {
+  color: #333;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #333;
+  color: white;
+  font-size: 0.875rem;
+  width: 250px;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 10;
+  text-align: left;
+}
+
+.tooltip-container:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
 }
 
 @media (max-width: 640px) {
