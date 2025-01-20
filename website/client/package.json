@@ -7,10 +7,10 @@
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
-    "vitepress": "^1.5.0"
+    "vitepress": "^1.6.0"
   },
   "dependencies": {
     "@types/gtag.js": "^0.0.20",
-    "lucide-vue-next": "^0.471.0"
+    "lucide-vue-next": "^0.473.0"
   }
 }
