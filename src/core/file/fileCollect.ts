@@ -10,7 +10,7 @@ import type { RawFile } from './fileTypes.js';
 
 // Maximum file size to process (50MB)
 // This prevents out-of-memory errors when processing very large files
-const MAX_FILE_SIZE = 50 * 1024 * 1024;
+export const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 export const collectFiles = async (filePaths: string[], rootDir: string): Promise<RawFile[]> => {
   const rawFiles = await pMap(

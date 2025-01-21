@@ -5,7 +5,7 @@ import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { collectFiles } from '../../../src/core/file/fileCollect.js';
+import { MAX_FILE_SIZE, collectFiles } from '../../../src/core/file/fileCollect.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -66,11 +66,12 @@ describe('fileCollect', () => {
   it('should skip large files', async () => {
     const mockFilePaths = ['large.txt', 'normal.txt'];
     const mockRootDir = '/root';
+    const largePath = path.resolve('/root/large.txt');
 
     vi.mocked(fs.stat)
       .mockResolvedValueOnce({
         // for large.txt
-        size: 60 * 1024 * 1024,
+        size: MAX_FILE_SIZE + 1024, // Slightly over limit
         isFile: () => true,
       } as Stats)
       .mockResolvedValueOnce({
@@ -86,7 +87,15 @@ describe('fileCollect', () => {
     const result = await collectFiles(mockFilePaths, mockRootDir);
 
     expect(result).toEqual([{ path: 'normal.txt', content: 'decoded content' }]);
+
     expect(logger.log).toHaveBeenCalledWith('⚠️ Large File Warning:');
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(`File exceeds size limit:`));
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(largePath));
+    expect(logger.note).toHaveBeenCalledWith('Add this file to .repomixignore if you want to exclude it permanently');
+
+    // Verify fs.readFile is not called for the large file
+    expect(fs.readFile).not.toHaveBeenCalledWith(largePath);
+    expect(fs.readFile).toHaveBeenCalledTimes(1);
   });
 
   it('should handle file read errors', async () => {
