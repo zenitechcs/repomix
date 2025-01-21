@@ -1,3 +1,4 @@
+import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import iconv from 'iconv-lite';
@@ -16,6 +17,12 @@ vi.mock('../../../src/shared/logger');
 describe('fileCollect', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    
+    // Setup basic file size mock to fix stat
+    vi.mocked(fs.stat).mockResolvedValue({
+      size: 1024,
+      isFile: () => true,
+    } as Stats);
   });
 
   afterEach(() => {
@@ -43,7 +50,9 @@ describe('fileCollect', () => {
     const mockFilePaths = ['binary.bin', 'text.txt'];
     const mockRootDir = '/root';
 
-    vi.mocked(isBinary).mockReturnValueOnce(true).mockReturnValueOnce(false);
+    vi.mocked(isBinary)
+      .mockReturnValueOnce(true)  // for binary.bin
+      .mockReturnValueOnce(false); // for text.txt
     vi.mocked(fs.readFile).mockResolvedValue(Buffer.from('file content'));
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
     vi.mocked(iconv.decode).mockReturnValue('decoded content');
@@ -52,6 +61,30 @@ describe('fileCollect', () => {
 
     expect(result).toEqual([{ path: 'text.txt', content: 'decoded content' }]);
     expect(logger.debug).toHaveBeenCalledWith(`Skipping binary file: ${path.resolve('/root/binary.bin')}`);
+  });
+
+  it('should skip large files', async () => {
+    const mockFilePaths = ['large.txt', 'normal.txt'];
+    const mockRootDir = '/root';
+
+    vi.mocked(fs.stat)
+      .mockResolvedValueOnce({  // for large.txt
+        size: 60 * 1024 * 1024,
+        isFile: () => true,
+      } as Stats)
+      .mockResolvedValueOnce({  // for normal.txt
+        size: 1024,
+        isFile: () => true,
+      } as Stats);
+    vi.mocked(isBinary).mockReturnValue(false);
+    vi.mocked(fs.readFile).mockResolvedValue(Buffer.from('file content'));
+    vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
+    vi.mocked(iconv.decode).mockReturnValue('decoded content');
+
+    const result = await collectFiles(mockFilePaths, mockRootDir);
+
+    expect(result).toEqual([{ path: 'normal.txt', content: 'decoded content' }]);
+    expect(logger.log).toHaveBeenCalledWith('⚠️ Large File Warning:');
   });
 
   it('should handle file read errors', async () => {
