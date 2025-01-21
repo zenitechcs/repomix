@@ -87,9 +87,9 @@ describe('fileCollect', () => {
     const result = await collectFiles(mockFilePaths, mockRootDir);
 
     expect(result).toEqual([{ path: 'normal.txt', content: 'decoded content' }]);
-
     expect(logger.log).toHaveBeenCalledWith('⚠️ Large File Warning:');
-    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(`File exceeds size limit:`));
+    expect(logger.log).toHaveBeenCalledWith('────────────────────────────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('File exceeds size limit:'));
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(largePath));
     expect(logger.note).toHaveBeenCalledWith('Add this file to .repomixignore if you want to exclude it permanently');
 
