@@ -34,7 +34,7 @@ export const collectFiles = async (filePaths: string[], rootDir: string): Promis
 const readRawFile = async (filePath: string): Promise<string | null> => {
   try {
     const stats = await fs.stat(filePath);
-    
+
     if (stats.size > MAX_FILE_SIZE) {
       const sizeMB = (stats.size / 1024 / 1024).toFixed(1);
       logger.log('⚠️ Large File Warning:');
