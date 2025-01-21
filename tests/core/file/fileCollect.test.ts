@@ -17,7 +17,7 @@ vi.mock('../../../src/shared/logger');
 describe('fileCollect', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    
+
     // Setup basic file size mock to fix stat
     vi.mocked(fs.stat).mockResolvedValue({
       size: 1024,
@@ -51,7 +51,7 @@ describe('fileCollect', () => {
     const mockRootDir = '/root';
 
     vi.mocked(isBinary)
-      .mockReturnValueOnce(true)  // for binary.bin
+      .mockReturnValueOnce(true) // for binary.bin
       .mockReturnValueOnce(false); // for text.txt
     vi.mocked(fs.readFile).mockResolvedValue(Buffer.from('file content'));
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
@@ -68,11 +68,13 @@ describe('fileCollect', () => {
     const mockRootDir = '/root';
 
     vi.mocked(fs.stat)
-      .mockResolvedValueOnce({  // for large.txt
+      .mockResolvedValueOnce({
+        // for large.txt
         size: 60 * 1024 * 1024,
         isFile: () => true,
       } as Stats)
-      .mockResolvedValueOnce({  // for normal.txt
+      .mockResolvedValueOnce({
+        // for normal.txt
         size: 1024,
         isFile: () => true,
       } as Stats);
