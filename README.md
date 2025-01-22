@@ -109,6 +109,14 @@ The website offers several convenient features:
 - Instant token count estimation
 - Much more!
 
+### Using The VSCode Extension ⚡️
+
+A community-maintained VSCode extension lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 
+
+Want your output as a file or just the content? Need automatic cleanup? This extension has you covered. Plus, it works smoothly with your existing repomix.config.json.
+
+Try it now on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)!
+
 ### Alternative Tools 🛠️
 
 If you're using Python, you might want to check out `Gitingest`, which is better suited for Python ecosystem and data

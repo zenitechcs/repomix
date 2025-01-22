@@ -38,6 +38,18 @@ docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix path/to/directory
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadashy/repomix
 ```
 
+## VSCode 扩展
+
+通过社区维护的 [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) 扩展，您可以直接在 VSCode 中运行 Repomix。
+
+功能：
+- 只需点击几下即可打包任何文件夹
+- 可选择文件或内容模式进行复制
+- 自动清理输出文件
+- 支持 repomix.config.json
+
+从 [VSCode 应用商店](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)安装。
+
 ## 系统要求
 
 - Node.js: ≥ 18.0.0
