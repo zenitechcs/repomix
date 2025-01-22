@@ -38,6 +38,18 @@ docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix path/to/directory
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadashy/repomix
 ```
 
+## VSCode 확장 프로그램
+
+커뮤니티에서 관리하는 [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) 확장 프로그램을 통해 VSCode에서 직접 Repomix를 실행할 수 있습니다.
+
+기능:
+- 몇 번의 클릭으로 폴더 패키징
+- 파일 또는 콘텐츠 모드로 복사
+- 출력 파일 자동 정리
+- repomix.config.json 지원
+
+[VSCode 마켓플레이스](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)에서 설치하세요.
+
 ## 시스템 요구 사항
 
 - Node.js: 18.0.0 이상

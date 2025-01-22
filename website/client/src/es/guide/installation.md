@@ -38,6 +38,18 @@ docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix ruta/al/directorio
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadashy/repomix
 ```
 
+## Extensión de VSCode
+
+Ejecuta Repomix directamente en VSCode con la extensión [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) mantenida por la comunidad.
+
+Características:
+- Empaqueta cualquier carpeta con unos pocos clics
+- Elige entre modo archivo o contenido para copiar
+- Limpieza automática de archivos de salida
+- Compatible con repomix.config.json
+
+Instálala desde el [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner).
+
 ## Requisitos del sistema
 
 - Node.js: ≥ 18.0.0

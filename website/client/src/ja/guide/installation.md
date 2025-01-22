@@ -38,6 +38,18 @@ docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix path/to/directory
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadashy/repomix
 ```
 
+## VSCode 拡張機能
+
+VSCodeでRepomixを直接実行できるコミュニティメンテナンスの[Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)拡張機能があります。
+
+機能:
+- クリック数回でフォルダをパック
+- ファイルまたはコンテンツモードでのコピーが可能
+- 出力ファイルの自動クリーンアップ
+- repomix.config.jsonと連携
+
+[VSCode マーケットプレイス](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)からインストールできます。
+
 ## システム要件
 
 - Node.js: 18.0.0 以上
