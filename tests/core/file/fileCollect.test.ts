@@ -1,10 +1,11 @@
+import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { collectFiles } from '../../../src/core/file/fileCollect.js';
+import { MAX_FILE_SIZE, collectFiles } from '../../../src/core/file/fileCollect.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -16,6 +17,12 @@ vi.mock('../../../src/shared/logger');
 describe('fileCollect', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+
+    // Setup basic file size mock to fix stat
+    vi.mocked(fs.stat).mockResolvedValue({
+      size: 1024,
+      isFile: () => true,
+    } as Stats);
   });
 
   afterEach(() => {
@@ -43,7 +50,9 @@ describe('fileCollect', () => {
     const mockFilePaths = ['binary.bin', 'text.txt'];
     const mockRootDir = '/root';
 
-    vi.mocked(isBinary).mockReturnValueOnce(true).mockReturnValueOnce(false);
+    vi.mocked(isBinary)
+      .mockReturnValueOnce(true) // for binary.bin
+      .mockReturnValueOnce(false); // for text.txt
     vi.mocked(fs.readFile).mockResolvedValue(Buffer.from('file content'));
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
     vi.mocked(iconv.decode).mockReturnValue('decoded content');
@@ -52,6 +61,41 @@ describe('fileCollect', () => {
 
     expect(result).toEqual([{ path: 'text.txt', content: 'decoded content' }]);
     expect(logger.debug).toHaveBeenCalledWith(`Skipping binary file: ${path.resolve('/root/binary.bin')}`);
+  });
+
+  it('should skip large files', async () => {
+    const mockFilePaths = ['large.txt', 'normal.txt'];
+    const mockRootDir = '/root';
+    const largePath = path.resolve('/root/large.txt');
+
+    vi.mocked(fs.stat)
+      .mockResolvedValueOnce({
+        // for large.txt
+        size: MAX_FILE_SIZE + 1024, // Slightly over limit
+        isFile: () => true,
+      } as Stats)
+      .mockResolvedValueOnce({
+        // for normal.txt
+        size: 1024,
+        isFile: () => true,
+      } as Stats);
+    vi.mocked(isBinary).mockReturnValue(false);
+    vi.mocked(fs.readFile).mockResolvedValue(Buffer.from('file content'));
+    vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
+    vi.mocked(iconv.decode).mockReturnValue('decoded content');
+
+    const result = await collectFiles(mockFilePaths, mockRootDir);
+
+    expect(result).toEqual([{ path: 'normal.txt', content: 'decoded content' }]);
+    expect(logger.log).toHaveBeenCalledWith('⚠️ Large File Warning:');
+    expect(logger.log).toHaveBeenCalledWith('──────────────────────');
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('File exceeds size limit:'));
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(largePath));
+    expect(logger.note).toHaveBeenCalledWith('Add this file to .repomixignore if you want to exclude it permanently');
+
+    // Verify fs.readFile is not called for the large file
+    expect(fs.readFile).not.toHaveBeenCalledWith(largePath);
+    expect(fs.readFile).toHaveBeenCalledTimes(1);
   });
 
   it('should handle file read errors', async () => {
