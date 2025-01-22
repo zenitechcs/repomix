@@ -43,6 +43,8 @@ steps:
       - '0'
       - '--max-instances'
       - '10'
+      - '--timeout'
+      - '35s'
       - '--ingress'
       - 'all'
       - '--allow-unauthenticated'
