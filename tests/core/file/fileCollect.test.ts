@@ -5,7 +5,10 @@ import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MAX_FILE_SIZE, collectFiles } from '../../../src/core/file/fileCollect.js';
+import { collectFiles } from '../../../src/core/file/fileCollect.js';
+import type { FileCollectTask } from '../../../src/core/file/workers/fileCollectWorker.js';
+import { MAX_FILE_SIZE } from '../../../src/core/file/workers/fileCollectWorker.js';
+import fileCollectWorker from '../../../src/core/file/workers/fileCollectWorker.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -13,6 +16,12 @@ vi.mock('istextorbinary');
 vi.mock('jschardet');
 vi.mock('iconv-lite');
 vi.mock('../../../src/shared/logger');
+
+const mockInitTaskRunner = () => {
+  return async (task: FileCollectTask) => {
+    return await fileCollectWorker(task);
+  };
+};
 
 describe('fileCollect', () => {
   beforeEach(() => {
@@ -38,7 +47,9 @@ describe('fileCollect', () => {
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
     vi.mocked(iconv.decode).mockReturnValue('decoded content');
 
-    const result = await collectFiles(mockFilePaths, mockRootDir);
+    const result = await collectFiles(mockFilePaths, mockRootDir, () => {}, {
+      initTaskRunner: mockInitTaskRunner,
+    });
 
     expect(result).toEqual([
       { path: 'file1.txt', content: 'decoded content' },
@@ -57,7 +68,9 @@ describe('fileCollect', () => {
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
     vi.mocked(iconv.decode).mockReturnValue('decoded content');
 
-    const result = await collectFiles(mockFilePaths, mockRootDir);
+    const result = await collectFiles(mockFilePaths, mockRootDir, () => {}, {
+      initTaskRunner: mockInitTaskRunner,
+    });
 
     expect(result).toEqual([{ path: 'text.txt', content: 'decoded content' }]);
     expect(logger.debug).toHaveBeenCalledWith(`Skipping binary file: ${path.resolve('/root/binary.bin')}`);
@@ -84,7 +97,9 @@ describe('fileCollect', () => {
     vi.mocked(jschardet.detect).mockReturnValue({ encoding: 'utf-8', confidence: 0.99 });
     vi.mocked(iconv.decode).mockReturnValue('decoded content');
 
-    const result = await collectFiles(mockFilePaths, mockRootDir);
+    const result = await collectFiles(mockFilePaths, mockRootDir, () => {}, {
+      initTaskRunner: mockInitTaskRunner,
+    });
 
     expect(result).toEqual([{ path: 'normal.txt', content: 'decoded content' }]);
     expect(logger.log).toHaveBeenCalledWith('⚠️ Large File Warning:');
@@ -105,7 +120,9 @@ describe('fileCollect', () => {
     vi.mocked(isBinary).mockReturnValue(false);
     vi.mocked(fs.readFile).mockRejectedValue(new Error('Read error'));
 
-    const result = await collectFiles(mockFilePaths, mockRootDir);
+    const result = await collectFiles(mockFilePaths, mockRootDir, () => {}, {
+      initTaskRunner: mockInitTaskRunner,
+    });
 
     expect(result).toEqual([]);
     expect(logger.warn).toHaveBeenCalledWith(

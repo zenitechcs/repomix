@@ -19,6 +19,7 @@ export const runRemoteAction = async (
   deps = {
     isGitInstalled,
     execGitShallowClone,
+    runDefaultAction,
   },
 ): Promise<DefaultActionRunnerResult> => {
   if (!(await deps.isGitInstalled())) {
@@ -46,7 +47,7 @@ export const runRemoteAction = async (
     logger.log('');
 
     // Run the default action on the cloned repository
-    result = await runDefaultAction(tempDirPath, tempDirPath, options);
+    result = await deps.runDefaultAction(tempDirPath, tempDirPath, options);
     await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
   } catch (error) {
     spinner.fail('Error during repository cloning. cleanup...');

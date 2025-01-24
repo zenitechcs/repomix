@@ -3,10 +3,8 @@ import { logger } from '../../shared/logger.js';
 
 export class TokenCounter {
   private encoding: Tiktoken;
-  private encodingName: TiktokenEncoding;
 
   constructor(encodingName: TiktokenEncoding) {
-    this.encodingName = encodingName;
     // Setup encoding with the specified model
     this.encoding = get_encoding(encodingName);
   }
@@ -30,10 +28,6 @@ export class TokenCounter {
 
       return 0;
     }
-  }
-
-  public getEncoding(): TiktokenEncoding {
-    return this.encodingName;
   }
 
   public free(): void {

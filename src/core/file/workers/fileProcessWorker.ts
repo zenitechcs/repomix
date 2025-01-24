@@ -3,24 +3,27 @@ import { logger } from '../../../shared/logger.js';
 import { getFileManipulator } from '../fileManipulate.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
 
-interface FileProcessWorkerInput {
+export interface FileProcessTask {
   rawFile: RawFile;
-  index: number;
-  totalFiles: number;
   config: RepomixConfigMerged;
 }
 
-/**
- * Worker thread function that processes a single file
- */
-export default async ({ rawFile, index, totalFiles, config }: FileProcessWorkerInput): Promise<ProcessedFile> => {
+export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFile> => {
+  const processedContent = await processContent(rawFile, config);
+  return {
+    path: rawFile.path,
+    content: processedContent,
+  };
+};
+
+export const processContent = async (rawFile: RawFile, config: RepomixConfigMerged) => {
   const processStartAt = process.hrtime.bigint();
   let processedContent = rawFile.content;
   const manipulator = getFileManipulator(rawFile.path);
 
   logger.trace(`Processing file: ${rawFile.path}`);
 
-  if (config.output.removeComments && manipulator) {
+  if (manipulator && config.output.removeComments) {
     processedContent = manipulator.removeComments(processedContent);
   }
 
@@ -40,8 +43,5 @@ export default async ({ rawFile, index, totalFiles, config }: FileProcessWorkerI
   const processEndAt = process.hrtime.bigint();
   logger.trace(`Processed file: ${rawFile.path}. Took: ${(Number(processEndAt - processStartAt) / 1e6).toFixed(2)}ms`);
 
-  return {
-    path: rawFile.path,
-    content: processedContent,
-  };
+  return processedContent;
 };
