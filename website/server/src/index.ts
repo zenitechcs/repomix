@@ -8,6 +8,10 @@ import { timeout } from 'hono/timeout';
 import { processRemoteRepo } from './remoteRepo.js';
 import type { ErrorResponse } from './types.js';
 import { handlePackError } from './utils/errorHandler.js';
+import { getProcessConcurrency } from './utils/processConcurrency.js';
+
+// Log metrics
+console.log('Server Process concurrency:', getProcessConcurrency());
 
 const app = new Hono();
 
