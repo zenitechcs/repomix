@@ -24,11 +24,9 @@ export default async ({ content, encoding, path }: OutputMetricsTask): Promise<n
   const tokenCount = counter.countTokens(content, path);
 
   const processEndAt = process.hrtime.bigint();
-  if (path) {
-    logger.trace(
-      `Counted tokens for ${path}. Count: ${tokenCount}. Took: ${(Number(processEndAt - processStartAt) / 1e6).toFixed(2)}ms`,
-    );
-  }
+  logger.trace(
+    `Counted output tokens. Count: ${tokenCount}. Took: ${(Number(processEndAt - processStartAt) / 1e6).toFixed(2)}ms`,
+  );
 
   return tokenCount;
 };

@@ -26,7 +26,7 @@ export const calculateMetrics = async (
 
   const [fileMetrics, totalTokens] = await Promise.all([
     deps.calculateAllFileMetrics(processedFiles, config.tokenCount.encoding, progressCallback),
-    deps.calculateOutputMetrics(output, config.tokenCount.encoding),
+    deps.calculateOutputMetrics(output, config.tokenCount.encoding, config.output.filePath),
   ]);
 
   const totalFiles = processedFiles.length;
