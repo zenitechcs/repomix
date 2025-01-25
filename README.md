@@ -703,6 +703,9 @@ repomix --no-security-check
 > Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such
 > as when working with test files or documentation that contains example credentials.
 
+
+
+
 ## 🤝 Contribution
 
 We welcome contributions from the community! To get started, please refer to our [Contributing Guide](CONTRIBUTING.md).
@@ -712,6 +715,28 @@ We welcome contributions from the community! To get started, please refer to our
 <a href="https://github.com/yamadashy/repomix/graphs/contributors">
   <img alt="contributors" src="https://contrib.rocks/image?repo=yamadashy/repomix"/>
 </a>
+
+
+
+## 🔒 Privacy Policy
+
+### Data Collection
+Repomix does **not** collect, transmit, or store any user data, telemetry, or repository information.
+
+### Network Usage
+Repomix operates fully offline after installation. The only cases where an internet connection is needed are:
+- Installation via npm/yarn.
+- Using the `--remote` flag to process remote repositories.
+- Checking for updates (manually triggered).
+
+### Security Considerations
+Since all processing is local, Repomix is safe to use with private and internal repositories.
+
+### Liability Disclaimer
+Repomix is provided "as is" without any warranties or guarantees.  
+We do not take responsibility for how the generated output is used, including but not limited to its accuracy, legality, or any potential consequences arising from its use.
+
+
 
 ## 📜 License
 
