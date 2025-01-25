@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import type { Ace } from 'ace-builds';
 import { Copy, Download } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { useData } from 'vitepress';
+import { computed, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from './api/client.js';
 import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer.js';
+import 'ace-builds/src-noconflict/theme-tomorrow';
+import 'ace-builds/src-noconflict/theme-tomorrow_night';
+
+const lightTheme = 'tomorrow';
+const darkTheme = 'tomorrow_night';
 
 const props = defineProps<{
   result: PackResult | null;
@@ -12,14 +19,27 @@ const props = defineProps<{
 }>();
 
 const copied = ref(false);
-const editorOptions = getEditorOptions();
+const { isDark } = useData();
+const editorInstance = ref<Ace.Editor | null>(null);
+
+const editorOptions = computed(() => ({
+  ...getEditorOptions(),
+  theme: isDark.value ? `ace/theme/${darkTheme}` : `ace/theme/${lightTheme}`,
+}));
+
+// Watch for theme changes and update editor theme
+watch(isDark, (newIsDark) => {
+  if (editorInstance.value) {
+    editorInstance.value.setTheme(newIsDark ? `ace/theme/${darkTheme}` : `ace/theme/${lightTheme}`);
+  }
+});
 
 const formattedTimestamp = computed(() => {
   if (!props.result) return '';
   return formatTimestamp(props.result.metadata.timestamp);
 });
 
-async function handleCopy(event: Event) {
+const handleCopy = async (event: Event) => {
   event.preventDefault();
   if (!props.result) return;
 
@@ -30,14 +50,18 @@ async function handleCopy(event: Event) {
       copied.value = false;
     }, 2000);
   }
-}
+};
 
-function handleDownload(event: Event) {
+const handleDownload = (event: Event) => {
   event.preventDefault();
   if (!props.result) return;
 
   downloadResult(props.result.content, props.result.format);
-}
+};
+
+const handleEditorMount = (editor: Ace.Editor) => {
+  editorInstance.value = editor;
+};
 </script>
 
 <template>
@@ -114,6 +138,7 @@ function handleDownload(event: Event) {
               :lang="'text'"
               :style="{ height: '100%', width: '100%' }"
               :options="editorOptions"
+              @mount="handleEditorMount"
           />
         </div>
       </div>
