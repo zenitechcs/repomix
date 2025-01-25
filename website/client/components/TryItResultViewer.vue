@@ -2,8 +2,8 @@
 import { Copy, Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
-import type { PackResult } from './api/client';
-import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer';
+import type { PackResult } from './api/client.js';
+import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer.js';
 
 const props = defineProps<{
   result: PackResult | null;

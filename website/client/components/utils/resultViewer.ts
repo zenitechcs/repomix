@@ -1,3 +1,4 @@
+import type { Ace } from 'ace-builds';
 import { analyticsUtils } from './analytics';
 
 /**
@@ -43,12 +44,13 @@ export function downloadResult(content: string, format: string): void {
 /**
  * Get Ace editor options
  */
-export function getEditorOptions() {
+export function getEditorOptions(): Partial<Ace.EditorOptions> {
   return {
     readOnly: true,
     wrap: false,
     showPrintMargin: false,
     fontSize: '13px',
     useWorker: false,
+    highlightActiveLine: false,
   };
 }
