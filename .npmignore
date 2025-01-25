@@ -36,6 +36,7 @@ repomix.config.js
 # Editor files
 .vscode/
 .idea/
+.memo/
 
 # Logs
 *.log
