@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { AlertTriangle } from 'lucide-vue-next';
-import { HelpCircle } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-import ResultViewer from './ResultViewer.vue';
-import { isValidRemoteValue, packRepository } from './api/client';
+import { ref } from 'vue';
+import TryItPackOptions from './TryItPackOptions.vue';
+import TryItResultViewer from './TryItResultViewer.vue';
+import TryItUrlInput from './TryItUrlInput.vue';
 import type { PackResult } from './api/client';
-import { AnalyticsAction, analyticsUtils } from './utils/analytics';
+import { handlePackRequest } from './utils/requestHandlers';
 
 // Form input states
 const url = ref('');
@@ -25,149 +24,62 @@ const error = ref<string | null>(null);
 const result = ref<PackResult | null>(null);
 const hasExecuted = ref(false);
 
-// URL validation
-const isValidUrl = computed(() => {
-  if (!url.value) return false;
-  return isValidRemoteValue(url.value.trim());
-});
-
-const TIMEOUT_MS = 30000;
-let currentRequest: AbortController | null = null;
+const TIMEOUT_MS = 30_000;
+let requestController: AbortController | null = null;
 
 async function handleSubmit() {
-  if (!isValidUrl.value) return;
+  if (!url.value) return;
 
   // Cancel any pending request
-  if (currentRequest) {
-    currentRequest.abort();
+  if (requestController) {
+    requestController.abort();
   }
-  currentRequest = new AbortController();
+  requestController = new AbortController();
 
   loading.value = true;
   error.value = null;
   result.value = null;
   hasExecuted.value = true;
 
-  const processedUrl = url.value.trim();
-
-  // Track pack start
-  analyticsUtils.trackPackStart(processedUrl);
-
-  try {
-    const timeoutId = setTimeout(() => {
-      if (currentRequest) {
-        currentRequest.abort();
-        throw new Error('Request timed out');
-      }
-    }, TIMEOUT_MS);
-
-    const response = await packRepository({
-      url: processedUrl,
-      format: format.value,
-      options: {
-        removeComments: removeComments.value,
-        removeEmptyLines: removeEmptyLines.value,
-        showLineNumbers: showLineNumbers.value,
-        fileSummary: fileSummary.value,
-        directoryStructure: directoryStructure.value,
-        includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
-        ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
-        outputParsable: outputParsable.value,
-      },
-      signal: currentRequest.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    // Set result
-    result.value = {
-      content: response.content,
-      format: response.format,
-      metadata: {
-        repository: response.metadata.repository,
-        timestamp: response.metadata.timestamp,
-        summary: response.metadata.summary,
-        topFiles: response.metadata.topFiles,
-      },
-    };
-
-    // Track successful pack
-    if (response.metadata.summary) {
-      analyticsUtils.trackPackSuccess(
-        processedUrl,
-        response.metadata.summary.totalFiles,
-        response.metadata.summary.totalCharacters,
-      );
+  const timeoutId = setTimeout(() => {
+    if (requestController) {
+      requestController.abort('Request timed out');
+      throw new Error('Request timed out');
     }
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-    if (errorMessage === 'AbortError') {
-      error.value = 'Request was cancelled';
-      return;
-    }
-    error.value = errorMessage;
-    analyticsUtils.trackPackError(processedUrl, errorMessage);
-    console.error('Error processing repository:', err);
-  } finally {
-    loading.value = false;
-    currentRequest = null;
-  }
-}
+  }, TIMEOUT_MS);
 
-// Event handlers with analytics
-function handleFormatChange(newFormat: 'xml' | 'markdown' | 'plain') {
-  format.value = newFormat;
-  analyticsUtils.trackFormatChange(newFormat);
-}
+  await handlePackRequest(
+    url.value,
+    format.value,
+    {
+      removeComments: removeComments.value,
+      removeEmptyLines: removeEmptyLines.value,
+      showLineNumbers: showLineNumbers.value,
+      fileSummary: fileSummary.value,
+      directoryStructure: directoryStructure.value,
+      includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
+      ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
+      outputParsable: outputParsable.value,
+    },
+    {
+      onSuccess: (response) => {
+        result.value = response;
+      },
+      onError: (errorMessage) => {
+        error.value = errorMessage;
+      },
+      signal: requestController.signal,
+    },
+  );
 
-function handleRemoveCommentsToggle(enabled: boolean) {
-  removeComments.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_REMOVE_COMMENTS, enabled);
-}
+  clearTimeout(timeoutId);
 
-function handleRemoveEmptyLinesToggle(enabled: boolean) {
-  removeEmptyLines.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_REMOVE_EMPTY_LINES, enabled);
-}
-
-function handleShowLineNumbersToggle(enabled: boolean) {
-  showLineNumbers.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_LINE_NUMBERS, enabled);
-}
-
-function handleOutputParsableToggle(enabled: boolean) {
-  outputParsable.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_OUTPUT_PARSABLE, enabled);
-}
-
-function handleFileSummaryToggle(enabled: boolean) {
-  fileSummary.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_FILE_SUMMARY, enabled);
-}
-
-function handleDirectoryStructureToggle(enabled: boolean) {
-  directoryStructure.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_DIRECTORY_STRUCTURE, enabled);
-}
-
-function handleIncludePatternsUpdate(patterns: string) {
-  includePatterns.value = patterns;
-  analyticsUtils.trackIncludePatternsUpdate(patterns);
-}
-
-function handleIgnorePatternsUpdate(patterns: string) {
-  ignorePatterns.value = patterns;
-  analyticsUtils.trackIgnorePatternsUpdate(patterns);
-}
-
-// Handle URL input and form submission
-function handleUrlInput(event: Event) {
-  const input = event.target as HTMLInputElement;
-  url.value = input.value;
+  loading.value = false;
+  requestController = null;
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key === 'Enter' && isValidUrl.value && !loading.value) {
+  if (event.key === 'Enter' && url.value && !loading.value) {
     handleSubmit();
   }
 }
@@ -175,189 +87,30 @@ function handleKeydown(event: KeyboardEvent) {
 
 <template>
   <div class="container">
-    <form
-        class="try-it-container"
-        @submit.prevent="handleSubmit"
-    >
-      <div class="input-group">
-        <div class="url-input-container">
-          <input
-              :value="url"
-              @input="handleUrlInput"
-              @keydown="handleKeydown"
-              type="text"
-              placeholder="GitHub repository URL or user/repo (e.g., yamadashy/repomix)"
-              class="repository-input"
-              :class="{ 'invalid': url && !isValidUrl }"
-              aria-label="GitHub repository URL"
-          />
-          <button
-              type="submit"
-              class="pack-button"
-              :disabled="!isValidUrl || loading"
-              aria-label="Pack repository"
-          >
-            {{ loading ? 'Processing...' : 'Pack' }}
-            <svg v-if="!loading"
-                 class="pack-button-icon"
-                 width="20"
-                 height="20"
-                 viewBox="96.259 93.171 300 300"
-            >
-              <g transform="matrix(1.160932, 0, 0, 1.160932, 97.635941, 94.725143)">
-                <path
-                    fill="currentColor"
-                    d="M 128.03 -1.486 L 21.879 65.349 L 21.848 190.25 L 127.979 256.927 L 234.2 190.27 L 234.197 65.463 L 128.03 -1.486 Z M 208.832 70.323 L 127.984 121.129 L 47.173 70.323 L 128.144 19.57 L 208.832 70.323 Z M 39.669 86.367 L 119.188 136.415 L 119.255 230.529 L 39.637 180.386 L 39.669 86.367 Z M 136.896 230.506 L 136.887 136.575 L 216.469 86.192 L 216.417 180.46 L 136.896 230.506 Z M 136.622 230.849"
-                />
-              </g>
-            </svg>
-          </button>
-        </div>
+    <form class="try-it-container" @submit.prevent="handleSubmit">
+      <TryItUrlInput
+        v-model:url="url"
+        :loading="loading"
+        @keydown="handleKeydown"
+      />
 
-        <div v-if="url && !isValidUrl" class="url-warning">
-          <AlertTriangle class="warning-icon" size="16" />
-          <span>Please enter a valid GitHub repository URL (e.g., yamadashy/repomix)</span>
-        </div>
-      </div>
-
-      <div class="options-container">
-        <div class="left-column">
-          <div class="option-section">
-            <p class="option-label">Output Format</p>
-            <div class="format-buttons">
-              <button
-                  class="format-button"
-                  :class="{ active: format === 'xml' }"
-                  @click="handleFormatChange('xml')"
-                  type="button"
-              >
-                XML
-              </button>
-              <button
-                  class="format-button"
-                  :class="{ active: format === 'markdown' }"
-                  @click="handleFormatChange('markdown')"
-                  type="button"
-              >
-                Markdown
-              </button>
-              <button
-                  class="format-button"
-                  :class="{ active: format === 'plain' }"
-                  @click="handleFormatChange('plain')"
-                  type="button"
-              >
-                Plain
-              </button>
-            </div>
-          </div>
-
-          <div class="option-section">
-            <p class="option-label">Include Patterns  (using <a href="https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax" target="_blank" rel="noopener noreferrer">glob patterns</a>)</p>
-            <input
-                v-model="includePatterns"
-                @input="handleIncludePatternsUpdate($event.target.value)"
-                type="text"
-                class="repository-input"
-                placeholder="Comma-separated patterns to include. e.g., src/**/*.ts"
-                aria-label="Include patterns"
-            />
-          </div>
-
-          <div class="option-section">
-            <p class="option-label">Ignore Patterns</p>
-            <input
-                v-model="ignorePatterns"
-                @input="handleIgnorePatternsUpdate($event.target.value)"
-                type="text"
-                class="repository-input"
-                placeholder="Comma-separated patterns to ignore. e.g., **/*.test.ts,README.md"
-                aria-label="Ignore patterns"
-            />
-          </div>
-        </div>
-
-        <div class="right-column">
-          <div class="option-section">
-            <p class="option-label">Output Options</p>
-            <div class="checkbox-group">
-              <label class="checkbox-label">
-                <input
-                  v-model="fileSummary"
-                  @change="handleFileSummaryToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <span>Include File Summary</span>
-              </label>
-              <label class="checkbox-label">
-                <input
-                  v-model="directoryStructure"
-                  @change="handleDirectoryStructureToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <span>Include Directory Structure</span>
-              </label>
-              <label class="checkbox-label">
-                <input
-                  v-model="removeComments"
-                  @change="handleRemoveCommentsToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <span>Remove Comments</span>
-              </label>
-              <label class="checkbox-label">
-                <input
-                  v-model="removeEmptyLines"
-                  @change="handleRemoveEmptyLinesToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <span>Remove Empty Lines</span>
-              </label>
-              <label class="checkbox-label">
-                <input
-                  v-model="showLineNumbers"
-                  @change="handleShowLineNumbersToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <span>Show Line Numbers</span>
-              </label>
-              <label class="checkbox-label">
-                <input
-                  v-model="outputParsable"
-                  @change="handleOutputParsableToggle($event.target.checked)"
-                  type="checkbox"
-                  class="checkbox-input"
-                />
-                <div class="parsable-option">
-                  <span>Output Parsable Format</span>
-                  <div class="tooltip-container">
-                    <HelpCircle
-                      :size="16"
-                      class="help-icon"
-                      aria-label="More information about parsable format"
-                    />
-                    <div class="tooltip-content">
-                      Whether to escape the output based on the chosen style schema. Note that this can increase token count.
-                      <div class="tooltip-arrow"></div>
-                    </div>
-                  </div>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TryItPackOptions
+        v-model:format="format"
+        v-model:include-patterns="includePatterns"
+        v-model:ignore-patterns="ignorePatterns"
+        v-model:file-summary="fileSummary"
+        v-model:directory-structure="directoryStructure"
+        v-model:remove-comments="removeComments"
+        v-model:remove-empty-lines="removeEmptyLines"
+        v-model:show-line-numbers="showLineNumbers"
+        v-model:output-parsable="outputParsable"
+      />
 
       <div v-if="hasExecuted">
-        <ResultViewer
-            :result="result"
-            :loading="loading"
-            :error="error"
+        <TryItResultViewer
+          :result="result"
+          :loading="loading"
+          :error="error"
         />
       </div>
     </form>
@@ -376,242 +129,5 @@ function handleKeydown(event: KeyboardEvent) {
   border: 1px solid var(--vp-c-border);
   border-radius: 12px;
   padding: 24px;
-}
-
-.url-input-container {
-  display: flex;
-  gap: 12px;
-}
-
-.repository-input {
-  flex: 1;
-  padding: 12px 16px;
-  font-size: 16px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  transition: border-color 0.2s;
-}
-
-.repository-input:focus {
-  outline: none;
-  border-color: var(--vp-c-brand-1);
-}
-
-.repository-input.invalid {
-  border-color: var(--vp-c-danger-1);
-}
-
-.url-warning {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--vp-c-warning-1);
-  font-size: 14px;
-}
-
-.warning-icon {
-  flex-shrink: 0;
-  color: var(--vp-c-warning-1);
-}
-
-.pack-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 500;
-  background: var(--vp-c-brand-1);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.pack-button:hover:not(:disabled) {
-  background: var(--vp-c-brand-2);
-}
-
-.pack-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pack-button-icon {
-  font-size: 20px;
-  line-height: 1;
-}
-
-.input-group {
-  margin-bottom: 24px;
-}
-
-.options-container {
-  display: grid;
-  grid-template-columns: 60% 40%;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.left-column,
-.right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.option-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.option-section input {
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  transition: border-color 0.2s;
-}
-
-.option-label {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
-  color: var(--vp-c-text-2);
-}
-
-.option-label a {
-  color: var(--vp-c-brand-1);
-}
-
-.option-label a:hover {
-  text-decoration: underline;
-}
-
-.format-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.format-button {
-  padding: 8px 16px;
-  font-size: 14px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 6px;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.format-button:hover {
-  border-color: var(--vp-c-brand-1);
-}
-
-.format-button.active {
-  background: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
-  color: white;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--vp-c-text-1);
-}
-
-.checkbox-input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--vp-c-brand-1);
-}
-
-.parsable-option {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-.help-icon {
-  color: #666;
-  cursor: help;
-  transition: color 0.2s;
-}
-
-.help-icon:hover {
-  color: #333;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 8px;
-  padding: 8px 12px;
-  background: #333;
-  color: white;
-  font-size: 0.875rem;
-  width: 250px;
-  border-radius: 4px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
-  z-index: 10;
-  text-align: left;
-}
-
-.tooltip-container:hover .tooltip-content {
-  opacity: 1;
-  visibility: visible;
-}
-
-.tooltip-arrow {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 8px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
-}
-
-@media (max-width: 640px) {
-  .url-input-container {
-    flex-direction: column;
-  }
-
-  .options-container {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .left-column,
-  .right-column {
-    gap: 24px;
-  }
 }
 </style>

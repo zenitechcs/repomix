@@ -91,37 +91,12 @@ export const analyticsUtils = {
     });
   },
 
-  // Format events
-  trackFormatChange(format: string): void {
-    trackEvent({
-      category: AnalyticsCategory.FORMAT,
-      action: AnalyticsAction.FORMAT_CHANGE,
-      label: format,
-    });
-  },
-
   // Options events
   trackOptionToggle(action: AnalyticsActionType, enabled: boolean): void {
     trackEvent({
       category: AnalyticsCategory.OPTIONS,
       action: action,
       label: enabled ? 'enabled' : 'disabled',
-    });
-  },
-
-  trackIncludePatternsUpdate(patterns: string): void {
-    trackEvent({
-      category: AnalyticsCategory.OPTIONS,
-      action: AnalyticsAction.UPDATE_INCLUDE_PATTERNS,
-      label: patterns,
-    });
-  },
-
-  trackIgnorePatternsUpdate(patterns: string): void {
-    trackEvent({
-      category: AnalyticsCategory.OPTIONS,
-      action: AnalyticsAction.UPDATE_IGNORE_PATTERNS,
-      label: patterns,
     });
   },
 
