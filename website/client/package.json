@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/gtag.js": "^0.0.20",
-    "lucide-vue-next": "^0.473.0"
+    "lucide-vue-next": "^0.473.0",
+    "vue3-ace-editor": "^2.2.4"
   }
 }

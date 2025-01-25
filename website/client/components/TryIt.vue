@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { AlertTriangle } from 'lucide-vue-next';
-import { HelpCircle } from 'lucide-vue-next';
+import { AlertTriangle, HelpCircle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ResultViewer from './ResultViewer.vue';
-import { isValidRemoteValue, packRepository } from './api/client';
 import type { PackResult } from './api/client';
-import { AnalyticsAction, analyticsUtils } from './utils/analytics';
+import { AnalyticsAction } from './utils/analytics';
+import { handleOptionChange, handlePackRequest } from './utils/requestHandlers';
+import { isValidRemoteValue } from './utils/validation';
 
 // Form input states
 const url = ref('');
@@ -31,133 +31,104 @@ const isValidUrl = computed(() => {
   return isValidRemoteValue(url.value.trim());
 });
 
-const TIMEOUT_MS = 30000;
-let currentRequest: AbortController | null = null;
+const TIMEOUT_MS = 30_000;
+let requestController: AbortController | null = null;
 
 async function handleSubmit() {
   if (!isValidUrl.value) return;
 
   // Cancel any pending request
-  if (currentRequest) {
-    currentRequest.abort();
+  if (requestController) {
+    requestController.abort();
   }
-  currentRequest = new AbortController();
+  requestController = new AbortController();
 
   loading.value = true;
   error.value = null;
   result.value = null;
   hasExecuted.value = true;
 
-  const processedUrl = url.value.trim();
-
-  // Track pack start
-  analyticsUtils.trackPackStart(processedUrl);
-
-  try {
-    const timeoutId = setTimeout(() => {
-      if (currentRequest) {
-        currentRequest.abort();
-        throw new Error('Request timed out');
-      }
-    }, TIMEOUT_MS);
-
-    const response = await packRepository({
-      url: processedUrl,
-      format: format.value,
-      options: {
-        removeComments: removeComments.value,
-        removeEmptyLines: removeEmptyLines.value,
-        showLineNumbers: showLineNumbers.value,
-        fileSummary: fileSummary.value,
-        directoryStructure: directoryStructure.value,
-        includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
-        ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
-        outputParsable: outputParsable.value,
-      },
-      signal: currentRequest.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    // Set result
-    result.value = {
-      content: response.content,
-      format: response.format,
-      metadata: {
-        repository: response.metadata.repository,
-        timestamp: response.metadata.timestamp,
-        summary: response.metadata.summary,
-        topFiles: response.metadata.topFiles,
-      },
-    };
-
-    // Track successful pack
-    if (response.metadata.summary) {
-      analyticsUtils.trackPackSuccess(
-        processedUrl,
-        response.metadata.summary.totalFiles,
-        response.metadata.summary.totalCharacters,
-      );
+  const timeoutId = setTimeout(() => {
+    if (requestController) {
+      requestController.abort('Request timed out');
+      throw new Error('Request timed out');
     }
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-    if (errorMessage === 'AbortError') {
-      error.value = 'Request was cancelled';
-      return;
-    }
-    error.value = errorMessage;
-    analyticsUtils.trackPackError(processedUrl, errorMessage);
-    console.error('Error processing repository:', err);
-  } finally {
-    loading.value = false;
-    currentRequest = null;
-  }
+  }, TIMEOUT_MS);
+
+  await handlePackRequest(
+    url.value,
+    format.value,
+    {
+      removeComments: removeComments.value,
+      removeEmptyLines: removeEmptyLines.value,
+      showLineNumbers: showLineNumbers.value,
+      fileSummary: fileSummary.value,
+      directoryStructure: directoryStructure.value,
+      includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
+      ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
+      outputParsable: outputParsable.value,
+    },
+    {
+      onSuccess: (response) => {
+        result.value = response;
+      },
+      onError: (errorMessage) => {
+        error.value = errorMessage;
+      },
+      signal: requestController.signal,
+    },
+  );
+
+  clearTimeout(timeoutId);
+
+  loading.value = false;
+  requestController = null;
 }
 
 // Event handlers with analytics
 function handleFormatChange(newFormat: 'xml' | 'markdown' | 'plain') {
   format.value = newFormat;
-  analyticsUtils.trackFormatChange(newFormat);
+  handleOptionChange(newFormat, AnalyticsAction.FORMAT_CHANGE);
 }
 
 function handleRemoveCommentsToggle(enabled: boolean) {
   removeComments.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_REMOVE_COMMENTS, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_REMOVE_COMMENTS);
 }
 
 function handleRemoveEmptyLinesToggle(enabled: boolean) {
   removeEmptyLines.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_REMOVE_EMPTY_LINES, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_REMOVE_EMPTY_LINES);
 }
 
 function handleShowLineNumbersToggle(enabled: boolean) {
   showLineNumbers.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_LINE_NUMBERS, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_LINE_NUMBERS);
 }
 
 function handleOutputParsableToggle(enabled: boolean) {
   outputParsable.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_OUTPUT_PARSABLE, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_OUTPUT_PARSABLE);
 }
 
 function handleFileSummaryToggle(enabled: boolean) {
   fileSummary.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_FILE_SUMMARY, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_FILE_SUMMARY);
 }
 
 function handleDirectoryStructureToggle(enabled: boolean) {
   directoryStructure.value = enabled;
-  analyticsUtils.trackOptionToggle(AnalyticsAction.TOGGLE_DIRECTORY_STRUCTURE, enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_DIRECTORY_STRUCTURE);
 }
 
 function handleIncludePatternsUpdate(patterns: string) {
   includePatterns.value = patterns;
-  analyticsUtils.trackIncludePatternsUpdate(patterns);
+  handleOptionChange(patterns, AnalyticsAction.UPDATE_INCLUDE_PATTERNS);
 }
 
 function handleIgnorePatternsUpdate(patterns: string) {
   ignorePatterns.value = patterns;
-  analyticsUtils.trackIgnorePatternsUpdate(patterns);
+  handleOptionChange(patterns, AnalyticsAction.UPDATE_IGNORE_PATTERNS);
 }
 
 // Handle URL input and form submission

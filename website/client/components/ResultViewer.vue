@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Copy, Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from './api/client';
-import { analyticsUtils } from './utils/analytics';
+import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer';
 
 const props = defineProps<{
   result: PackResult | null;
@@ -11,61 +12,31 @@ const props = defineProps<{
 }>();
 
 const copied = ref(false);
+const editorOptions = getEditorOptions();
 
 const formattedTimestamp = computed(() => {
   if (!props.result) return '';
-  return new Date(props.result.metadata.timestamp).toLocaleString();
+  return formatTimestamp(props.result.metadata.timestamp);
 });
 
-async function copyToClipboard(event: Event) {
-  event.stopPropagation();
+async function handleCopy(event: Event) {
   event.preventDefault();
-
   if (!props.result) return;
 
-  try {
-    await navigator.clipboard.writeText(props.result.content);
+  const success = await copyToClipboard(props.result.content, props.result.format);
+  if (success) {
     copied.value = true;
-    // Track copy event
-    analyticsUtils.trackCopyOutput(props.result.format);
     setTimeout(() => {
       copied.value = false;
     }, 2000);
-  } catch (err) {
-    console.error('Failed to copy:', err);
   }
 }
 
-function downloadResult(event: Event) {
-  event.stopPropagation();
+function handleDownload(event: Event) {
   event.preventDefault();
-
   if (!props.result) return;
 
-  const blob = new Blob([props.result.content], { type: 'text/plain' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  let extension = 'txt';
-
-  switch (props.result.format) {
-    case 'markdown':
-      extension = 'md';
-      break;
-    case 'xml':
-      extension = 'xml';
-      break;
-  }
-
-  a.href = url;
-  a.download = `repomix-output.${extension}`;
-  document.body.appendChild(a);
-  a.click();
-
-  // Track download event
-  analyticsUtils.trackDownloadOutput(props.result.format);
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  downloadResult(props.result.content, props.result.format);
 }
 </script>
 
@@ -123,7 +94,7 @@ function downloadResult(event: Event) {
         <div class="output-actions">
           <button
               class="action-button"
-              @click="copyToClipboard"
+              @click="handleCopy"
               :class="{ copied }"
           >
             <Copy size="16" />
@@ -131,13 +102,20 @@ function downloadResult(event: Event) {
           </button>
           <button
               class="action-button"
-              @click="downloadResult"
+              @click="handleDownload"
           >
             <Download size="16" />
             Download
           </button>
         </div>
-        <pre><code>{{ result.content }}</code></pre>
+        <div class="editor-container">
+          <VAceEditor
+              v-model:value="result.content"
+              :lang="'text'"
+              :style="{ height: '100%', width: '100%' }"
+              :options="editorOptions"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -287,21 +265,10 @@ dd {
   border-color: var(--vp-c-brand-1);
 }
 
-pre {
-  margin: 0;
-  padding: 16px;
-  font-size: 13px;
-  line-height: 1.5;
+.editor-container {
   height: 100%;
-  overflow: auto;
-  flex: 1;
-}
-
-code {
+  width: 100%;
   font-family: var(--vp-font-family-mono);
-  color: var(--vp-c-text-1);
-  white-space: pre;
-  word-wrap: normal;
 }
 
 @media (max-width: 768px) {
