@@ -21,13 +21,13 @@ describe('validateFileSafety', () => {
       { filePath: 'file2.txt', messages: ['something suspicious.'] },
     ];
     const deps = {
-      runSecurityCheckIfEnabled: vi.fn().mockResolvedValue(suspiciousFilesResults),
+      runSecurityCheck: vi.fn().mockResolvedValue(suspiciousFilesResults),
       filterOutUntrustedFiles: vi.fn().mockReturnValue(safeRawFiles),
     };
 
     const result = await validateFileSafety(rawFiles, progressCallback, config, deps);
 
-    expect(deps.runSecurityCheckIfEnabled).toHaveBeenCalledWith(rawFiles, config, progressCallback);
+    expect(deps.runSecurityCheck).toHaveBeenCalledWith(rawFiles, progressCallback);
     expect(deps.filterOutUntrustedFiles).toHaveBeenCalledWith(rawFiles, suspiciousFilesResults);
     expect(result).toEqual({
       safeRawFiles,

@@ -72,7 +72,7 @@ describe('packager', () => {
     const result = await pack('root', mockConfig, progressCallback, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
-    expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root');
+    expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root', progressCallback);
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();

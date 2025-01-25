@@ -1,12 +1,14 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import type { DefaultActionRunnerResult } from '../../../src/cli/actions/defaultAction.js';
 import {
   copyOutputToCurrentDirectory,
   formatRemoteValueToUrl,
   isValidRemoteValue,
   runRemoteAction,
 } from '../../../src/cli/actions/remoteAction.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();
@@ -32,6 +34,19 @@ describe('remoteAction functions', () => {
           isGitInstalled: async () => Promise.resolve(true),
           execGitShallowClone: async (url: string, directory: string) => {
             await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
+          },
+          runDefaultAction: async () => {
+            return {
+              packResult: {
+                totalFiles: 1,
+                totalCharacters: 1,
+                totalTokens: 1,
+                fileCharCounts: {},
+                fileTokenCounts: {},
+                suspiciousFilesResults: [],
+              },
+              config: createMockConfig(),
+            } satisfies DefaultActionRunnerResult;
           },
         },
       );

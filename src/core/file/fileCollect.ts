@@ -1,71 +1,57 @@
-import * as fs from 'node:fs/promises';
-import path from 'node:path';
-import iconv from 'iconv-lite';
-import { isBinary } from 'istextorbinary';
-import jschardet from 'jschardet';
-import pMap from 'p-map';
+import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
-import { getProcessConcurrency } from '../../shared/processConcurrency.js';
+import { initPiscina } from '../../shared/processConcurrency.js';
+import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from './fileTypes.js';
+import type { FileCollectTask } from './workers/fileCollectWorker.js';
 
-// Maximum file size to process (50MB)
-// This prevents out-of-memory errors when processing very large files
-export const MAX_FILE_SIZE = 50 * 1024 * 1024;
-
-export const collectFiles = async (filePaths: string[], rootDir: string): Promise<RawFile[]> => {
-  const rawFiles = await pMap(
-    filePaths,
-    async (filePath) => {
-      const fullPath = path.resolve(rootDir, filePath);
-      const content = await readRawFile(fullPath);
-      if (content) {
-        return { path: filePath, content };
-      }
-      return null;
-    },
-    {
-      concurrency: getProcessConcurrency(),
-    },
-  );
-
-  return rawFiles.filter((file): file is RawFile => file != null);
+const initTaskRunner = (numOfTasks: number) => {
+  const pool = initPiscina(numOfTasks, new URL('./workers/fileCollectWorker.js', import.meta.url).href);
+  return (task: FileCollectTask) => pool.run(task);
 };
 
-const readRawFile = async (filePath: string): Promise<string | null> => {
+export const collectFiles = async (
+  filePaths: string[],
+  rootDir: string,
+  progressCallback: RepomixProgressCallback = () => {},
+  deps = {
+    initTaskRunner,
+  },
+): Promise<RawFile[]> => {
+  const runTask = deps.initTaskRunner(filePaths.length);
+  const tasks = filePaths.map(
+    (filePath) =>
+      ({
+        filePath,
+        rootDir,
+      }) satisfies FileCollectTask,
+  );
+
   try {
-    const stats = await fs.stat(filePath);
+    const startTime = process.hrtime.bigint();
+    logger.trace(`Starting file collection for ${filePaths.length} files using worker pool`);
 
-    if (stats.size > MAX_FILE_SIZE) {
-      const sizeMB = (stats.size / 1024 / 1024).toFixed(1);
-      logger.log('');
-      logger.log('⚠️ Large File Warning:');
-      logger.log('──────────────────────');
-      logger.log(`File exceeds size limit: ${sizeMB}MB > ${MAX_FILE_SIZE / 1024 / 1024}MB (${filePath})`);
-      logger.note('Add this file to .repomixignore if you want to exclude it permanently');
-      logger.log('');
-      return null;
-    }
+    let completedTasks = 0;
+    const totalTasks = tasks.length;
 
-    if (isBinary(filePath)) {
-      logger.debug(`Skipping binary file: ${filePath}`);
-      return null;
-    }
+    const results = await Promise.all(
+      tasks.map((task) =>
+        runTask(task).then((result) => {
+          completedTasks++;
+          progressCallback(`Collect file... (${completedTasks}/${totalTasks}) ${pc.dim(task.filePath)}`);
+          logger.trace(`Collect files... (${completedTasks}/${totalTasks}) ${task.filePath}`);
+          return result;
+        }),
+      ),
+    );
 
-    logger.trace(`Reading file: ${filePath}`);
+    const endTime = process.hrtime.bigint();
+    const duration = Number(endTime - startTime) / 1e6;
+    logger.trace(`File collection completed in ${duration.toFixed(2)}ms`);
 
-    const buffer = await fs.readFile(filePath);
-
-    if (isBinary(null, buffer)) {
-      logger.debug(`Skipping binary file (content check): ${filePath}`);
-      return null;
-    }
-
-    const encoding = jschardet.detect(buffer).encoding || 'utf-8';
-    const content = iconv.decode(buffer, encoding);
-
-    return content;
+    return results.filter((file): file is RawFile => file !== null);
   } catch (error) {
-    logger.warn(`Failed to read file: ${filePath}`, error);
-    return null;
+    logger.error('Error during file collection:', error);
+    throw error;
   }
 };

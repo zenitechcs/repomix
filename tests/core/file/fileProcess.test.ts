@@ -1,10 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
 import { getFileManipulator } from '../../../src/core/file/fileManipulate.js';
-import { processContent, processFiles } from '../../../src/core/file/fileProcess.js';
+import { processFiles } from '../../../src/core/file/fileProcess.js';
 import type { RawFile } from '../../../src/core/file/fileTypes.js';
+import { type FileProcessTask, processContent } from '../../../src/core/file/workers/fileProcessWorker.js';
+import fileProcessWorker from '../../../src/core/file/workers/fileProcessWorker.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('../../../src/core/file/fileManipulate');
+
+const mockInitTaskRunner = (numOfTasks: number) => {
+  return async (task: FileProcessTask) => {
+    return await fileProcessWorker(task);
+  };
+};
 
 describe('fileProcess', () => {
   describe('processFiles', () => {
@@ -25,7 +33,9 @@ describe('fileProcess', () => {
         removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
-      const result = await processFiles(mockRawFiles, config, () => {});
+      const result = await processFiles(mockRawFiles, config, () => {}, {
+        initTaskRunner: mockInitTaskRunner,
+      });
 
       expect(result).toEqual([
         { path: 'file1.js', content: 'const a = 1;' },
@@ -50,7 +60,7 @@ describe('fileProcess', () => {
         removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe('const a = 1;\nconst b = 2;');
     });
@@ -65,7 +75,7 @@ describe('fileProcess', () => {
         },
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe(content.trim());
     });
@@ -82,7 +92,7 @@ describe('fileProcess', () => {
 
       vi.mocked(getFileManipulator).mockReturnValue(null);
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe(content);
     });
@@ -98,7 +108,7 @@ describe('fileProcess', () => {
         },
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe('1: Line 1\n2: Line 2\n3: Line 3');
     });
@@ -114,7 +124,7 @@ describe('fileProcess', () => {
         },
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe('Line 1\nLine 2\nLine 3');
     });
@@ -130,7 +140,7 @@ describe('fileProcess', () => {
         },
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       expect(result).toBe('1: ');
     });
@@ -146,7 +156,7 @@ describe('fileProcess', () => {
         },
       });
 
-      const result = await processContent(content, filePath, config);
+      const result = await processContent({ path: filePath, content }, config);
 
       const lines = result.split('\n');
       expect(lines[0]).toBe('  1: Line');
