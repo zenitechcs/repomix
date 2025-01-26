@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import type { Ace } from 'ace-builds';
+import ace, { type Ace } from 'ace-builds';
 import { Copy, Download } from 'lucide-vue-next';
 import { useData } from 'vitepress';
-import { computed, onMounted, ref, watch } from 'vue';
-import { VAceEditor } from 'vue3-ace-editor';
+import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue';
 import type { PackResult } from './api/client.js';
+import { VAceEditor } from 'vue3-ace-editor';
 import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer.js';
-import 'ace-builds/src-noconflict/theme-tomorrow';
-import 'ace-builds/src-noconflict/theme-tomorrow_night';
+import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
+import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
+
+ace.config.setModuleUrl('ace/theme/tomorrow', themeTomorrowUrl);
+ace.config.setModuleUrl('ace/theme/tomorrow_night', themeTomorrowNightUrl);
 
 const lightTheme = 'tomorrow';
 const darkTheme = 'tomorrow_night';
