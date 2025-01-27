@@ -54,8 +54,13 @@ export const defaultIgnoreList = [
   // Optional npm cache directory
   '**/.npm/**',
 
-  // Optional eslint cache
+  // Cache directories
   '.eslintcache',
+  '.rollup.cache/**',
+  '.webpack.cache/**',
+  '.parcel-cache/**',
+  '.sass-cache/**',
+  '*.cache',
 
   // Optional REPL history
   '.node_repl_history',
@@ -105,11 +110,6 @@ export const defaultIgnoreList = [
   '**/*.swn',
   '**/*.bak',
 
-  // Package manager locks
-  '**/package-lock.json',
-  '**/yarn.lock',
-  '**/pnpm-lock.yaml',
-
   // Build outputs
   'build/**',
   'out/**',
@@ -121,6 +121,13 @@ export const defaultIgnoreList = [
   // repomix output
   'repomix-output.*',
   'repopack-output.*', // Legacy
+
+  // Essential Node.js-related entries
+  '**/package-lock.json',
+  '**/yarn-error.log',
+  '**/yarn.lock',
+  '**/pnpm-lock.yaml',
+  '**/bun.lockb',
 
   // Essential Python-related entries
   '**/__pycache__/**',
@@ -138,4 +145,20 @@ export const defaultIgnoreList = [
   '**/Cargo.toml.orig',
   '**/target/**',
   '**/*.rs.bk',
+
+  // Essential PHP-related entries
+  '**/composer.lock',
+
+  // Essential Ruby-related entries
+  '**/Gemfile.lock',
+
+  // Essential Go-related entries
+  '**/go.sum',
+
+  // Essential Elixir-related entries
+  '**/mix.lock',
+
+  // Essential Haskell-related entries
+  '**/stack.yaml.lock',
+  '**/cabal.project.freeze',
 ];
