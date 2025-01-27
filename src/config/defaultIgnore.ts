@@ -136,4 +136,6 @@ export const defaultIgnoreList = [
   // Essential Rust-related entries
   '**/Cargo.lock',
   '**/Cargo.toml.orig',
+  '**/target/**',
+  '**/*.rs.bk',
 ];
