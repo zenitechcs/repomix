@@ -437,4 +437,24 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('includeEmptyDirectories flag', () => {
+    it('should handle --include-empty-directories flag', async () => {
+      const options: CliOptions = {
+        includeEmptyDirectories: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            includeEmptyDirectories: true,
+          },
+        }),
+      );
+    });
+  });
 });

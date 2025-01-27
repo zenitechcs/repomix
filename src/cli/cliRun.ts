@@ -36,6 +36,7 @@ export interface CliOptions extends OptionValues {
   removeEmptyLines?: boolean;
   tokenCountEncoding?: string;
   instructionFilePath?: string;
+  includeEmptyDirectories?: boolean;
 }
 
 export const run = async () => {
@@ -71,6 +72,7 @@ export const run = async () => {
       )
       .option('--no-security-check', 'disable security check')
       .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
+      .option('--include-empty-directories', 'include empty directories in the output')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);

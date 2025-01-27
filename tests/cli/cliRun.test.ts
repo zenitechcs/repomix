@@ -268,5 +268,17 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle --include-empty-directories flag', async () => {
+      await executeAction('.', process.cwd(), { includeEmptyDirectories: true });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          includeEmptyDirectories: true,
+        }),
+      );
+    });
   });
 });

@@ -423,6 +423,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
 - `--verbose`: Enable verbose logging
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
+- `--include-empty-directories`: Include empty directories in the output
 
 Examples:
 

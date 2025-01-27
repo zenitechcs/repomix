@@ -145,6 +145,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.instructionFilePath) {
     cliConfig.output = { ...cliConfig.output, instructionFilePath: options.instructionFilePath };
   }
+  if (options.includeEmptyDirectories) {
+    cliConfig.output = { ...cliConfig.output, includeEmptyDirectories: options.includeEmptyDirectories };
+  }
 
   try {
     return repomixConfigCliSchema.parse(cliConfig);
