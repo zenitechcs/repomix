@@ -404,6 +404,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `-o, --output <file>`: Specify the output file name
 - `--include <patterns>`: List of include patterns (comma-separated)
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
+- `--no-gitignore`: Disable .gitignore file usage
 - `-c, --config <path>`: Path to a custom config file
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
@@ -579,7 +580,7 @@ Repomix offers multiple methods to set ignore patterns for excluding specific fi
 process:
 
 - **.gitignore**: By default, patterns listed in your project's `.gitignore` file are used. This behavior can be
-  controlled with the `ignore.useGitignore` setting.
+  controlled with the `ignore.useGitignore` setting or the `--no-gitignore` cli option.
 - **Default patterns**: Repomix includes a default list of commonly excluded files and directories (e.g., node_modules,
   .git, binary files). This feature can be controlled with the `ignore.useDefaultPatterns` setting. Please
   see [defaultIgnore.ts](src/config/defaultIgnore.ts) for more details.
@@ -592,7 +593,7 @@ Priority Order (from highest to lowest):
 
 1. Custom patterns `ignore.customPatterns`
 2. `.repomixignore`
-3. `.gitignore` (if `ignore.useGitignore` is true)
+3. `.gitignore` (if `ignore.useGitignore` is true and `--no-gitignore` is not used)
 4. Default patterns (if `ignore.useDefaultPatterns` is true)
 
 This approach allows for flexible file exclusion configuration based on your project's needs. It helps optimize the size

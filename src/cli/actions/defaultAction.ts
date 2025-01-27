@@ -100,6 +100,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
   }
+  if (options.gitignore !== undefined) {
+    cliConfig.ignore = { ...cliConfig.ignore, useGitignore: options.gitignore };
+  }
   if (options.topFilesLen !== undefined) {
     cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
   }

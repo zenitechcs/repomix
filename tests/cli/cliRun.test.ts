@@ -220,5 +220,17 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle explicit --no-gitignore flag', async () => {
+      await executeAction('.', process.cwd(), { gitignore: false });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          gitignore: false,
+        }),
+      );
+    });
   });
 });

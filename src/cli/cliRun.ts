@@ -15,6 +15,7 @@ export interface CliOptions extends OptionValues {
   output?: string;
   include?: string;
   ignore?: string;
+  gitignore?: boolean;
   config?: string;
   copy?: boolean;
   verbose?: boolean;
@@ -43,6 +44,7 @@ export const run = async () => {
       .option('-o, --output <file>', 'specify the output file name')
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
+      .option('--no-gitignore', 'disable .gitignore file usage')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--copy', 'copy generated output to system clipboard')
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)

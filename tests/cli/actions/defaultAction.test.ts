@@ -357,4 +357,24 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('gitignore flag', () => {
+    it('should handle explicit --no-gitignore flag', async () => {
+      const options: CliOptions = {
+        gitignore: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          ignore: {
+            useGitignore: false,
+          },
+        }),
+      );
+    });
+  });
 });
