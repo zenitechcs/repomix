@@ -232,5 +232,17 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle explicit --no-default-patterns flag', async () => {
+      await executeAction('.', process.cwd(), { defaultPatterns: false });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          defaultPatterns: false,
+        }),
+      );
+    });
   });
 });

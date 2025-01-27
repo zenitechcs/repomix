@@ -377,4 +377,24 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('defaultPatterns flag', () => {
+    it('should handle explicit --no-default-patterns flag', async () => {
+      const options: CliOptions = {
+        defaultPatterns: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          ignore: {
+            useDefaultPatterns: false,
+          },
+        }),
+      );
+    });
+  });
 });
