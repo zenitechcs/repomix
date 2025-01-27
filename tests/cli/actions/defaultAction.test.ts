@@ -397,4 +397,24 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('headerText flag', () => {
+    it('should handle --header-text flag', async () => {
+      const options: CliOptions = {
+        headerText: 'Another header text',
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            headerText: 'Another header text',
+          },
+        }),
+      );
+    });
+  });
 });

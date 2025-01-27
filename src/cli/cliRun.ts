@@ -30,6 +30,7 @@ export interface CliOptions extends OptionValues {
   remoteBranch?: string;
   securityCheck?: boolean;
   fileSummary?: boolean;
+  headerText?: string;
   directoryStructure?: boolean;
   removeComments?: boolean;
   removeEmptyLines?: boolean;
@@ -53,6 +54,7 @@ export const run = async () => {
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
       .option('--parsable-style', 'by escaping and formatting, ensure the output is parsable as a document of its type')
+      .option('--header-text <text>', 'specify the header text')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')

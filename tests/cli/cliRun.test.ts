@@ -244,5 +244,17 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle explicit --header-text flag', async () => {
+      await executeAction('.', process.cwd(), { headerText: 'I am a good header text' });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          headerText: 'I am a good header text',
+        }),
+      );
+    });
   });
 });

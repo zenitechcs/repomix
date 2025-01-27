@@ -407,6 +407,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--no-gitignore`: Disable .gitignore file usage
 - `--no-default-patterns`: Disable default patterns
 - `-c, --config <path>`: Path to a custom config file
+- `--header-text <text>`: Custom text to include in the file header
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
 - `--no-file-summary`: Disable file summary section output

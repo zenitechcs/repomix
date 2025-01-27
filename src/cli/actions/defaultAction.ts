@@ -136,6 +136,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.removeEmptyLines !== undefined) {
     cliConfig.output = { ...cliConfig.output, removeEmptyLines: options.removeEmptyLines };
   }
+  if (options.headerText !== undefined) {
+    cliConfig.output = { ...cliConfig.output, headerText: options.headerText };
+  }
   if (options.tokenCountEncoding) {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
   }
