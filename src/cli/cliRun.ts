@@ -35,6 +35,7 @@ export interface CliOptions extends OptionValues {
   removeComments?: boolean;
   removeEmptyLines?: boolean;
   tokenCountEncoding?: string;
+  instructionFilePath?: string;
 }
 
 export const run = async () => {
@@ -69,6 +70,7 @@ export const run = async () => {
         'specify the remote branch name, tag, or commit hash (defaults to repository default branch)',
       )
       .option('--no-security-check', 'disable security check')
+      .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);

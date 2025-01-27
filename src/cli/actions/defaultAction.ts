@@ -142,6 +142,9 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.tokenCountEncoding) {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
   }
+  if (options.instructionFilePath) {
+    cliConfig.output = { ...cliConfig.output, instructionFilePath: options.instructionFilePath };
+  }
 
   try {
     return repomixConfigCliSchema.parse(cliConfig);

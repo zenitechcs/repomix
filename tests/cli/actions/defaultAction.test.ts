@@ -417,4 +417,24 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('instructionFilePath flag', () => {
+    it('should handle --instruction-file-path flag', async () => {
+      const options: CliOptions = {
+        instructionFilePath: 'path/to/instruction.txt',
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            instructionFilePath: 'path/to/instruction.txt',
+          },
+        }),
+      );
+    });
+  });
 });

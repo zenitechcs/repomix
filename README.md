@@ -422,6 +422,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--no-security-check`: Disable security check
 - `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
 - `--verbose`: Enable verbose logging
+- `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 
 Examples:
 

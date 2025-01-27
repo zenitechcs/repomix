@@ -256,5 +256,17 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle --instruction-file-path flag', async () => {
+      await executeAction('.', process.cwd(), { instructionFilePath: 'path/to/instruction.txt' });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          instructionFilePath: 'path/to/instruction.txt',
+        }),
+      );
+    });
   });
 });
