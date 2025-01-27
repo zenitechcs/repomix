@@ -132,4 +132,10 @@ export const defaultIgnoreList = [
   '**/.ipynb_checkpoints/**',
   '**/Pipfile.lock',
   '**/poetry.lock',
+
+  // Essential Rust-related entries
+  '**/Cargo.lock',
+  '**/Cargo.toml.orig',
+  '**/target/**',
+  '**/*.rs.bk',
 ];
