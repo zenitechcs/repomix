@@ -100,6 +100,12 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
   }
+  if (options.gitignore !== undefined) {
+    cliConfig.ignore = { ...cliConfig.ignore, useGitignore: options.gitignore };
+  }
+  if (options.defaultPatterns !== undefined) {
+    cliConfig.ignore = { ...cliConfig.ignore, useDefaultPatterns: options.defaultPatterns };
+  }
   if (options.topFilesLen !== undefined) {
     cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
   }
@@ -130,8 +136,17 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.removeEmptyLines !== undefined) {
     cliConfig.output = { ...cliConfig.output, removeEmptyLines: options.removeEmptyLines };
   }
+  if (options.headerText !== undefined) {
+    cliConfig.output = { ...cliConfig.output, headerText: options.headerText };
+  }
   if (options.tokenCountEncoding) {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
+  }
+  if (options.instructionFilePath) {
+    cliConfig.output = { ...cliConfig.output, instructionFilePath: options.instructionFilePath };
+  }
+  if (options.includeEmptyDirectories) {
+    cliConfig.output = { ...cliConfig.output, includeEmptyDirectories: options.includeEmptyDirectories };
   }
 
   try {

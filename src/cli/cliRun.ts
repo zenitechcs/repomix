@@ -15,6 +15,8 @@ export interface CliOptions extends OptionValues {
   output?: string;
   include?: string;
   ignore?: string;
+  gitignore?: boolean;
+  defaultPatterns?: boolean;
   config?: string;
   copy?: boolean;
   verbose?: boolean;
@@ -28,10 +30,13 @@ export interface CliOptions extends OptionValues {
   remoteBranch?: string;
   securityCheck?: boolean;
   fileSummary?: boolean;
+  headerText?: string;
   directoryStructure?: boolean;
   removeComments?: boolean;
   removeEmptyLines?: boolean;
   tokenCountEncoding?: string;
+  instructionFilePath?: string;
+  includeEmptyDirectories?: boolean;
 }
 
 export const run = async () => {
@@ -43,12 +48,15 @@ export const run = async () => {
       .option('-o, --output <file>', 'specify the output file name')
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
+      .option('--no-gitignore', 'disable .gitignore file usage')
+      .option('--no-default-patterns', 'disable default patterns')
       .option('-c, --config <path>', 'path to a custom config file')
       .option('--copy', 'copy generated output to system clipboard')
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
       .option('--parsable-style', 'by escaping and formatting, ensure the output is parsable as a document of its type')
+      .option('--header-text <text>', 'specify the header text')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')
@@ -63,6 +71,8 @@ export const run = async () => {
         'specify the remote branch name, tag, or commit hash (defaults to repository default branch)',
       )
       .option('--no-security-check', 'disable security check')
+      .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
+      .option('--include-empty-directories', 'include empty directories in the output')
       .action((directory = '.', options: CliOptions = {}) => executeAction(directory, process.cwd(), options));
 
     await program.parseAsync(process.argv);

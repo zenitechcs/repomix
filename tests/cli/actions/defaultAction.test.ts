@@ -357,4 +357,104 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  describe('gitignore flag', () => {
+    it('should handle explicit --no-gitignore flag', async () => {
+      const options: CliOptions = {
+        gitignore: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          ignore: {
+            useGitignore: false,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('defaultPatterns flag', () => {
+    it('should handle explicit --no-default-patterns flag', async () => {
+      const options: CliOptions = {
+        defaultPatterns: false,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          ignore: {
+            useDefaultPatterns: false,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('headerText flag', () => {
+    it('should handle --header-text flag', async () => {
+      const options: CliOptions = {
+        headerText: 'Another header text',
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            headerText: 'Another header text',
+          },
+        }),
+      );
+    });
+  });
+
+  describe('instructionFilePath flag', () => {
+    it('should handle --instruction-file-path flag', async () => {
+      const options: CliOptions = {
+        instructionFilePath: 'path/to/instruction.txt',
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            instructionFilePath: 'path/to/instruction.txt',
+          },
+        }),
+      );
+    });
+  });
+
+  describe('includeEmptyDirectories flag', () => {
+    it('should handle --include-empty-directories flag', async () => {
+      const options: CliOptions = {
+        includeEmptyDirectories: true,
+      };
+
+      await runDefaultAction('.', process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            includeEmptyDirectories: true,
+          },
+        }),
+      );
+    });
+  });
 });

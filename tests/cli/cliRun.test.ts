@@ -220,5 +220,65 @@ describe('cliRun', () => {
         }),
       );
     });
+
+    test('should handle explicit --no-gitignore flag', async () => {
+      await executeAction('.', process.cwd(), { gitignore: false });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          gitignore: false,
+        }),
+      );
+    });
+
+    test('should handle explicit --no-default-patterns flag', async () => {
+      await executeAction('.', process.cwd(), { defaultPatterns: false });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          defaultPatterns: false,
+        }),
+      );
+    });
+
+    test('should handle explicit --header-text flag', async () => {
+      await executeAction('.', process.cwd(), { headerText: 'I am a good header text' });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          headerText: 'I am a good header text',
+        }),
+      );
+    });
+
+    test('should handle --instruction-file-path flag', async () => {
+      await executeAction('.', process.cwd(), { instructionFilePath: 'path/to/instruction.txt' });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          instructionFilePath: 'path/to/instruction.txt',
+        }),
+      );
+    });
+
+    test('should handle --include-empty-directories flag', async () => {
+      await executeAction('.', process.cwd(), { includeEmptyDirectories: true });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        '.',
+        process.cwd(),
+        expect.objectContaining({
+          includeEmptyDirectories: true,
+        }),
+      );
+    });
   });
 });
