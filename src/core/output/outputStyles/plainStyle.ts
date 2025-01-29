@@ -67,5 +67,8 @@ ${PLAIN_LONG_SEPARATOR}
 {{{instruction}}}
 {{/if}}
 
+${PLAIN_LONG_SEPARATOR}
+End of Codebase
+${PLAIN_LONG_SEPARATOR}
 `;
 };
