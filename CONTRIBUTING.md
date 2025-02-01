@@ -35,7 +35,7 @@ npm install
 To run Repomix locally:
 
 ```bash
-npm run cli-run
+npm run repomix
 ```
 
 ### Docker Usage

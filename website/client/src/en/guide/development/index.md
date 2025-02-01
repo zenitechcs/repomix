@@ -12,7 +12,7 @@ npm install
 
 ```bash
 # Run CLI
-npm run cli-run
+npm run repomix
 
 # Run tests
 npm run test

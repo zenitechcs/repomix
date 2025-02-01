@@ -8,6 +8,10 @@ class Logger {
     this.isVerbose = value;
   }
 
+  isVerboseEnabled(): boolean {
+    return this.isVerbose;
+  }
+
   error(...args: unknown[]) {
     console.error(pc.red(this.formatArgs(args)));
   }

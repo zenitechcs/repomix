@@ -17,7 +17,7 @@ cd repomix
 npm install
 
 # 运行 CLI
-npm run cli-run
+npm run repomix
 ```
 
 ## Docker 开发环境
