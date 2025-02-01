@@ -8,3 +8,19 @@ export interface OutputGeneratorContext {
   config: RepomixConfigMerged;
   instruction: string;
 }
+
+export interface RenderContext {
+  readonly generationHeader: string;
+  readonly summaryPurpose: string;
+  readonly summaryFileFormat: string;
+  readonly summaryUsageGuidelines: string;
+  readonly summaryNotes: string;
+  readonly headerText: string | undefined;
+  readonly instruction: string;
+  readonly treeString: string;
+  readonly processedFiles: ReadonlyArray<ProcessedFile>;
+  readonly fileSummaryEnabled: boolean;
+  readonly directoryStructureEnabled: boolean;
+  readonly escapeFileContent: boolean;
+  readonly markdownCodeBlockDelimiter: string;
+}

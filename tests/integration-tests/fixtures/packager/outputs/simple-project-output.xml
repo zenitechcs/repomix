@@ -1,4 +1,4 @@
-This file is a merged representation of the entire codebase, combining all repository files into a single document.
+This file is a merged representation of the entire codebase, combined into a single document.
 
 <file_summary>
 This section contains a summary of this file.
@@ -30,11 +30,10 @@ The content is organized as follows:
 </usage_guidelines>
 
 <notes>
-- Some files may have been excluded based on .gitignore rules and Repomix's
-  configuration.
-- Binary files are not included in this packed representation. Please refer to
-  the Repository Structure section for a complete list of file paths, including
-  binary files.
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
 </notes>
 
 <additional_info>

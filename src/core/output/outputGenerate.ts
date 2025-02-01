@@ -7,7 +7,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import type { OutputGeneratorContext } from './outputGeneratorTypes.js';
+import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import {
   generateHeader,
   generateSummaryFileFormat,
@@ -19,22 +19,6 @@ import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
 
-interface RenderContext {
-  readonly generationHeader: string;
-  readonly summaryPurpose: string;
-  readonly summaryFileFormat: string;
-  readonly summaryUsageGuidelines: string;
-  readonly summaryNotes: string;
-  readonly headerText: string | undefined;
-  readonly instruction: string;
-  readonly treeString: string;
-  readonly processedFiles: ReadonlyArray<ProcessedFile>;
-  readonly fileSummaryEnabled: boolean;
-  readonly directoryStructureEnabled: boolean;
-  readonly escapeFileContent: boolean;
-  readonly markdownCodeBlockDelimiter: string;
-}
-
 const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string => {
   const maxBackticks = files
     .flatMap((file) => file.content.match(/`+/g) ?? [])
@@ -44,7 +28,7 @@ const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
   return {
-    generationHeader: generateHeader(outputGeneratorContext.generationDate),
+    generationHeader: generateHeader(outputGeneratorContext.config, outputGeneratorContext.generationDate), // configを追加
     summaryPurpose: generateSummaryPurpose(),
     summaryFileFormat: generateSummaryFileFormat(),
     summaryUsageGuidelines: generateSummaryUsageGuidelines(
@@ -175,6 +159,7 @@ export const buildOutputGeneratorContext = async (
       }
     }
   }
+
   return {
     generationDate: new Date().toISOString(),
     treeString: generateTreeString(allFilePaths, emptyDirPaths),
