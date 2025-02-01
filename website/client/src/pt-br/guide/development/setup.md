@@ -17,7 +17,7 @@ cd repomix
 npm install
 
 # Executar CLI
-npm run cli-run
+npm run repomix
 ```
 
 ## Desenvolvimento com Docker

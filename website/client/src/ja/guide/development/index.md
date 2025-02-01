@@ -12,7 +12,7 @@ npm install
 
 ```bash
 # CLIを実行
-npm run cli-run
+npm run repomix
 
 # テストを実行
 npm run test
