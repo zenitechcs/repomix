@@ -41,6 +41,7 @@ export const calculateAllFileMetrics = async (
         runTask(task).then((result) => {
           completedTasks++;
           progressCallback(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${pc.dim(task.file.path)}`);
+          logger.trace(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${task.file.path}`);
           return result;
         }),
       ),

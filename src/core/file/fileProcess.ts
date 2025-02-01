@@ -40,6 +40,7 @@ export const processFiles = async (
         runTask(task).then((result) => {
           completedTasks++;
           progressCallback(`Processing file... (${completedTasks}/${totalTasks}) ${pc.dim(task.rawFile.path)}`);
+          logger.trace(`Processing file... (${completedTasks}/${totalTasks}) ${task.rawFile.path}`);
           return result;
         }),
       ),

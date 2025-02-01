@@ -43,6 +43,7 @@ export const runSecurityCheck = async (
         runTask(task).then((result) => {
           completedTasks++;
           progressCallback(`Running security check... (${completedTasks}/${totalTasks}) ${pc.dim(task.filePath)}`);
+          logger.trace(`Running security check... (${completedTasks}/${totalTasks}) ${task.filePath}`);
           return result;
         }),
       ),
