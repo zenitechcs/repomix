@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { DefaultActionRunnerResult } from '../../../src/cli/actions/defaultAction.js';
 import {
   copyOutputToCurrentDirectory,
-  formatRemoteValueToUrl,
   isValidRemoteValue,
+  parseRemoteValue,
   runRemoteAction,
 } from '../../../src/cli/actions/remoteAction.js';
 import { createMockConfig } from '../../testing/testUtils.js';
@@ -55,20 +55,20 @@ describe('remoteAction functions', () => {
 
   describe('formatGitUrl', () => {
     test('should convert GitHub shorthand to full URL', () => {
-      expect(formatRemoteValueToUrl('user/repo')).toBe('https://github.com/user/repo.git');
-      expect(formatRemoteValueToUrl('user-name/repo-name')).toBe('https://github.com/user-name/repo-name.git');
-      expect(formatRemoteValueToUrl('user_name/repo_name')).toBe('https://github.com/user_name/repo_name.git');
-      expect(formatRemoteValueToUrl('a.b/a-b_c')).toBe('https://github.com/a.b/a-b_c.git');
+      expect(parseRemoteValue('user/repo').repoUrl).toBe('https://github.com/user/repo.git');
+      expect(parseRemoteValue('user-name/repo-name').repoUrl).toBe('https://github.com/user-name/repo-name.git');
+      expect(parseRemoteValue('user_name/repo_name').repoUrl).toBe('https://github.com/user_name/repo_name.git');
+      expect(parseRemoteValue('a.b/a-b_c').repoUrl).toBe('https://github.com/a.b/a-b_c.git');
     });
 
     test('should handle HTTPS URLs', () => {
-      expect(formatRemoteValueToUrl('https://github.com/user/repo')).toBe('https://github.com/user/repo.git');
-      expect(formatRemoteValueToUrl('https://github.com/user/repo.git')).toBe('https://github.com/user/repo.git');
+      expect(parseRemoteValue('https://github.com/user/repo').repoUrl).toBe('https://github.com/user/repo.git');
+      expect(parseRemoteValue('https://github.com/user/repo.git').repoUrl).toBe('https://github.com/user/repo.git');
     });
 
     test('should not modify SSH URLs', () => {
       const sshUrl = 'git@github.com:user/repo.git';
-      expect(formatRemoteValueToUrl(sshUrl)).toBe(sshUrl);
+      expect(parseRemoteValue(sshUrl).repoUrl).toBe(sshUrl);
     });
   });
 
