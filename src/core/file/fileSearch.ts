@@ -57,6 +57,14 @@ const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
   }
 };
 
+/**
+ * Escapes special characters in glob patterns to handle paths with parentheses.
+ * Example: "src/(categories)" -> "src/\\(categories\\)"
+ */
+const escapeGlobPattern = (pattern: string): string => {
+  return pattern.replace(/[()[\]{}]/g, '\\$&');
+};
+
 // Get all file paths considering the config
 export const searchFiles = async (rootDir: string, config: RepomixConfigMerged): Promise<FileSearchResult> => {
   // First check directory permissions
@@ -69,7 +77,9 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
     throw new Error(`Cannot access directory ${rootDir}: ${permissionCheck.error?.message}`);
   }
 
-  const includePatterns = config.include.length > 0 ? config.include : ['**/*'];
+  const includePatterns = config.include.length > 0 
+    ? config.include.map(pattern => escapeGlobPattern(pattern))
+    : ['**/*'];
 
   try {
     const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
