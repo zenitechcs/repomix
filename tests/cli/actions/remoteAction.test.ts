@@ -53,22 +53,69 @@ describe('remoteAction functions', () => {
     });
   });
 
-  describe('formatGitUrl', () => {
+  describe('parseRemoteValue', () => {
     test('should convert GitHub shorthand to full URL', () => {
-      expect(parseRemoteValue('user/repo').repoUrl).toBe('https://github.com/user/repo.git');
-      expect(parseRemoteValue('user-name/repo-name').repoUrl).toBe('https://github.com/user-name/repo-name.git');
-      expect(parseRemoteValue('user_name/repo_name').repoUrl).toBe('https://github.com/user_name/repo_name.git');
-      expect(parseRemoteValue('a.b/a-b_c').repoUrl).toBe('https://github.com/a.b/a-b_c.git');
+      expect(parseRemoteValue('user/repo')).toEqual({
+        repoUrl: 'https://github.com/user/repo.git',
+        remoteBranch: undefined,
+      });
+      expect(parseRemoteValue('user-name/repo-name')).toEqual({
+        repoUrl: 'https://github.com/user-name/repo-name.git',
+        remoteBranch: undefined,
+      });
+      expect(parseRemoteValue('user_name/repo_name')).toEqual({
+        repoUrl: 'https://github.com/user_name/repo_name.git',
+        remoteBranch: undefined,
+      });
+      expect(parseRemoteValue('a.b/a-b_c')).toEqual({
+        repoUrl: 'https://github.com/a.b/a-b_c.git',
+        remoteBranch: undefined,
+      });
     });
 
     test('should handle HTTPS URLs', () => {
-      expect(parseRemoteValue('https://github.com/user/repo').repoUrl).toBe('https://github.com/user/repo.git');
-      expect(parseRemoteValue('https://github.com/user/repo.git').repoUrl).toBe('https://github.com/user/repo.git');
+      expect(parseRemoteValue('https://github.com/user/repo')).toEqual({
+        repoUrl: 'https://github.com/user/repo.git',
+        remoteBranch: undefined,
+      });
+      expect(parseRemoteValue('https://github.com/user/repo.git')).toEqual({
+        repoUrl: 'https://github.com/user/repo.git',
+        remoteBranch: undefined,
+      });
     });
 
     test('should not modify SSH URLs', () => {
       const sshUrl = 'git@github.com:user/repo.git';
-      expect(parseRemoteValue(sshUrl).repoUrl).toBe(sshUrl);
+      const parsed = parseRemoteValue(sshUrl);
+      expect(parsed).toEqual({
+        repoUrl: sshUrl,
+        remoteBranch: undefined,
+      });
+    });
+
+    test('should get correct branch name from url', () => {
+      expect(parseRemoteValue('https://github.com/username/repo/tree/branchname')).toEqual({
+        repoUrl: 'https://github.com/username/repo.git',
+        remoteBranch: 'branchname',
+      });
+      expect(parseRemoteValue('https://some.gitlab.domain/some/path/username/repo/-/tree/branchname')).toEqual({
+        repoUrl: 'https://some.gitlab.domain/some/path/username/repo.git',
+        remoteBranch: 'branchname',
+      });
+    });
+
+    test('should get correct commit hash from url', () => {
+      expect(
+        parseRemoteValue(
+          'https://some.gitlab.domain/some/path/username/repo/commit/c482755296cce46e58f87d50f25f545c5d15be6f',
+        ),
+      ).toEqual({
+        repoUrl: 'https://some.gitlab.domain/some/path/username/repo.git',
+        remoteBranch: 'c482755296cce46e58f87d50f25f545c5d15be6f',
+      });
+    });
+    test('should throw when the URL is invalid or harmful', () => {
+      expect(() => parseRemoteValue('some random string')).toThrowError();
     });
   });
 

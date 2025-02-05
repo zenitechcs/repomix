@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import GitUrlParse from 'git-url-parse';
+import GitUrlParse, { type GitUrl } from 'git-url-parse';
 import pc from 'picocolors';
 import { execGitShallowClone, isGitInstalled } from '../../core/file/gitCommand.js';
 import { RepomixError } from '../../shared/errorHandle.js';
@@ -9,7 +9,9 @@ import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
-
+interface CorrectedGitUrl extends GitUrl {
+  commit: string | undefined;
+}
 export const runRemoteAction = async (
   repoUrl: string,
   options: CliOptions,
@@ -67,31 +69,47 @@ export const isValidShorthand = (remoteValue: string): boolean => {
 };
 
 export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remoteBranch: string | undefined } => {
+  if (isValidShorthand(remoteValue)) {
+    logger.trace(`Formatting GitHub shorthand: ${remoteValue}`);
+    return {
+      repoUrl: `https://github.com/${remoteValue}.git`,
+      remoteBranch: undefined,
+    };
+  }
+
   try {
-    let repoUrl: string;
-    if (isValidShorthand(remoteValue)) {
-      logger.trace(`Formatting GitHub shorthand: ${remoteValue}`);
-      repoUrl = `https://github.com/${remoteValue}.git`;
-      return {
-        repoUrl: repoUrl,
-        remoteBranch: undefined,
-      };
-    }
     const parsedFields = GitUrlParse(remoteValue);
-    console.log(parsedFields);
-    const ownerSlashName =
+
+    // This will make parsedFields.toString() automatically append '.git' to the returned url
+    parsedFields.git_suffix = true;
+
+    const ownerSlashRepo =
       parsedFields.full_name.split('/').length > 1 ? parsedFields.full_name.split('/').slice(-2).join('/') : '';
 
-    if (ownerSlashName !== '' && !isValidShorthand(ownerSlashName)) {
+    if (ownerSlashRepo !== '' && !isValidShorthand(ownerSlashRepo)) {
       throw new RepomixError('Invalid owner/repo in repo URL');
     }
-    const remoteBranch = parsedFields.ref !== '' ? parsedFields.ref : undefined;
-    repoUrl = parsedFields.toString(parsedFields.protocol);
-    if (parsedFields.protocol === 'https' && !repoUrl.endsWith('.git')) {
-      logger.trace(`Adding .git to HTTPS URL: ${repoUrl}`);
-      repoUrl = `${repoUrl}.git`;
+
+    const repoUrl = parsedFields.toString(parsedFields.protocol);
+
+    if (parsedFields.ref) {
+      return {
+        repoUrl: repoUrl,
+        remoteBranch: parsedFields.ref,
+      };
     }
-    return { repoUrl, remoteBranch };
+
+    if ((parsedFields as CorrectedGitUrl).commit) {
+      return {
+        repoUrl: repoUrl,
+        remoteBranch: (parsedFields as CorrectedGitUrl).commit,
+      };
+    }
+
+    return {
+      repoUrl: repoUrl,
+      remoteBranch: undefined,
+    };
   } catch (error) {
     throw new RepomixError('Invalid remote repository URL or repository shorthand (owner/repo)');
   }
