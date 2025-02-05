@@ -26,13 +26,7 @@ export const runRemoteAction = async (
   }
 
   const parsedFields = parseRemoteValue(repoUrl);
-
-  if (options.remoteBranch === undefined) {
-    options.remoteBranch = parsedFields.remoteBranch;
-  }
-
   const spinner = new Spinner('Cloning repository...');
-
   const tempDirPath = await createTempDirectory();
   let result: DefaultActionRunnerResult;
 
@@ -40,7 +34,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(parsedFields.repoUrl, tempDirPath, options.remoteBranch, {
+    await cloneRepository(parsedFields.repoUrl, tempDirPath, options.remoteBranch || parsedFields.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
