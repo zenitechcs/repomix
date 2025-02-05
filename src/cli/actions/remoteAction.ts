@@ -138,13 +138,13 @@ export const cloneRepository = async (
     execGitShallowClone,
   },
 ): Promise<void> => {
-  logger.log(`Clone repository: ${url} to temporary directory.${pc.dim(`path: ${directory}`)} `);
+  logger.log(`Clone repository: ${url} to temporary directory.${pc.dim(`path: ${directory}`)}`);
   logger.log('');
 
   try {
     await deps.execGitShallowClone(url, directory, remoteBranch);
   } catch (error) {
-    throw new RepomixError(`Failed to clone repository: ${(error as Error).message} `);
+    throw new RepomixError(`Failed to clone repository: ${(error as Error).message}`);
   }
 };
 
@@ -162,9 +162,9 @@ export const copyOutputToCurrentDirectory = async (
   const targetPath = path.join(targetDir, outputFileName);
 
   try {
-    logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath} `);
+    logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath}`);
     await fs.copyFile(sourcePath, targetPath);
   } catch (error) {
-    throw new RepomixError(`Failed to copy output file: ${(error as Error).message} `);
+    throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
   }
 };
