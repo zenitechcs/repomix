@@ -77,9 +77,8 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
     throw new Error(`Cannot access directory ${rootDir}: ${permissionCheck.error?.message}`);
   }
 
-  const includePatterns = config.include.length > 0 
-    ? config.include.map(pattern => escapeGlobPattern(pattern))
-    : ['**/*'];
+  const includePatterns =
+    config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
 
   try {
     const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
