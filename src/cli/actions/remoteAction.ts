@@ -138,7 +138,7 @@ export const cloneRepository = async (
     execGitShallowClone,
   },
 ): Promise<void> => {
-  logger.log(`Clone repository: ${url} to temporary directory.${pc.dim(`path: ${directory}`)}`);
+  logger.log(`Clone repository: ${url} to temporary directory. ${pc.dim(`path: ${directory}`)}`);
   logger.log('');
 
   try {
@@ -149,7 +149,7 @@ export const cloneRepository = async (
 };
 
 export const cleanupTempDirectory = async (directory: string): Promise<void> => {
-  logger.trace(`Cleaning up temporary directory: ${directory} `);
+  logger.trace(`Cleaning up temporary directory: ${directory}`);
   await fs.rm(directory, { recursive: true, force: true });
 };
 
