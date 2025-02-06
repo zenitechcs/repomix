@@ -102,6 +102,12 @@ describe('remoteAction functions', () => {
         repoUrl: 'https://some.gitlab.domain/some/path/username/repo.git',
         remoteBranch: 'branchname',
       });
+      expect(
+        parseRemoteValue('https://some.gitlab.domain/some/path/username/repo/-/tree/branchname/withslash'),
+      ).toEqual({
+        repoUrl: 'https://some.gitlab.domain/some/path/username/repo.git',
+        remoteBranch: 'branchname/withslash',
+      });
     });
 
     test('should get correct commit hash from url', () => {

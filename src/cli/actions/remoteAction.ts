@@ -89,7 +89,7 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
     if (parsedFields.ref) {
       return {
         repoUrl: repoUrl,
-        remoteBranch: parsedFields.ref,
+        remoteBranch: parsedFields.filepath ? `${parsedFields.ref}/${parsedFields.filepath}` : parsedFields.ref,
       };
     }
 
