@@ -2,7 +2,8 @@ import type { RepomixConfigMerged } from '../config/configSchema.js';
 import type { RepomixProgressCallback } from '../shared/types.js';
 import { collectFiles } from './file/fileCollect.js';
 import { processFiles } from './file/fileProcess.js';
-import { searchFiles } from './file/fileSearch.js';
+import { FileSearchResult, searchFiles } from './file/fileSearch.js';
+import type { RawFile } from './file/fileTypes.js';
 import { calculateMetrics } from './metrics/calculateMetrics.js';
 import { generateOutput } from './output/outputGenerate.js';
 import { copyToClipboardIfEnabled } from './packager/copyToClipboardIfEnabled.js';
@@ -20,7 +21,7 @@ export interface PackResult {
 }
 
 export const pack = async (
-  rootDir: string,
+  rootDirs: string[],
   config: RepomixConfigMerged,
   progressCallback: RepomixProgressCallback = () => {},
   deps = {
@@ -35,10 +36,19 @@ export const pack = async (
   },
 ): Promise<PackResult> => {
   progressCallback('Searching for files...');
-  const { filePaths } = await deps.searchFiles(rootDir, config);
+  const filePathsByDir = await Promise.all(
+    rootDirs.map(async (rootDir) => ({
+      rootDir,
+      filePaths: (await deps.searchFiles(rootDir, config)).filePaths,
+    })),
+  );
 
   progressCallback('Collecting files...');
-  const rawFiles = await deps.collectFiles(filePaths, rootDir, progressCallback);
+  const rawFiles = (
+    await Promise.all(
+      filePathsByDir.map(({ rootDir, filePaths }) => deps.collectFiles(filePaths, rootDir, progressCallback)),
+    )
+  ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []);
 
   const { safeFilePaths, safeRawFiles, suspiciousFilesResults } = await deps.validateFileSafety(
     rawFiles,
@@ -51,7 +61,7 @@ export const pack = async (
   const processedFiles = await deps.processFiles(safeRawFiles, config, progressCallback);
 
   progressCallback('Generating output...');
-  const output = await deps.generateOutput(rootDir, config, processedFiles, safeFilePaths);
+  const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths);
 
   progressCallback('Writing output file...');
   await deps.writeOutputToDisk(output, config);

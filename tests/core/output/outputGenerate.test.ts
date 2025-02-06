@@ -22,7 +22,7 @@ describe('outputGenerate', () => {
       { path: 'dir/file2.txt', content: 'content2' },
     ];
 
-    const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
 
     expect(output).toContain('File Summary');
     expect(output).toContain('File: file1.txt');
@@ -48,15 +48,21 @@ describe('outputGenerate', () => {
       { path: 'dir/file2.txt', content: 'if (a && b)' },
     ];
 
-    const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
 
     const parser = new XMLParser({ ignoreAttributes: false });
     const parsedOutput = parser.parse(output);
 
     expect(parsedOutput.repomix.file_summary).not.toBeUndefined();
     expect(parsedOutput.repomix.files.file).toEqual([
-      { '#text': mockProcessedFiles[0].content, '@_path': mockProcessedFiles[0].path },
-      { '#text': mockProcessedFiles[1].content, '@_path': mockProcessedFiles[1].path },
+      {
+        '#text': mockProcessedFiles[0].content,
+        '@_path': mockProcessedFiles[0].path,
+      },
+      {
+        '#text': mockProcessedFiles[1].content,
+        '@_path': mockProcessedFiles[1].path,
+      },
     ]);
   });
 
@@ -77,7 +83,7 @@ describe('outputGenerate', () => {
       { path: 'dir/file2.txt', content: '```\ncontent2\n```' },
     ];
 
-    const output = await generateOutput(process.cwd(), mockConfig, mockProcessedFiles, []);
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
 
     expect(output).toContain('# File Summary');
     expect(output).toContain('## File: file1.txt');

@@ -4,7 +4,7 @@ import { XMLBuilder } from 'fast-xml-parser';
 import Handlebars from 'handlebars';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
-import { searchFiles } from '../file/fileSearch.js';
+import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
@@ -112,12 +112,12 @@ const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContex
 };
 
 export const generateOutput = async (
-  rootDir: string,
+  rootDirs: string[],
   config: RepomixConfigMerged,
   processedFiles: ProcessedFile[],
   allFilePaths: string[],
 ): Promise<string> => {
-  const outputGeneratorContext = await buildOutputGeneratorContext(rootDir, config, allFilePaths, processedFiles);
+  const outputGeneratorContext = await buildOutputGeneratorContext(rootDirs, config, allFilePaths, processedFiles);
   const renderContext = createRenderContext(outputGeneratorContext);
 
   if (!config.output.parsableStyle) return generateHandlebarOutput(config, renderContext);
@@ -132,7 +132,7 @@ export const generateOutput = async (
 };
 
 export const buildOutputGeneratorContext = async (
-  rootDir: string,
+  rootDirs: string[],
   config: RepomixConfigMerged,
   allFilePaths: string[],
   processedFiles: ProcessedFile[],
@@ -151,8 +151,14 @@ export const buildOutputGeneratorContext = async (
   let emptyDirPaths: string[] = [];
   if (config.output.includeEmptyDirectories) {
     try {
-      const searchResult = await searchFiles(rootDir, config);
-      emptyDirPaths = searchResult.emptyDirPaths;
+      emptyDirPaths = (await Promise.all(rootDirs.map((rootDir) => searchFiles(rootDir, config)))).reduce(
+        (acc: FileSearchResult, curr: FileSearchResult) =>
+          ({
+            filePaths: [...acc.filePaths, ...curr.filePaths],
+            emptyDirPaths: [...acc.emptyDirPaths, ...curr.emptyDirPaths],
+          }) as FileSearchResult,
+        { filePaths: [], emptyDirPaths: [] },
+      ).emptyDirPaths;
     } catch (error) {
       if (error instanceof Error) {
         throw new RepomixError(`Failed to search for empty directories: ${error.message}`);

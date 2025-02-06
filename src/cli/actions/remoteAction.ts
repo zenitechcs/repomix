@@ -42,7 +42,7 @@ export const runRemoteAction = async (
     logger.log('');
 
     // Run the default action on the cloned repository
-    result = await deps.runDefaultAction(tempDirPath, tempDirPath, options);
+    result = await deps.runDefaultAction([tempDirPath], tempDirPath, options);
     await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
   } catch (error) {
     spinner.fail('Error during repository cloning. cleanup...');

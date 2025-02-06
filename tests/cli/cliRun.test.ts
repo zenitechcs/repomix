@@ -125,33 +125,35 @@ describe('cliRun', () => {
 
   describe('executeAction', () => {
     test('should execute default action when no special options provided', async () => {
-      await executeAction('.', process.cwd(), {});
+      await executeAction(['.'], process.cwd(), {});
 
-      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith('.', process.cwd(), expect.any(Object));
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['.'], process.cwd(), expect.any(Object));
     });
 
     test('should enable verbose logging when verbose option is true', async () => {
-      await executeAction('.', process.cwd(), { verbose: true });
+      await executeAction(['.'], process.cwd(), { verbose: true });
 
       expect(logger.setVerbose).toHaveBeenCalledWith(true);
     });
 
     test('should execute version action when version option is true', async () => {
-      await executeAction('.', process.cwd(), { version: true });
+      await executeAction(['.'], process.cwd(), { version: true });
 
       expect(versionAction.runVersionAction).toHaveBeenCalled();
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
 
     test('should execute init action when init option is true', async () => {
-      await executeAction('.', process.cwd(), { init: true });
+      await executeAction(['.'], process.cwd(), { init: true });
 
       expect(initAction.runInitAction).toHaveBeenCalledWith(process.cwd(), false);
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
 
     test('should execute remote action when remote option is provided', async () => {
-      await executeAction('.', process.cwd(), { remote: 'yamadashy/repomix' });
+      await executeAction(['.'], process.cwd(), {
+        remote: 'yamadashy/repomix',
+      });
 
       expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('yamadashy/repomix', expect.any(Object));
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
@@ -160,10 +162,10 @@ describe('cliRun', () => {
 
   describe('parsable style flag', () => {
     test('should disable parsable style by default', async () => {
-      await executeAction('.', process.cwd(), {});
+      await executeAction(['.'], process.cwd(), {});
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.not.objectContaining({
           parsableStyle: false,
@@ -172,10 +174,10 @@ describe('cliRun', () => {
     });
 
     test('should handle --parsable-style flag', async () => {
-      await executeAction('.', process.cwd(), { parsableStyle: true });
+      await executeAction(['.'], process.cwd(), { parsableStyle: true });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           parsableStyle: true,
@@ -186,10 +188,10 @@ describe('cliRun', () => {
 
   describe('security check flag', () => {
     test('should enable security check by default', async () => {
-      await executeAction('.', process.cwd(), {});
+      await executeAction(['.'], process.cwd(), {});
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.not.objectContaining({
           securityCheck: false,
@@ -198,10 +200,10 @@ describe('cliRun', () => {
     });
 
     test('should handle --no-security-check flag', async () => {
-      await executeAction('.', process.cwd(), { securityCheck: false });
+      await executeAction(['.'], process.cwd(), { securityCheck: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           securityCheck: false,
@@ -210,10 +212,10 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --security-check flag', async () => {
-      await executeAction('.', process.cwd(), { securityCheck: true });
+      await executeAction(['.'], process.cwd(), { securityCheck: true });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           securityCheck: true,
@@ -222,10 +224,10 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --no-gitignore flag', async () => {
-      await executeAction('.', process.cwd(), { gitignore: false });
+      await executeAction(['.'], process.cwd(), { gitignore: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           gitignore: false,
@@ -234,10 +236,10 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --no-default-patterns flag', async () => {
-      await executeAction('.', process.cwd(), { defaultPatterns: false });
+      await executeAction(['.'], process.cwd(), { defaultPatterns: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           defaultPatterns: false,
@@ -246,10 +248,12 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --header-text flag', async () => {
-      await executeAction('.', process.cwd(), { headerText: 'I am a good header text' });
+      await executeAction(['.'], process.cwd(), {
+        headerText: 'I am a good header text',
+      });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           headerText: 'I am a good header text',
@@ -258,10 +262,12 @@ describe('cliRun', () => {
     });
 
     test('should handle --instruction-file-path flag', async () => {
-      await executeAction('.', process.cwd(), { instructionFilePath: 'path/to/instruction.txt' });
+      await executeAction(['.'], process.cwd(), {
+        instructionFilePath: 'path/to/instruction.txt',
+      });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           instructionFilePath: 'path/to/instruction.txt',
@@ -270,10 +276,12 @@ describe('cliRun', () => {
     });
 
     test('should handle --include-empty-directories flag', async () => {
-      await executeAction('.', process.cwd(), { includeEmptyDirectories: true });
+      await executeAction(['.'], process.cwd(), {
+        includeEmptyDirectories: true,
+      });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        '.',
+        ['.'],
         process.cwd(),
         expect.objectContaining({
           includeEmptyDirectories: true,
