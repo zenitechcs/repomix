@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import GitUrlParse, { type GitUrl } from 'git-url-parse';
 import pc from 'picocolors';
 import { execGitShallowClone, isGitInstalled } from '../../core/file/gitCommand.js';
 import { RepomixError } from '../../shared/errorHandle.js';
@@ -8,11 +9,9 @@ import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
-
-// Check the short form of the GitHub URL. e.g. yamadashy/repomix
-const remoteNamePattern = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
-const remoteNamePatternRegex = new RegExp(`^${remoteNamePattern}/${remoteNamePattern}$`);
-
+interface IGitUrl extends GitUrl {
+  commit: string | undefined;
+}
 export const runRemoteAction = async (
   repoUrl: string,
   options: CliOptions,
@@ -26,12 +25,8 @@ export const runRemoteAction = async (
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
-  if (!isValidRemoteValue(repoUrl)) {
-    throw new RepomixError('Invalid repository URL or user/repo format');
-  }
-
+  const parsedFields = parseRemoteValue(repoUrl);
   const spinner = new Spinner('Cloning repository...');
-
   const tempDirPath = await createTempDirectory();
   let result: DefaultActionRunnerResult;
 
@@ -39,7 +34,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(formatRemoteValueToUrl(repoUrl), tempDirPath, options.remoteBranch, {
+    await cloneRepository(parsedFields.repoUrl, tempDirPath, options.remoteBranch || parsedFields.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
@@ -60,34 +55,67 @@ export const runRemoteAction = async (
   return result;
 };
 
-export function isValidRemoteValue(remoteValue: string): boolean {
-  if (remoteNamePatternRegex.test(remoteValue)) {
-    return true;
+// Check the short form of the GitHub URL. e.g. yamadashy/repomix
+const VALID_NAME_PATTERN = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
+const validShorthandRegex = new RegExp(`^${VALID_NAME_PATTERN}/${VALID_NAME_PATTERN}$`);
+export const isValidShorthand = (remoteValue: string): boolean => {
+  return validShorthandRegex.test(remoteValue);
+};
+
+export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remoteBranch: string | undefined } => {
+  if (isValidShorthand(remoteValue)) {
+    logger.trace(`Formatting GitHub shorthand: ${remoteValue}`);
+    return {
+      repoUrl: `https://github.com/${remoteValue}.git`,
+      remoteBranch: undefined,
+    };
   }
 
-  // Check the direct form of the GitHub URL. e.g.  https://github.com/yamadashy/repomix or https://gist.github.com/yamadashy/1234567890abcdef
   try {
-    new URL(remoteValue);
+    const parsedFields = GitUrlParse(remoteValue) as IGitUrl;
+
+    // This will make parsedFields.toString() automatically append '.git' to the returned url
+    parsedFields.git_suffix = true;
+
+    const ownerSlashRepo =
+      parsedFields.full_name.split('/').length > 1 ? parsedFields.full_name.split('/').slice(-2).join('/') : '';
+
+    if (ownerSlashRepo !== '' && !isValidShorthand(ownerSlashRepo)) {
+      throw new RepomixError('Invalid owner/repo in repo URL');
+    }
+
+    const repoUrl = parsedFields.toString(parsedFields.protocol);
+
+    if (parsedFields.ref) {
+      return {
+        repoUrl: repoUrl,
+        remoteBranch: parsedFields.filepath ? `${parsedFields.ref}/${parsedFields.filepath}` : parsedFields.ref,
+      };
+    }
+
+    if (parsedFields.commit) {
+      return {
+        repoUrl: repoUrl,
+        remoteBranch: parsedFields.commit,
+      };
+    }
+
+    return {
+      repoUrl: repoUrl,
+      remoteBranch: undefined,
+    };
+  } catch (error) {
+    throw new RepomixError('Invalid remote repository URL or repository shorthand (owner/repo)');
+  }
+};
+
+export const isValidRemoteValue = (remoteValue: string): boolean => {
+  try {
+    parseRemoteValue(remoteValue);
     return true;
   } catch (error) {
     return false;
   }
-}
-
-export const formatRemoteValueToUrl = (url: string): string => {
-  // If the URL is in the format owner/repo, convert it to a GitHub URL
-  if (remoteNamePatternRegex.test(url)) {
-    logger.trace(`Formatting GitHub shorthand: ${url}`);
-    return `https://github.com/${url}.git`;
-  }
-
-  // Add .git to HTTPS URLs if missing
-  if (url.startsWith('https://') && !url.endsWith('.git')) {
-    logger.trace(`Adding .git to HTTPS URL: ${url}`);
-    return `${url}.git`;
-  }
-
-  return url;
 };
 
 export const createTempDirectory = async (): Promise<string> => {

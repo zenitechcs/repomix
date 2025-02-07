@@ -163,6 +163,13 @@ repomix --remote https://github.com/yamadashy/repomix --remote-branch main
 
 # Or use a specific commit hash:
 repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+
+# Another convenient way is specifying the branch's URL
+repomix --remote https://github.com/yamadashy/repomix/tree/main
+
+# Commit's URL is also supported
+repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
+
 ```
 
 To initialize a new configuration file (`repomix.config.json`):
@@ -470,13 +477,21 @@ repomix --remote yamadashy/repomix
 You can specify the branch name, tag, or commit hash:
 
 ```bash
+# Using --remote-branch option
 repomix --remote https://github.com/yamadashy/repomix --remote-branch main
+
+# Using branch's URL
+repomix --remote https://github.com/yamadashy/repomix/tree/main
 ```
 
 Or use a specific commit hash:
 
 ```bash
+# Using --remote-branch option
 repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+
+# Using commit's URL
+repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 ## ⚙️ Configuration
