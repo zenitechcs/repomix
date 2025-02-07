@@ -62,7 +62,10 @@ const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
  * Example: "src/(categories)" -> "src/\\(categories\\)"
  */
 export const escapeGlobPattern = (pattern: string): string => {
-  return pattern.replace(/[()[\]{}]/g, '\\$&');
+  // First escape backslashes
+  const escapedBackslashes = pattern.replace(/\\/g, '\\\\');
+  // Then escape special characters
+  return escapedBackslashes.replace(/[()[\]{}]/g, '\\$&');
 };
 
 // Get all file paths considering the config

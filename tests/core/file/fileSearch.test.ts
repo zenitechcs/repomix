@@ -374,4 +374,19 @@ node_modules
       expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\(settings\\)/**/*.ts');
     });
   });
+
+  test('should escape backslashes in pattern', () => {
+    const pattern = 'src\\temp\\(categories)';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\temp\\\\\\(categories\\)');
+  });
+
+  test('should handle patterns with already escaped special characters', () => {
+    const pattern = 'src\\\\(categories)';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\\\\\\\(categories\\)');
+  });
+
+  test('should handle patterns with mixed backslashes and special characters', () => {
+    const pattern = 'src\\temp\\[id]\\{slug}';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\temp\\\\\\[id\\]\\\\\\{slug\\}');
+  });
 });
