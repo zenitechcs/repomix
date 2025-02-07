@@ -9,7 +9,7 @@ import { logger } from '../../shared/logger.js';
 import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
-interface CorrectedGitUrl extends GitUrl {
+interface IGitUrl extends GitUrl {
   commit: string | undefined;
 }
 export const runRemoteAction = async (
@@ -72,7 +72,7 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
   }
 
   try {
-    const parsedFields = GitUrlParse(remoteValue);
+    const parsedFields = GitUrlParse(remoteValue) as IGitUrl;
 
     // This will make parsedFields.toString() automatically append '.git' to the returned url
     parsedFields.git_suffix = true;
@@ -93,10 +93,10 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
       };
     }
 
-    if ((parsedFields as CorrectedGitUrl).commit) {
+    if (parsedFields.commit) {
       return {
         repoUrl: repoUrl,
-        remoteBranch: (parsedFields as CorrectedGitUrl).commit,
+        remoteBranch: parsedFields.commit,
       };
     }
 
