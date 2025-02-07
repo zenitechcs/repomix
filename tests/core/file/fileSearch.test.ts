@@ -6,6 +6,7 @@ import { globby } from 'globby';
 import { minimatch } from 'minimatch';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  escapeGlobPattern,
   getIgnoreFilePatterns,
   getIgnorePatterns,
   parseIgnoreContent,
@@ -341,5 +342,51 @@ node_modules
       // Verify the files were returned correctly
       expect(result.filePaths).toEqual(['file1.js', 'file2.js']);
     });
+  });
+
+  describe('escapeGlobPattern', () => {
+    test('should escape parentheses in pattern', () => {
+      const pattern = 'src/(categories)/**/*.ts';
+      expect(escapeGlobPattern(pattern)).toBe('src/\\(categories\\)/**/*.ts');
+    });
+
+    test('should escape multiple types of brackets', () => {
+      const pattern = 'src/(auth)/[id]/{slug}/**/*.ts';
+      expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\[id\\]/\\{slug\\}/**/*.ts');
+    });
+
+    test('should handle nested brackets', () => {
+      const pattern = 'src/(auth)/([id])/**/*.ts';
+      expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\(\\[id\\]\\)/**/*.ts');
+    });
+
+    test('should handle empty string', () => {
+      expect(escapeGlobPattern('')).toBe('');
+    });
+
+    test('should not modify patterns without special characters', () => {
+      const pattern = 'src/components/**/*.ts';
+      expect(escapeGlobPattern(pattern)).toBe(pattern);
+    });
+
+    test('should handle multiple occurrences of the same bracket type', () => {
+      const pattern = 'src/(auth)/(settings)/**/*.ts';
+      expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\(settings\\)/**/*.ts');
+    });
+  });
+
+  test('should escape backslashes in pattern', () => {
+    const pattern = 'src\\temp\\(categories)';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\temp\\\\\\(categories\\)');
+  });
+
+  test('should handle patterns with already escaped special characters', () => {
+    const pattern = 'src\\\\(categories)';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\\\\\\\(categories\\)');
+  });
+
+  test('should handle patterns with mixed backslashes and special characters', () => {
+    const pattern = 'src\\temp\\[id]\\{slug}';
+    expect(escapeGlobPattern(pattern)).toBe('src\\\\temp\\\\\\[id\\]\\\\\\{slug\\}');
   });
 });
