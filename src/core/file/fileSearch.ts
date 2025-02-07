@@ -61,7 +61,7 @@ const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
  * Escapes special characters in glob patterns to handle paths with parentheses.
  * Example: "src/(categories)" -> "src/\\(categories\\)"
  */
-const escapeGlobPattern = (pattern: string): string => {
+export const escapeGlobPattern = (pattern: string): string => {
   return pattern.replace(/[()[\]{}]/g, '\\$&');
 };
 
