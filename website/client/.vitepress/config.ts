@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import { configDe } from './config/configDe';
 import { configEnUs } from './config/configEnUs';
 import { configEs } from './config/configEs';
 import { configJa } from './config/configJa';
@@ -16,5 +17,6 @@ export default defineConfig({
     es: { label: 'Español', ...configEs },
     'pt-br': { label: 'Português', ...configPtBr },
     ko: { label: '한국어', ...configKo },
+    de: { label: 'Deutsch', ...configDe },
   },
 });

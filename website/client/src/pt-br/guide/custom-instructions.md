@@ -1,6 +1,6 @@
 # Instruções Personalizadas
 
-O Repomix permite fornecer instruções personalizadas que serão incluídas no arquivo de saída. Isso pode ser útil para adicionar contexto ou diretrizes específicas para sistemas de IA que processam o repositório.
+O Repomix permite que você forneça instruções personalizadas que serão incluídas no arquivo de saída. Isso pode ser útil para adicionar contexto ou diretrizes específicas para sistemas de IA que processam o repositório.
 
 ## Uso
 

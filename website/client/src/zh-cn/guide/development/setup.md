@@ -5,19 +5,37 @@
 - Node.js ≥ 18.0.0
 - Git
 - npm
+- pnpm（推荐）
 
 ## 本地开发
 
+### 克隆仓库
+
 ```bash
-# 克隆仓库
 git clone https://github.com/yamadashy/repomix.git
 cd repomix
+```
 
-# 安装依赖
+### 安装依赖
+
+使用 pnpm（推荐）：
+```bash
+pnpm install
+```
+
+使用 npm：
+```bash
 npm install
+```
 
+### 启动开发服务器
+
+```bash
 # 运行 CLI
-npm run repomix
+pnpm run repomix
+
+# 启动文档网站开发服务器
+pnpm run website:dev
 ```
 
 ## Docker 开发环境
@@ -32,43 +50,74 @@ docker run -v ./:/app -it --rm repomix
 
 ## 项目结构
 
-```
-src/
-├── cli/          # CLI 实现
-├── config/       # 配置处理
-├── core/         # 核心功能
-└── shared/       # 共享工具
+```text
+.
+├── src/                # 源代码
+│   ├── cli/           # CLI 实现
+│   ├── config/        # 配置处理
+│   ├── core/          # 核心功能
+│   └── shared/        # 共享工具
+├── tests/             # 测试文件
+├── website/           # 文档网站
+└── package.json       # 项目依赖
 ```
 
 ## 测试
 
 ```bash
-# 运行测试
-npm run test
+# 运行所有测试
+pnpm run test
 
-# 测试覆盖率
-npm run test-coverage
+# 生成测试覆盖率报告
+pnpm run test:coverage
 
-# 代码检查
-npm run lint-biome
-npm run lint-ts
-npm run lint-secretlint
+# 运行特定测试
+pnpm run test -- tests/cli
 ```
 
-## 发布流程
+## 代码质量
 
-1. 更新版本
 ```bash
-npm version patch  # 或 minor/major
+# 运行代码检查
+pnpm run lint
+
+# 自动修复代码问题
+pnpm run lint:fix
+
+# 类型检查
+pnpm run typecheck
 ```
 
-2. 运行测试和构建
+## 文档
+
+文档位于 `website/` 目录。要在本地开发文档网站：
+
 ```bash
-npm run test-coverage
-npm run build
+# 启动开发服务器
+pnpm run website:dev
+
+# 构建生产版本
+pnpm run website:build
 ```
 
-3. 发布
-```bash
-npm publish
-```
+## 故障排除
+
+### 常见问题
+
+1. **Node.js 版本**
+   - 确保使用 Node.js ≥ 18.0.0
+   - 使用 `node --version` 检查版本
+
+2. **依赖问题**
+   - 删除 `node_modules` 和锁定文件
+   - 重新运行 `pnpm install`
+
+3. **构建错误**
+   - 运行 `pnpm run clean`
+   - 重新构建项目 `pnpm run build`
+
+### 支持
+
+如果遇到问题：
+- 创建 [GitHub Issue](https://github.com/yamadashy/repomix/issues)
+- 加入我们的 [Discord 服务器](https://discord.gg/wNYzTwZFku)
