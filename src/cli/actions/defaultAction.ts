@@ -21,7 +21,7 @@ export interface DefaultActionRunnerResult {
 }
 
 export const runDefaultAction = async (
-  directory: string,
+  directories: string[],
   cwd: string,
   options: CliOptions,
 ): Promise<DefaultActionRunnerResult> => {
@@ -43,7 +43,7 @@ export const runDefaultAction = async (
 
   logger.trace('Merged config:', config);
 
-  const targetPath = path.resolve(directory);
+  const targetPaths = directories.map((directory) => path.resolve(directory));
 
   const spinner = new Spinner('Packing files...');
   spinner.start();
@@ -51,7 +51,7 @@ export const runDefaultAction = async (
   let packResult: PackResult;
 
   try {
-    packResult = await pack(targetPath, config, (message) => {
+    packResult = await pack(targetPaths, config, (message) => {
       spinner.update(message);
     });
   } catch (error) {
@@ -104,37 +104,64 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.ignore = { ...cliConfig.ignore, useGitignore: options.gitignore };
   }
   if (options.defaultPatterns !== undefined) {
-    cliConfig.ignore = { ...cliConfig.ignore, useDefaultPatterns: options.defaultPatterns };
+    cliConfig.ignore = {
+      ...cliConfig.ignore,
+      useDefaultPatterns: options.defaultPatterns,
+    };
   }
   if (options.topFilesLen !== undefined) {
-    cliConfig.output = { ...cliConfig.output, topFilesLength: options.topFilesLen };
+    cliConfig.output = {
+      ...cliConfig.output,
+      topFilesLength: options.topFilesLen,
+    };
   }
   if (options.outputShowLineNumbers !== undefined) {
-    cliConfig.output = { ...cliConfig.output, showLineNumbers: options.outputShowLineNumbers };
+    cliConfig.output = {
+      ...cliConfig.output,
+      showLineNumbers: options.outputShowLineNumbers,
+    };
   }
   if (options.copy) {
     cliConfig.output = { ...cliConfig.output, copyToClipboard: options.copy };
   }
   if (options.style) {
-    cliConfig.output = { ...cliConfig.output, style: options.style.toLowerCase() as RepomixOutputStyle };
+    cliConfig.output = {
+      ...cliConfig.output,
+      style: options.style.toLowerCase() as RepomixOutputStyle,
+    };
   }
   if (options.parsableStyle !== undefined) {
-    cliConfig.output = { ...cliConfig.output, parsableStyle: options.parsableStyle };
+    cliConfig.output = {
+      ...cliConfig.output,
+      parsableStyle: options.parsableStyle,
+    };
   }
   if (options.securityCheck !== undefined) {
     cliConfig.security = { enableSecurityCheck: options.securityCheck };
   }
   if (options.fileSummary !== undefined) {
-    cliConfig.output = { ...cliConfig.output, fileSummary: options.fileSummary };
+    cliConfig.output = {
+      ...cliConfig.output,
+      fileSummary: options.fileSummary,
+    };
   }
   if (options.directoryStructure !== undefined) {
-    cliConfig.output = { ...cliConfig.output, directoryStructure: options.directoryStructure };
+    cliConfig.output = {
+      ...cliConfig.output,
+      directoryStructure: options.directoryStructure,
+    };
   }
   if (options.removeComments !== undefined) {
-    cliConfig.output = { ...cliConfig.output, removeComments: options.removeComments };
+    cliConfig.output = {
+      ...cliConfig.output,
+      removeComments: options.removeComments,
+    };
   }
   if (options.removeEmptyLines !== undefined) {
-    cliConfig.output = { ...cliConfig.output, removeEmptyLines: options.removeEmptyLines };
+    cliConfig.output = {
+      ...cliConfig.output,
+      removeEmptyLines: options.removeEmptyLines,
+    };
   }
   if (options.headerText !== undefined) {
     cliConfig.output = { ...cliConfig.output, headerText: options.headerText };
@@ -143,10 +170,16 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
   }
   if (options.instructionFilePath) {
-    cliConfig.output = { ...cliConfig.output, instructionFilePath: options.instructionFilePath };
+    cliConfig.output = {
+      ...cliConfig.output,
+      instructionFilePath: options.instructionFilePath,
+    };
   }
   if (options.includeEmptyDirectories) {
-    cliConfig.output = { ...cliConfig.output, includeEmptyDirectories: options.includeEmptyDirectories };
+    cliConfig.output = {
+      ...cliConfig.output,
+      includeEmptyDirectories: options.includeEmptyDirectories,
+    };
   }
 
   try {

@@ -31,12 +31,19 @@ const mockCollectFileInitTaskRunner = () => {
 
 describe.runIf(!isWindows)('packager integration', () => {
   const testCases = [
-    { desc: 'simple plain style', input: 'simple-project', output: 'simple-project-output.txt', config: {} },
+    {
+      desc: 'simple plain style',
+      input: 'simple-project',
+      output: 'simple-project-output.txt',
+      config: {},
+    },
     {
       desc: 'simple xml style',
       input: 'simple-project',
       output: 'simple-project-output.xml',
-      config: { output: { style: 'xml', filePath: 'simple-project-output.xml' } },
+      config: {
+        output: { style: 'xml', filePath: 'simple-project-output.xml' },
+      },
     },
   ];
 
@@ -67,7 +74,7 @@ describe.runIf(!isWindows)('packager integration', () => {
       });
 
       // Run the pack function
-      await pack(inputDir, mergedConfig, () => {}, {
+      await pack([inputDir], mergedConfig, () => {}, {
         searchFiles,
         collectFiles: (filePaths, rootDir, progressCallback) => {
           return collectFiles(filePaths, rootDir, progressCallback, {

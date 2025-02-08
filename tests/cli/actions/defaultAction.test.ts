@@ -63,7 +63,7 @@ describe('defaultAction', () => {
       verbose: true,
     };
 
-    await runDefaultAction('.', process.cwd(), options);
+    await runDefaultAction(['.'], process.cwd(), options);
 
     expect(configLoader.loadFileConfig).toHaveBeenCalled();
     expect(configLoader.mergeConfigs).toHaveBeenCalled();
@@ -75,7 +75,7 @@ describe('defaultAction', () => {
       include: '*.js,*.ts',
     };
 
-    await runDefaultAction('.', process.cwd(), options);
+    await runDefaultAction(['.'], process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       process.cwd(),
@@ -91,7 +91,7 @@ describe('defaultAction', () => {
       ignore: 'node_modules,*.log',
     };
 
-    await runDefaultAction('.', process.cwd(), options);
+    await runDefaultAction(['.'], process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       process.cwd(),
@@ -109,7 +109,7 @@ describe('defaultAction', () => {
       style: 'xml',
     };
 
-    await runDefaultAction('.', process.cwd(), options);
+    await runDefaultAction(['.'], process.cwd(), options);
 
     expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
       process.cwd(),
@@ -127,7 +127,7 @@ describe('defaultAction', () => {
 
     const options: CliOptions = {};
 
-    await expect(runDefaultAction('.', process.cwd(), options)).rejects.toThrow('Test error');
+    await expect(runDefaultAction(['.'], process.cwd(), options)).rejects.toThrow('Test error');
   });
 
   describe('parsableStyle flag', () => {
@@ -136,7 +136,7 @@ describe('defaultAction', () => {
         parsableStyle: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -154,7 +154,7 @@ describe('defaultAction', () => {
         parsableStyle: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -174,7 +174,7 @@ describe('defaultAction', () => {
         securityCheck: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -192,7 +192,7 @@ describe('defaultAction', () => {
         securityCheck: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -212,7 +212,7 @@ describe('defaultAction', () => {
         fileSummary: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -230,7 +230,7 @@ describe('defaultAction', () => {
         fileSummary: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -250,7 +250,7 @@ describe('defaultAction', () => {
         directoryStructure: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -268,7 +268,7 @@ describe('defaultAction', () => {
         directoryStructure: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -288,7 +288,7 @@ describe('defaultAction', () => {
         removeComments: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -306,7 +306,7 @@ describe('defaultAction', () => {
         removeComments: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -326,7 +326,7 @@ describe('defaultAction', () => {
         removeEmptyLines: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -344,7 +344,7 @@ describe('defaultAction', () => {
         removeEmptyLines: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -364,7 +364,7 @@ describe('defaultAction', () => {
         gitignore: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -384,7 +384,7 @@ describe('defaultAction', () => {
         defaultPatterns: false,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -404,7 +404,7 @@ describe('defaultAction', () => {
         headerText: 'Another header text',
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -424,7 +424,7 @@ describe('defaultAction', () => {
         instructionFilePath: 'path/to/instruction.txt',
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
@@ -444,7 +444,7 @@ describe('defaultAction', () => {
         includeEmptyDirectories: true,
       };
 
-      await runDefaultAction('.', process.cwd(), options);
+      await runDefaultAction(['.'], process.cwd(), options);
 
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),

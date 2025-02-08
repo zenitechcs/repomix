@@ -23,7 +23,7 @@ describe('plainStyle', () => {
       },
     });
 
-    const output = await generateOutput(process.cwd(), mockConfig, [], []);
+    const output = await generateOutput([process.cwd()], mockConfig, [], []);
 
     expect(output).toContain('File Summary');
     expect(output).toContain('Directory Structure');

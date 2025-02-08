@@ -69,7 +69,7 @@ describe('packager', () => {
 
     const mockConfig = createMockConfig();
     const progressCallback = vi.fn();
-    const result = await pack('root', mockConfig, progressCallback, mockDeps);
+    const result = await pack(['root'], mockConfig, progressCallback, mockDeps);
 
     expect(mockDeps.searchFiles).toHaveBeenCalledWith('root', mockConfig);
     expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root', progressCallback);
@@ -81,7 +81,7 @@ describe('packager', () => {
 
     expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig, progressCallback);
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith('root', mockConfig, mockProcessedFiles, mockFilePaths);
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith(['root'], mockConfig, mockProcessedFiles, mockFilePaths);
     expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
     expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(

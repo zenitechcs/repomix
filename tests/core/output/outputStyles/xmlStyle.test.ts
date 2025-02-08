@@ -23,7 +23,7 @@ describe('xmlStyle', () => {
       },
     });
 
-    const output = await generateOutput(process.cwd(), mockConfig, [], []);
+    const output = await generateOutput([process.cwd()], mockConfig, [], []);
 
     expect(output).toContain('file_summary');
     expect(output).toContain('directory_structure');
