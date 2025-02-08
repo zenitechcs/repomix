@@ -43,7 +43,7 @@ export const run = async () => {
   try {
     program
       .description('Repomix - Pack your repository into a single AI-friendly file')
-      .arguments('[directories...]')
+      .argument('[directories...]', 'list of directories to process', ['.'])
       .option('-v, --version', 'show version information')
       .option('-o, --output <file>', 'specify the output file name')
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
@@ -73,7 +73,7 @@ export const run = async () => {
       .option('--no-security-check', 'disable security check')
       .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
       .option('--include-empty-directories', 'include empty directories in the output')
-      .action((directories = ['.'], options: CliOptions = {}) => executeAction(directories, process.cwd(), options));
+      .action((directories, options: CliOptions = {}) => executeAction(directories, process.cwd(), options));
 
     await program.parseAsync(process.argv);
   } catch (error) {
@@ -83,6 +83,10 @@ export const run = async () => {
 
 export const executeAction = async (directories: string[], cwd: string, options: CliOptions) => {
   logger.setVerbose(options.verbose || false);
+
+  logger.trace('directories:', directories);
+  logger.trace('cwd:', cwd);
+  logger.trace('options:', options);
 
   if (options.version) {
     await runVersionAction();
