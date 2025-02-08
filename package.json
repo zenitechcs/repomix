@@ -30,6 +30,7 @@
     "repomix": "npm run build && node --trace-warnings bin/repomix.cjs",
     "repomix-src": "npm run repomix -- --include 'src,tests'",
     "repomix-website": "npm run repomix -- --include 'website'",
+    "website": "docker compose -f website/compose.yml up --build",
     "npm-publish": "npm run lint && npm run test-coverage && npm run build && npm publish",
     "npm-release-patch": "npm version patch && npm run npm-publish",
     "npm-release-minor": "npm version minor && npm run npm-publish",

@@ -5,6 +5,7 @@ export const configJa = defineConfig({
   description: 'コードベースをAIフレンドリーな形式にパッケージング',
   themeConfig: {
     nav: [
+      // guide
       { text: '使い方', link: '/ja/guide/' },
       { text: 'Discordに参加', link: 'https://discord.gg/wNYzTwZFku' },
     ],

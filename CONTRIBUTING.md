@@ -1,6 +1,6 @@
 # Contribution Guide
 
-Thanks for your interest in **Repomix**! 🚀 We’d love your help to make it even better. Here’s how you can get involved:
+Thanks for your interest in **Repomix**! 🚀 We'd love your help to make it even better. Here's how you can get involved:
 
 
 - **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by creating an issue.
@@ -76,6 +76,27 @@ npm run test-coverage
 ### Documentation
 
 When adding new features or making changes, please update the relevant documentation in the README.md file.
+
+### Website Development
+
+The Repomix website is built with [VitePress](https://vitepress.dev/). To run the website locally:
+
+```bash
+# Prerequisites: Docker must be installed on your system
+
+# Start the website development server
+npm run website
+
+# Access the website at http://localhost:5173/
+```
+
+The website source code is located in the `website` directory. The main components are:
+
+- `website/client`: Frontend code (Vue.js components, styles, etc.)
+- `website/server`: Backend API server
+
+When updating documentation, you only need to update the English version (`website/client/src/en/`).
+The maintainers will handle translations to other languages.
 
 ## Releasing
 

@@ -1,68 +1,68 @@
-# Remote Repository Processing
+# 원격 저장소 처리
 
-## Basic Usage
+## 기본 사용법
 
-Process public repositories:
+공개 저장소 처리:
 ```bash
-# Using full URL
+# 전체 URL 사용
 repomix --remote https://github.com/user/repo
 
-# Using GitHub shorthand
+# GitHub 단축형 사용
 repomix --remote user/repo
 ```
 
-## Branch and Commit Selection
+## 브랜치 및 커밋 선택
 
 ```bash
-# Specific branch
+# 특정 브랜치
 repomix --remote user/repo --remote-branch main
 
-# Tag
+# 태그
 repomix --remote user/repo --remote-branch v1.0.0
 
-# Commit hash
+# 커밋 해시
 repomix --remote user/repo --remote-branch 935b695
 ```
 
-## Requirements
+## 요구 사항
 
-- Git must be installed
-- Internet connection
-- Read access to repository
+- Git이 설치되어 있어야 함
+- 인터넷 연결
+- 저장소에 대한 읽기 권한
 
-## Output Control
+## 출력 제어
 
 ```bash
-# Custom output location
+# 사용자 지정 출력 위치
 repomix --remote user/repo -o custom-output.xml
 
-# With XML format
+# XML 형식 사용
 repomix --remote user/repo --style xml
 
-# Remove comments
+# 주석 제거
 repomix --remote user/repo --remove-comments
 ```
 
-## Docker Usage
+## Docker 사용
 
 ```bash
-# Process and output to current directory
+# 현재 디렉토리에서 처리 및 출력
 docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix \
   --remote user/repo
 
-# Output to specific directory
+# 특정 디렉토리에 출력
 docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix \
   --remote user/repo
 ```
 
-## Common Issues
+## 일반적인 문제
 
-### Access Issues
-- Ensure repository is public
-- Check Git installation
-- Verify internet connection
+### 접근 문제
+- 저장소가 공개되어 있는지 확인
+- Git 설치 확인
+- 인터넷 연결 확인
 
-### Large Repositories
-- Use `--include` to select specific paths
-- Enable `--remove-comments`
-- Process branches separately
+### 대용량 저장소
+- `--include`를 사용하여 특정 경로 선택
+- `--remove-comments` 활성화
+- 브랜치별로 개별 처리

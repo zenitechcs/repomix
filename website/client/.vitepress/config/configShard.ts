@@ -1,6 +1,7 @@
 import { visualizer } from 'rollup-plugin-visualizer';
 import { type ManifestOptions, VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vitepress';
+import { configDeSearch } from './configDe';
 import { configEsSearch } from './configEs';
 import { configJaSearch } from './configJa';
 import { configKoSearch } from './configKo';
@@ -62,11 +63,12 @@ export const configShard = defineConfig({
       provider: 'local',
       options: {
         locales: {
+          ...configDeSearch,
+          ...configEsSearch,
           ...configJaSearch,
-          ...configZhCnSearch,
           ...configKoSearch,
           ...configPtBrSearch,
-          ...configEsSearch,
+          ...configZhCnSearch,
         },
       },
     },

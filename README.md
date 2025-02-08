@@ -407,30 +407,47 @@ This format provides a clean, readable structure that is both human-friendly and
 
 ### Command Line Options
 
+#### Basic Options
 - `-v, --version`: Show tool version
+
+#### Output Options
 - `-o, --output <file>`: Specify the output file name
-- `--include <patterns>`: List of include patterns (comma-separated)
-- `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
-- `--no-gitignore`: Disable .gitignore file usage
-- `--no-default-patterns`: Disable default patterns
-- `-c, --config <path>`: Path to a custom config file
-- `--header-text <text>`: Custom text to include in the file header
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
+- `--output-show-line-numbers`: Show line numbers in the output
+- `--copy`: Additionally copy generated output to system clipboard
 - `--no-file-summary`: Disable file summary section output
 - `--no-directory-structure`: Disable directory structure section output
 - `--remove-comments`: Remove comments from supported file types
 - `--remove-empty-lines`: Remove empty lines from the output
-- `--top-files-len <number>`: Number of top files to display in the summary
-- `--output-show-line-numbers`: Show line numbers in the output
-- `--copy`: Additionally copy generated output to system clipboard
-- `--remote <url>`: Process a remote Git repository
-- `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
-- `--no-security-check`: Disable security check
-- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
-- `--verbose`: Enable verbose logging
+- `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 - `--include-empty-directories`: Include empty directories in the output
+
+#### Filter Options
+- `--include <patterns>`: List of include patterns (comma-separated)
+- `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
+- `--no-gitignore`: Disable .gitignore file usage
+- `--no-default-patterns`: Disable default patterns
+
+#### Remote Repository Options
+- `--remote <url>`: Process a remote Git repository
+- `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
+
+#### Configuration Options
+- `-c, --config <path>`: Path to a custom config file
+- `--init`: Create config file
+- `--global`: Use global config
+
+#### Security Options
+- `--no-security-check`: Disable security check
+
+#### Token Count Options
+- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
+
+#### Other Options
+- `--top-files-len <number>`: Number of top files to display in the summary
+- `--verbose`: Enable verbose logging
 
 Examples:
 

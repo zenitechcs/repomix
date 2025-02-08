@@ -1,4 +1,4 @@
-# Instrucciones personalizadas
+# Instrucciones Personalizadas
 
 Repomix te permite proporcionar instrucciones personalizadas que se incluirán en el archivo de salida. Esto puede ser útil para agregar contexto o pautas específicas para los sistemas de IA que procesan el repositorio.
 
@@ -19,12 +19,12 @@ El contenido de este archivo se incluirá en la salida bajo la sección "Instruc
 ## Ejemplo
 
 ```markdown
-# Instrucciones del repositorio
+# Instrucciones del Repositorio
 
 Este repositorio contiene el código fuente de la herramienta Repomix. Por favor, sigue estas pautas al analizar el código:
 
 1. Concéntrate en la funcionalidad principal en el directorio `src/core`.
-2. Presta especial atención a las comprobaciones de seguridad en `src/core/security`.
+2. Presta especial atención a las verificaciones de seguridad en `src/core/security`.
 3. Ignora cualquier archivo en el directorio `tests`.
 ```
 
@@ -32,11 +32,11 @@ Esto resultará en la siguiente sección en la salida:
 
 ```xml
 <instruction>
-# Instrucciones del repositorio
+# Instrucciones del Repositorio
 
 Este repositorio contiene el código fuente de la herramienta Repomix. Por favor, sigue estas pautas al analizar el código:
 
 1. Concéntrate en la funcionalidad principal en el directorio `src/core`.
-2. Presta especial atención a las comprobaciones de seguridad en `src/core/security`.
+2. Presta especial atención a las verificaciones de seguridad en `src/core/security`.
 3. Ignora cualquier archivo en el directorio `tests`.
 </instruction>
