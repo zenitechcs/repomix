@@ -107,16 +107,15 @@ repomix --ignore "**/*.log,tmp/"
 
 处理远程仓库：
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# 使用简写格式
+npx repomix --remote yamadashy/repomix
 
-# 也可以使用 GitHub 简写形式：
-repomix --remote yamadashy/repomix
+# 使用完整 URL（支持分支和特定路径）
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# 可以指定分支名称、标签或提交哈希：
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# 或使用特定的提交哈希：
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# 使用提交 URL
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 初始化配置文件（`repomix.config.json`）：

@@ -107,16 +107,15 @@ repomix --ignore "**/*.log,tmp/"
 
 Para empaquetar un repositorio remoto:
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# Usando formato abreviado
+npx repomix --remote yamadashy/repomix
 
-# También puedes usar la abreviatura de GitHub:
-repomix --remote yamadashy/repomix
+# Usando URL completa (soporta ramas y rutas específicas)
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# Puedes especificar el nombre de la rama, la etiqueta o el hash de confirmación:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# O usar un hash de confirmación específico:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# Usando URL de confirmación
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 Para inicializar un nuevo archivo de configuración (`repomix.config.json`):

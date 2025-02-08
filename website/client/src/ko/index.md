@@ -107,16 +107,15 @@ repomix --ignore "**/*.log,tmp/"
 
 원격 저장소 처리:
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# 단축형 사용
+npx repomix --remote yamadashy/repomix
 
-# GitHub 단축형도 사용 가능:
-repomix --remote yamadashy/repomix
+# 전체 URL 사용 (브랜치 및 특정 경로 지원)
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# 브랜치명, 태그, 또는 커밋 해시 지정 가능:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# 또는 특정 커밋 해시 사용:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# 커밋 URL 사용
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 새 설정 파일(`repomix.config.json`) 초기화:
