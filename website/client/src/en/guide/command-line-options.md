@@ -1,59 +1,46 @@
 # Command Line Options
 
 ## Basic Options
-
-```bash
-repomix [directory]  # Process specific directory (default: ".")
-```
+- `-v, --version`: Show tool version
 
 ## Output Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-o, --output <file>` | Output file name | `repomix-output.txt` |
-| `--style <type>` | Output style (`plain`, `xml`, `markdown`) | `plain` |
-| `--output-show-line-numbers` | Add line numbers | `false` |
-| `--copy` | Copy to clipboard | `false` |
-| `--no-file-summary` | Disable file summary | `true` |
-| `--no-directory-structure` | Disable directory structure | `true` |
-| `--remove-comments` | Remove comments | `false` |
-| `--remove-empty-lines` | Remove empty lines | `false` |
+- `-o, --output <file>`: Output file name (default: `repomix-output.txt`)
+- `--style <type>`: Output style (`plain`, `xml`, `markdown`) (default: `plain`)
+- `--parsable-style`: Enable parsable output based on the chosen style schema (default: `false`)
+- `--output-show-line-numbers`: Add line numbers (default: `false`)
+- `--copy`: Copy to clipboard (default: `false`)
+- `--no-file-summary`: Disable file summary (default: `true`)
+- `--no-directory-structure`: Disable directory structure (default: `true`)
+- `--remove-comments`: Remove comments (default: `false`)
+- `--remove-empty-lines`: Remove empty lines (default: `false`)
+- `--header-text <text>`: Custom text to include in the file header
+- `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
+- `--include-empty-directories`: Include empty directories in the output (default: `false`)
 
 ## Filter Options
+- `--include <patterns>`: Include patterns (comma-separated)
+- `-i, --ignore <patterns>`: Ignore patterns (comma-separated)
+- `--no-gitignore`: Disable .gitignore file usage
+- `--no-default-patterns`: Disable default patterns
 
-| Option | Description |
-|--------|-------------|
-| `--include <patterns>` | Include patterns (comma-separated) |
-| `-i, --ignore <patterns>` | Ignore patterns (comma-separated) |
+## Remote Repository Options
+- `--remote <url>`: Process remote repository
+- `--remote-branch <name>`: Specify the remote branch name, tag, or commit hash (defaults to repository default branch)
 
-## Remote Repository
+## Configuration Options
+- `-c, --config <path>`: Custom config file path
+- `--init`: Create config file
+- `--global`: Use global config
 
-| Option | Description |
-|--------|-------------|
-| `--remote <url>` | Process remote repository |
-| `--remote-branch <name>` | Specify branch/tag/commit |
+## Security Options
+- `--no-security-check`: Disable security check (default: `true`)
 
-## Configuration
-
-| Option | Description |
-|--------|-------------|
-| `-c, --config <path>` | Custom config file path |
-| `--init` | Create config file |
-| `--global` | Use global config |
-
-## Security
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--no-security-check` | Disable security check | `true` |
+## Token Count Options
+- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`) (default: `o200k_base`)
 
 ## Other Options
-
-| Option | Description |
-|--------|-------------|
-| `-v, --version` | Show version |
-| `--verbose` | Enable verbose logging |
-| `--top-files-len <number>` | Number of top files to show | `5` |
+- `--top-files-len <number>`: Number of top files to show (default: `5`)
+- `--verbose`: Enable verbose logging
 
 ## Examples
 
@@ -67,6 +54,12 @@ repomix -o output.xml --style xml
 # Process specific files
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
 
-# Remote repository
-repomix --remote user/repo --remote-branch main
+# Remote repository with branch
+repomix --remote https://github.com/user/repo/tree/main
+
+# Remote repository with commit
+repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
+
+# Remote repository with shorthand
+repomix --remote user/repo
 ```
