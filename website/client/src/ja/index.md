@@ -107,16 +107,15 @@ repomix --ignore "**/*.log,tmp/"
 リモートリポジトリをまとめる。
 
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# ショートハンド形式を使用
+npx repomix --remote yamadashy/repomix
 
-# GitHubショートハンド形式も使用可能
-repomix --remote yamadashy/repomix
+# 完全なURL（ブランチや特定のパスをサポート）
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# ブランチ名、タグ、コミットハッシュを指定可能
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# または特定のコミットハッシュを使用
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# コミットのURLを使用
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 設定ファイル（`repomix.config.json`）の初期化

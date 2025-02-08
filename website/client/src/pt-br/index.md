@@ -103,16 +103,15 @@ repomix --ignore "**/*.log,tmp/"
 
 Para compactar um repositório remoto:
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# Usando formato abreviado
+npx repomix --remote yamadashy/repomix
 
-# Você também pode usar o atalho do GitHub:
-repomix --remote yamadashy/repomix
+# Usando URL completa (suporta branches e caminhos específicos)
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# Você pode especificar o nome do branch, tag ou hash do commit:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# Ou usar um hash de commit específico:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# Usando URL do commit
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 Para inicializar um novo arquivo de configuração (`repomix.config.json`):

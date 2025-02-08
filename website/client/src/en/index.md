@@ -108,16 +108,15 @@ repomix --ignore "**/*.log,tmp/"
 
 To pack a remote repository:
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# Using shorthand format
+npx repomix --remote yamadashy/repomix
 
-# You can also use GitHub shorthand:
-repomix --remote yamadashy/repomix
+# Using full URL (supports branches and specific paths)
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# You can specify the branch name, tag, or commit hash:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch main
-
-# Or use a specific commit hash:
-repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
+# Using commit's URL
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
 To initialize a new configuration file (`repomix.config.json`):
