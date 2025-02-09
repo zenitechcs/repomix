@@ -178,7 +178,7 @@ To initialize a new configuration file (`repomix.config.json`):
 repomix --init
 ```
 
-Once you have generated the packed file, you can use it with Generative AI tools like Claude, ChatGPT, and Gemini.
+Once you have generated the packed file, you can use it with Generative AI tools like ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 
 ### Docker Usage 🐳
 
@@ -205,7 +205,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://
 
 ### Prompt Examples
 
-Once you have generated the packed file with Repomix, you can use it with AI tools like Claude, ChatGPT, and Gemini.
+Once you have generated the packed file with Repomix, you can use it with AI tools like ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 Here are some example prompts to get you started:
 
 #### Code Review and Refactoring
