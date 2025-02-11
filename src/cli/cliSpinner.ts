@@ -11,10 +11,9 @@ class Spinner {
   private readonly isQuiet: boolean;
 
   constructor(message: string, cliOptions: CliOptions) {
-    const isVerbose = cliOptions.verbose || false;
     this.message = message;
     // If the user has specified the verbose flag, don't show the spinner
-    this.isQuiet = isVerbose;
+    this.isQuiet = cliOptions.quiet || cliOptions.verbose || false;
   }
 
   start(): void {
@@ -40,6 +39,10 @@ class Spinner {
   }
 
   stop(finalMessage: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
@@ -49,10 +52,18 @@ class Spinner {
   }
 
   succeed(message: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     this.stop(`${pc.green('✔')} ${message}`);
   }
 
   fail(message: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     this.stop(`${pc.red('✖')} ${message}`);
   }
 }

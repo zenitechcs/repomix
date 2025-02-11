@@ -2,13 +2,14 @@ import util from 'node:util';
 import pc from 'picocolors';
 
 export const repomixLogLevels = {
-  ERROR: 0,   // error
-  WARN: 1,    // warn
-  INFO: 2,    // success, info, log, note
-  DEBUG: 3,   // debug, trace
+  SILENT: -1, // No output
+  ERROR: 0, // error
+  WARN: 1, // warn
+  INFO: 2, // success, info, log, note
+  DEBUG: 3, // debug, trace
 } as const;
 
-export type RepomixLogLevel = typeof repomixLogLevels[keyof typeof repomixLogLevels];
+export type RepomixLogLevel = (typeof repomixLogLevels)[keyof typeof repomixLogLevels];
 
 class RepomixLogger {
   private level: RepomixLogLevel = repomixLogLevels.INFO;

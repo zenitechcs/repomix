@@ -3,7 +3,7 @@ import { program } from 'commander';
 import pc from 'picocolors';
 import { getVersion } from '../core/file/packageJsonParse.js';
 import { handleError } from '../shared/errorHandle.js';
-import { repomixLogLevels, logger } from '../shared/logger.js';
+import { logger, repomixLogLevels } from '../shared/logger.js';
 import { runDefaultAction } from './actions/defaultAction.js';
 import { runInitAction } from './actions/initAction.js';
 import { runRemoteAction } from './actions/remoteAction.js';
@@ -33,6 +33,7 @@ export const run = async () => {
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
       .option('--verbose', 'enable verbose logging for detailed output')
+      .option('--quiet', 'disable all output to stdout')
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
@@ -53,8 +54,14 @@ export const run = async () => {
 };
 
 export const executeAction = async (directories: string[], cwd: string, options: CliOptions) => {
-  const isVerbose = options.verbose || false;
-  logger.setLogLevel(isVerbose ? repomixLogLevels.DEBUG : repomixLogLevels.INFO);
+  // Set log level based on verbose and quiet flags
+  if (options.quiet) {
+    logger.setLogLevel(repomixLogLevels.SILENT);
+  } else if (options.verbose) {
+    logger.setLogLevel(repomixLogLevels.DEBUG);
+  } else {
+    logger.setLogLevel(repomixLogLevels.INFO);
+  }
 
   logger.trace('directories:', directories);
   logger.trace('cwd:', cwd);

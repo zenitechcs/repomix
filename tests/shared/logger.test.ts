@@ -1,6 +1,6 @@
 import pc from 'picocolors';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { repomixLogLevels, logger } from '../../src/shared/logger.js';
+import { logger, repomixLogLevels } from '../../src/shared/logger.js';
 
 vi.mock('picocolors', () => ({
   default: {
@@ -23,6 +23,34 @@ describe('logger', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  describe('log levels', () => {
+    it('should not log anything in SILENT mode', () => {
+      logger.setLogLevel(repomixLogLevels.SILENT);
+
+      logger.error('Error message');
+      logger.warn('Warning message');
+      logger.success('Success message');
+      logger.info('Info message');
+      logger.note('Note message');
+      logger.debug('Debug message');
+      logger.trace('Trace message');
+      logger.log('Log message');
+
+      expect(console.error).not.toHaveBeenCalled();
+      expect(console.log).not.toHaveBeenCalled();
+    });
+
+    it('should only log errors in ERROR mode', () => {
+      logger.setLogLevel(repomixLogLevels.ERROR);
+
+      logger.error('Error message');
+      logger.warn('Warning message');
+
+      expect(console.error).toHaveBeenCalledWith('RED:Error message');
+      expect(console.log).not.toHaveBeenCalled();
+    });
   });
 
   it('should log error messages', () => {
