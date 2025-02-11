@@ -75,7 +75,7 @@ export const generateHeader = (config: RepomixConfigMerged, generationDate: stri
   const processingInfo =
     processingNotes.length > 0 ? ` The content has been processed where ${processingNotes.join(', ')}.` : '';
 
-  return `${description}, combined into a single document.${processingInfo}`;
+  return `${description}, combined into a single document by Repomix.${processingInfo}`;
 };
 
 export const generateSummaryPurpose = (): string => {
