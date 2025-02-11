@@ -6,9 +6,15 @@ import * as versionAction from '../../src/cli/actions/versionAction.js';
 import { executeAction, run } from '../../src/cli/cliRun.js';
 import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
 import type { PackResult } from '../../src/core/packager.js';
-import { logger } from '../../src/shared/logger.js';
+import { repomixLogLevels, logger } from '../../src/shared/logger.js';
 
 vi.mock('../../src/shared/logger', () => ({
+  RepomixLogLevel: {
+    ERROR: 0,
+    WARN: 1,
+    INFO: 2,
+    DEBUG: 3,
+  },
   logger: {
     log: vi.fn(),
     trace: vi.fn(),
@@ -18,7 +24,7 @@ vi.mock('../../src/shared/logger', () => ({
     error: vi.fn(),
     success: vi.fn(),
     note: vi.fn(),
-    setVerbose: vi.fn(),
+    setLogLevel: vi.fn(),
   },
 }));
 
@@ -133,7 +139,7 @@ describe('cliRun', () => {
     test('should enable verbose logging when verbose option is true', async () => {
       await executeAction(['.'], process.cwd(), { verbose: true });
 
-      expect(logger.setVerbose).toHaveBeenCalledWith(true);
+      expect(logger.setLogLevel).toHaveBeenCalledWith(repomixLogLevels.DEBUG);
     });
 
     test('should execute version action when version option is true', async () => {

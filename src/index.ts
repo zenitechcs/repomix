@@ -1,6 +1,6 @@
 // CLI
 export { run as cli } from './cli/cliRun.js';
-export type { CliOptions } from './cli/cliRun.js';
+export type { CliOptions } from './cli/types.js';
 
 // Config
 export type { RepomixConfigFile as RepomixConfig } from './config/configSchema.js';

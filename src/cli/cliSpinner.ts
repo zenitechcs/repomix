@@ -1,22 +1,24 @@
 import cliSpinners from 'cli-spinners';
 import logUpdate from 'log-update';
 import pc from 'picocolors';
-import { logger } from '../shared/logger.js';
+import type { CliOptions } from './types.js';
 
 class Spinner {
   private spinner = cliSpinners.dots;
   private message: string;
   private currentFrame = 0;
   private interval: ReturnType<typeof setInterval> | null = null;
-  private isEnabled: boolean;
+  private readonly isQuiet: boolean;
 
-  constructor(message: string) {
+  constructor(message: string, cliOptions: CliOptions) {
+    const isVerbose = cliOptions.verbose || false;
     this.message = message;
-    this.isEnabled = !logger.isVerboseEnabled();
+    // If the user has specified the verbose flag, don't show the spinner
+    this.isQuiet = isVerbose;
   }
 
   start(): void {
-    if (!this.isEnabled) {
+    if (this.isQuiet) {
       return;
     }
 
@@ -30,7 +32,7 @@ class Spinner {
   }
 
   update(message: string): void {
-    if (!this.isEnabled) {
+    if (this.isQuiet) {
       return;
     }
 

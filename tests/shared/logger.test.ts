@@ -1,5 +1,6 @@
+import pc from 'picocolors';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { logger } from '../../src/shared/logger.js';
+import { repomixLogLevels, logger } from '../../src/shared/logger.js';
 
 vi.mock('picocolors', () => ({
   default: {
@@ -17,7 +18,7 @@ describe('logger', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     vi.spyOn(console, 'log').mockImplementation(vi.fn());
-    logger.setVerbose(false);
+    logger.init();
   });
 
   afterEach(() => {
@@ -44,11 +45,6 @@ describe('logger', () => {
     expect(console.log).toHaveBeenCalledWith('CYAN:Info message');
   });
 
-  it('should log note messages', () => {
-    logger.note('Note message');
-    expect(console.log).toHaveBeenCalledWith('DIM:Note message');
-  });
-
   it('should log log messages', () => {
     logger.log('Note message');
     expect(console.log).toHaveBeenCalledWith('Note message');
@@ -60,7 +56,7 @@ describe('logger', () => {
   });
 
   it('should log debug messages when verbose is true', () => {
-    logger.setVerbose(true);
+    logger.setLogLevel(repomixLogLevels.DEBUG);
     logger.debug('Debug message');
     expect(console.log).toHaveBeenCalledWith('BLUE:Debug message');
   });
@@ -71,9 +67,9 @@ describe('logger', () => {
   });
 
   it('should log trace messages when verbose is true', () => {
-    logger.setVerbose(true);
+    logger.setLogLevel(repomixLogLevels.DEBUG);
     logger.trace('Trace message');
-    expect(console.log).toHaveBeenCalledWith('GRAY:Trace message');
+    expect(console.log).toHaveBeenCalledWith(pc.gray('Trace message'));
   });
 
   it('should format object arguments correctly', () => {

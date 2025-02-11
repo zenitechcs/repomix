@@ -2,6 +2,7 @@ import type { Stats } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import pc from 'picocolors';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
 import type { RepomixConfigCli, RepomixConfigFile } from '../../src/config/configSchema.js';
@@ -14,6 +15,7 @@ vi.mock('../../src/shared/logger', () => ({
   logger: {
     trace: vi.fn(),
     note: vi.fn(),
+    log: vi.fn(),
   },
 }));
 vi.mock('../../src/config/globalDirectory', () => ({
@@ -67,14 +69,14 @@ describe('configLoad', () => {
     });
 
     test('should return an empty object if no config file is found', async () => {
-      const loggerSpy = vi.spyOn(logger, 'note').mockImplementation(vi.fn());
+      const loggerSpy = vi.spyOn(logger, 'log').mockImplementation(vi.fn());
       vi.mocked(getGlobalDirectory).mockReturnValue('/global/repomix');
       vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
 
       const result = await loadFileConfig(process.cwd(), null);
       expect(result).toEqual({});
 
-      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('No custom config found'));
+      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining(pc.dim('No custom config found')));
     });
 
     test('should throw an error for invalid JSON', async () => {

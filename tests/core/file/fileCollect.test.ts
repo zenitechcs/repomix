@@ -4,6 +4,7 @@ import path from 'node:path';
 import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
+import pc from 'picocolors';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { collectFiles } from '../../../src/core/file/fileCollect.js';
 import type { FileCollectTask } from '../../../src/core/file/workers/fileCollectWorker.js';
@@ -106,7 +107,9 @@ describe('fileCollect', () => {
     expect(logger.log).toHaveBeenCalledWith('──────────────────────');
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('File exceeds size limit:'));
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining(largePath));
-    expect(logger.note).toHaveBeenCalledWith('Add this file to .repomixignore if you want to exclude it permanently');
+    expect(logger.log).toHaveBeenCalledWith(
+      pc.dim('Add this file to .repomixignore if you want to exclude it permanently'),
+    );
 
     // Verify fs.readFile is not called for the large file
     expect(fs.readFile).not.toHaveBeenCalledWith(largePath);

@@ -3,6 +3,7 @@ import path from 'node:path';
 import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
+import pc from 'picocolors';
 import { logger } from '../../../shared/logger.js';
 
 // Maximum file size to process (50MB)
@@ -38,7 +39,7 @@ const readRawFile = async (filePath: string): Promise<string | null> => {
       logger.log('⚠️ Large File Warning:');
       logger.log('──────────────────────');
       logger.log(`File exceeds size limit: ${sizeMB}MB > ${MAX_FILE_SIZE / 1024 / 1024}MB (${filePath})`);
-      logger.note('Add this file to .repomixignore if you want to exclude it permanently');
+      logger.log(pc.dim('Add this file to .repomixignore if you want to exclude it permanently'));
       logger.log('');
       return null;
     }

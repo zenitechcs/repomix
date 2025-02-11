@@ -1,5 +1,6 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import pc from 'picocolors';
 import stripJsonComments from 'strip-json-comments';
 import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
@@ -56,8 +57,10 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
       return await loadAndValidateConfig(globalConfigPath);
     }
 
-    logger.note(
-      `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.`,
+    logger.log(
+      pc.dim(
+        `No custom config found at ${configPath} or global config at ${globalConfigPath}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.`,
+      ),
     );
     return {};
   }

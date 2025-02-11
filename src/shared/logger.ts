@@ -1,51 +1,80 @@
 import util from 'node:util';
 import pc from 'picocolors';
 
-class Logger {
-  private isVerbose = false;
+export const repomixLogLevels = {
+  ERROR: 0,   // error
+  WARN: 1,    // warn
+  INFO: 2,    // success, info, log, note
+  DEBUG: 3,   // debug, trace
+} as const;
 
-  setVerbose(value: boolean) {
-    this.isVerbose = value;
+export type RepomixLogLevel = typeof repomixLogLevels[keyof typeof repomixLogLevels];
+
+class RepomixLogger {
+  private level: RepomixLogLevel = repomixLogLevels.INFO;
+
+  constructor() {
+    this.init();
   }
 
-  isVerboseEnabled(): boolean {
-    return this.isVerbose;
+  init() {
+    this.setLogLevel(repomixLogLevels.INFO);
+  }
+
+  setLogLevel(level: RepomixLogLevel) {
+    this.level = level;
+  }
+
+  getLogLevel(): RepomixLogLevel {
+    return this.level;
   }
 
   error(...args: unknown[]) {
-    console.error(pc.red(this.formatArgs(args)));
+    if (this.level >= repomixLogLevels.ERROR) {
+      console.error(pc.red(this.formatArgs(args)));
+    }
   }
 
   warn(...args: unknown[]) {
-    console.log(pc.yellow(this.formatArgs(args)));
+    if (this.level >= repomixLogLevels.WARN) {
+      console.log(pc.yellow(this.formatArgs(args)));
+    }
   }
 
   success(...args: unknown[]) {
-    console.log(pc.green(this.formatArgs(args)));
+    if (this.level >= repomixLogLevels.INFO) {
+      console.log(pc.green(this.formatArgs(args)));
+    }
   }
 
   info(...args: unknown[]) {
-    console.log(pc.cyan(this.formatArgs(args)));
+    if (this.level >= repomixLogLevels.INFO) {
+      console.log(pc.cyan(this.formatArgs(args)));
+    }
+  }
+
+  log(...args: unknown[]) {
+    if (this.level >= repomixLogLevels.INFO) {
+      console.log(...args);
+    }
   }
 
   note(...args: unknown[]) {
-    console.log(pc.dim(this.formatArgs(args)));
+    if (this.level >= repomixLogLevels.INFO) {
+      console.log(pc.dim(this.formatArgs(args)));
+    }
   }
 
   debug(...args: unknown[]) {
-    if (this.isVerbose) {
+    if (this.level >= repomixLogLevels.DEBUG) {
       console.log(pc.blue(this.formatArgs(args)));
     }
   }
 
   trace(...args: unknown[]) {
-    if (this.isVerbose) {
+    if (this.level >= repomixLogLevels.DEBUG) {
       console.log(pc.gray(this.formatArgs(args)));
     }
-  }
-
-  log(...args: unknown[]) {
-    console.log(...args);
   }
 
   private formatArgs(args: unknown[]): string {
@@ -55,4 +84,4 @@ class Logger {
   }
 }
 
-export const logger = new Logger();
+export const logger = new RepomixLogger();
