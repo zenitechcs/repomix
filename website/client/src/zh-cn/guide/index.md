@@ -1,6 +1,6 @@
 # Repomix 入门指南
 
-Repomix 是一个将代码库打包成单个 AI 友好文件的工具。它专为帮助你将代码提供给大型语言模型（如 Claude、ChatGPT 和 Gemini）而设计。
+Repomix 是一个将代码库打包成单个 AI 友好文件的工具。它专为帮助你将代码提供给大型语言模型（如 ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grok 等）而设计。
 
 ## 快速开始
 
