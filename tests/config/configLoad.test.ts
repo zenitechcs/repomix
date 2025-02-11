@@ -76,7 +76,7 @@ describe('configLoad', () => {
       const result = await loadFileConfig(process.cwd(), null);
       expect(result).toEqual({});
 
-      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining(pc.dim('No custom config found')));
+      expect(loggerSpy).toHaveBeenCalledWith(expect.stringContaining('No custom config found'));
     });
 
     test('should throw an error for invalid JSON', async () => {

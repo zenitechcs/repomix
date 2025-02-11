@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { program } from 'commander';
+import { Option, program } from 'commander';
 import pc from 'picocolors';
 import { getVersion } from '../core/file/packageJsonParse.js';
 import { handleError } from '../shared/errorHandle.js';
@@ -32,8 +32,8 @@ export const run = async () => {
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
-      .option('--verbose', 'enable verbose logging for detailed output')
-      .option('--quiet', 'disable all output to stdout')
+      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
+      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')

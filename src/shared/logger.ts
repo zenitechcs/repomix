@@ -56,7 +56,7 @@ class RepomixLogger {
 
   log(...args: unknown[]) {
     if (this.level >= repomixLogLevels.INFO) {
-      console.log(...args);
+      console.log(this.formatArgs(args));
     }
   }
 
