@@ -1,22 +1,23 @@
 import cliSpinners from 'cli-spinners';
 import logUpdate from 'log-update';
 import pc from 'picocolors';
-import { logger } from '../shared/logger.js';
+import type { CliOptions } from './types.js';
 
 class Spinner {
   private spinner = cliSpinners.dots;
   private message: string;
   private currentFrame = 0;
   private interval: ReturnType<typeof setInterval> | null = null;
-  private isEnabled: boolean;
+  private readonly isQuiet: boolean;
 
-  constructor(message: string) {
+  constructor(message: string, cliOptions: CliOptions) {
     this.message = message;
-    this.isEnabled = !logger.isVerboseEnabled();
+    // If the user has specified the verbose flag, don't show the spinner
+    this.isQuiet = cliOptions.quiet || cliOptions.verbose || false;
   }
 
   start(): void {
-    if (!this.isEnabled) {
+    if (this.isQuiet) {
       return;
     }
 
@@ -30,7 +31,7 @@ class Spinner {
   }
 
   update(message: string): void {
-    if (!this.isEnabled) {
+    if (this.isQuiet) {
       return;
     }
 
@@ -38,6 +39,10 @@ class Spinner {
   }
 
   stop(finalMessage: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
@@ -47,10 +52,18 @@ class Spinner {
   }
 
   succeed(message: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     this.stop(`${pc.green('✔')} ${message}`);
   }
 
   fail(message: string): void {
+    if (this.isQuiet) {
+      return;
+    }
+
     this.stop(`${pc.red('✖')} ${message}`);
   }
 }

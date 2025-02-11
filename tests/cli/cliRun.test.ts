@@ -4,11 +4,21 @@ import * as initAction from '../../src/cli/actions/initAction.js';
 import * as remoteAction from '../../src/cli/actions/remoteAction.js';
 import * as versionAction from '../../src/cli/actions/versionAction.js';
 import { executeAction, run } from '../../src/cli/cliRun.js';
+import type { CliOptions } from '../../src/cli/types.js';
 import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
 import type { PackResult } from '../../src/core/packager.js';
-import { logger } from '../../src/shared/logger.js';
+import { type RepomixLogLevel, logger, repomixLogLevels } from '../../src/shared/logger.js';
+
+let logLevel: RepomixLogLevel;
 
 vi.mock('../../src/shared/logger', () => ({
+  repomixLogLevels: {
+    SILENT: -1,
+    ERROR: 0,
+    WARN: 1,
+    INFO: 2,
+    DEBUG: 3,
+  },
   logger: {
     log: vi.fn(),
     trace: vi.fn(),
@@ -18,7 +28,10 @@ vi.mock('../../src/shared/logger', () => ({
     error: vi.fn(),
     success: vi.fn(),
     note: vi.fn(),
-    setVerbose: vi.fn(),
+    setLogLevel: vi.fn((level: RepomixLogLevel) => {
+      logLevel = level;
+    }),
+    getLogLevel: vi.fn(() => logLevel),
   },
 }));
 
@@ -133,7 +146,7 @@ describe('cliRun', () => {
     test('should enable verbose logging when verbose option is true', async () => {
       await executeAction(['.'], process.cwd(), { verbose: true });
 
-      expect(logger.setVerbose).toHaveBeenCalledWith(true);
+      expect(logger.setLogLevel).toHaveBeenCalledWith(repomixLogLevels.DEBUG);
     });
 
     test('should execute version action when version option is true', async () => {
@@ -287,6 +300,36 @@ describe('cliRun', () => {
           includeEmptyDirectories: true,
         }),
       );
+    });
+  });
+
+  describe('quiet mode', () => {
+    test('should set log level to SILENT when quiet option is true', async () => {
+      const options: CliOptions = {
+        quiet: true,
+      };
+
+      await executeAction(['.'], process.cwd(), options);
+
+      expect(logger.getLogLevel()).toBe(repomixLogLevels.SILENT);
+    });
+
+    test('should set log level to DEBUG when verbose option is true', async () => {
+      const options: CliOptions = {
+        verbose: true,
+      };
+
+      await executeAction(['.'], process.cwd(), options);
+
+      expect(logger.getLogLevel()).toBe(repomixLogLevels.DEBUG);
+    });
+
+    test('should set log level to INFO by default', async () => {
+      const options: CliOptions = {};
+
+      await executeAction(['.'], process.cwd(), options);
+
+      expect(logger.getLogLevel()).toBe(repomixLogLevels.INFO);
     });
   });
 });

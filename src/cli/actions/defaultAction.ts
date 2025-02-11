@@ -11,8 +11,8 @@ import { type PackResult, pack } from '../../core/packager.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
-import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
+import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
 
 export interface DefaultActionRunnerResult {
@@ -23,19 +23,19 @@ export interface DefaultActionRunnerResult {
 export const runDefaultAction = async (
   directories: string[],
   cwd: string,
-  options: CliOptions,
+  cliOptions: CliOptions,
 ): Promise<DefaultActionRunnerResult> => {
-  logger.trace('Loaded CLI options:', options);
+  logger.trace('Loaded CLI options:', cliOptions);
 
   // Run migration before loading config
   await runMigrationAction(cwd);
 
   // Load the config file
-  const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, options.config ?? null);
+  const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, cliOptions.config ?? null);
   logger.trace('Loaded file config:', fileConfig);
 
   // Parse the CLI options into a config
-  const cliConfig: RepomixConfigCli = buildCliConfig(options);
+  const cliConfig: RepomixConfigCli = buildCliConfig(cliOptions);
   logger.trace('CLI config:', cliConfig);
 
   // Merge default, file, and CLI configs
@@ -45,7 +45,7 @@ export const runDefaultAction = async (
 
   const targetPaths = directories.map((directory) => path.resolve(directory));
 
-  const spinner = new Spinner('Packing files...');
+  const spinner = new Spinner('Packing files...', cliOptions);
   spinner.start();
 
   let packResult: PackResult;

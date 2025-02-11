@@ -6,15 +6,15 @@ import pc from 'picocolors';
 import { execGitShallowClone, isGitInstalled } from '../../core/file/gitCommand.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
-import type { CliOptions } from '../cliRun.js';
 import Spinner from '../cliSpinner.js';
+import type { CliOptions } from '../types.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
 interface IGitUrl extends GitUrl {
   commit: string | undefined;
 }
 export const runRemoteAction = async (
   repoUrl: string,
-  options: CliOptions,
+  cliOptions: CliOptions,
   deps = {
     isGitInstalled,
     execGitShallowClone,
@@ -26,7 +26,7 @@ export const runRemoteAction = async (
   }
 
   const parsedFields = parseRemoteValue(repoUrl);
-  const spinner = new Spinner('Cloning repository...');
+  const spinner = new Spinner('Cloning repository...', cliOptions);
   const tempDirPath = await createTempDirectory();
   let result: DefaultActionRunnerResult;
 
@@ -34,7 +34,7 @@ export const runRemoteAction = async (
     spinner.start();
 
     // Clone the repository
-    await cloneRepository(parsedFields.repoUrl, tempDirPath, options.remoteBranch || parsedFields.remoteBranch, {
+    await cloneRepository(parsedFields.repoUrl, tempDirPath, cliOptions.remoteBranch || parsedFields.remoteBranch, {
       execGitShallowClone: deps.execGitShallowClone,
     });
 
@@ -42,7 +42,7 @@ export const runRemoteAction = async (
     logger.log('');
 
     // Run the default action on the cloned repository
-    result = await deps.runDefaultAction([tempDirPath], tempDirPath, options);
+    result = await deps.runDefaultAction([tempDirPath], tempDirPath, cliOptions);
     await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
   } catch (error) {
     spinner.fail('Error during repository cloning. cleanup...');

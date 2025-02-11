@@ -1,43 +1,14 @@
 import process from 'node:process';
-import { type OptionValues, program } from 'commander';
+import { Option, program } from 'commander';
 import pc from 'picocolors';
-import type { RepomixOutputStyle } from '../config/configSchema.js';
 import { getVersion } from '../core/file/packageJsonParse.js';
 import { handleError } from '../shared/errorHandle.js';
-import { logger } from '../shared/logger.js';
+import { logger, repomixLogLevels } from '../shared/logger.js';
 import { runDefaultAction } from './actions/defaultAction.js';
 import { runInitAction } from './actions/initAction.js';
 import { runRemoteAction } from './actions/remoteAction.js';
 import { runVersionAction } from './actions/versionAction.js';
-
-export interface CliOptions extends OptionValues {
-  version?: boolean;
-  output?: string;
-  include?: string;
-  ignore?: string;
-  gitignore?: boolean;
-  defaultPatterns?: boolean;
-  config?: string;
-  copy?: boolean;
-  verbose?: boolean;
-  topFilesLen?: number;
-  outputShowLineNumbers?: boolean;
-  style?: RepomixOutputStyle;
-  parsableStyle?: boolean;
-  init?: boolean;
-  global?: boolean;
-  remote?: string;
-  remoteBranch?: string;
-  securityCheck?: boolean;
-  fileSummary?: boolean;
-  headerText?: string;
-  directoryStructure?: boolean;
-  removeComments?: boolean;
-  removeEmptyLines?: boolean;
-  tokenCountEncoding?: string;
-  instructionFilePath?: string;
-  includeEmptyDirectories?: boolean;
-}
+import type { CliOptions } from './types.js';
 
 export const run = async () => {
   try {
@@ -61,7 +32,8 @@ export const run = async () => {
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
-      .option('--verbose', 'enable verbose logging for detailed output')
+      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
+      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .option('--init', 'initialize a new repomix.config.json file')
       .option('--global', 'use global configuration (only applicable with --init)')
       .option('--remote <url>', 'process a remote Git repository')
@@ -82,7 +54,14 @@ export const run = async () => {
 };
 
 export const executeAction = async (directories: string[], cwd: string, options: CliOptions) => {
-  logger.setVerbose(options.verbose || false);
+  // Set log level based on verbose and quiet flags
+  if (options.quiet) {
+    logger.setLogLevel(repomixLogLevels.SILENT);
+  } else if (options.verbose) {
+    logger.setLogLevel(repomixLogLevels.DEBUG);
+  } else {
+    logger.setLogLevel(repomixLogLevels.INFO);
+  }
 
   logger.trace('directories:', directories);
   logger.trace('cwd:', cwd);
