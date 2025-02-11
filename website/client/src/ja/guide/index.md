@@ -1,6 +1,6 @@
 # Repomixとは
 
-Repomixは、リポジトリ全体をAIフレンドリーな単一ファイルにパッケージングするツールです。Claude、ChatGPT、Geminiなどの大規模言語モデル（LLM）にコードベースを提供するために設計されています。
+Repomixは、リポジトリ全体をAIフレンドリーな単一ファイルにパッケージングするツールです。ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grokなどの大規模言語モデル（LLM）にコードベースを提供するために設計されています。
 
 ## クイックスタート
 

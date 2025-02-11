@@ -1,6 +1,6 @@
 # Erste Schritte mit Repomix
 
-Repomix ist ein Tool, das Ihr gesamtes Repository in eine einzige, KI-freundliche Datei verpackt. Es wurde entwickelt, um Ihren Codebase an große Sprachmodelle (LLMs) wie Claude, ChatGPT und Gemini zu übergeben.
+Repomix ist ein Tool, das Ihr gesamtes Repository in eine einzige, KI-freundliche Datei verpackt. Es wurde entwickelt, um Ihren Codebase an große Sprachmodelle (LLMs) wie ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok und mehr zu übergeben.
 
 ## Schnellstart
 

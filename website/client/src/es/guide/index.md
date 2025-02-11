@@ -1,6 +1,6 @@
 # Primeros pasos con Repomix
 
-Repomix es una herramienta que empaqueta todo tu repositorio en un solo archivo amigable para la IA. Está diseñado para ayudarte a alimentar tu código a modelos de lenguaje grandes (LLMs) como Claude, ChatGPT y Gemini.
+Repomix es una herramienta que empaqueta todo tu repositorio en un solo archivo amigable para la IA. Está diseñado para ayudarte a alimentar tu código a modelos de lenguaje grandes (LLMs) como ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok y más.
 
 ## Inicio rápido
 

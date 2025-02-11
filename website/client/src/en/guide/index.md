@@ -1,6 +1,6 @@
 # Getting Started with Repomix
 
-Repomix is a tool that packs your entire repository into a single, AI-friendly file. It's designed to help you feed your codebase to Large Language Models (LLMs) like Claude, ChatGPT, and Gemini.
+Repomix is a tool that packs your entire repository into a single, AI-friendly file. It's designed to help you feed your codebase to Large Language Models (LLMs) like ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 
 ## Quick Start
 
