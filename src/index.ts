@@ -5,6 +5,9 @@ export type { CliOptions } from './cli/types.js';
 // Config
 export type { RepomixConfigFile as RepomixConfig } from './config/configSchema.js';
 
+// Execute action
+export { executeAction } from './cli/cliRun.js';
+
 // Init action
 export { runInitAction } from './cli/actions/initAction.js';
 
