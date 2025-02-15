@@ -1,7 +1,7 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import { LanguageParser } from './LanguageParser.js';
-import type { SupportedLang } from './lang2query.js';
+import type { SupportedLang } from './lang2Query.js';
 
 let languageParserSingleton: LanguageParser | null = null;
 

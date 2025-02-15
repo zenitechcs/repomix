@@ -1,4 +1,4 @@
-export default `
+export const queryPhp = `
 (class_declaration
   name: (name) @name.definition.class) @definition.class
 

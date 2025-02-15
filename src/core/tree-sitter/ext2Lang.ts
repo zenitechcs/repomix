@@ -1,4 +1,7 @@
-export const ext2lang = {
+/**
+ * @see https://unpkg.com/browse/tree-sitter-wasms@latest/out/
+ */
+export const ext2Lang = {
   vue: 'javascript',
   cjs: 'javascript',
   js: 'javascript',

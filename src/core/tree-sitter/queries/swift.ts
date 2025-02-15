@@ -1,4 +1,4 @@
-export default `
+export const querySwift = `
 (class_declaration
   name: (type_identifier) @name) @definition.class
 

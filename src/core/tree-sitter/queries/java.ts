@@ -1,4 +1,4 @@
-export default `
+export const queryJava = `
 (class_declaration
   name: (identifier) @name.definition.class) @definition.class
 

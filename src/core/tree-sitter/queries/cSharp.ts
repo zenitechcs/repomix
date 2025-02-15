@@ -1,4 +1,4 @@
-export default `
+export const queryCSharp = `
 (class_declaration
  name: (identifier) @name.definition.class
  ) @definition.class

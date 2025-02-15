@@ -1,4 +1,4 @@
-export default `
+export const queryC = `
 (struct_specifier name: (type_identifier) @name.definition.class body:(_)) @definition.class
 
 (declaration type: (union_specifier name: (type_identifier) @name.definition.class)) @definition.class

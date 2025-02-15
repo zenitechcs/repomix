@@ -2,8 +2,8 @@ import * as path from 'node:path';
 import Parser from 'web-tree-sitter';
 
 import { RepomixError } from '../../shared/errorHandle.js';
-import { ext2lang } from './ext2lang.js';
-import { type SupportedLang, lang2Query } from './lang2query.js';
+import { ext2Lang } from './ext2Lang.js';
+import { type SupportedLang, lang2Query } from './lang2Query.js';
 import { loadLanguage } from './loadLanguage.js';
 
 export class LanguageParser {
@@ -49,10 +49,10 @@ export class LanguageParser {
 
   public guessTheLang(filePath: string): SupportedLang | undefined {
     const ext = this.getFileExtension(filePath);
-    if (!Object.keys(ext2lang).includes(ext)) {
+    if (!Object.keys(ext2Lang).includes(ext)) {
       return undefined;
     }
-    const lang = ext2lang[ext as keyof typeof ext2lang] as SupportedLang;
+    const lang = ext2Lang[ext as keyof typeof ext2Lang] as SupportedLang;
     return lang;
   }
 

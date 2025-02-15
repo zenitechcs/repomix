@@ -1,4 +1,4 @@
-export default `
+export const queryPython = `
 (class_definition
   name: (identifier) @name.definition.class) @definition.class
 

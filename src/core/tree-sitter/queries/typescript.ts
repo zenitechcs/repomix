@@ -1,4 +1,4 @@
-export default `
+export const queryTypescript = `
 (function_signature
   name: (identifier) @name.definition.function) @definition.function
 

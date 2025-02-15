@@ -1,4 +1,4 @@
-export default `
+export const queryRust = `
 ; ADT definitions
 
 (struct_item
