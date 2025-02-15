@@ -1,7 +1,7 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import { LanguageParser } from './languageParser.js';
 import type { SupportedLang } from './lang2Query.js';
+import { LanguageParser } from './languageParser.js';
 
 let languageParserSingleton: LanguageParser | null = null;
 
@@ -12,6 +12,10 @@ const getLanguageParserSingleton = async () => {
   }
   return languageParserSingleton;
 };
+
+function normalizeChunk(chunk: string): string {
+  return chunk.trim();
+}
 
 // TODO: Do something with config: RepomixConfigMerged, it is not used (yet)
 export const parseFile = async (fileContent: string, filePath: string, config: RepomixConfigMerged) => {
@@ -31,6 +35,7 @@ export const parseFile = async (fileContent: string, filePath: string, config: R
 
   const query = await languageParser.getQueryForLang(lang);
   const parser = await languageParser.getParserForLang(lang);
+  const processedChunks = new Set<string>();
   const chunks = [];
 
   try {
@@ -62,7 +67,12 @@ export const parseFile = async (fileContent: string, filePath: string, config: R
         continue;
       }
       const chunk = selectedLines.join('\n');
-      chunks.push(chunk);
+      const normalizedChunk = normalizeChunk(chunk);
+
+      if (!processedChunks.has(normalizedChunk)) {
+        processedChunks.add(normalizedChunk);
+        chunks.push(chunk);
+      }
     }
   } catch (error: unknown) {
     logger.log(`Error parsing file: ${error}\n`);
