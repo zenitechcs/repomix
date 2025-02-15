@@ -47,12 +47,12 @@ export class LanguageParser {
     return this.loadedQueries[name];
   }
 
-  public guessTheLang(filePath: string) {
+  public guessTheLang(filePath: string): SupportedLang | undefined {
     const ext = this.getFileExtension(filePath);
     if (!Object.keys(ext2lang).includes(ext)) {
       return undefined;
     }
-    const lang = ext2lang[ext as keyof typeof ext2lang] as keyof typeof lang2Query;
+    const lang = ext2lang[ext as keyof typeof ext2lang] as SupportedLang;
     return lang;
   }
 

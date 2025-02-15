@@ -39,4 +39,24 @@ export default `
   name: (type_identifier) @name.definition.type) @definition.type
 
 (enum_declaration
-  name: (identifier) @name.definition.enum) @definition.enum`;
+  name: (identifier) @name.definition.enum) @definition.enum
+
+(lexical_declaration
+    (variable_declarator
+      name: (identifier) @name.definition.function
+      value: (arrow_function)
+    )
+  ) @definition.function
+
+(variable_declaration
+    (variable_declarator
+      name: (identifier) @name.definition.function
+      value: (arrow_function)
+    )
+) @definition.function
+
+(assignment_expression
+    left: [(identifier) @name.definition.function]
+    right: (arrow_function)
+) @definition.function
+`;

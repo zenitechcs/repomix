@@ -35,6 +35,33 @@ describe('parseFile', () => {
     expect(result).toContain('sayHello');
   });
 
+  test('should parse TypeScript arrow functions correctly', async () => {
+    const fileContent = `
+        const add = (x: number, y: number): number => {
+            return x + y;
+        };
+        let multiply: (a: number, b:number) => number;
+        multiply = (a, b) => {
+            return a*b;
+        }
+        let obj = { a: 1, b: () => 2 }
+    `;
+    const filePath = 'dummy.ts';
+    const config = { output: { compress: true } }; // compress を true に設定
+    const parseFile = await getFn_parseFile();
+    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+
+    console.log(result);
+
+    expect(typeof result).toBe('string');
+    expect(result).toContain('add');
+    expect(result).toContain('multiply');
+    expect(result).toContain('b'); //obj b property
+    expect(result).not.toContain('x + y'); // not contain function body
+    expect(result).not.toContain('a*b'); // not contain function body
+    expect(result).not.toContain('obj'); // not contain object body
+  });
+
   test('should parse TSX correctly', async () => {
     const fileContent = 'function greet(name: string){ console.log("Hello, " + name); }';
     const filePath = 'dummy.tsx';

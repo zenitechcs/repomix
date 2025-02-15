@@ -1,10 +1,12 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import { LanguageParser } from './LanguageParser.js';
+import type { SupportedLang } from './lang2query.js';
 
 export const getFn_parseFile = async () => {
-  const magicBlob = new LanguageParser();
-  await magicBlob.init();
+  const languageParser = new LanguageParser();
+  await languageParser.init();
+
   // TODO: Do something with config: RepomixConfigMerged, it is not used (yet)
   const parseFile = async (fileContent: string, filePath: string, config: RepomixConfigMerged) => {
     // Split the file content into individual lines
@@ -12,14 +14,17 @@ export const getFn_parseFile = async () => {
     if (lines.length < 1) {
       return '';
     }
-    const lang = magicBlob.guessTheLang(filePath);
+
+    const lang: SupportedLang | undefined = languageParser.guessTheLang(filePath);
     if (lang === undefined) {
       // Language not supported
       return undefined;
     }
-    const query = await magicBlob.getQueryForLang(lang);
-    const parser = await magicBlob.getParserForLang(lang);
+
+    const query = await languageParser.getQueryForLang(lang);
+    const parser = await languageParser.getParserForLang(lang);
     const chunks = [];
+
     try {
       // Parse the file content into an Abstract Syntax Tree (AST), a tree-like representation of the code
       const tree = parser.parse(fileContent);
@@ -55,5 +60,6 @@ export const getFn_parseFile = async () => {
     }
     return chunks.join('\n');
   };
+
   return parseFile;
 };
