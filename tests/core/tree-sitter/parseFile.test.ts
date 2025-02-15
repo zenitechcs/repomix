@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
-import { getFn_parseFile } from '../../../src/core/tree-sitter/parseFile.js';
+import { parseFile } from '../../../src/core/tree-sitter/parseFile.js';
 
 describe('parseFile', () => {
   // Test for JavaScript (js and jsx)
@@ -8,7 +8,6 @@ describe('parseFile', () => {
     const fileContent = 'function sayHello(name) { console.log("Hello, " + name); }';
     const filePath = 'dummy.js';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('sayHello');
@@ -18,7 +17,6 @@ describe('parseFile', () => {
     const fileContent = 'function sayHello(name) { console.log("Hello, " + name); }';
     const filePath = 'dummy.jsx';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('sayHello');
@@ -29,7 +27,6 @@ describe('parseFile', () => {
     const fileContent = 'function sayHello(name) { console.log("Hello, " + name); }';
     const filePath = 'dummy.ts';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('sayHello');
@@ -48,7 +45,6 @@ describe('parseFile', () => {
     `;
     const filePath = 'dummy.ts';
     const config = { output: { compress: true } }; // compress を true に設定
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
 
     console.log(result);
@@ -66,7 +62,6 @@ describe('parseFile', () => {
     const fileContent = 'function greet(name: string){ console.log("Hello, " + name); }';
     const filePath = 'dummy.tsx';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('greet');
@@ -77,7 +72,6 @@ describe('parseFile', () => {
     const fileContent = 'def greet(name): print(f"Hello, {name}")';
     const filePath = 'dummy.py';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('greet');
@@ -88,7 +82,6 @@ describe('parseFile', () => {
     const fileContent = 'fn main() { println!("Hello, world!"); }';
     const filePath = 'dummy.rs';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -99,7 +92,6 @@ describe('parseFile', () => {
     const fileContent = 'func main() { fmt.Println("Hello, world!") }';
     const filePath = 'dummy.go';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -110,7 +102,6 @@ describe('parseFile', () => {
     const fileContent = 'int main() { std::cout << "Hello, world!"; return 0; }';
     const filePath = 'dummy.cpp';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -120,7 +111,6 @@ describe('parseFile', () => {
     const fileContent = 'int main() { std::cout << "Hello, world!"; return 0; }';
     const filePath = 'dummy.hpp';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -131,7 +121,6 @@ describe('parseFile', () => {
     const fileContent = 'int main() { printf("Hello, world!"); return 0; }';
     const filePath = 'dummy.c';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -141,7 +130,6 @@ describe('parseFile', () => {
     const fileContent = 'int main() { printf("Hello, world!"); return 0; }';
     const filePath = 'dummy.h';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -152,7 +140,6 @@ describe('parseFile', () => {
     const fileContent = 'class Program { static void Main() { Console.WriteLine("Hello, world!"); } }';
     const filePath = 'dummy.cs';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('Main');
@@ -163,7 +150,6 @@ describe('parseFile', () => {
     const fileContent = 'def greet(name) puts "Hello, #{name}" end';
     const filePath = 'dummy.rb';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('greet');
@@ -175,7 +161,6 @@ describe('parseFile', () => {
       'public class HelloWorld { public static void main(String[] args) { System.out.println("Hello, world!"); } }';
     const filePath = 'dummy.java';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('main');
@@ -200,7 +185,6 @@ greet("John");
 
     const filePath = 'dummy.php';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('greet');
@@ -211,7 +195,6 @@ greet("John");
     const fileContent = 'func greet(name: String) { print("Hello, (name)") }';
     const filePath = 'dummy.swift';
     const config = {};
-    const parseFile = await getFn_parseFile();
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
     expect(result).toContain('greet');

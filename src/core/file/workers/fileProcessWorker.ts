@@ -1,6 +1,6 @@
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
 import { logger } from '../../../shared/logger.js';
-import { getFn_parseFile } from '../../tree-sitter/parseFile.js';
+import { parseFile } from '../../tree-sitter/parseFile.js';
 import { getFileManipulator } from '../fileManipulate.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
 
@@ -35,7 +35,6 @@ export const processContent = async (rawFile: RawFile, config: RepomixConfigMerg
   processedContent = processedContent.trim();
 
   if (config.output.compress) {
-    const parseFile = await getFn_parseFile();
     try {
       const parsedContent = await parseFile(processedContent, rawFile.path, config);
       if (parsedContent === undefined) {
