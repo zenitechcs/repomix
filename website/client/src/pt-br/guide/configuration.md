@@ -15,7 +15,9 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
-    "headerText": "Texto de cabeçalho personalizado",
+    "parsableStyle": true,
+    "compress": false,
+    "headerText": "Texto personalizado do cabeçalho",
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
     "directoryStructure": true,
@@ -49,7 +51,7 @@ Localização:
 - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
 - macOS/Linux: `~/.config/repomix/repomix.config.json`
 
-## Padrões de Exclusão
+## Padrões de Ignorar
 
 Ordem de prioridade:
 1. Opções de CLI (`--ignore`)
@@ -71,7 +73,7 @@ build/
 *.log
 ```
 
-## Padrões de Exclusão Padrão
+## Padrões de Ignorar Padrão
 
 Padrões comuns incluídos por padrão:
 ```text
@@ -82,3 +84,37 @@ dist/**
 ```
 
 Lista completa: [defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src/config/defaultIgnore.ts)
+
+## Exemplos
+
+### Compressão de Código
+
+Quando `output.compress` está configurado como `true`, o Repomix extrairá de forma inteligente as estruturas essenciais do código enquanto remove os detalhes de implementação. Isso é particularmente útil para reduzir a contagem de tokens enquanto mantém informações estruturais importantes.
+
+Por exemplo, este código:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+Será comprimido para:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+### Remoção de Comentários
+
+Quando `output.removeComments` está configurado como `true`, todos os comentários do código serão removidos. Isso é útil quando você deseja focar na implementação do código ou reduzir ainda mais a contagem de tokens.

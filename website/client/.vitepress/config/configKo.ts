@@ -1,7 +1,7 @@
 import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configKo = defineConfig({
-  lang: 'ko-KR',
+  lang: 'ko',
   description: '코드베이스를 AI 친화적인 형식으로 패키징',
   themeConfig: {
     nav: [
@@ -18,11 +18,12 @@ export const configKo = defineConfig({
             { text: '기본 사용법', link: '/ko/guide/usage' },
             { text: '프롬프트 예제', link: '/ko/guide/prompt-examples' },
             { text: '출력 형식', link: '/ko/guide/output' },
-            { text: '명령행 옵션', link: '/ko/guide/command-line-options' },
+            { text: '명령줄 옵션', link: '/ko/guide/command-line-options' },
             { text: '원격 저장소 처리', link: '/ko/guide/remote-repository-processing' },
             { text: '설정', link: '/ko/guide/configuration' },
-            { text: '사용자 지정 지시사항', link: '/ko/guide/custom-instructions' },
+            { text: '사용자 정의 지침', link: '/ko/guide/custom-instructions' },
             { text: '주석 제거', link: '/ko/guide/comment-removal' },
+            { text: '코드 압축', link: '/ko/guide/code-compress' },
             { text: '보안', link: '/ko/guide/security' },
             {
               text: '팁과 요령',
@@ -50,10 +51,10 @@ export const configKoSearch: DefaultTheme.LocalSearchOptions['locales'] = {
         buttonAriaLabel: '검색',
       },
       modal: {
-        noResultsText: '결과 없음',
-        resetButtonTitle: '검색 재설정',
+        noResultsText: '검색 결과가 없습니다',
+        resetButtonTitle: '검색 초기화',
         backButtonTitle: '뒤로',
-        displayDetails: '세부 정보 표시',
+        displayDetails: '상세 정보 표시',
         footer: {
           selectText: '선택',
           navigateText: '이동',

@@ -1,48 +1,49 @@
-# Opciones de línea de comandos
+# Opciones de Línea de Comandos
 
-## Opciones básicas
-- `-v, --version`: Mostrar versión
+## Opciones Básicas
+- `-v, --version`: Muestra la versión
 
-## Opciones de salida
-- `-o, --output <file>`: Nombre del archivo de salida (valor predeterminado: `repomix-output.txt`)
-- `--style <type>`: Formato de salida (`plain`, `xml`, `markdown`) (valor predeterminado: `plain`)
-- `--parsable-style`: Habilitar salida analizable basada en el esquema de estilo seleccionado (valor predeterminado: `false`)
-- `--output-show-line-numbers`: Agregar números de línea (valor predeterminado: `false`)
-- `--copy`: Copiar al portapapeles (valor predeterminado: `false`)
-- `--no-file-summary`: Deshabilitar resumen de archivos (valor predeterminado: `true`)
-- `--no-directory-structure`: Deshabilitar estructura de directorios (valor predeterminado: `true`)
-- `--remove-comments`: Eliminar comentarios (valor predeterminado: `false`)
-- `--remove-empty-lines`: Eliminar líneas vacías (valor predeterminado: `false`)
+## Opciones de Salida
+- `-o, --output <file>`: Nombre del archivo de salida (predeterminado: `repomix-output.txt`)
+- `--style <type>`: Estilo de salida (`plain`, `xml`, `markdown`) (predeterminado: `plain`)
+- `--parsable-style`: Habilita la salida analizable basada en el esquema del estilo elegido (predeterminado: `false`)
+- `--compress`: Realiza una extracción inteligente del código, enfocándose en las firmas esenciales de funciones y clases mientras elimina detalles de implementación
+- `--output-show-line-numbers`: Agrega números de línea (predeterminado: `false`)
+- `--copy`: Copiar al portapapeles (predeterminado: `false`)
+- `--no-file-summary`: Deshabilita el resumen de archivos (predeterminado: `true`)
+- `--no-directory-structure`: Deshabilita la estructura de directorios (predeterminado: `true`)
+- `--remove-comments`: Elimina comentarios (predeterminado: `false`)
+- `--remove-empty-lines`: Elimina líneas vacías (predeterminado: `false`)
 - `--header-text <text>`: Texto personalizado para incluir en el encabezado del archivo
 - `--instruction-file-path <path>`: Ruta al archivo con instrucciones personalizadas detalladas
-- `--include-empty-directories`: Incluir directorios vacíos en la salida (valor predeterminado: `false`)
+- `--include-empty-directories`: Incluye directorios vacíos en la salida (predeterminado: `false`)
 
-## Opciones de filtro
-- `--include <patterns>`: Patrones de inclusión (separados por comas)
-- `-i, --ignore <patterns>`: Patrones de exclusión (separados por comas)
-- `--no-gitignore`: Deshabilitar el uso del archivo .gitignore
-- `--no-default-patterns`: Deshabilitar patrones predeterminados
+## Opciones de Filtrado
+- `--include <patterns>`: Patrones a incluir (separados por comas)
+- `-i, --ignore <patterns>`: Patrones a ignorar (separados por comas)
+- `--no-gitignore`: Deshabilita el uso del archivo .gitignore
+- `--no-default-patterns`: Deshabilita los patrones predeterminados
 
-## Opciones de repositorio remoto
-- `--remote <url>`: Procesar repositorio remoto
-- `--remote-branch <name>`: Especificar nombre de rama remota, etiqueta o hash de commit (valor predeterminado es la rama predeterminada del repositorio)
+## Opciones de Repositorio Remoto
+- `--remote <url>`: Procesa repositorio remoto
+- `--remote-branch <name>`: Especifica el nombre de la rama remota, etiqueta o hash de commit (por defecto es la rama principal del repositorio)
 
-## Opciones de configuración
+## Opciones de Configuración
 - `-c, --config <path>`: Ruta del archivo de configuración personalizado
-- `--init`: Crear archivo de configuración
-- `--global`: Usar configuración global
+- `--init`: Crea archivo de configuración
+- `--global`: Usa configuración global
 
-## Opciones de seguridad
-- `--no-security-check`: Deshabilitar verificación de seguridad (valor predeterminado: `true`)
+## Opciones de Seguridad
+- `--no-security-check`: Deshabilita la verificación de seguridad (predeterminado: `true`)
 
-## Opciones de conteo de tokens
-- `--token-count-encoding <encoding>`: Especificar codificación para conteo de tokens (ej: `o200k_base`, `cl100k_base`) (valor predeterminado: `o200k_base`)
+## Opciones de Conteo de Tokens
+- `--token-count-encoding <encoding>`: Especifica la codificación para el conteo de tokens (ej. `o200k_base`, `cl100k_base`) (predeterminado: `o200k_base`)
 
-## Otras opciones
-- `--top-files-len <number>`: Número de archivos principales a mostrar (valor predeterminado: `5`)
-- `--verbose`: Habilitar registro detallado
+## Otras Opciones
+- `--top-files-len <number>`: Número de archivos principales a mostrar (predeterminado: `5`)
+- `--verbose`: Habilita el registro detallado
 
-## Ejemplos de uso
+## Ejemplos
 
 ```bash
 # Uso básico
@@ -51,14 +52,44 @@ repomix
 # Salida personalizada
 repomix -o output.xml --style xml
 
+# Salida personalizada con compresión
+repomix --compress
+
 # Procesar archivos específicos
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
 
-# Repositorio remoto con rama específica
+# Repositorio remoto con rama
 repomix --remote https://github.com/user/repo/tree/main
 
-# Repositorio remoto con commit específico
+# Repositorio remoto con commit
 repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
 
-# Formato abreviado de repositorio remoto
+# Repositorio remoto con formato abreviado
 repomix --remote user/repo
+```
+
+Por ejemplo, al usar la opción `--compress`, este código:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+Se comprimirá a:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+Esta compresión ayuda a reducir el conteo de tokens mientras mantiene información estructural importante sobre el código.

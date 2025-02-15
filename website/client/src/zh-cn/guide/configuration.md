@@ -15,6 +15,8 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
+    "parsableStyle": true,
+    "compress": false,
     "headerText": "自定义头部文本",
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
@@ -45,16 +47,16 @@ repomix --init
 repomix --init --global
 ```
 
-配置文件位置：
-- Windows: `%LOCALAPPDATA%\\Repomix\\repomix.config.json`
+位置：
+- Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
 - macOS/Linux: `~/.config/repomix/repomix.config.json`
 
 ## 忽略模式
 
 优先级顺序：
-1. 命令行选项（`--ignore`）
-2. .repomixignore 文件
-3. .gitignore 文件
+1. CLI 选项（`--ignore`）
+2. .repomixignore
+3. .gitignore
 4. 默认模式
 
 `.repomixignore` 示例：
@@ -67,13 +69,13 @@ tmp/
 dist/
 build/
 
-# 日志文件
+# 日志
 *.log
 ```
 
 ## 默认忽略模式
 
-内置的常用模式：
+默认包含的常见模式：
 ```text
 node_modules/**
 .git/**
@@ -82,3 +84,37 @@ dist/**
 ```
 
 完整列表：[defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src/config/defaultIgnore.ts)
+
+## 示例
+
+### 代码压缩
+
+当 `output.compress` 设置为 `true` 时，Repomix 将智能提取基本代码结构，同时移除实现细节。这在需要减少令牌数量的同时保持重要的结构信息时特别有用。
+
+例如，这段代码：
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+将被压缩为：
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+### 注释移除
+
+当 `output.removeComments` 设置为 `true` 时，所有代码注释将被移除。这在需要专注于代码实现或进一步减少令牌数量时很有用。

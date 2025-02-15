@@ -24,6 +24,7 @@ export const configEnUs = defineConfig({
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Custom Instructions', link: '/guide/custom-instructions' },
             { text: 'Comment Removal', link: '/guide/comment-removal' },
+            { text: 'Code Compression', link: '/guide/code-compress' },
             { text: 'Security', link: '/guide/security' },
             {
               text: 'Tips & Tricks',

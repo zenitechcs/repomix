@@ -38,6 +38,16 @@ repomix --remote user/repo --remote-branch main
 repomix --remote user/repo --remote-branch 935b695
 ```
 
+
+### Code Compression
+
+```bash
+repomix --compress
+
+# You can also use it with remote repositories:
+repomix --remote yamaadshy/repomix --compress
+```
+
 ## Output Formats
 
 ### Plain Text (Default)
