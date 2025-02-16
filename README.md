@@ -172,6 +172,15 @@ repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad
 
 ```
 
+To compress the output:
+
+```bash
+repomix --compress
+
+# You can also use it with remote repositories:
+repomix --remote yamaadshy/repomix --compress
+```
+
 To initialize a new configuration file (`repomix.config.json`):
 
 ```bash
@@ -414,6 +423,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `-o, --output <file>`: Specify the output file name
 - `--style <style>`: Specify the output style (`plain`, `xml`, `markdown`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
+- `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures to reduce token count
 - `--output-show-line-numbers`: Show line numbers in the output
 - `--copy`: Additionally copy generated output to system clipboard
 - `--no-file-summary`: Disable file summary section output
@@ -511,6 +521,43 @@ repomix --remote https://github.com/yamadashy/repomix --remote-branch 935b695
 repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
+### Code Compression
+
+The `--compress` option utilizes tree-sitter to perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. This can help reduce token count while retaining important structural information.
+
+```bash
+repomix --compress
+```
+
+For example, this code:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+Will be compressed to:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+> **Note**  
+> Currently, compression is supported for these languages: TypeScript/JavaScript, Python, Ruby, Java, Go, C#, C/C++, PHP, and Rust.
+
+
+
 ## ⚙️ Configuration
 
 Create a `repomix.config.json` file in your project root for custom configurations.
@@ -526,6 +573,7 @@ Here's an explanation of the configuration options:
 | `output.filePath`                | The name of the output file                                                                                                  | `"repomix-output.txt"` |
 | `output.style`                   | The style of the output (`plain`, `xml`, `markdown`)                                                                         | `"plain"`              |
 | `output.parsableStyle`           | Whether to escape the output based on the chosen style schema. Note that this can increase token count.                      | `false`                |
+| `output.compress`                | Whether to perform intelligent code extraction to reduce token count                                                         | `false`                |
 | `output.headerText`              | Custom text to include in the file header                                                                                    | `null`                 |
 | `output.instructionFilePath`     | Path to a file containing detailed custom instructions                                                                       | `null`                 |
 | `output.fileSummary`             | Whether to include a summary section at the beginning of the output                                                          | `true`                 |
@@ -551,6 +599,7 @@ Example configuration:
     "filePath": "repomix-output.xml",
     "style": "xml",
     "parsableStyle": true,
+    "compress": false,
     "headerText": "Custom header information for the packed file.",
     "fileSummary": true,
     "directoryStructure": true,

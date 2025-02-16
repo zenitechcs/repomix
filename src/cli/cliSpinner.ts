@@ -3,7 +3,7 @@ import logUpdate from 'log-update';
 import pc from 'picocolors';
 import type { CliOptions } from './types.js';
 
-class Spinner {
+export class Spinner {
   private spinner = cliSpinners.dots;
   private message: string;
   private currentFrame = 0;
@@ -67,5 +67,3 @@ class Spinner {
     this.stop(`${pc.red('✖')} ${message}`);
   }
 }
-
-export default Spinner;

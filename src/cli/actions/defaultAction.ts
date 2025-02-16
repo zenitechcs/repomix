@@ -11,7 +11,7 @@ import { type PackResult, pack } from '../../core/packager.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
-import Spinner from '../cliSpinner.js';
+import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
 
@@ -166,6 +166,11 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.headerText !== undefined) {
     cliConfig.output = { ...cliConfig.output, headerText: options.headerText };
   }
+
+  if (options.compress !== undefined) {
+    cliConfig.output = { ...cliConfig.output, compress: options.compress };
+  }
+
   if (options.tokenCountEncoding) {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
   }

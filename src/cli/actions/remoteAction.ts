@@ -6,7 +6,7 @@ import pc from 'picocolors';
 import { execGitShallowClone, isGitInstalled } from '../../core/file/gitCommand.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
-import Spinner from '../cliSpinner.js';
+import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
 interface IGitUrl extends GitUrl {
