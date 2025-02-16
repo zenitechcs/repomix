@@ -1,13 +1,13 @@
 # Configuración
 
-## Inicio rápido
+## Inicio Rápido
 
 Crear archivo de configuración:
 ```bash
 repomix --init
 ```
 
-## Archivo de configuración
+## Archivo de Configuración
 
 `repomix.config.json`:
 ```json
@@ -15,6 +15,8 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
+    "parsableStyle": true,
+    "compress": false,
     "headerText": "Texto de encabezado personalizado",
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
@@ -38,7 +40,7 @@ repomix --init
 }
 ```
 
-## Configuración global
+## Configuración Global
 
 Crear configuración global:
 ```bash
@@ -49,7 +51,7 @@ Ubicación:
 - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
 - macOS/Linux: `~/.config/repomix/repomix.config.json`
 
-## Patrones de ignorar
+## Patrones de Ignorar
 
 Orden de prioridad:
 1. Opciones de CLI (`--ignore`)
@@ -63,7 +65,7 @@ Ejemplo de `.repomixignore`:
 .cache/
 tmp/
 
-# Salidas de compilación
+# Salidas de construcción
 dist/
 build/
 
@@ -71,7 +73,7 @@ build/
 *.log
 ```
 
-## Patrones de ignorar predeterminados
+## Patrones de Ignorar Predeterminados
 
 Patrones comunes incluidos por defecto:
 ```text
@@ -82,3 +84,37 @@ dist/**
 ```
 
 Lista completa: [defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src/config/defaultIgnore.ts)
+
+## Ejemplos
+
+### Compresión de Código
+
+Cuando `output.compress` está configurado como `true`, Repomix extraerá de manera inteligente las estructuras esenciales del código mientras elimina los detalles de implementación. Esto es particularmente útil para reducir el conteo de tokens mientras se mantiene información estructural importante.
+
+Por ejemplo, este código:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+Se comprimirá a:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+### Eliminación de Comentarios
+
+Cuando `output.removeComments` está configurado como `true`, se eliminarán todos los comentarios del código. Esto es útil cuando desea enfocarse en la implementación del código o reducir aún más el conteo de tokens.

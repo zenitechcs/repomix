@@ -2,28 +2,28 @@ import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configEs = defineConfig({
   lang: 'es',
-  description: 'Empaqueta tu código en formatos compatibles con la inteligencia artificial',
+  description: 'Empaqueta tu código en formatos amigables para IA',
   themeConfig: {
     nav: [
-      // guía
       { text: 'Guía', link: '/es/guide/' },
-      { text: 'Únete a Discord', link: 'https://discord.gg/wNYzTwZFku' },
+      { text: 'Unirse a Discord', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {
       '/es/guide/': [
         {
           text: 'Guía',
           items: [
-            { text: 'Introducción', link: '/es/guide/' },
+            { text: 'Comenzar', link: '/es/guide/' },
             { text: 'Instalación', link: '/es/guide/installation' },
             { text: 'Uso Básico', link: '/es/guide/usage' },
-            { text: 'Ejemplos de Prompt', link: '/es/guide/prompt-examples' },
+            { text: 'Ejemplos de Prompts', link: '/es/guide/prompt-examples' },
             { text: 'Formatos de Salida', link: '/es/guide/output' },
-            { text: 'Opciones de Línea de Comando', link: '/es/guide/command-line-options' },
+            { text: 'Opciones de Línea de Comandos', link: '/es/guide/command-line-options' },
             { text: 'Procesamiento de Repositorios Remotos', link: '/es/guide/remote-repository-processing' },
             { text: 'Configuración', link: '/es/guide/configuration' },
             { text: 'Instrucciones Personalizadas', link: '/es/guide/custom-instructions' },
             { text: 'Eliminación de Comentarios', link: '/es/guide/comment-removal' },
+            { text: 'Compresión de Código', link: '/es/guide/code-compress' },
             { text: 'Seguridad', link: '/es/guide/security' },
             {
               text: 'Consejos y Trucos',
@@ -33,7 +33,7 @@ export const configEs = defineConfig({
               text: 'Desarrollo',
               items: [
                 { text: 'Contribuir', link: '/es/guide/development/' },
-                { text: 'Configuración Inicial', link: '/es/guide/development/setup' },
+                { text: 'Configuración', link: '/es/guide/development/setup' },
               ],
             },
           ],
@@ -51,9 +51,9 @@ export const configEsSearch: DefaultTheme.LocalSearchOptions['locales'] = {
         buttonAriaLabel: 'Buscar',
       },
       modal: {
-        noResultsText: 'Sin resultados',
-        resetButtonTitle: 'Restablecer búsqueda',
-        backButtonTitle: 'Volver',
+        noResultsText: 'No se encontraron resultados',
+        resetButtonTitle: 'Reiniciar búsqueda',
+        backButtonTitle: 'Atrás',
         displayDetails: 'Mostrar detalles',
         footer: {
           selectText: 'Seleccionar',

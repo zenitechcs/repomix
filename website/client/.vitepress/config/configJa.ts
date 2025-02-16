@@ -24,6 +24,7 @@ export const configJa = defineConfig({
             { text: '設定', link: '/ja/guide/configuration' },
             { text: 'カスタム指示', link: '/ja/guide/custom-instructions' },
             { text: 'コメントの削除', link: '/ja/guide/comment-removal' },
+            { text: 'コード圧縮', link: '/ja/guide/code-compress' },
             { text: 'セキュリティ', link: '/ja/guide/security' },
             {
               text: 'ヒント＆テクニック',

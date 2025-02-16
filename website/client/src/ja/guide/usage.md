@@ -2,20 +2,20 @@
 
 ## クイックスタート
 
-リポジトリ全体をパッケージング
+リポジトリ全体をパッケージ化：
 ```bash
 repomix
 ```
 
 ## 一般的な使用例
 
-### 特定のディレクトリをパッケージング
+### 特定のディレクトリをパッケージ化
 ```bash
 repomix path/to/directory
 ```
 
 ### 特定のファイルを含める
-[globパターン](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)を使用
+[glob パターン](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)を使用：
 ```bash
 repomix --include "src/**/*.ts,**/*.md"
 ```
@@ -25,12 +25,12 @@ repomix --include "src/**/*.ts,**/*.md"
 repomix --ignore "**/*.log,tmp/"
 ```
 
-### リモートリポジトリを処理
+### リモートリポジトリ
 ```bash
-# GitHubのURLを使用
+# GitHub URLを使用
 repomix --remote https://github.com/user/repo
 
-# 省略形を使用
+# ショートハンドを使用
 repomix --remote user/repo
 
 # 特定のブランチ/タグ/コミット
@@ -38,7 +38,15 @@ repomix --remote user/repo --remote-branch main
 repomix --remote user/repo --remote-branch 935b695
 ```
 
-## 出力フォーマット
+### コード圧縮
+```bash
+repomix --compress
+
+# リモートリポジトリでも使用可能：
+repomix --remote user/repo --compress
+```
+
+## 出力形式
 
 ### プレーンテキスト（デフォルト）
 ```bash
@@ -79,9 +87,9 @@ repomix --no-security-check
 
 ## 設定
 
-設定ファイルを初期化
+設定ファイルを初期化：
 ```bash
 repomix --init
 ```
 
-詳細な設定オプションについては[設定ガイド](/ja/guide/configuration)をご覧ください。
+詳細なオプションについては[設定ガイド](/ja/guide/configuration)を参照してください。

@@ -15,6 +15,8 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
+    "parsableStyle": true,
+    "compress": false,
     "headerText": "사용자 정의 헤더 텍스트",
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
@@ -45,14 +47,14 @@ repomix --init
 repomix --init --global
 ```
 
-설정 파일 위치:
-- Windows: `%LOCALAPPDATA%\\Repomix\\repomix.config.json`
+위치:
+- Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
 - macOS/Linux: `~/.config/repomix/repomix.config.json`
 
-## 제외 패턴
+## 무시 패턴
 
-우선순위 순서:
-1. 명령행 옵션 (`--ignore`)
+우선순위:
+1. CLI 옵션 (`--ignore`)
 2. .repomixignore
 3. .gitignore
 4. 기본 패턴
@@ -71,7 +73,7 @@ build/
 *.log
 ```
 
-## 기본 제외 패턴
+## 기본 무시 패턴
 
 기본적으로 포함되는 일반적인 패턴:
 ```text
@@ -82,3 +84,37 @@ dist/**
 ```
 
 전체 목록: [defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src/config/defaultIgnore.ts)
+
+## 예제
+
+### 코드 압축
+
+`output.compress`를 `true`로 설정하면, Repomix는 구현 세부 사항을 제거하면서 필수적인 코드 구조를 지능적으로 추출합니다. 이는 중요한 구조적 정보를 유지하면서 토큰 수를 줄일 때 특히 유용합니다.
+
+예를 들어, 이 코드가:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+다음과 같이 압축됩니다:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+### 주석 제거
+
+`output.removeComments`를 `true`로 설정하면, 모든 코드 주석이 제거됩니다. 이는 코드 구현에 집중하거나 토큰 수를 더 줄이고 싶을 때 유용합니다.

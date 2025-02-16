@@ -15,6 +15,8 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
+    "parsableStyle": true,
+    "compress": false,
     "headerText": "Custom header text",
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
@@ -82,3 +84,35 @@ dist/**
 ```
 
 Full list: [defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src/config/defaultIgnore.ts)
+
+## Examples
+
+### Code Compression
+
+When `output.compress` is set to `true`, Repomix will intelligently extract essential code structures while removing implementation details. This is particularly useful for reducing token count while maintaining important structural information.
+
+For example, this code:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+  let total = 0;
+  for (const item of items) {
+    total += item.price * item.quantity;
+  }
+  return total;
+}
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
+```
+
+Will be compressed to:
+
+```typescript
+const calculateTotal = (items: ShoppingItem[]) => {
+interface Item {
+```
+
+### Comment Removal
