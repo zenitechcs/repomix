@@ -23,9 +23,63 @@
 - Mock dependencies by passing test doubles through deps object
 - Use vi.mock() only when dependency injection is not feasible
 
+----------------------------------------------------------------
+
 # Generate Comprehensive Output
 - Include all content without abbreviation, unless specified otherwise
 - Optimize for handling large codebases while maintaining output quality
+
+----------------------------------------------------------------
+
+# Repomix Project Structure and Overview
+
+This document provides a structural overview of the Repomix project, designed to aid AI code assistants (like Copilot) in understanding the codebase.
+
+## Project Overview
+
+Repomix is a tool that packs the contents of a software repository into a single file, making it easier for AI systems to analyze and process the codebase. It supports various output formats (plain text, XML, Markdown), ignores files based on configurable patterns, and performs security checks to exclude potentially sensitive information.
+
+## Directory Structure
+
+The project is organized into the following directories:
+
+```
+repomix/
+├── src/ # Main source code
+│   ├── cli/ # Command-line interface logic (argument parsing, command handling, output)
+│   ├── config/ # Configuration loading, schema, and defaults
+│   ├── core/ # Core logic of Repomix
+│   │   ├── file/ # File handling (reading, processing, searching, tree structure generation, git commands)
+│   │   ├── metrics/ # Calculating code metrics (character count, token count)
+│   │   ├── output/ # Output generation (different styles, headers, etc.)
+│   │   ├── packager/ # Orchestrates file collection, processing, output, and clipboard operations.
+│   │   ├── security/ # Security checks to exclude sensitive files
+│   │   ├── tokenCount/ # Token counting using Tiktoken
+│   │   └── tree-sitter/ # Code parsing using Tree-sitter and language-specific queries
+│   └── shared/ # Shared utilities and types (error handling, logging, helper functions)
+├── tests/ # Unit and integration tests (organized mirroring src/)
+│   ├── cli/
+│   ├── config/
+│   ├── core/
+│   ├── integration-tests/
+│   ├── shared/
+│   └── testing/
+└── website/ # Documentation website (VitePress)
+    ├── client/      # Client-side code (Vue.js components, styles, configuration)
+    │   ├── .vitepress/  # VitePress configuration and theme
+    │   │   ├── config/  # Site configuration files (navigation, sidebar, etc.)
+    │   │   └── theme/   # Custom theme and styles
+    │   ├── components/ # Vue.js components for the website
+    │   ├── guide/      # Markdown files for the documentation (guides, tutorials)
+    │   └── public/     # Static assets (images, etc.)
+    └── server/      # Server-side API (for remote repository processing)
+        ├── src/       # Server source code (API endpoints, request handling)
+        │   ├── schemas/ # Request/response schemas (validation)
+        │   └── utils/    # Utility functions (caching, error handling, etc.)
+        └── test/
+```
+
+----------------------------------------------------------------
 
 # GitHub Release Note Guidelines
 Here are some examples of release notes that follow the guidelines:
