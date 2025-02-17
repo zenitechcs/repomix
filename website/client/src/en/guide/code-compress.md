@@ -2,6 +2,9 @@
 
 Code compression is a powerful feature that intelligently extracts essential code structures while removing implementation details. This is particularly useful for reducing token count while maintaining important structural information about your codebase.
 
+> [!NOTE]  
+> This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
+
 ## Basic Usage
 
 Enable code compression using the `--compress` flag:
