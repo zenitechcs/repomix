@@ -70,13 +70,9 @@ repomix/
     │   │   ├── config/  # Site configuration files (navigation, sidebar, etc.)
     │   │   └── theme/   # Custom theme and styles
     │   ├── components/ # Vue.js components for the website
-    │   ├── guide/      # Markdown files for the documentation (guides, tutorials)
-    │   └── public/     # Static assets (images, etc.)
+    │   └── src/        # Markdown files for the documentation in various languages (en, ja, etc.)
     └── server/      # Server-side API (for remote repository processing)
-        ├── src/       # Server source code (API endpoints, request handling)
-        │   ├── schemas/ # Request/response schemas (validation)
-        │   └── utils/    # Utility functions (caching, error handling, etc.)
-        └── test/
+        └── src/       # Server source code (API endpoints, request handling)
 ```
 
 ----------------------------------------------------------------
