@@ -3,7 +3,7 @@ import * as defaultAction from '../../src/cli/actions/defaultAction.js';
 import * as initAction from '../../src/cli/actions/initAction.js';
 import * as remoteAction from '../../src/cli/actions/remoteAction.js';
 import * as versionAction from '../../src/cli/actions/versionAction.js';
-import { executeAction, run } from '../../src/cli/cliRun.js';
+import { run, runCli } from '../../src/cli/cliRun.js';
 import type { CliOptions } from '../../src/cli/types.js';
 import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
 import type { PackResult } from '../../src/core/packager.js';
@@ -140,33 +140,33 @@ describe('cliRun', () => {
 
   describe('executeAction', () => {
     test('should execute default action when no special options provided', async () => {
-      await executeAction(['.'], process.cwd(), {});
+      await runCli(['.'], process.cwd(), {});
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['.'], process.cwd(), expect.any(Object));
     });
 
     test('should enable verbose logging when verbose option is true', async () => {
-      await executeAction(['.'], process.cwd(), { verbose: true });
+      await runCli(['.'], process.cwd(), { verbose: true });
 
       expect(logger.setLogLevel).toHaveBeenCalledWith(repomixLogLevels.DEBUG);
     });
 
     test('should execute version action when version option is true', async () => {
-      await executeAction(['.'], process.cwd(), { version: true });
+      await runCli(['.'], process.cwd(), { version: true });
 
       expect(versionAction.runVersionAction).toHaveBeenCalled();
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
 
     test('should execute init action when init option is true', async () => {
-      await executeAction(['.'], process.cwd(), { init: true });
+      await runCli(['.'], process.cwd(), { init: true });
 
       expect(initAction.runInitAction).toHaveBeenCalledWith(process.cwd(), false);
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
 
     test('should execute remote action when remote option is provided', async () => {
-      await executeAction(['.'], process.cwd(), {
+      await runCli(['.'], process.cwd(), {
         remote: 'yamadashy/repomix',
       });
 
@@ -177,7 +177,7 @@ describe('cliRun', () => {
 
   describe('parsable style flag', () => {
     test('should disable parsable style by default', async () => {
-      await executeAction(['.'], process.cwd(), {});
+      await runCli(['.'], process.cwd(), {});
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -189,7 +189,7 @@ describe('cliRun', () => {
     });
 
     test('should handle --parsable-style flag', async () => {
-      await executeAction(['.'], process.cwd(), { parsableStyle: true });
+      await runCli(['.'], process.cwd(), { parsableStyle: true });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -203,7 +203,7 @@ describe('cliRun', () => {
 
   describe('security check flag', () => {
     test('should enable security check by default', async () => {
-      await executeAction(['.'], process.cwd(), {});
+      await runCli(['.'], process.cwd(), {});
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -215,7 +215,7 @@ describe('cliRun', () => {
     });
 
     test('should handle --no-security-check flag', async () => {
-      await executeAction(['.'], process.cwd(), { securityCheck: false });
+      await runCli(['.'], process.cwd(), { securityCheck: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -227,7 +227,7 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --security-check flag', async () => {
-      await executeAction(['.'], process.cwd(), { securityCheck: true });
+      await runCli(['.'], process.cwd(), { securityCheck: true });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -239,7 +239,7 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --no-gitignore flag', async () => {
-      await executeAction(['.'], process.cwd(), { gitignore: false });
+      await runCli(['.'], process.cwd(), { gitignore: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -251,7 +251,7 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --no-default-patterns flag', async () => {
-      await executeAction(['.'], process.cwd(), { defaultPatterns: false });
+      await runCli(['.'], process.cwd(), { defaultPatterns: false });
 
       expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
         ['.'],
@@ -263,7 +263,7 @@ describe('cliRun', () => {
     });
 
     test('should handle explicit --header-text flag', async () => {
-      await executeAction(['.'], process.cwd(), {
+      await runCli(['.'], process.cwd(), {
         headerText: 'I am a good header text',
       });
 
@@ -277,7 +277,7 @@ describe('cliRun', () => {
     });
 
     test('should handle --instruction-file-path flag', async () => {
-      await executeAction(['.'], process.cwd(), {
+      await runCli(['.'], process.cwd(), {
         instructionFilePath: 'path/to/instruction.txt',
       });
 
@@ -291,7 +291,7 @@ describe('cliRun', () => {
     });
 
     test('should handle --include-empty-directories flag', async () => {
-      await executeAction(['.'], process.cwd(), {
+      await runCli(['.'], process.cwd(), {
         includeEmptyDirectories: true,
       });
 
@@ -311,7 +311,7 @@ describe('cliRun', () => {
         quiet: true,
       };
 
-      await executeAction(['.'], process.cwd(), options);
+      await runCli(['.'], process.cwd(), options);
 
       expect(logger.getLogLevel()).toBe(repomixLogLevels.SILENT);
     });
@@ -321,7 +321,7 @@ describe('cliRun', () => {
         verbose: true,
       };
 
-      await executeAction(['.'], process.cwd(), options);
+      await runCli(['.'], process.cwd(), options);
 
       expect(logger.getLogLevel()).toBe(repomixLogLevels.DEBUG);
     });
@@ -329,7 +329,7 @@ describe('cliRun', () => {
     test('should set log level to INFO by default', async () => {
       const options: CliOptions = {};
 
-      await executeAction(['.'], process.cwd(), options);
+      await runCli(['.'], process.cwd(), options);
 
       expect(logger.getLogLevel()).toBe(repomixLogLevels.INFO);
     });

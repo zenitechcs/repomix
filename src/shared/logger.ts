@@ -86,3 +86,7 @@ class RepomixLogger {
 }
 
 export const logger = new RepomixLogger();
+
+export const setLogLevel = (level: RepomixLogLevel) => {
+  logger.setLogLevel(level);
+};

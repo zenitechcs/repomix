@@ -46,7 +46,7 @@ export const run = async () => {
       .option('--no-security-check', 'disable security check')
       .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
       .option('--include-empty-directories', 'include empty directories in the output')
-      .action((directories, options: CliOptions = {}) => executeAction(directories, process.cwd(), options));
+      .action(commanderActionEndpoint);
 
     await program.parseAsync(process.argv);
   } catch (error) {
@@ -54,7 +54,11 @@ export const run = async () => {
   }
 };
 
-export const executeAction = async (directories: string[], cwd: string, options: CliOptions) => {
+const commanderActionEndpoint = async (directories: string[], options: CliOptions = {}) => {
+  await runCli(directories, process.cwd(), options);
+};
+
+export const runCli = async (directories: string[], cwd: string, options: CliOptions) => {
   // Set log level based on verbose and quiet flags
   if (options.quiet) {
     logger.setLogLevel(repomixLogLevels.SILENT);
@@ -82,9 +86,8 @@ export const executeAction = async (directories: string[], cwd: string, options:
   }
 
   if (options.remote) {
-    await runRemoteAction(options.remote, options);
-    return;
+    return await runRemoteAction(options.remote, options);
   }
 
-  await runDefaultAction(directories, cwd, options);
+  return await runDefaultAction(directories, cwd, options);
 };
