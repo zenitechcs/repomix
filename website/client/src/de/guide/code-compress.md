@@ -2,6 +2,9 @@
 
 Die Code-Komprimierung ist eine leistungsstarke Funktion, die wichtige Code-Strukturen intelligent extrahiert und dabei Implementierungsdetails entfernt. Dies ist besonders nützlich, um die Token-Anzahl zu reduzieren und gleichzeitig wichtige strukturelle Informationen über Ihre Codebasis beizubehalten.
 
+> [!NOTE]
+> Dies ist eine experimentelle Funktion, die wir basierend auf Benutzerfeedback und praktischer Nutzung aktiv verbessern werden.
+
 ## Grundlegende Verwendung
 
 Aktivieren Sie die Code-Komprimierung mit der Option `--compress`:

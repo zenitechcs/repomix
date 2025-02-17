@@ -2,6 +2,9 @@
 
 La compresión de código es una función poderosa que extrae de manera inteligente las estructuras esenciales del código mientras elimina los detalles de implementación. Esto es particularmente útil para reducir el conteo de tokens mientras se mantiene la información estructural importante de tu base de código.
 
+> [!NOTE]
+> Esta es una función experimental que mejoraremos activamente según los comentarios de los usuarios y el uso en el mundo real.
+
 ## Uso Básico
 
 Habilita la compresión de código usando la bandera `--compress`:

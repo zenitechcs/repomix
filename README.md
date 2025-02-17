@@ -553,9 +553,8 @@ const calculateTotal = (items: ShoppingItem[]) => {
 interface Item {
 ```
 
-> **Note**  
-> Currently, compression is supported for these languages: TypeScript/JavaScript, Python, Ruby, Java, Go, C#, C/C++, PHP, and Rust.
-
+> [!NOTE]
+> This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
 
 
 ## ⚙️ Configuration
