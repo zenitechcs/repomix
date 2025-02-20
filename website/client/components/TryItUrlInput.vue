@@ -7,6 +7,7 @@ import { isValidRemoteValue } from './utils/validation.js';
 const props = defineProps<{
   url: string;
   loading: boolean;
+  showButton?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -49,7 +50,7 @@ function handleKeydown(event: KeyboardEvent) {
       <AlertTriangle class="warning-icon" size="16" />
       <span>Please enter a valid GitHub repository URL (e.g., yamadashy/repomix)</span>
     </div>
-    <div class="pack-button-container">
+    <div v-if="showButton" class="pack-button-container">
       <PackButton :isValid="isValidUrl" :loading="loading"/>
     </div>
   </div>
@@ -57,16 +58,21 @@ function handleKeydown(event: KeyboardEvent) {
 
 <style scoped>
 .input-group {
-  margin-bottom: 24px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .url-input-container {
-  display: flex;
-  gap: 12px;
+  flex: 1;
+  position: relative;
+  height: 100%;
 }
 
 .repository-input {
-  flex: 1;
+  width: 100%;
+  height: 50px;
   padding: 12px 16px;
   font-size: 16px;
   border: 1px solid var(--vp-c-border);
@@ -104,11 +110,5 @@ function handleKeydown(event: KeyboardEvent) {
   display: flex;
   justify-content: center;
   width: 100%;
-}
-
-@media (max-width: 640px) {
-  .url-input-container {
-    flex-direction: column;
-  }
 }
 </style>

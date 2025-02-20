@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { AlertTriangle, Folder } from 'lucide-vue-next';
+import { ref } from 'vue';
 import PackButton from './PackButton.vue';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-const emit = defineEmits<(e: 'upload', file: File) => void>();
+const props = defineProps<{
+  loading: boolean;
+  showButton?: boolean;
+}>();
+
+const emit = defineEmits<{
+  upload: [file: File];
+}>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const dragActive = ref(false);
 const selectedFile = ref<File | null>(null);
 const errorMessage = ref<string | null>(null);
-const loading = ref(false);
-const isValidUrl = ref(false);
 
 function validateFile(file: File): boolean {
   errorMessage.value = null;
@@ -41,15 +47,20 @@ function handleFileSelect(files: FileList | null) {
     selectedFile.value = null;
   }
 }
+
+function triggerFileInput() {
+  fileInput.value?.click();
+}
 </script>
 
 <template>
   <div class="upload-wrapper">
     <div class="upload-container"
-      :class="{ 'drag-active': dragActive, 'has-error': errorMessage }"
-      @dragover.prevent="dragActive = true"
-      @dragleave="dragActive = false"
-      @drop.prevent="handleFileSelect($event.dataTransfer?.files || null)"
+         :class="{ 'drag-active': dragActive, 'has-error': errorMessage }"
+         @dragover.prevent="dragActive = true"
+         @dragleave="dragActive = false"
+         @drop.prevent="handleFileSelect($event.dataTransfer?.files || null)"
+         @click="triggerFileInput"
     >
       <input
         ref="fileInput"
@@ -58,10 +69,10 @@ function handleFileSelect(files: FileList | null) {
         class="hidden-input"
         @change="(e) => handleFileSelect((e.target as HTMLInputElement).files)"
       />
-      <div class="upload-content" @click="fileInput?.click()">
+      <div class="upload-content">
         <div class="upload-icon">
-          <span v-if="errorMessage">⚠️</span>
-          <span v-else>📁</span>
+          <AlertTriangle v-if="errorMessage" class="icon-error" size="20" />
+          <Folder v-else class="icon-folder" size="20" />
         </div>
         <div class="upload-text">
           <p v-if="errorMessage" class="error-message">
@@ -72,48 +83,50 @@ function handleFileSelect(files: FileList | null) {
             <button class="clear-button" @click.stop="selectedFile = null">×</button>
           </p>
           <template v-else>
-            <p>Drop your ZIP file here</p>
-            <p class="upload-hint">or click to browse (max 10MB)</p>
+            <p>Drop your ZIP file here or click to browse (max 10MB)</p>
           </template>
         </div>
       </div>
     </div>
   </div>
-  <div class="pack-button-container">
-      <PackButton
-        :loading="loading"
-        :isValid="!!selectedFile"
-      />
+  <div v-if="showButton" class="pack-button-container">
+    <PackButton
+      :loading="loading"
+      :isValid="!!selectedFile"
+    />
   </div>
 </template>
 
 <style scoped>
 .upload-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  width: 100%;
 }
 
 .upload-container {
   border: 2px dashed var(--vp-c-border);
   border-radius: 8px;
-  padding: 20px;
+  padding: 0 16px;
   cursor: pointer;
   transition: all 0.2s ease;
-  flex-grow: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  background: white;
+  user-select: none;
 }
 
 .upload-container:hover {
-  border-color: var(--vp-c-brand);
+  border-color: var(--vp-c-brand-1);
+  background-color: var(--vp-c-bg-soft);
 }
 
 .drag-active {
-  border-color: var(--vp-c-brand);
+  border-color: var(--vp-c-brand-1);
   background-color: var(--vp-c-bg-soft);
 }
 
 .has-error {
-  border-color: var(--vp-c-danger);
+  border-color: var(--vp-c-danger-1);
 }
 
 .hidden-input {
@@ -122,32 +135,49 @@ function handleFileSelect(files: FileList | null) {
 
 .upload-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  pointer-events: none; /* Allow clicks to pass through to container */
 }
 
 .upload-icon {
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-folder {
+  color: #64748b;
+}
+
+.icon-error {
+  color: var(--vp-c-danger-1);
 }
 
 .upload-text {
-  text-align: center;
+  flex: 1;
+  font-size: 14px;
 }
 
-.upload-hint {
-  color: var(--vp-c-text-2);
-  font-size: 0.9em;
+.upload-text p {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .error-message {
-  color: var(--vp-c-danger);
+  color: var(--vp-c-danger-1);
 }
 
 .selected-file {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .clear-button {
@@ -158,6 +188,8 @@ function handleFileSelect(files: FileList | null) {
   font-size: 1.2em;
   padding: 0 4px;
   line-height: 1;
+  flex-shrink: 0;
+  pointer-events: auto; /* Re-enable pointer events for button */
 }
 
 .clear-button:hover {
@@ -169,6 +201,11 @@ function handleFileSelect(files: FileList | null) {
   display: flex;
   justify-content: center;
   margin-top: 16px;
-  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .upload-text p {
+    font-size: 13px;
+  }
 }
 </style>
