@@ -1,19 +1,28 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+import AdmZip from 'adm-zip';
 import { type CliOptions, runDefaultAction } from 'repomix';
 import { packRequestSchema } from './schemas/request.js';
 import type { PackOptions, PackResult } from './types.js';
 import { generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
-import {
-  cleanupTempDirectory,
-  copyOutputToCurrentDirectory,
-  createTempDirectory,
-  extractZip,
-} from './utils/fileUtils.js';
+import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from './utils/fileUtils.js';
 import { cache, rateLimiter } from './utils/sharedInstance.js';
 import { sanitizePattern, validateRequest } from './utils/validation.js';
 
+// Enhanced ZIP extraction limits
+const ZIP_SECURITY_LIMITS = {
+  MAX_FILES: 10000, // Maximum number of files in the archive
+  MAX_UNCOMPRESSED_SIZE: 100_000_000, // Maximum total uncompressed size (100MB)
+  MAX_COMPRESSION_RATIO: 100, // Maximum compression ratio to prevent ZIP bombs
+  MAX_PATH_LENGTH: 200, // Maximum file path length
+  MAX_NESTING_LEVEL: 50, // Maximum directory nesting level
+};
+
+/**
+ * Process an uploaded ZIP file
+ */
 export async function processZipFile(
   file: File,
   format: string,
@@ -75,8 +84,8 @@ export async function processZipFile(
   const tempDirPath = await createTempDirectory();
 
   try {
-    // Extract the ZIP file to the temporary directory
-    await extractZip(file, tempDirPath);
+    // Extract the ZIP file to the temporary directory with enhanced security checks
+    await extractZipWithSecurity(file, tempDirPath);
 
     // Execute default action on the extracted directory
     const result = await runDefaultAction([tempDirPath], tempDirPath, cliOptions);
@@ -115,10 +124,10 @@ export async function processZipFile(
     return packResultData;
   } catch (error) {
     console.error('Error processing uploaded file:', error);
-    if (error instanceof Error) {
-      throw new AppError(`File processing failed: ${error.message}`, 500);
+    if (error instanceof AppError) {
+      throw error;
     }
-    throw new AppError('File processing failed with unknown error', 500);
+    throw new AppError(`File processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 500);
   } finally {
     cleanupTempDirectory(tempDirPath);
     // Clean up the output file
@@ -128,5 +137,101 @@ export async function processZipFile(
       // Ignore file deletion errors
       console.warn('Failed to cleanup output file:', err);
     }
+  }
+}
+
+/**
+ * Enhanced ZIP extraction with security checks
+ */
+async function extractZipWithSecurity(file: File, destPath: string): Promise<void> {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const zip = new AdmZip(buffer);
+
+    // Get all entries for validation
+    const entries = zip.getEntries();
+
+    // 1. Check number of files
+    if (entries.length > ZIP_SECURITY_LIMITS.MAX_FILES) {
+      throw new AppError(
+        `ZIP contains too many files (${entries.length}). Maximum allowed: ${ZIP_SECURITY_LIMITS.MAX_FILES}`,
+        413,
+      );
+    }
+
+    // 2. Calculate total uncompressed size
+    const totalUncompressedSize = entries.reduce((sum, entry) => sum + entry.header.size, 0);
+
+    if (totalUncompressedSize > ZIP_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE) {
+      throw new AppError(
+        `Uncompressed size (${(totalUncompressedSize / 1_000_000).toFixed(2)}MB) exceeds maximum limit of ${
+          ZIP_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE / 1_000_000
+        }MB`,
+        413,
+      );
+    }
+
+    // 3. Check compression ratio (ZIP bomb detection)
+    if (file.size > 0) {
+      const compressionRatio = totalUncompressedSize / file.size;
+      if (compressionRatio > ZIP_SECURITY_LIMITS.MAX_COMPRESSION_RATIO) {
+        throw new AppError(
+          `Suspicious compression ratio (${compressionRatio.toFixed(2)}:1). Maximum allowed: ${ZIP_SECURITY_LIMITS.MAX_COMPRESSION_RATIO}:1`,
+          400,
+        );
+      }
+    }
+
+    // 4. Validate all entries for path traversal, file extensions, and nesting level
+    const processedPaths = new Set<string>();
+
+    for (const entry of entries) {
+      // Skip directories
+      if (entry.isDirectory) continue;
+
+      const entryPath = entry.entryName;
+
+      // 4.1 Check for unsafe paths (directory traversal prevention)
+      const normalizedPath = path.normalize(path.join(destPath, entryPath));
+      if (!normalizedPath.startsWith(destPath)) {
+        throw new AppError(
+          `Security violation: Potential directory traversal attack detected in path: ${entryPath}`,
+          400,
+        );
+      }
+
+      // 4.2 Check path length
+      if (entryPath.length > ZIP_SECURITY_LIMITS.MAX_PATH_LENGTH) {
+        throw new AppError(
+          `File path exceeds maximum length: ${entryPath.length} > ${ZIP_SECURITY_LIMITS.MAX_PATH_LENGTH}`,
+          400,
+        );
+      }
+
+      // 4.3 Check nesting level
+      const nestingLevel = entryPath.split('/').length - 1;
+      if (nestingLevel > ZIP_SECURITY_LIMITS.MAX_NESTING_LEVEL) {
+        throw new AppError(
+          `Directory nesting level exceeds maximum: ${nestingLevel} > ${ZIP_SECURITY_LIMITS.MAX_NESTING_LEVEL}`,
+          400,
+        );
+      }
+
+      // 4.4 Check for duplicate paths (could indicate ZipSlip vulnerability attempts)
+      if (processedPaths.has(normalizedPath)) {
+        throw new AppError(`Duplicate file path detected: ${entryPath}. This could indicate a malicious archive.`, 400);
+      }
+      processedPaths.add(normalizedPath);
+    }
+
+    // If all checks pass, extract the ZIP
+    await fs.mkdir(destPath, { recursive: true });
+    zip.extractAllTo(destPath, true);
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(`Failed to extract ZIP file: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
