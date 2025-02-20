@@ -108,7 +108,7 @@ function triggerFileInput() {
   padding: 0 16px;
   cursor: pointer;
   transition: all 0.2s ease;
-  height: 48px;
+  height: 50px;
   display: flex;
   align-items: center;
   background: white;
