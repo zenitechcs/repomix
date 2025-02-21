@@ -216,7 +216,7 @@ function handleFileUpload(file: File) {
   flex: 1;
   height: 48px;
   padding: 0 16px;
-  background: white;
+  background: var(--vp-c-bg);
   cursor: pointer;
   font-size: 16px;
   white-space: nowrap;
