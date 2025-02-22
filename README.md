@@ -569,9 +569,28 @@ Here's an explanation of the configuration options:
 
 | Option                           | Description                                                                                                                  | Default                |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------|------------------------|
-// ...existing code...
+| `output.filePath`                | The name of the output file                                                                                                  | `"repomix-output.txt"` |
+| `output.style`                   | The style of the output (`plain`, `xml`, `markdown`)                                                                         | `"plain"`              |
+| `output.parsableStyle`           | Whether to escape the output based on the chosen style schema. Note that this can increase token count.                      | `false`                |
+| `output.compress`                | Whether to perform intelligent code extraction to reduce token count                                                         | `false`                |
+| `output.headerText`              | Custom text to include in the file header                                                                                    | `null`                 |
+| `output.instructionFilePath`     | Path to a file containing detailed custom instructions                                                                       | `null`                 |
+| `output.fileSummary`             | Whether to include a summary section at the beginning of the output                                                          | `true`                 |
+| `output.directoryStructure`      | Whether to include the directory structure in the output                                                                     | `true`                 |
+| `output.removeComments`          | Whether to remove comments from supported file types                                                                         | `false`                |
+| `output.removeEmptyLines`        | Whether to remove empty lines from the output                                                                                | `false`                |
+| `output.showLineNumbers`         | Whether to add line numbers to each line in the output                                                                       | `false`                |
+| `output.copyToClipboard`         | Whether to copy the output to system clipboard in addition to saving the file                                                | `false`                |
+| `output.topFilesLength`          | Number of top files to display in the summary. If set to 0, no summary will be displayed                                     | `5`                    |
+| `output.includeEmptyDirectories` | Whether to include empty directories in the repository structure                                                             | `false`                |
+| `include`                        | Patterns of files to include (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax))  | `[]`                   |
+| `ignore.useGitignore`            | Whether to use patterns from the project's `.gitignore` file                                                                 | `true`                 |
+| `ignore.useDefaultPatterns`      | Whether to use default ignore patterns                                                                                       | `true`                 |
+| `ignore.customPatterns`          | Additional patterns to ignore (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) | `[]`                   |
+| `security.enableSecurityCheck`   | Whether to perform security checks on files                                                                                  | `true`                 |
+| `tokenCount.encoding`            | Token count encoding for AI model context limits (e.g., `o200k_base`, `cl100k_base`)                                         | `"o200k_base"`         |
 
-The configuration file supports JSON5 syntax, which allows:
+The configuration file supports [JSON5](https://json5.org/) syntax, which allows:
 - Comments (both single-line and multi-line)
 - Trailing commas in objects and arrays
 - Unquoted property names
@@ -581,39 +600,38 @@ Example configuration:
 
 ```json5
 {
-  // Output configuration
-  output: {
-    filePath: "repomix-output.xml",
-    style: "xml",
-    parsableStyle: true,
-    compress: false,
-    headerText: "Custom header information for the packed file.",
-    fileSummary: true,
-    directoryStructure: true,
-    removeComments: false,
-    removeEmptyLines: false,
-    showLineNumbers: false,
-    copyToClipboard: true,
-    topFilesLength: 5, // Number of top files to show
-    includeEmptyDirectories: false,
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "parsableStyle": true,
+    "compress": false,
+    "headerText": "Custom header information for the packed file.",
+    "fileSummary": true,
+    "directoryStructure": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "showLineNumbers": false,
+    "copyToClipboard": true,
+    "topFilesLength": 5,
+    "includeEmptyDirectories": false,
   },
-  include: [
-    "**/*",
+  "include": [
+    "**/*"
   ],
-  ignore: {
-    useGitignore: true,
-    useDefaultPatterns: true,
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
     // Patterns can also be specified in .repomixignore
-    customPatterns: [
+    "customPatterns": [
       "additional-folder",
-      "**/*.log",
+      "**/*.log"
     ],
   },
-  security: {
-    enableSecurityCheck: true,
+  "security": {
+    "enableSecurityCheck": true
   },
-  tokenCount: {
-    encoding: "o200k_base",
+  "tokenCount": {
+    "encoding": "o200k_base"
   },
 }
 ```
