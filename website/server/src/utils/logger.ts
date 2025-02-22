@@ -2,6 +2,7 @@ import { LoggingWinston } from '@google-cloud/logging-winston';
 import type { Context, Next } from 'hono';
 import winston from 'winston';
 import { getClientIP } from './network.js';
+import { calculateLatency, formatLatencyForDisplay } from './time.js';
 
 // Augment Hono's context type
 declare module 'hono' {
@@ -36,13 +37,6 @@ const logger = createLogger();
 // Generate unique request identifier
 function generateRequestId(): string {
   return `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
-// Calculate and format request latency
-export function formatLatency(startTime: number): string {
-  const latencyMs = Date.now() - startTime;
-  const latencySec = latencyMs / 1000; // Convert to seconds
-  return `${latencySec.toFixed(3)}s`;
 }
 
 // Error response interface with request tracking
@@ -96,18 +90,18 @@ export function cloudLogger() {
 
       // Collect response information
       const status = c.res.status;
-      const latency = formatLatency(startTime);
+      const latency = calculateLatency(startTime);
       const contentLength = Number.parseInt(c.res.headers.get('content-length') || '0', 10);
 
       // Log successful response
       logger.info({
-        message: `${method} ${url.pathname} completed`,
+        message: `${method} ${url.pathname} completed in ${formatLatencyForDisplay(startTime)}`,
         requestId,
         httpRequest: {
           requestMethod: method,
           requestUrl: url.toString(),
           status,
-          latency,
+          latency, // Now uses the correct format { seconds: number, nanos: number }
           responseSize: contentLength,
           userAgent,
           referer,
@@ -118,7 +112,7 @@ export function cloudLogger() {
       // Log error information
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error({
-        message: `${method} ${url.pathname} failed: ${errorMessage}`,
+        message: `${method} ${url.pathname} failed: ${errorMessage} (${formatLatencyForDisplay(startTime)})`,
         requestId,
         error: {
           message: errorMessage,
@@ -128,7 +122,7 @@ export function cloudLogger() {
           requestMethod: method,
           requestUrl: url.toString(),
           status: 500,
-          latency: formatLatency(startTime),
+          latency: calculateLatency(startTime), // Now uses the correct format
           userAgent,
           referer,
           remoteIp,

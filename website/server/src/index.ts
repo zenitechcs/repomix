@@ -4,14 +4,14 @@ import { bodyLimit } from 'hono/body-limit';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
 import { timeout } from 'hono/timeout';
-import { setLogLevel } from 'repomix';
 import { FILE_SIZE_LIMITS } from './constants.js';
 import { processZipFile } from './processZipFile.js';
 import { processRemoteRepo } from './remoteRepo.js';
-import type { ErrorResponse, PackResult } from './types.js';
+import type { PackResult } from './types.js';
 import { handlePackError } from './utils/errorHandler.js';
-import { cloudLogger, createErrorResponse, formatLatency, logError, logInfo } from './utils/logger.js';
+import { cloudLogger, createErrorResponse, logError, logInfo } from './utils/logger.js';
 import { getProcessConcurrency } from './utils/processConcurrency.js';
+import { calculateLatency, formatLatencyForDisplay } from './utils/time.js';
 
 // Log server metrics on startup
 logInfo('Server starting', {
@@ -102,7 +102,7 @@ app.post(
         requestId,
         format,
         repository: result.metadata.repository,
-        latency: formatLatency(startTime),
+        duration: formatLatencyForDisplay(startTime),
         metrics: {
           totalFiles: result.metadata.summary?.totalFiles,
           totalCharacters: result.metadata.summary?.totalCharacters,
