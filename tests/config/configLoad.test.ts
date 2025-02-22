@@ -132,9 +132,9 @@ describe('configLoad', () => {
       const result = await loadFileConfig(process.cwd(), 'test-config.json');
       expect(result).toEqual({
         output: { filePath: 'test-output.txt', style: 'plain' },
-        ignore: { 
+        ignore: {
           useGitignore: true,
-          customPatterns: ['*.log', '*.tmp', '*.temp']
+          customPatterns: ['*.log', '*.tmp', '*.temp'],
         },
       });
     });
