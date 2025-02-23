@@ -2,7 +2,7 @@
 import ace, { type Ace } from 'ace-builds';
 import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
-import { Copy, Download } from 'lucide-vue-next';
+import { BarChart2, Copy, Download, GitFork, PackageSearch } from 'lucide-vue-next';
 import { useData } from 'vitepress';
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
@@ -81,7 +81,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
     <div v-else-if="result" class="content-wrapper">
       <div class="metadata-panel">
         <div class="metadata-section">
-          <h3>Repository Info</h3>
+          <h3><GitFork size="16" class="section-icon" /> Repository Info</h3>
           <dl>
             <dt>Repository</dt>
             <dd>{{ result.metadata.repository }}</dd>
@@ -93,24 +93,24 @@ const handleEditorMount = (editor: Ace.Editor) => {
         </div>
 
         <div class="metadata-section">
-          <h3>Pack Summary</h3>
+          <h3><PackageSearch size="16" class="section-icon" /> Pack Summary</h3>
           <dl v-if="result.metadata.summary">
             <dt>Total Files</dt>
-            <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} files</dd>
+            <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
             <dt>Total Size</dt>
-            <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} chars</dd>
+            <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
             <dt>Total Tokens</dt>
-            <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} tokens</dd>
+            <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} <span class="unit">tokens</span></dd>
           </dl>
         </div>
 
         <div class="metadata-section" v-if="result.metadata.topFiles">
-          <h3>Top {{ result.metadata.topFiles.length }} Files</h3>
+          <h3><BarChart2 size="16" class="section-icon" /> Top {{ result.metadata.topFiles.length }} Files</h3>
           <ol class="top-files-list">
             <li v-for="file in result.metadata.topFiles" :key="file.path">
               <div class="file-path">{{ file.path }}</div>
               <div class="file-stats">
-                {{ file.charCount.toLocaleString() }} chars
+                {{ file.charCount.toLocaleString() }} <span class="unit">chars</span> <span class="separator-unit">|</span> {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span> <span class="separator-unit">|</span> {{ ((file.tokenCount / result.metadata.summary.totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
               </div>
             </li>
           </ol>
@@ -208,6 +208,13 @@ const handleEditorMount = (editor: Ace.Editor) => {
   font-weight: 600;
   margin: 0 0 12px;
   color: var(--vp-c-text-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-icon {
+  color: var(--vp-c-text-2);
 }
 
 dl {
@@ -227,6 +234,16 @@ dd {
   margin: 0;
   color: var(--vp-c-text-1);
   text-transform: lowercase;
+}
+
+.unit {
+  color: var(--vp-c-text-2);
+  margin-left: 0.3em;
+}
+
+.separator-unit {
+  color: var(--vp-c-text-3);
+  margin: 0 0.5em;
 }
 
 .top-files-list {
@@ -249,7 +266,9 @@ dd {
 
 .file-stats {
   font-size: 12px;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-text-1);
+  display: flex;
+  align-items: center;
 }
 
 .output-panel {
@@ -291,6 +310,18 @@ dd {
   background: var(--vp-c-brand-1);
   color: white;
   border-color: var(--vp-c-brand-1);
+}
+
+.separator {
+  color: var(--vp-c-text-3);
+  margin: 0 6px;
+}
+
+.separator-icon {
+  display: inline-block;
+  margin: 0 4px;
+  color: var(--vp-c-text-3);
+  vertical-align: middle;
 }
 
 .editor-container {
