@@ -59,7 +59,7 @@ const handleDownload = (event: Event) => {
   event.preventDefault();
   if (!props.result) return;
 
-  downloadResult(props.result.content, props.result.format);
+  downloadResult(props.result.content, props.result.format, props.result);
 };
 
 const handleEditorMount = (editor: Ace.Editor) => {
