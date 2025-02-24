@@ -20,6 +20,7 @@ const props = defineProps<{
   result: PackResult | null;
   loading: boolean;
   error: string | null;
+  repositoryUrl?: string;
 }>();
 
 const copied = ref(false);
@@ -45,6 +46,7 @@ const formattedTimestamp = computed(() => {
 
 const handleCopy = async (event: Event) => {
   event.preventDefault();
+  event.stopPropagation();
   if (!props.result) return;
 
   const success = await copyToClipboard(props.result.content, props.result.format);
@@ -58,6 +60,7 @@ const handleCopy = async (event: Event) => {
 
 const handleDownload = (event: Event) => {
   event.preventDefault();
+  event.stopPropagation();
   if (!props.result) return;
 
   downloadResult(props.result.content, props.result.format, props.result);
@@ -78,6 +81,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
     <TryItResultViewerErrorMessage
       v-else-if="error"
       :message="error"
+      :repository-url="repositoryUrl"
     />
 
     <div v-else-if="result" class="content-wrapper">
