@@ -11,6 +11,7 @@ import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } fr
 
 ace.config.setModuleUrl('ace/theme/tomorrow', themeTomorrowUrl);
 ace.config.setModuleUrl('ace/theme/tomorrow_night', themeTomorrowNightUrl);
+import TryItResultViewerErrorMessage from './TryItResultViewerErrorMessage.vue';
 
 const lightTheme = 'tomorrow';
 const darkTheme = 'tomorrow_night';
@@ -74,14 +75,15 @@ const handleEditorMount = (editor: Ace.Editor) => {
       <p>Processing repository...</p>
     </div>
 
-    <div v-else-if="error" class="error">
-      <p>{{ error }}</p>
-    </div>
+    <TryItResultViewerErrorMessage
+      v-else-if="error"
+      :message="error"
+    />
 
     <div v-else-if="result" class="content-wrapper">
       <div class="metadata-panel">
         <div class="metadata-section">
-          <h3><GitFork size="16" class="section-icon" /> Repository Info</h3>
+          <h3><GitFork :size="16" class="section-icon" /> Repository Info</h3>
           <dl>
             <dt>Repository</dt>
             <dd>{{ result.metadata.repository }}</dd>
@@ -93,7 +95,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
         </div>
 
         <div class="metadata-section">
-          <h3><PackageSearch size="16" class="section-icon" /> Pack Summary</h3>
+          <h3><PackageSearch :size="16" class="section-icon" /> Pack Summary</h3>
           <dl v-if="result.metadata.summary">
             <dt>Total Files</dt>
             <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
@@ -105,7 +107,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
         </div>
 
         <div class="metadata-section" v-if="result.metadata.topFiles">
-          <h3><BarChart2 size="16" class="section-icon" /> Top {{ result.metadata.topFiles.length }} Files</h3>
+          <h3><BarChart2 :size="16" class="section-icon" /> Top {{ result.metadata.topFiles.length }} Files</h3>
           <ol class="top-files-list">
             <li v-for="file in result.metadata.topFiles" :key="file.path">
               <div class="file-path">{{ file.path }}</div>
@@ -124,14 +126,14 @@ const handleEditorMount = (editor: Ace.Editor) => {
               @click="handleCopy"
               :class="{ copied }"
           >
-            <Copy size="16" />
+            <Copy :size="16" />
             {{ copied ? 'Copied!' : 'Copy' }}
           </button>
           <button
               class="action-button"
               @click="handleDownload"
           >
-            <Download size="16" />
+            <Download :size="16" />
             Download
           </button>
         </div>
