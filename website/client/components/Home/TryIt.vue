@@ -56,7 +56,7 @@
       />
 
       <div v-if="hasExecuted">
-        <TryItResultViewer
+        <TryItResult
           :result="result"
           :loading="loading"
           :error="error"
@@ -75,7 +75,7 @@ import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
 import TryItPackOptions from './TryItPackOptions.vue';
-import TryItResultViewer from './TryItResultViewer.vue';
+import TryItResult from './TryItResult.vue';
 import TryItUrlInput from './TryItUrlInput.vue';
 
 // Form input states

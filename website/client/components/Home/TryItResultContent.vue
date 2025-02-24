@@ -4,23 +4,19 @@ import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
 import { BarChart2, Copy, Download, GitFork, PackageSearch } from 'lucide-vue-next';
 import { useData } from 'vitepress';
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from '../utils/resultViewer';
 
 ace.config.setModuleUrl('ace/theme/tomorrow', themeTomorrowUrl);
 ace.config.setModuleUrl('ace/theme/tomorrow_night', themeTomorrowNightUrl);
-import TryItResultViewerErrorMessage from './TryItResultViewerErrorMessage.vue';
 
 const lightTheme = 'tomorrow';
 const darkTheme = 'tomorrow_night';
 
 const props = defineProps<{
-  result: PackResult | null;
-  loading: boolean;
-  error: string | null;
-  repositoryUrl?: string;
+  result: PackResult;
 }>();
 
 const copied = ref(false);
@@ -32,7 +28,6 @@ const editorOptions = computed(() => ({
   theme: isDark.value ? `ace/theme/${darkTheme}` : `ace/theme/${lightTheme}`,
 }));
 
-// Watch for theme changes and update editor theme
 watch(isDark, (newIsDark) => {
   if (editorInstance.value) {
     editorInstance.value.setTheme(newIsDark ? `ace/theme/${darkTheme}` : `ace/theme/${lightTheme}`);
@@ -40,14 +35,12 @@ watch(isDark, (newIsDark) => {
 });
 
 const formattedTimestamp = computed(() => {
-  if (!props.result) return '';
   return formatTimestamp(props.result.metadata.timestamp);
 });
 
 const handleCopy = async (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
-  if (!props.result) return;
 
   const success = await copyToClipboard(props.result.content, props.result.format);
   if (success) {
@@ -61,8 +54,6 @@ const handleCopy = async (event: Event) => {
 const handleDownload = (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
-  if (!props.result) return;
-
   downloadResult(props.result.content, props.result.format, props.result);
 };
 
@@ -72,122 +63,77 @@ const handleEditorMount = (editor: Ace.Editor) => {
 </script>
 
 <template>
-  <div class="result-viewer">
-    <div v-if="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Processing repository...</p>
-    </div>
-
-    <TryItResultViewerErrorMessage
-      v-else-if="error"
-      :message="error"
-      :repository-url="repositoryUrl"
-    />
-
-    <div v-else-if="result" class="content-wrapper">
-      <div class="metadata-panel">
-        <div class="metadata-section">
-          <h3><GitFork :size="16" class="section-icon" /> Repository Info</h3>
-          <dl>
-            <dt>Repository</dt>
-            <dd>{{ result.metadata.repository }}</dd>
-            <dt>Generated At</dt>
-            <dd>{{ formattedTimestamp }}</dd>
-            <dt>Format</dt>
-            <dd>{{ result.format }}</dd>
-          </dl>
-        </div>
-
-        <div class="metadata-section">
-          <h3><PackageSearch :size="16" class="section-icon" /> Pack Summary</h3>
-          <dl v-if="result.metadata.summary">
-            <dt>Total Files</dt>
-            <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
-            <dt>Total Size</dt>
-            <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
-            <dt>Total Tokens</dt>
-            <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} <span class="unit">tokens</span></dd>
-          </dl>
-        </div>
-
-        <div class="metadata-section" v-if="result.metadata.topFiles">
-          <h3><BarChart2 :size="16" class="section-icon" /> Top {{ result.metadata.topFiles.length }} Files</h3>
-          <ol class="top-files-list">
-            <li v-for="file in result.metadata.topFiles" :key="file.path">
-              <div class="file-path">{{ file.path }}</div>
-              <div class="file-stats">
-                {{ file.charCount.toLocaleString() }} <span class="unit">chars</span> <span class="separator-unit">|</span> {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span> <span class="separator-unit">|</span> {{ ((file.tokenCount / result.metadata.summary.totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
-              </div>
-            </li>
-          </ol>
-        </div>
+  <div class="content-wrapper">
+    <div class="metadata-panel">
+      <div class="metadata-section">
+        <h3><GitFork :size="16" class="section-icon" /> Repository Info</h3>
+        <dl>
+          <dt>Repository</dt>
+          <dd>{{ result.metadata.repository }}</dd>
+          <dt>Generated At</dt>
+          <dd>{{ formattedTimestamp }}</dd>
+          <dt>Format</dt>
+          <dd>{{ result.format }}</dd>
+        </dl>
       </div>
 
-      <div class="output-panel">
-        <div class="output-actions">
-          <button
-              class="action-button"
-              @click="handleCopy"
-              :class="{ copied }"
-          >
-            <Copy :size="16" />
-            {{ copied ? 'Copied!' : 'Copy' }}
-          </button>
-          <button
-              class="action-button"
-              @click="handleDownload"
-          >
-            <Download :size="16" />
-            Download
-          </button>
-        </div>
-        <div class="editor-container">
-          <VAceEditor
-              v-model:value="result.content"
-              :lang="'text'"
-              :style="{ height: '100%', width: '100%' }"
-              :options="editorOptions"
-              @mount="handleEditorMount"
-          />
-        </div>
+      <div class="metadata-section">
+        <h3><PackageSearch :size="16" class="section-icon" /> Pack Summary</h3>
+        <dl v-if="result.metadata.summary">
+          <dt>Total Files</dt>
+          <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
+          <dt>Total Size</dt>
+          <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
+          <dt>Total Tokens</dt>
+          <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} <span class="unit">tokens</span></dd>
+        </dl>
+      </div>
+
+      <div class="metadata-section" v-if="result.metadata.topFiles">
+        <h3><BarChart2 :size="16" class="section-icon" /> Top {{ result.metadata.topFiles.length }} Files</h3>
+        <ol class="top-files-list">
+          <li v-for="file in result.metadata.topFiles" :key="file.path">
+            <div class="file-path">{{ file.path }}</div>
+            <div class="file-stats">
+              {{ file.charCount.toLocaleString() }} <span class="unit">chars</span> <span class="separator-unit">|</span> {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span> <span class="separator-unit">|</span> {{ ((file.tokenCount / result.metadata.summary.totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="output-panel">
+      <div class="output-actions">
+        <button
+          class="action-button"
+          @click="handleCopy"
+          :class="{ copied }"
+        >
+          <Copy :size="16" />
+          {{ copied ? 'Copied!' : 'Copy' }}
+        </button>
+        <button
+          class="action-button"
+          @click="handleDownload"
+        >
+          <Download :size="16" />
+          Download
+        </button>
+      </div>
+      <div class="editor-container">
+        <VAceEditor
+          v-model:value="result.content"
+          :lang="'text'"
+          :style="{ height: '100%', width: '100%' }"
+          :options="editorOptions"
+          @mount="handleEditorMount"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.result-viewer {
-  margin-top: 24px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.loading {
-  padding: 48px;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 16px;
-  border: 3px solid var(--vp-c-brand-1);
-  border-radius: 50%;
-  border-top-color: transparent;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.error {
-  padding: 24px;
-  color: var(--vp-c-danger-1);
-  text-align: center;
-}
-
 .content-wrapper {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -316,18 +262,6 @@ dd {
   background: var(--vp-c-brand-1);
   color: white;
   border-color: var(--vp-c-brand-1);
-}
-
-.separator {
-  color: var(--vp-c-text-3);
-  margin: 0 6px;
-}
-
-.separator-icon {
-  display: inline-block;
-  margin: 0 4px;
-  color: var(--vp-c-text-3);
-  vertical-align: middle;
 }
 
 .editor-container {
