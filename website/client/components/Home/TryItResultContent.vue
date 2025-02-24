@@ -2,7 +2,7 @@
 import ace, { type Ace } from 'ace-builds';
 import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
-import { BarChart2, Copy, Download, GitFork, PackageSearch } from 'lucide-vue-next';
+import { BarChart2, Coffee, Copy, Download, GitFork, PackageSearch } from 'lucide-vue-next';
 import { useData } from 'vitepress';
 import { computed, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
@@ -130,6 +130,14 @@ const handleEditorMount = (editor: Ace.Editor) => {
         />
       </div>
     </div>
+    <div class="support-notice">
+      <div class="support-message">
+        <a href="https://ko-fi.com/yamadashy" target="_blank" rel="noopener noreferrer" class="support-link">
+          <Coffee :size="14" class="support-icon" />
+          This tool is independently developed. Your support helps maintain and improve it. Thank you!
+        </a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -137,7 +145,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
 .content-wrapper {
   display: grid;
   grid-template-columns: 300px 1fr;
-  height: 500px;
+  grid-template-rows: 500px auto;
 }
 
 .metadata-panel {
@@ -270,9 +278,53 @@ dd {
   font-family: var(--vp-font-family-mono);
 }
 
+.support-notice {
+  grid-column: 1 / -1;
+  padding: 8px;
+  background: var(--vp-c-bg-soft);
+  border-top: 1px solid var(--vp-c-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 45px;
+}
+
+.support-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+  width: 100%;
+}
+
+.support-icon {
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.support-link {
+  text-decoration: none;
+  font-weight: normal;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.support-link:hover {
+  color: var(--vp-c-brand-1);
+}
+
+.support-link:hover .support-icon {
+  color: var(--vp-c-brand-1);
+}
+
 @media (max-width: 768px) {
   .content-wrapper {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(500px, auto) auto;
     height: auto;
   }
 
@@ -283,6 +335,14 @@ dd {
 
   .output-panel {
     height: 500px;
+  }
+
+  .support-notice {
+    padding: 16px;
+  }
+
+  .support-message {
+    max-width: 100%;
   }
 }
 </style>
