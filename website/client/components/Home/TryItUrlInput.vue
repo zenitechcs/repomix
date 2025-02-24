@@ -2,7 +2,7 @@
 import { AlertTriangle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import PackButton from './PackButton.vue';
-import { isValidRemoteValue } from './utils/validation.js';
+import { isValidRemoteValue } from '../utils/validation';
 
 const props = defineProps<{
   url: string;

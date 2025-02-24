@@ -6,8 +6,8 @@ import { BarChart2, Copy, Download, GitFork, PackageSearch } from 'lucide-vue-ne
 import { useData } from 'vitepress';
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
-import type { PackResult } from './api/client.js';
-import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from './utils/resultViewer.js';
+import type { PackResult } from '../api/client';
+import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from '../utils/resultViewer';
 
 ace.config.setModuleUrl('ace/theme/tomorrow', themeTomorrowUrl);
 ace.config.setModuleUrl('ace/theme/tomorrow_night', themeTomorrowNightUrl);

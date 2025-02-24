@@ -73,9 +73,9 @@ import TryItFileUpload from './TryItFileUpload.vue';
 import TryItPackOptions from './TryItPackOptions.vue';
 import TryItResultViewer from './TryItResultViewer.vue';
 import TryItUrlInput from './TryItUrlInput.vue';
-import type { PackResult } from './api/client';
-import { handlePackRequest } from './utils/requestHandlers';
-import { isValidRemoteValue } from './utils/validation';
+import type { PackResult } from '../api/client';
+import { handlePackRequest } from '../utils/requestHandlers';
+import { isValidRemoteValue } from '../utils/validation';
 
 // Form input states
 const url = ref('');
