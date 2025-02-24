@@ -103,6 +103,7 @@ app.post(
         format,
         repository: result.metadata.repository,
         duration: formatLatencyForDisplay(startTime),
+        inputType: file ? 'file' : url ? 'url' : 'unknown',
         metrics: {
           totalFiles: result.metadata.summary?.totalFiles,
           totalCharacters: result.metadata.summary?.totalCharacters,
