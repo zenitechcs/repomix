@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { logger } from './logger.js';
+import {logger, repomixLogLevels} from './logger.js';
 
 export class RepomixError extends Error {
   constructor(message: string) {
@@ -18,13 +18,22 @@ export class RepomixConfigValidationError extends RepomixError {
 export const handleError = (error: unknown): void => {
   if (error instanceof RepomixError) {
     logger.error(`Error: ${error.message}`);
+    logger.debug('Stack trace:', error.stack);
   } else if (error instanceof Error) {
     logger.error(`Unexpected error: ${error.message}`);
-    logger.debug('Stack trace:', error.stack);
+    // Show stack trace for unexpected errors
+    logger.error('Stack trace:', error.stack);
+    if (logger.getLogLevel() > repomixLogLevels.DEBUG) {
+      logger.info('Please run with --verbose to see more details');
+    }
   } else {
     logger.error('An unknown error occurred');
+    if (logger.getLogLevel() > repomixLogLevels.DEBUG) {
+      logger.info('Please run with --verbose to see more details');
+    }
   }
 
+  logger.log('');
   logger.info('For more help, please visit: https://github.com/yamadashy/repomix/issues');
 };
 
