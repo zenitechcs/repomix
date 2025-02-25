@@ -79,7 +79,7 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       throw permissionCheck.error;
     }
     throw new RepomixError(
-      `Directory ${rootDir} is not readable. Please check folder access permissions for your terminal app.`,
+      `Target directory is not readable or does not exist. Please check folder access permissions for your terminal app.\npath: ${rootDir}`,
     );
   }
 
