@@ -83,6 +83,15 @@ repomix/
 ----------------------------------------------------------------
 
 # GitHub Release Note Guidelines
+When writing release notes, please follow these guidelines:
+
+- When referencing issues or PRs, use the gh command to verify the content:
+  ```bash
+  gh issue view <issue-number>  # For checking issue content
+  gh pr view <pr-number>        # For checking PR content
+  ```
+  This helps ensure accuracy in release note descriptions.
+
 Here are some examples of release notes that follow the guidelines:
 
 v0.2.25
