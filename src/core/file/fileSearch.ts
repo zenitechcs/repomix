@@ -220,5 +220,22 @@ export const getIgnorePatterns = async (rootDir: string, config: RepomixConfigMe
     }
   }
 
+  // Add patterns from .git/info/exclude if useGitignore is enabled
+  if (config.ignore.useGitignore) {
+    const excludeFilePath = path.join(rootDir, '.git/info/exclude');
+
+    try {
+      const excludeFileContent = await fs.readFile(excludeFilePath, 'utf8');
+      const excludePatterns = parseIgnoreContent(excludeFileContent);
+
+      for (const pattern of excludePatterns) {
+        ignorePatterns.add(pattern);
+      }
+    } catch (error) {
+      // File might not exist or might not be accessible, which is fine
+      logger.trace('Could not read .git/info/exclude file:', error instanceof Error ? error.message : String(error));
+    }
+  }
+
   return Array.from(ignorePatterns);
 };
