@@ -1,4 +1,6 @@
 export const querySwift = `
+(comment) @comment
+
 (class_declaration
   name: (type_identifier) @name) @definition.class
 

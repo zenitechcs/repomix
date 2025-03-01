@@ -1,4 +1,7 @@
 export const queryRust = `
+(line_comment) @comment
+(block_comment) @comment
+
 ; ADT definitions
 
 (struct_item

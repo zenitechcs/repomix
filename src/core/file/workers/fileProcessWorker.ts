@@ -1,6 +1,6 @@
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
 import { logger } from '../../../shared/logger.js';
-import { parseFile } from '../../tree-sitter/parseFile.js';
+import { parseFile } from '../../treeSitter/parseFile.js';
 import { getFileManipulator } from '../fileManipulate.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
 

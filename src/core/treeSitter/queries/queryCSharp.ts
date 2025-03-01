@@ -1,4 +1,6 @@
 export const queryCSharp = `
+(comment) @comment
+
 (class_declaration
  name: (identifier) @name.definition.class
  ) @definition.class

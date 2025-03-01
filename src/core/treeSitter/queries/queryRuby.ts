@@ -1,4 +1,6 @@
 export const queryRuby = `
+(comment) @comment
+
 ; Method definitions
 
 (

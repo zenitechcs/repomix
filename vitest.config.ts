@@ -10,5 +10,6 @@ export default defineConfig({
       exclude: ['src/index.ts'],
       reporter: ['text', 'json', 'html'],
     },
+    watch: false,
   },
 });
