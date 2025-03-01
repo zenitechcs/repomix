@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import Parser from 'web-tree-sitter';
-import { LanguageParser } from '../../../src/core/tree-sitter/languageParser.js';
+import { LanguageParser } from '../../../src/core/treeSitter/languageParser.js';
 // Mock external modules
-vi.mock('web-tree-sitter');
+vi.mock('web-treeSitter');
 describe('LanguageParser', () => {
   let parser: LanguageParser;
 

@@ -1,4 +1,6 @@
 export const queryCpp = `
+(comment) @comment
+
 (struct_specifier name: (type_identifier) @name.definition.class body:(_)) @definition.class
 
 (declaration type: (union_specifier name: (type_identifier) @name.definition.class)) @definition.class

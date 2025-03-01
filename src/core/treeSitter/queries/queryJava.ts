@@ -1,4 +1,7 @@
 export const queryJava = `
+(line_comment) @comment
+(block_comment) @comment
+
 (class_declaration
   name: (identifier) @name.definition.class) @definition.class
 
