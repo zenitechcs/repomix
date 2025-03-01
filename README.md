@@ -523,7 +523,7 @@ repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad
 
 ### Code Compression
 
-The `--compress` option utilizes tree-sitter to perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. This can help reduce token count while retaining important structural information.
+The `--compress` option utilizes [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) to perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. This can help reduce token count while retaining important structural information.
 
 ```bash
 repomix --compress
