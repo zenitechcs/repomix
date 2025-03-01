@@ -14,6 +14,7 @@ interface ContentInfo {
     securityCheckEnabled: boolean;
     showLineNumbers: boolean;
     parsableStyle: boolean;
+    compressed: boolean;
   };
 }
 
@@ -32,6 +33,7 @@ export const analyzeContent = (config: RepomixConfigMerged): ContentInfo => {
       securityCheckEnabled: config.security.enableSecurityCheck,
       showLineNumbers: config.output.showLineNumbers,
       parsableStyle: config.output.parsableStyle,
+      compressed: config.output.compress,
     },
   };
 };
@@ -66,16 +68,19 @@ export const generateHeader = (config: RepomixConfigMerged, generationDate: stri
     processingNotes.push('line numbers have been added');
   }
   if (info.processing.parsableStyle) {
-    processingNotes.push('content has been formatted for parsing');
+    processingNotes.push(`content has been formatted for parsing in ${config.output.style} style`);
+  }
+  if (info.processing.compressed) {
+    processingNotes.push('content has been compressed (code blocks are separated by ⋮---- delimiter)');
   }
   if (!info.processing.securityCheckEnabled) {
     processingNotes.push('security check has been disabled');
   }
 
   const processingInfo =
-    processingNotes.length > 0 ? ` The content has been processed where ${processingNotes.join(', ')}.` : '';
+    processingNotes.length > 0 ? `The content has been processed where ${processingNotes.join(', ')}.` : '';
 
-  return `${description}, combined into a single document by Repomix.${processingInfo}`;
+  return `${description}, combined into a single document by Repomix.\n${processingInfo}`.trim();
 };
 
 export const generateSummaryPurpose = (): string => {
@@ -141,6 +146,9 @@ export const generateSummaryNotes = (config: RepomixConfigMerged): string => {
   }
   if (info.processing.parsableStyle) {
     notes.push(`- Content has been formatted for parsing in ${config.output.style} style`);
+  }
+  if (info.processing.compressed) {
+    notes.push('- Content has been compressed - code blocks are separated by ⋮---- delimiter');
   }
   if (!info.processing.securityCheckEnabled) {
     notes.push('- Security check has been disabled - content may contain sensitive information');
