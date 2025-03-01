@@ -24,7 +24,7 @@ describe('parseFile for JavaScript', () => {
     expect(typeof result).toBe('string');
     // Check content
     expect(result).toContain('/**\n       * Greeting function\n       * @param name The name to greet\n       */');
-    expect(result).toContain('// inline comment'); // Should be filtered out as it starts on same line as function
+    expect(result).toContain('// inline comment');
     expect(result).not.toBeUndefined();
     if (result) {
       // Check separator
