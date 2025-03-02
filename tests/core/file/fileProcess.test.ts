@@ -1,12 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getFileManipulator } from '../../../src/core/file/fileManipulate.js';
+import type { FileManipulator } from '../../../src/core/file/fileManipulate.js';
 import { processFiles } from '../../../src/core/file/fileProcess.js';
 import type { RawFile } from '../../../src/core/file/fileTypes.js';
 import { type FileProcessTask, processContent } from '../../../src/core/file/workers/fileProcessWorker.js';
 import fileProcessWorker from '../../../src/core/file/workers/fileProcessWorker.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
-vi.mock('../../../src/core/file/fileManipulate');
+const createMockFileManipulator = (): FileManipulator => ({
+  removeComments: (content: string) => content.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, ''),
+  removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
+});
+
+const mockGetFileManipulator = (filePath: string): FileManipulator | null => {
+  if (filePath.endsWith('.js')) {
+    return createMockFileManipulator();
+  }
+  return null;
+};
 
 const mockInitTaskRunner = (numOfTasks: number) => {
   return async (task: FileProcessTask) => {
@@ -28,13 +38,9 @@ describe('fileProcess', () => {
         },
       });
 
-      vi.mocked(getFileManipulator).mockReturnValue({
-        removeComments: (content: string) => content.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, ''),
-        removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
-      });
-
       const result = await processFiles(mockRawFiles, config, () => {}, {
         initTaskRunner: mockInitTaskRunner,
+        getFileManipulator: mockGetFileManipulator,
       });
 
       expect(result).toEqual([
@@ -53,11 +59,6 @@ describe('fileProcess', () => {
           removeComments: true,
           removeEmptyLines: true,
         },
-      });
-
-      vi.mocked(getFileManipulator).mockReturnValue({
-        removeComments: (content: string) => content.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, ''),
-        removeEmptyLines: (content: string) => content.replace(/^\s*[\r\n]/gm, ''),
       });
 
       const result = await processContent({ path: filePath, content }, config);
@@ -89,8 +90,6 @@ describe('fileProcess', () => {
           removeEmptyLines: true,
         },
       });
-
-      vi.mocked(getFileManipulator).mockReturnValue(null);
 
       const result = await processContent({ path: filePath, content }, config);
 

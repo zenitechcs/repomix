@@ -1,7 +1,7 @@
 import path from 'node:path';
 import strip from 'strip-comments';
 
-interface FileManipulator {
+export interface FileManipulator {
   removeComments(content: string): string;
   removeEmptyLines(content: string): string;
 }
