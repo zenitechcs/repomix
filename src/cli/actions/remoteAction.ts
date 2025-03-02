@@ -157,6 +157,10 @@ export const copyOutputToCurrentDirectory = async (
 
   try {
     logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath}`);
+
+    // Create target directory if it doesn't exist
+    await fs.mkdir(path.dirname(targetPath), { recursive: true });
+
     await fs.copyFile(sourcePath, targetPath);
   } catch (error) {
     throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
