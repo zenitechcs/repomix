@@ -3,8 +3,11 @@ import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import { initPiscina } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
+import { type FileManipulator, getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';
 import type { FileProcessTask } from './workers/fileProcessWorker.js';
+
+type GetFileManipulator = (filePath: string) => FileManipulator | null;
 
 const initTaskRunner = (numOfTasks: number) => {
   const pool = initPiscina(numOfTasks, new URL('./workers/fileProcessWorker.js', import.meta.url).href);
@@ -15,8 +18,12 @@ export const processFiles = async (
   rawFiles: RawFile[],
   config: RepomixConfigMerged,
   progressCallback: RepomixProgressCallback,
-  deps = {
+  deps: {
+    initTaskRunner: typeof initTaskRunner;
+    getFileManipulator: GetFileManipulator;
+  } = {
     initTaskRunner,
+    getFileManipulator,
   },
 ): Promise<ProcessedFile[]> => {
   const runTask = deps.initTaskRunner(rawFiles.length);

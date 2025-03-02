@@ -24,7 +24,7 @@ repomix/
 │   │   ├── packager/ # Orchestrates file collection, processing, output, and clipboard operations.
 │   │   ├── security/ # Security checks to exclude sensitive files
 │   │   ├── tokenCount/ # Token counting using Tiktoken
-│   │   └── tree-sitter/ # Code parsing using Tree-sitter and language-specific queries
+│   │   └── treeSitter/ # Code parsing using Tree-sitter and language-specific queries
 │   └── shared/ # Shared utilities and types (error handling, logging, helper functions)
 ├── tests/ # Unit and integration tests (organized mirroring src/)
 │   ├── cli/

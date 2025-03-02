@@ -1,8 +1,10 @@
 import os from 'node:os';
+import { Piscina } from 'piscina';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getProcessConcurrency, getWorkerThreadCount } from '../../src/shared/processConcurrency.js';
+import { getProcessConcurrency, getWorkerThreadCount, initPiscina } from '../../src/shared/processConcurrency.js';
 
 vi.mock('node:os');
+vi.mock('piscina');
 
 describe('processConcurrency', () => {
   describe('getProcessConcurrency', () => {
@@ -55,6 +57,26 @@ describe('processConcurrency', () => {
 
       expect(minThreads).toBe(1);
       expect(maxThreads).toBe(1);
+    });
+  });
+
+  describe('initPiscina', () => {
+    beforeEach(() => {
+      vi.mocked(os).availableParallelism = vi.fn().mockReturnValue(4);
+      vi.mocked(Piscina).mockImplementation(() => ({}) as unknown as Piscina);
+    });
+
+    it('should initialize Piscina with correct configuration', () => {
+      const workerPath = '/path/to/worker.js';
+      const piscina = initPiscina(500, workerPath);
+
+      expect(Piscina).toHaveBeenCalledWith({
+        filename: workerPath,
+        minThreads: 1,
+        maxThreads: 4,
+        idleTimeout: 5000,
+      });
+      expect(piscina).toBeDefined();
     });
   });
 });
