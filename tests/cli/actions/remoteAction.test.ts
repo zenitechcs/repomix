@@ -15,6 +15,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   return {
     ...actual,
     copyFile: vi.fn(),
+    mkdir: vi.fn(),
   };
 });
 vi.mock('../../../src/shared/logger');

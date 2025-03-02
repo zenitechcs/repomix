@@ -7,5 +7,9 @@ import { logger } from '../../shared/logger.js';
 export const writeOutputToDisk = async (output: string, config: RepomixConfigMerged): Promise<undefined> => {
   const outputPath = path.resolve(config.cwd, config.output.filePath);
   logger.trace(`Writing output to: ${outputPath}`);
+
+  // Create output directory if it doesn't exist
+  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+
   await fs.writeFile(outputPath, output);
 };
