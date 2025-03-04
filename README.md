@@ -116,6 +116,7 @@ A community-maintained VSCode extension lets you run Repomix right inside your e
 Want your output as a file or just the content? Need automatic cleanup? This extension has you covered. Plus, it works smoothly with your existing repomix.config.json.
 
 Try it now on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)!
+Source code is available on [GitHub](https://github.com/massdo/repomix-runner).
 
 ### Alternative Tools 🛠️
 
