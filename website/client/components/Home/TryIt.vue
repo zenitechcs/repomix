@@ -8,20 +8,33 @@
             :class="{ active: mode === 'url' }"
             @click="setMode('url')"
           >
-            URL Input
+          🔗
           </button>
           <button
             type="button"
             :class="{ active: mode === 'file' }"
             @click="setMode('file')"
           >
-            File Upload
+          <img class="zip-icon" src="../../src/public/images/zip-folder-icon.png" alt="zip-folder" />
+          </button>
+          <button
+            type="button"
+            :class="{ active: mode === 'folder' }"
+            @click="setMode('folder')"
+          >
+          📁
           </button>
         </div>
 
         <div class="input-field">
           <TryItFileUpload
             v-if="mode === 'file'"
+            @upload="handleFileUpload"
+            :loading="loading"
+            :show-button="false"
+          />
+          <TryItFolderUpload
+            v-else-if="mode === 'folder'"
             @upload="handleFileUpload"
             :loading="loading"
             :show-button="false"
@@ -74,6 +87,7 @@ import { handlePackRequest } from '../utils/requestHandlers';
 import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
+import TryItFolderUpload from './TryItFolderUpload.vue';
 import TryItPackOptions from './TryItPackOptions.vue';
 import TryItResult from './TryItResult.vue';
 import TryItUrlInput from './TryItUrlInput.vue';
@@ -96,7 +110,7 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const result = ref<PackResult | null>(null);
 const hasExecuted = ref(false);
-const mode = ref<'url' | 'file'>('url');
+const mode = ref<'url' | 'file' | 'folder'>('url');
 const uploadedFile = ref<File | null>(null);
 
 // Compute if the current mode's input is valid for submission
@@ -105,6 +119,7 @@ const isSubmitValid = computed(() => {
     case 'url':
       return !!url.value && isValidRemoteValue(url.value.trim());
     case 'file':
+    case 'folder':
       return !!uploadedFile.value;
     default:
       return false;
@@ -112,7 +127,7 @@ const isSubmitValid = computed(() => {
 });
 
 // Explicitly set the mode and handle related state changes
-function setMode(newMode: 'url' | 'file') {
+function setMode(newMode: 'url' | 'file' | 'folder') {
   mode.value = newMode;
 }
 
@@ -163,7 +178,7 @@ async function handleSubmit() {
         error.value = errorMessage;
       },
       signal: requestController.signal,
-      file: mode.value === 'file' ? uploadedFile.value || undefined : undefined,
+      file: mode.value === 'file' || mode.value === 'folder' ? uploadedFile.value || undefined : undefined,
     },
   );
 
@@ -238,6 +253,13 @@ function handleFileUpload(file: File) {
 .tab-container button.active {
   background: var(--vp-c-brand-1);
   color: white;
+}
+
+.zip-icon {
+  margin-left: auto;
+  margin-right: auto;
+  width: 20px;
+  height: 20px;
 }
 
 .input-field {
