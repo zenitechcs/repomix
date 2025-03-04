@@ -88,6 +88,15 @@ export const runDefaultAction = async (
   };
 };
 
+/**
+ * Builds CLI configuration from command-line options.
+ *
+ * Note: Due to Commander.js behavior with --no-* flags:
+ * - When --no-* flags are used (e.g., --no-file-summary), the options explicitly become false
+ * - When no flag is specified, Commander defaults to true (e.g., options.fileSummary === true)
+ * - For --no-* flags, we only apply the setting when it's explicitly false to respect config file values
+ * - This allows the config file to maintain control unless explicitly overridden by CLI
+ */
 const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   const cliConfig: RepomixConfigCli = {};
 
@@ -100,10 +109,12 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.ignore) {
     cliConfig.ignore = { customPatterns: options.ignore.split(',') };
   }
-  if (options.gitignore !== undefined) {
+  // Only apply gitignore setting if explicitly set to false
+  if (options.gitignore === false) {
     cliConfig.ignore = { ...cliConfig.ignore, useGitignore: options.gitignore };
   }
-  if (options.defaultPatterns !== undefined) {
+  // Only apply defaultPatterns setting if explicitly set to false
+  if (options.defaultPatterns === false) {
     cliConfig.ignore = {
       ...cliConfig.ignore,
       useDefaultPatterns: options.defaultPatterns,
@@ -136,19 +147,22 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
       parsableStyle: options.parsableStyle,
     };
   }
-  if (options.securityCheck !== undefined) {
+  // Only apply securityCheck setting if explicitly set to false
+  if (options.securityCheck === false) {
     cliConfig.security = { enableSecurityCheck: options.securityCheck };
   }
-  if (options.fileSummary !== undefined) {
+  // Only apply fileSummary setting if explicitly set to false
+  if (options.fileSummary === false) {
     cliConfig.output = {
       ...cliConfig.output,
-      fileSummary: options.fileSummary,
+      fileSummary: false,
     };
   }
-  if (options.directoryStructure !== undefined) {
+  // Only apply directoryStructure setting if explicitly set to false
+  if (options.directoryStructure === false) {
     cliConfig.output = {
       ...cliConfig.output,
-      directoryStructure: options.directoryStructure,
+      directoryStructure: false,
     };
   }
   if (options.removeComments !== undefined) {

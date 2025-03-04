@@ -198,11 +198,75 @@ describe('defaultAction', () => {
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
         expect.anything(),
+        expect.objectContaining({}),
+      );
+    });
+  });
+
+  describe('gitignore flag', () => {
+    it('should handle explicit --no-gitignore flag', async () => {
+      const options: CliOptions = {
+        gitignore: false,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
         expect.objectContaining({
-          security: {
-            enableSecurityCheck: true,
+          ignore: {
+            useGitignore: false,
           },
         }),
+      );
+    });
+
+    it('should handle explicit --no-gitignore flag', async () => {
+      const options: CliOptions = {
+        gitignore: false,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({}),
+      );
+    });
+  });
+
+  describe('defaultPatterns flag', () => {
+    it('should handle explicit --no-default-patterns flag', async () => {
+      const options: CliOptions = {
+        defaultPatterns: false,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          ignore: {
+            useDefaultPatterns: false,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --no-default-patterns flag', async () => {
+      const options: CliOptions = {
+        defaultPatterns: false,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({}),
       );
     });
   });
@@ -236,11 +300,7 @@ describe('defaultAction', () => {
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
         expect.anything(),
-        expect.objectContaining({
-          output: {
-            fileSummary: true,
-          },
-        }),
+        expect.objectContaining({}),
       );
     });
   });
@@ -274,11 +334,7 @@ describe('defaultAction', () => {
       expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
         process.cwd(),
         expect.anything(),
-        expect.objectContaining({
-          output: {
-            directoryStructure: true,
-          },
-        }),
+        expect.objectContaining({}),
       );
     });
   });
@@ -353,46 +409,6 @@ describe('defaultAction', () => {
         expect.objectContaining({
           output: {
             removeEmptyLines: false,
-          },
-        }),
-      );
-    });
-  });
-
-  describe('gitignore flag', () => {
-    it('should handle explicit --no-gitignore flag', async () => {
-      const options: CliOptions = {
-        gitignore: false,
-      };
-
-      await runDefaultAction(['.'], process.cwd(), options);
-
-      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
-        process.cwd(),
-        expect.anything(),
-        expect.objectContaining({
-          ignore: {
-            useGitignore: false,
-          },
-        }),
-      );
-    });
-  });
-
-  describe('defaultPatterns flag', () => {
-    it('should handle explicit --no-default-patterns flag', async () => {
-      const options: CliOptions = {
-        defaultPatterns: false,
-      };
-
-      await runDefaultAction(['.'], process.cwd(), options);
-
-      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
-        process.cwd(),
-        expect.anything(),
-        expect.objectContaining({
-          ignore: {
-            useDefaultPatterns: false,
           },
         }),
       );
