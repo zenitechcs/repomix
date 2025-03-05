@@ -8,21 +8,21 @@
             :class="{ active: mode === 'url' }"
             @click="setMode('url')"
           >
-          🔗
-          </button>
-          <button
-            type="button"
-            :class="{ active: mode === 'file' }"
-            @click="setMode('file')"
-          >
-          <img class="zip-icon" src="../../src/public/images/zip-folder-icon.png" alt="zip-folder" />
+            <Link2 size="20" class="icon" />
           </button>
           <button
             type="button"
             :class="{ active: mode === 'folder' }"
             @click="setMode('folder')"
           >
-          📁
+            <FolderOpen size="20" class="icon" />
+          </button>
+          <button
+            type="button"
+            :class="{ active: mode === 'file' }"
+            @click="setMode('file')"
+          >
+            <FolderArchive size="20" class="icon" />
           </button>
         </div>
 
@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { FolderArchive, FolderOpen, Link2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import type { PackResult } from '../api/client';
 import { handlePackRequest } from '../utils/requestHandlers';
@@ -239,11 +240,24 @@ function handleFileUpload(file: File) {
   font-size: 16px;
   white-space: nowrap;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.tab-container button:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: var(--vp-c-border);
 }
 
 .tab-container button:first-child {
   border-radius: 8px 0 0 8px;
-  border-right: none;
 }
 
 .tab-container button:last-child {
@@ -255,11 +269,20 @@ function handleFileUpload(file: File) {
   color: white;
 }
 
-.zip-icon {
-  margin-left: auto;
-  margin-right: auto;
-  width: 20px;
-  height: 20px;
+.tab-container button.active::before {
+  display: none;
+}
+
+.tab-container button.active + button::before {
+  display: none;
+}
+
+.tab-container button .icon {
+  color: var(--vp-c-text-1);
+}
+
+.tab-container button.active .icon {
+  color: white;
 }
 
 .input-field {
