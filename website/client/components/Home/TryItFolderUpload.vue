@@ -4,6 +4,26 @@ import { AlertTriangle, FolderOpen } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PackButton from './PackButton.vue';
 
+// WebKit FileSystem API interfaces
+interface WebKitFileEntry {
+  isFile: boolean;
+  isDirectory: boolean;
+  name: string;
+  file: (successCallback: (file: File) => void, errorCallback: (error: Error) => void) => void;
+}
+
+interface WebKitDirectoryEntry extends WebKitFileEntry {
+  createReader: () => WebKitDirectoryReader;
+}
+
+interface WebKitDirectoryReader {
+  readEntries: (successCallback: (entries: WebKitFileEntry[]) => void, errorCallback: (error: Error) => void) => void;
+}
+
+interface WebKitEntry extends WebKitFileEntry {
+  createReader?: () => WebKitDirectoryReader;
+}
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const props = defineProps<{
@@ -20,14 +40,16 @@ const dragActive = ref(false);
 const selectedFolder = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
-function validateFolder(files: FileList): boolean {
+// Common validation logic
+const validateFolder = (files: File[]): boolean => {
   errorMessage.value = null;
 
-  let totalSize = 0;
-  for (const file of files) {
-    totalSize += file.size;
+  if (files.length === 0) {
+    errorMessage.value = 'The folder is empty.';
+    return false;
   }
 
+  const totalSize = files.reduce((sum, file) => sum + file.size, 0);
   if (totalSize > MAX_FILE_SIZE) {
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
     errorMessage.value = `File size (${sizeMB}MB) exceeds the 10MB limit`;
@@ -35,39 +57,132 @@ function validateFolder(files: FileList): boolean {
   }
 
   return true;
-}
+};
 
-async function getZipFile(files: FileList, folderName) {
+// Create ZIP file
+const createZipFile = async (files: File[], folderName: string): Promise<File> => {
   const zip = new JSZip();
+
   for (const file of files) {
-    zip.file(file.webkitRelativePath, file);
+    const path = file.webkitRelativePath || file.name;
+    zip.file(path, file);
   }
 
-  const zipBlob = await zip.generateAsync({
-    type: 'blob',
-  });
-  const zipFile = new File([zipBlob], folderName.concat('.zip'));
-  return zipFile;
-}
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  return new File([zipBlob], `${folderName}.zip`);
+};
 
-async function handleFileSelect(files: FileList | null) {
+// Common folder processing logic
+const processFolder = async (files: File[], folderName: string): Promise<void> => {
+  if (!validateFolder(files)) {
+    selectedFolder.value = null;
+    return;
+  }
+
+  const zipFile = await createZipFile(files, folderName);
+  selectedFolder.value = folderName;
+  emit('upload', zipFile);
+};
+
+// File selection handler
+const handleFileSelect = async (files: FileList | null): Promise<void> => {
   if (!files || files.length === 0) return;
 
-  const relativePath = files[0].webkitRelativePath;
-  const folderName = relativePath.split('/')[0];
-  const zipFile = await getZipFile(files, folderName);
+  const fileArray = Array.from(files);
+  const folderName = files[0].webkitRelativePath.split('/')[0];
 
-  if (validateFolder(files)) {
-    selectedFolder.value = folderName;
-    emit('upload', zipFile);
-  } else {
-    selectedFolder.value = null;
+  await processFolder(fileArray, folderName);
+};
+
+// Folder drop handler
+const handleFolderDrop = async (event: DragEvent): Promise<void> => {
+  event.preventDefault();
+  dragActive.value = false;
+  errorMessage.value = null;
+
+  if (!event.dataTransfer?.items?.length) return;
+
+  // Check directory reading capability
+  if (!('webkitGetAsEntry' in DataTransferItem.prototype)) {
+    errorMessage.value = "Your browser doesn't support folder drop. Please use the browse button instead.";
+    return;
   }
-}
 
-function triggerFileInput() {
+  const entry = event.dataTransfer.items[0].webkitGetAsEntry() as WebKitEntry;
+  if (!entry?.isDirectory) {
+    errorMessage.value = 'Please drop a folder, not a file.';
+    return;
+  }
+
+  const folderName = entry.name;
+
+  try {
+    const files = await collectFilesFromEntry(entry);
+    await processFolder(files, folderName);
+  } catch (error) {
+    console.error('Error processing dropped folder:', error);
+    errorMessage.value = 'Failed to process the folder. Please try again or use the browse button.';
+  }
+};
+
+// Recursively collect files from entry
+const collectFilesFromEntry = async (entry: WebKitEntry, path = ''): Promise<File[]> => {
+  if (entry.isFile) {
+    return new Promise((resolve, reject) => {
+      entry.file((file: File) => {
+        // Create custom file with path information
+        const customFile = new File([file], file.name, {
+          type: file.type,
+          lastModified: file.lastModified,
+        });
+
+        // Add relative path information
+        Object.defineProperty(customFile, 'webkitRelativePath', {
+          value: path ? `${path}/${file.name}` : file.name,
+        });
+
+        resolve([customFile]);
+      }, reject);
+    });
+  }
+
+  if (entry.isDirectory && entry.createReader) {
+    return new Promise((resolve, reject) => {
+      const dirReader = entry.createReader();
+      const allFiles: File[] = [];
+
+      // Function to read entries in directory
+      function readEntries() {
+        dirReader.readEntries(async (entries: WebKitFileEntry[]) => {
+          if (entries.length === 0) {
+            resolve(allFiles);
+          } else {
+            try {
+              // Process each entry
+              for (const childEntry of entries) {
+                const newPath = path ? `${path}/${entry.name}` : entry.name;
+                const files = await collectFilesFromEntry(childEntry as WebKitEntry, newPath);
+                allFiles.push(...files);
+              }
+              // Continue reading (some browsers return entries in batches)
+              readEntries();
+            } catch (error) {
+              reject(error);
+            }
+          }
+        }, reject);
+      }
+
+      readEntries();
+    });
+  }
+
+  return []; // If neither file nor directory
+};
+
+const triggerFileInput = () => {
   fileInput.value?.click();
-}
+};
 </script>
 
 <template>
@@ -76,7 +191,7 @@ function triggerFileInput() {
          :class="{ 'drag-active': dragActive, 'has-error': errorMessage }"
          @dragover.prevent="dragActive = true"
          @dragleave="dragActive = false"
-         @drop.prevent="handleFileSelect($event.dataTransfer?.files || null)"
+         @drop.prevent="handleFolderDrop($event)"
          @click="triggerFileInput"
     >
       <input
