@@ -4,26 +4,6 @@ import { AlertTriangle, FolderOpen } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PackButton from './PackButton.vue';
 
-// WebKit FileSystem API interfaces
-interface WebKitFileEntry {
-  isFile: boolean;
-  isDirectory: boolean;
-  name: string;
-  file: (successCallback: (file: File) => void, errorCallback: (error: Error) => void) => void;
-}
-
-interface WebKitDirectoryEntry extends WebKitFileEntry {
-  createReader: () => WebKitDirectoryReader;
-}
-
-interface WebKitDirectoryReader {
-  readEntries: (successCallback: (entries: WebKitFileEntry[]) => void, errorCallback: (error: Error) => void) => void;
-}
-
-interface WebKitEntry extends WebKitFileEntry {
-  createReader?: () => WebKitDirectoryReader;
-}
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const props = defineProps<{
@@ -108,7 +88,7 @@ const handleFolderDrop = async (event: DragEvent): Promise<void> => {
     return;
   }
 
-  const entry = event.dataTransfer.items[0].webkitGetAsEntry() as WebKitEntry;
+  const entry = event.dataTransfer.items[0].webkitGetAsEntry();
   if (!entry?.isDirectory) {
     errorMessage.value = 'Please drop a folder, not a file.';
     return;
@@ -125,9 +105,16 @@ const handleFolderDrop = async (event: DragEvent): Promise<void> => {
   }
 };
 
+const isFileEntry = (entry: FileSystemEntry): entry is FileSystemFileEntry => {
+  return entry.isFile;
+}
+const isDirectoryEntry = (entry: FileSystemEntry): entry is FileSystemDirectoryEntry => {
+  return entry.isDirectory;
+}
+
 // Recursively collect files from entry
-const collectFilesFromEntry = async (entry: WebKitEntry, path = ''): Promise<File[]> => {
-  if (entry.isFile) {
+const collectFilesFromEntry = async (entry: FileSystemEntry, path = ''): Promise<File[]> => {
+  if (isFileEntry(entry)) {
     return new Promise((resolve, reject) => {
       entry.file((file: File) => {
         // Create custom file with path information
@@ -146,14 +133,14 @@ const collectFilesFromEntry = async (entry: WebKitEntry, path = ''): Promise<Fil
     });
   }
 
-  if (entry.isDirectory && entry.createReader) {
+  if (isDirectoryEntry(entry) && entry.createReader) {
     return new Promise((resolve, reject) => {
       const dirReader = entry.createReader();
       const allFiles: File[] = [];
 
       // Function to read entries in directory
       function readEntries() {
-        dirReader.readEntries(async (entries: WebKitFileEntry[]) => {
+        dirReader.readEntries(async (entries: FileSystemEntry[]) => {
           if (entries.length === 0) {
             resolve(allFiles);
           } else {
@@ -161,7 +148,7 @@ const collectFilesFromEntry = async (entry: WebKitEntry, path = ''): Promise<Fil
               // Process each entry
               for (const childEntry of entries) {
                 const newPath = path ? `${path}/${entry.name}` : entry.name;
-                const files = await collectFilesFromEntry(childEntry as WebKitEntry, newPath);
+                const files = await collectFilesFromEntry(childEntry as FileSystemEntry, newPath);
                 allFiles.push(...files);
               }
               // Continue reading (some browsers return entries in batches)
