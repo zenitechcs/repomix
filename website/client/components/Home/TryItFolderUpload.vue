@@ -107,10 +107,10 @@ const handleFolderDrop = async (event: DragEvent): Promise<void> => {
 
 const isFileEntry = (entry: FileSystemEntry): entry is FileSystemFileEntry => {
   return entry.isFile;
-}
+};
 const isDirectoryEntry = (entry: FileSystemEntry): entry is FileSystemDirectoryEntry => {
   return entry.isDirectory;
-}
+};
 
 // Recursively collect files from entry
 const collectFilesFromEntry = async (entry: FileSystemEntry, path = ''): Promise<File[]> => {
@@ -147,8 +147,8 @@ const collectFilesFromEntry = async (entry: FileSystemEntry, path = ''): Promise
             try {
               // Process each entry
               for (const childEntry of entries) {
-                const newPath = path ? `${path}/${entry.name}` : entry.name;
-                const files = await collectFilesFromEntry(childEntry as FileSystemEntry, newPath);
+                const newPath = path ? `${path}/${childEntry.name}` : childEntry.name;
+                const files = await collectFilesFromEntry(childEntry, newPath);
                 allFiles.push(...files);
               }
               // Continue reading (some browsers return entries in batches)
