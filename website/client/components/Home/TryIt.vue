@@ -8,20 +8,33 @@
             :class="{ active: mode === 'url' }"
             @click="setMode('url')"
           >
-            URL Input
+            <Link2 size="20" class="icon" />
+          </button>
+          <button
+            type="button"
+            :class="{ active: mode === 'folder' }"
+            @click="setMode('folder')"
+          >
+            <FolderOpen size="20" class="icon" />
           </button>
           <button
             type="button"
             :class="{ active: mode === 'file' }"
             @click="setMode('file')"
           >
-            File Upload
+            <FolderArchive size="20" class="icon" />
           </button>
         </div>
 
         <div class="input-field">
           <TryItFileUpload
             v-if="mode === 'file'"
+            @upload="handleFileUpload"
+            :loading="loading"
+            :show-button="false"
+          />
+          <TryItFolderUpload
+            v-else-if="mode === 'folder'"
             @upload="handleFileUpload"
             :loading="loading"
             :show-button="false"
@@ -68,12 +81,14 @@
 </template>
 
 <script setup lang="ts">
+import { FolderArchive, FolderOpen, Link2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import type { PackResult } from '../api/client';
 import { handlePackRequest } from '../utils/requestHandlers';
 import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
+import TryItFolderUpload from './TryItFolderUpload.vue';
 import TryItPackOptions from './TryItPackOptions.vue';
 import TryItResult from './TryItResult.vue';
 import TryItUrlInput from './TryItUrlInput.vue';
@@ -96,7 +111,7 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const result = ref<PackResult | null>(null);
 const hasExecuted = ref(false);
-const mode = ref<'url' | 'file'>('url');
+const mode = ref<'url' | 'file' | 'folder'>('url');
 const uploadedFile = ref<File | null>(null);
 
 // Compute if the current mode's input is valid for submission
@@ -105,6 +120,7 @@ const isSubmitValid = computed(() => {
     case 'url':
       return !!url.value && isValidRemoteValue(url.value.trim());
     case 'file':
+    case 'folder':
       return !!uploadedFile.value;
     default:
       return false;
@@ -112,7 +128,7 @@ const isSubmitValid = computed(() => {
 });
 
 // Explicitly set the mode and handle related state changes
-function setMode(newMode: 'url' | 'file') {
+function setMode(newMode: 'url' | 'file' | 'folder') {
   mode.value = newMode;
 }
 
@@ -163,7 +179,7 @@ async function handleSubmit() {
         error.value = errorMessage;
       },
       signal: requestController.signal,
-      file: mode.value === 'file' ? uploadedFile.value || undefined : undefined,
+      file: mode.value === 'file' || mode.value === 'folder' ? uploadedFile.value || undefined : undefined,
     },
   );
 
@@ -224,11 +240,24 @@ function handleFileUpload(file: File) {
   font-size: 16px;
   white-space: nowrap;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.tab-container button:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: var(--vp-c-border);
 }
 
 .tab-container button:first-child {
   border-radius: 8px 0 0 8px;
-  border-right: none;
 }
 
 .tab-container button:last-child {
@@ -237,6 +266,22 @@ function handleFileUpload(file: File) {
 
 .tab-container button.active {
   background: var(--vp-c-brand-1);
+  color: white;
+}
+
+.tab-container button.active::before {
+  display: none;
+}
+
+.tab-container button.active + button::before {
+  display: none;
+}
+
+.tab-container button .icon {
+  color: var(--vp-c-text-1);
+}
+
+.tab-container button.active .icon {
   color: white;
 }
 

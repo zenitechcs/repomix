@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertTriangle, Folder } from 'lucide-vue-next';
+import { AlertTriangle, FolderArchive } from 'lucide-vue-next';
 import { ref } from 'vue';
 import PackButton from './PackButton.vue';
 
@@ -72,7 +72,7 @@ function triggerFileInput() {
       <div class="upload-content">
         <div class="upload-icon">
           <AlertTriangle v-if="errorMessage" class="icon-error" size="20" />
-          <Folder v-else class="icon-folder" size="20" />
+          <FolderArchive v-else class="icon-folder" size="20" />
         </div>
         <div class="upload-text">
           <p v-if="errorMessage" class="error-message">
