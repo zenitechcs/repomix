@@ -33,7 +33,7 @@ Feliz codificação! 🚀
 
 - **Saída Otimizada para IA**: Formata seu código-fonte para fácil processamento por IA
 - **Contagem de Tokens**: Rastreia o uso de tokens para limites de contexto de LLM
-- **Consciente do Git**: Respeita seus arquivos .gitignore
+- **Consciente do Git**: Respeita seus arquivos `.gitignore` e `.git/info/exclude`
 - **Focado em Segurança**: Detecta informações sensíveis
 - **Múltiplos Formatos de Saída**: Escolha entre texto simples, XML ou Markdown
 

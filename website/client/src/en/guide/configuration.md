@@ -53,10 +53,10 @@ Location:
 
 ## Ignore Patterns
 
-Priority order:
+Priority:
 1. CLI options (`--ignore`)
-2. .repomixignore
-3. .gitignore
+2. `.repomixignore`
+3. `.gitignore` and `.git/info/exclude`
 4. Default patterns
 
 `.repomixignore` example:

@@ -33,7 +33,7 @@ Happy coding! 🚀
 
 - **AI-Optimized Output**: Formats your codebase for easy AI processing
 - **Token Counting**: Tracks token usage for LLM context limits
-- **Git-Aware**: Respects your .gitignore files
+- **Git-Aware**: Respects your `.gitignore` and `.git/info/exclude` files
 - **Security-Focused**: Detects sensitive information
 - **Multiple Output Formats**: Choose between plain text, XML, or Markdown
 
