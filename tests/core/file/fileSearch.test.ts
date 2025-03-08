@@ -143,6 +143,37 @@ describe('fileSearch', () => {
       expect(patterns).toContain('*.custom');
       expect(patterns).toContain('temp/');
     });
+
+    test('should include patterns from .git/info/exclude when useGitignore is true', async () => {
+      const mockConfig = createMockConfig({
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
+
+      const mockExcludeContent = `
+# Test exclude file
+*.ignored
+temp-files/
+`;
+
+      vi.mocked(fs.readFile).mockImplementation(async (filePath) => {
+        // Use path.join to create platform-specific path for testing
+        const excludePath = path.join('.git', 'info', 'exclude');
+        if (filePath.toString().endsWith(excludePath)) {
+          return mockExcludeContent;
+        }
+        return '';
+      });
+
+      const patterns = await getIgnorePatterns('/mock/root', mockConfig);
+
+      // Only test for the exclude file patterns
+      expect(patterns).toContain('*.ignored');
+      expect(patterns).toContain('temp-files/');
+    });
   });
 
   describe('parseIgnoreContent', () => {
