@@ -33,7 +33,7 @@ Al discutir cambios específicos, la IA puede ayudar a generar código. Con func
 
 - **Salida optimizada para IA**: Formatea tu código para un fácil procesamiento por parte de la IA
 - **Conteo de tokens**: Realiza un seguimiento del uso de tokens para los límites de contexto de los LLM
-- **Compatible con Git**: Respeta tus archivos .gitignore
+- **Compatible con Git**: Respeta tus archivos `.gitignore` y `.git/info/exclude`
 - **Enfocado en la seguridad**: Detecta información sensible
 - **Múltiples formatos de salida**: Elige entre texto plano, XML o Markdown
 

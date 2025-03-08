@@ -55,8 +55,8 @@ repomix --init --global
 
 優先順位：
 1. CLIオプション（`--ignore`）
-2. .repomixignore
-3. .gitignore
+2. `.repomixignore`
+3. `.gitignore` および `.git/info/exclude`
 4. デフォルトパターン
 
 `.repomixignore` の例：

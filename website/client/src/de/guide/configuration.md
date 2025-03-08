@@ -55,9 +55,9 @@ Speicherort:
 
 Prioritätsreihenfolge:
 1. CLI-Optionen (`--ignore`)
-2. .repomixignore
-3. .gitignore
-4. Standardmuster
+2. `.repomixignore`
+3. `.gitignore` und `.git/info/exclude`
+4. Standard-Muster
 
 Beispiel für `.repomixignore`:
 ```text

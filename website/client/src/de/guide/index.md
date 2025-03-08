@@ -33,7 +33,7 @@ Viel Spaß beim Programmieren! 🚀
 
 - **KI-optimierte Ausgabe**: Formatiert Ihren Codebase für einfache KI-Verarbeitung
 - **Token-Zählung**: Verfolgt Token-Nutzung für LLM-Kontextgrenzen
-- **Git-bewusst**: Berücksichtigt Ihre .gitignore-Dateien
+- **Git-bewusst**: Berücksichtigt Ihre `.gitignore`-Dateien und `.git/info/exclude`-Dateien
 - **Sicherheitsorientiert**: Erkennt sensible Informationen
 - **Mehrere Ausgabeformate**: Wählen Sie zwischen Klartext, XML oder Markdown
 

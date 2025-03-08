@@ -53,10 +53,10 @@ Localização:
 
 ## Padrões de Ignorar
 
-Ordem de prioridade:
-1. Opções de CLI (`--ignore`)
-2. .repomixignore
-3. .gitignore
+Prioridade:
+1. Opções CLI (`--ignore`)
+2. `.repomixignore`
+3. `.gitignore` e `.git/info/exclude`
 4. Padrões padrão
 
 Exemplo de `.repomixignore`:

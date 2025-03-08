@@ -53,10 +53,10 @@ Ubicación:
 
 ## Patrones de Ignorar
 
-Orden de prioridad:
-1. Opciones de CLI (`--ignore`)
-2. .repomixignore
-3. .gitignore
+Prioridad:
+1. Opciones CLI (`--ignore`)
+2. `.repomixignore`
+3. `.gitignore` y `.git/info/exclude`
 4. Patrones predeterminados
 
 Ejemplo de `.repomixignore`:

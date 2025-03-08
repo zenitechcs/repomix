@@ -46,7 +46,7 @@ ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 - **Token Counting**: Provides token counts for each file and the entire repository, useful for LLM context limits.
 - **Simple to Use**: You need just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
-- **Git-Aware**: Automatically respects your .gitignore files.
+- **Git-Aware**: Automatically respects your `.gitignore` files and `.git/info/exclude`.
 - **Security-Focused**: Incorporates [Secretlint](https://github.com/secretlint/secretlint) for robust security checks
   to detect and prevent inclusion of sensitive information.
 
@@ -670,8 +670,7 @@ flexible and powerful file selection:
 Repomix offers multiple methods to set ignore patterns for excluding specific files or directories during the packing
 process:
 
-- **.gitignore**: By default, patterns listed in your project's `.gitignore` file are used. This behavior can be
-  controlled with the `ignore.useGitignore` setting or the `--no-gitignore` cli option.
+- **.gitignore**: By default, patterns listed in your project's `.gitignore` files and `.git/info/exclude` are used. This behavior can be controlled with the `ignore.useGitignore` setting or the `--no-gitignore` cli option.
 - **Default patterns**: Repomix includes a default list of commonly excluded files and directories (e.g., node_modules,
   .git, binary files). This feature can be controlled with the `ignore.useDefaultPatterns` setting or the `--no-default-patterns` cli option. Please
   see [defaultIgnore.ts](src/config/defaultIgnore.ts) for more details.
@@ -684,7 +683,7 @@ Priority Order (from highest to lowest):
 
 1. Custom patterns `ignore.customPatterns`
 2. `.repomixignore`
-3. `.gitignore` (if `ignore.useGitignore` is true and `--no-gitignore` is not used)
+3. `.gitignore` and `.git/info/exclude` (if `ignore.useGitignore` is true and `--no-gitignore` is not used)
 4. Default patterns (if `ignore.useDefaultPatterns` is true and `--no-default-patterns` is not used)
 
 This approach allows for flexible file exclusion configuration based on your project's needs. It helps optimize the size

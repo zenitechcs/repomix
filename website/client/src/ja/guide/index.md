@@ -33,7 +33,7 @@ npx repomix
 
 - **AI最適化**: コードベースをAIが理解しやすい形式にフォーマット化
 - **トークンカウント**: LLMのコンテキスト制限に対応するためのトークン数を計測
-- **Git対応**: .gitignoreファイルを自動的に認識してパッケージング対象から除外
+- **Git対応**: `.gitignore`および`.git/info/exclude`ファイルを自動的に認識してパッケージング対象から除外
 - **セキュリティ重視**: [Secretlint](https://github.com/secretlint/secretlint)を使用した機密情報の検出と保護
 - **複数の出力形式**: プレーンテキスト、XML、Markdownの出力形式を選択可能
 

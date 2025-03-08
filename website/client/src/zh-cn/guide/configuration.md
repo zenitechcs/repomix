@@ -53,10 +53,10 @@ repomix --init --global
 
 ## 忽略模式
 
-优先级顺序：
-1. CLI 选项（`--ignore`）
-2. .repomixignore
-3. .gitignore
+优先级：
+1. CLI 选项 (`--ignore`)
+2. `.repomixignore`
+3. `.gitignore` 和 `.git/info/exclude`
 4. 默认模式
 
 `.repomixignore` 示例：
