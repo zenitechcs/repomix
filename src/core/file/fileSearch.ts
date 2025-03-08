@@ -123,7 +123,7 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
       // Handle EPERM errors specifically
       if (error.code === 'EPERM' || error.code === 'EACCES') {
         throw new PermissionError(
-          'Permission denied while scanning directory. Please check folder access permissions for your terminal app.',
+          `Permission denied while scanning directory. Please check folder access permissions for your terminal app. path: ${rootDir}`,
           rootDir,
         );
       }

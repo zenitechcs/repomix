@@ -456,6 +456,9 @@ This format provides a clean, readable structure that is both human-friendly and
 #### Token Count Options
 - `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
 
+#### MCP
+- `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server
+
 #### Other Options
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--verbose`: Enable verbose logging
