@@ -160,7 +160,9 @@ temp-files/
 `;
 
       vi.mocked(fs.readFile).mockImplementation(async (filePath) => {
-        if (filePath.toString().endsWith('.git/info/exclude')) {
+        // Use path.join to create platform-specific path for testing
+        const excludePath = path.join('.git', 'info', 'exclude');
+        if (filePath.toString().endsWith(excludePath)) {
           return mockExcludeContent;
         }
         return '';

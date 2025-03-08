@@ -222,7 +222,7 @@ export const getIgnorePatterns = async (rootDir: string, config: RepomixConfigMe
 
   // Add patterns from .git/info/exclude if useGitignore is enabled
   if (config.ignore.useGitignore) {
-    const excludeFilePath = path.join(rootDir, '.git/info/exclude');
+    const excludeFilePath = path.join(rootDir, '.git', 'info', 'exclude');
 
     try {
       const excludeFileContent = await fs.readFile(excludeFilePath, 'utf8');
