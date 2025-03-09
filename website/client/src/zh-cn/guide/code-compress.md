@@ -39,13 +39,22 @@ repomix --remote user/repo --compress
 原始 TypeScript 代码：
 
 ```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
+import { ShoppingItem } from './shopping-item';
+
+/**
+ * Calculate the total price of shopping items
+ */
+const calculateTotal = (
+  items: ShoppingItem[]
+) => {
   let total = 0;
   for (const item of items) {
     total += item.price * item.quantity;
   }
   return total;
 }
+
+// Shopping item interface
 interface Item {
   name: string;
   price: number;
@@ -56,8 +65,21 @@ interface Item {
 压缩后：
 
 ```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
+import { ShoppingItem } from './shopping-item';
+⋮----
+/**
+ * Calculate the total price of shopping items
+ */
+const calculateTotal = (
+  items: ShoppingItem[]
+) => {
+⋮----
+// Shopping item interface
 interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
 ```
 
 ## 配置
