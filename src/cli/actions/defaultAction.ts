@@ -43,7 +43,7 @@ export const runDefaultAction = async (
 
   logger.trace('Merged config:', config);
 
-  const targetPaths = directories.map((directory) => path.resolve(directory));
+  const targetPaths = directories.map((directory) => path.resolve(cwd, directory));
 
   const spinner = new Spinner('Packing files...', cliOptions);
   spinner.start();
