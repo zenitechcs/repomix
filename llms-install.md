@@ -11,36 +11,11 @@ Repomix MCP server is a powerful tool that packages local or remote codebases in
 Before installation, you need:
 
 1. Node.js 18.0.0 or higher
-2. npm, yarn, or Homebrew (package manager)
+2. npm (Node Package Manager)
 
-## Installation Steps
+## Installation and Configuration
 
-### 1. Install Repomix
-
-Choose one of the following methods to install Repomix:
-
-```bash
-# Using npm (globally)
-npm install -g repomix
-
-# Using yarn
-yarn global add repomix
-
-# Using Homebrew (macOS/Linux)
-brew install repomix
-```
-
-### 2. Verify Installation
-
-Confirm the installation was successful by running:
-
-```bash
-repomix --version
-```
-
-If a version number is displayed, the installation was successful.
-
-### 3. Configure MCP Settings
+### Configure MCP Settings
 
 Add the Repomix MCP server configuration to your MCP settings file based on your LLM client:
 
@@ -70,9 +45,11 @@ Add this configuration to your chosen client's settings file:
 }
 ```
 
+This configuration uses `npx` to run Repomix directly without requiring a global installation.
+
 ## Available MCP Tools
 
-Once installed, you'll have access to these Repomix tools:
+Once configured, you'll have access to these Repomix tools:
 
 ### 1. pack_codebase
 
@@ -154,23 +131,18 @@ Please package my project at /path/to/project, but only include TypeScript files
 
 ### Common Issues and Solutions
 
-1. **"Command not found" error**
-   - Verify Repomix is correctly installed
-   - Check if the Repomix installation directory is in your PATH environment variable
-   - Try running `which repomix` to locate the executable
-
-2. **MCP server connection issues**
+1. **MCP server connection issues**
    - Verify the syntax in your MCP settings file is correct
-   - Ensure Repomix is the latest version
+   - Ensure you have an active internet connection (needed for npx to fetch the package)
    - Check if any other MCP servers are causing conflicts
 
-3. **Packaging failures**
+2. **Packaging failures**
    - Verify the specified directory or repository exists
    - Check if you have sufficient disk space
    - For remote repositories, ensure you have internet connectivity
    - Try with simpler parameters first, then add complexity
 
-4. **JSON parsing errors in configuration**
+3. **JSON parsing errors in configuration**
    - Make sure your MCP settings file is properly formatted
    - Verify all paths use forward slashes, even on Windows
    - Check for any missing commas or brackets in the configuration
