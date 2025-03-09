@@ -136,7 +136,7 @@ describe('remoteAction functions', () => {
 
       await copyOutputToCurrentDirectory(sourceDir, targetDir, fileName);
 
-      expect(fs.copyFile).toHaveBeenCalledWith(path.join(sourceDir, fileName), path.join(targetDir, fileName));
+      expect(fs.copyFile).toHaveBeenCalledWith(path.resolve(sourceDir, fileName), path.resolve(targetDir, fileName));
     });
 
     test('should throw error when copy fails', async () => {
