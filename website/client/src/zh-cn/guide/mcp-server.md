@@ -68,8 +68,10 @@ repomix --mcp
 {
   "mcpServers": {
     "repomix": {
-      "command": "repomix",
+      "command": "npx",
       "args": [
+        "-y",
+        "repomix",
         "--mcp"
       ]
     }
