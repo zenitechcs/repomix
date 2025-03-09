@@ -6,6 +6,7 @@ import { handleError } from '../shared/errorHandle.js';
 import { logger, repomixLogLevels } from '../shared/logger.js';
 import { runDefaultAction } from './actions/defaultAction.js';
 import { runInitAction } from './actions/initAction.js';
+import { runMcpAction } from './actions/mcpAction.js';
 import { runRemoteAction } from './actions/remoteAction.js';
 import { runVersionAction } from './actions/versionAction.js';
 import type { CliOptions } from './types.js';
@@ -50,6 +51,8 @@ export const run = async () => {
       .option('--no-security-check', 'disable security check')
       // Token Count Options
       .option('--token-count-encoding <encoding>', 'specify token count encoding (e.g., o200k_base, cl100k_base)')
+      // MCP
+      .option('--mcp', 'run as a MCP server')
       // Other Options
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
@@ -79,6 +82,10 @@ export const runCli = async (directories: string[], cwd: string, options: CliOpt
   logger.trace('directories:', directories);
   logger.trace('cwd:', cwd);
   logger.trace('options:', options);
+
+  if (options.mcp) {
+    return await runMcpAction();
+  }
 
   if (options.version) {
     await runVersionAction();
