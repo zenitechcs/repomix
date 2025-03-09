@@ -15,37 +15,45 @@ export const run = async () => {
     program
       .description('Repomix - Pack your repository into a single AI-friendly file')
       .argument('[directories...]', 'list of directories to process', ['.'])
+      // Basic Options
       .option('-v, --version', 'show version information')
+      // Output Options
       .option('-o, --output <file>', 'specify the output file name')
-      .option('--include <patterns>', 'list of include patterns (comma-separated)')
-      .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
-      .option('--no-gitignore', 'disable .gitignore file usage')
-      .option('--no-default-patterns', 'disable default patterns')
-      .option('-c, --config <path>', 'path to a custom config file')
-      .option('--copy', 'copy generated output to system clipboard')
-      .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
-      .option('--output-show-line-numbers', 'add line numbers to each line in the output')
       .option('--style <type>', 'specify the output style (plain, xml, markdown)')
       .option('--parsable-style', 'by escaping and formatting, ensure the output is parsable as a document of its type')
-      .option('--header-text <text>', 'specify the header text')
+      .option('--compress', 'perform code compression to reduce token count')
+      .option('--output-show-line-numbers', 'add line numbers to each line in the output')
+      .option('--copy', 'copy generated output to system clipboard')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
-      .option('--compress', 'perform code compression to reduce token count')
-      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
-      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
-      .option('--init', 'initialize a new repomix.config.json file')
-      .option('--global', 'use global configuration (only applicable with --init)')
+      .option('--header-text <text>', 'specify the header text')
+      .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
+      .option('--include-empty-directories', 'include empty directories in the output')
+      // Filter Options
+      .option('--include <patterns>', 'list of include patterns (comma-separated)')
+      .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
+      .option('--no-gitignore', 'disable .gitignore file usage')
+      .option('--no-default-patterns', 'disable default patterns')
+      // Remote Repository Options
       .option('--remote <url>', 'process a remote Git repository')
-      .option('--token-count-encoding <encoding>', 'specify token count encoding (e.g., o200k_base, cl100k_base)')
       .option(
         '--remote-branch <name>',
         'specify the remote branch name, tag, or commit hash (defaults to repository default branch)',
       )
+      // Configuration Options
+      .option('-c, --config <path>', 'path to a custom config file')
+      .option('--init', 'initialize a new repomix.config.json file')
+      .option('--global', 'use global configuration (only applicable with --init)')
+      // Security Options
       .option('--no-security-check', 'disable security check')
-      .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
-      .option('--include-empty-directories', 'include empty directories in the output')
+      // Token Count Options
+      .option('--token-count-encoding <encoding>', 'specify token count encoding (e.g., o200k_base, cl100k_base)')
+      // Other Options
+      .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
+      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
+      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .action(commanderActionEndpoint);
 
     await program.parseAsync(process.argv);

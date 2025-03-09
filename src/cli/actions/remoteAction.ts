@@ -152,8 +152,8 @@ export const copyOutputToCurrentDirectory = async (
   targetDir: string,
   outputFileName: string,
 ): Promise<void> => {
-  const sourcePath = path.join(sourceDir, outputFileName);
-  const targetPath = path.join(targetDir, outputFileName);
+  const sourcePath = path.resolve(sourceDir, outputFileName);
+  const targetPath = path.resolve(targetDir, outputFileName);
 
   try {
     logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath}`);

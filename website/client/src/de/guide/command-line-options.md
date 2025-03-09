@@ -42,6 +42,7 @@
 ## Weitere Optionen
 - `--top-files-len <number>`: Anzahl der anzuzeigenden Top-Dateien (Standard: `5`)
 - `--verbose`: Ausführliche Protokollierung aktivieren
+- `--quiet`: Deaktiviert alle Ausgaben an stdout
 
 ## Beispiele
 

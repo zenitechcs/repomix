@@ -42,6 +42,7 @@
 ## Outras Opções
 - `--top-files-len <number>`: Número de arquivos principais para mostrar (padrão: `5`)
 - `--verbose`: Habilita log detalhado
+- `--quiet`: Desabilita toda saída para stdout
 
 ## Exemplos
 

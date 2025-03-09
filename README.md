@@ -459,6 +459,7 @@ This format provides a clean, readable structure that is both human-friendly and
 #### Other Options
 - `--top-files-len <number>`: Number of top files to display in the summary
 - `--verbose`: Enable verbose logging
+- `--quiet`: Disable all output to stdout
 
 Examples:
 

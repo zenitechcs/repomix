@@ -42,6 +42,7 @@
 ## Other Options
 - `--top-files-len <number>`: Number of top files to show (default: `5`)
 - `--verbose`: Enable verbose logging
+- `--quiet`: Disable all output to stdout
 
 ## Examples
 
