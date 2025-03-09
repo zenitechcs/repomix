@@ -25,6 +25,7 @@ export const configDe = defineConfig({
             { text: 'Kommentare entfernen', link: '/de/guide/comment-removal' },
             { text: 'Code-Komprimierung', link: '/de/guide/code-compress' },
             { text: 'Sicherheit', link: '/de/guide/security' },
+            { text: 'MCP-Server', link: '/de/guide/mcp-server' },
             {
               text: 'Tipps & Tricks',
               items: [{ text: 'Best Practices', link: '/de/guide/tips/best-practices' }],

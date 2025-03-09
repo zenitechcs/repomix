@@ -25,6 +25,7 @@ export const configPtBr = defineConfig({
             { text: 'Remoção de Comentários', link: '/pt-br/guide/comment-removal' },
             { text: 'Compressão de Código', link: '/pt-br/guide/code-compress' },
             { text: 'Segurança', link: '/pt-br/guide/security' },
+            { text: 'Servidor MCP', link: '/pt-br/guide/mcp-server' },
             {
               text: 'Dicas e Truques',
               items: [{ text: 'Melhores Práticas', link: '/pt-br/guide/tips/best-practices' }],

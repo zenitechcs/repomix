@@ -457,7 +457,7 @@ This format provides a clean, readable structure that is both human-friendly and
 - `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
 
 #### MCP
-- `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) server
+- `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server
 
 #### Other Options
 - `--top-files-len <number>`: Number of top files to display in the summary
@@ -583,6 +583,57 @@ interface Item {
 > [!NOTE]
 > This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
 
+### MCP Integration
+
+Repomix supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), allowing AI assistants to directly interact with your codebase. When run as an MCP server, Repomix provides tools that enable AI assistants to package local or remote repositories for analysis without requiring manual file preparation.
+
+```bash
+repomix --mcp
+```
+
+#### Available MCP Tools
+
+When running as an MCP server, Repomix provides the following tools:
+
+1. **pack_codebase**: Package a local code directory into a consolidated file for AI analysis
+  - Parameters:
+    - `directory`: Absolute path to the directory to pack
+    - `compress`: (Optional, default: true) Whether to perform intelligent code extraction
+    - `includePatterns`: (Optional) Comma-separated list of include patterns
+    - `ignorePatterns`: (Optional) Comma-separated list of ignore patterns
+
+2. **pack_remote_repository**: Fetch, clone and package a GitHub repository
+  - Parameters:
+    - `remote`: GitHub repository URL or user/repo format (e.g., yamadashy/repomix)
+    - `compress`: (Optional, default: true) Whether to perform intelligent code extraction
+    - `includePatterns`: (Optional) Comma-separated list of include patterns
+    - `ignorePatterns`: (Optional) Comma-separated list of ignore patterns
+
+#### Configuring MCP Servers
+
+To use Repomix as an MCP server with AI assistants like Claude, you need to configure the MCP settings:
+
+**For Cline (VS Code extension):**
+
+Edit the `cline_mcp_settings.json` file:
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "repomix",
+      "args": [
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+**For Claude Desktop:**
+
+Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
+
+Once configured, your AI assistant can directly use Repomix's capabilities to analyze codebases without manual file preparation, making code analysis workflows more efficient.
 
 ## ⚙️ Configuration
 
