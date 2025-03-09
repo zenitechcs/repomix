@@ -68,8 +68,10 @@ Bearbeiten Sie die `cline_mcp_settings.json`-Datei:
 {
   "mcpServers": {
     "repomix": {
-      "command": "repomix",
+      "command": "npx",
       "args": [
+        "-y",
+        "repomix",
         "--mcp"
       ]
     }

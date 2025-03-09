@@ -68,8 +68,10 @@ Claude와 같은 AI 어시스턴트와 함께 Repomix를 MCP 서버로 사용하
 {
   "mcpServers": {
     "repomix": {
-      "command": "repomix",
+      "command": "npx",
       "args": [
+        "-y",
+        "repomix",
         "--mcp"
       ]
     }
