@@ -47,8 +47,8 @@ ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, and more.
 - **Simple to Use**: You need just one command to pack your entire repository.
 - **Customizable**: Easily configure what to include or exclude.
 - **Git-Aware**: Automatically respects your `.gitignore` files and `.git/info/exclude`.
-- **Security-Focused**: Incorporates [Secretlint](https://github.com/secretlint/secretlint) for robust security checks
-  to detect and prevent inclusion of sensitive information.
+- **Security-Focused**: Incorporates [Secretlint](https://github.com/secretlint/secretlint) for robust security checks to detect and prevent inclusion of sensitive information.
+- **Code Compression**: The `--compress` option uses [Tree-sitter](https://github.com/tree-sitter/tree-sitter) to extract key code elements, reducing token count while preserving structure.
 
 ## 🚀 Quick Start
 
@@ -524,7 +524,7 @@ repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad
 
 ### Code Compression
 
-The `--compress` option utilizes [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) to perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. This can help reduce token count while retaining important structural information.
+The `--compress` option utilizes [Tree-sitter](https://github.com/tree-sitter/tree-sitter) to perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. This can help reduce token count while retaining important structural information.
 
 ```bash
 repomix --compress
@@ -533,13 +533,22 @@ repomix --compress
 For example, this code:
 
 ```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
+import { ShoppingItem } from './shopping-item';
+
+/**
+ * Calculate the total price of shopping items
+ */
+const calculateTotal = (
+  items: ShoppingItem[]
+) => {
   let total = 0;
   for (const item of items) {
     total += item.price * item.quantity;
   }
   return total;
 }
+
+// Shopping item interface
 interface Item {
   name: string;
   price: number;
@@ -550,8 +559,21 @@ interface Item {
 Will be compressed to:
 
 ```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
+import { ShoppingItem } from './shopping-item';
+⋮----
+/**
+ * Calculate the total price of shopping items
+ */
+const calculateTotal = (
+  items: ShoppingItem[]
+) => {
+⋮----
+// Shopping item interface
 interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+}
 ```
 
 > [!NOTE]
