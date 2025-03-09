@@ -26,6 +26,7 @@ export const configJa = defineConfig({
             { text: 'コメントの削除', link: '/ja/guide/comment-removal' },
             { text: 'コード圧縮', link: '/ja/guide/code-compress' },
             { text: 'セキュリティ', link: '/ja/guide/security' },
+            { text: 'MCPサーバー', link: '/ja/guide/mcp-server' },
             {
               text: 'ヒント＆テクニック',
               items: [{ text: 'ベストプラクティス', link: '/ja/guide/tips/best-practices' }],

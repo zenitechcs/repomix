@@ -25,6 +25,7 @@ export const configKo = defineConfig({
             { text: '주석 제거', link: '/ko/guide/comment-removal' },
             { text: '코드 압축', link: '/ko/guide/code-compress' },
             { text: '보안', link: '/ko/guide/security' },
+            { text: 'MCP 서버', link: '/ko/guide/mcp-server' },
             {
               text: '팁과 요령',
               items: [{ text: '모범 사례', link: '/ko/guide/tips/best-practices' }],
