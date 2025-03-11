@@ -23,6 +23,7 @@ repomix/
 │   │   ├── output/ # Output generation (different styles, headers, etc.)
 │   │   ├── packager/ # Orchestrates file collection, processing, output, and clipboard operations.
 │   │   ├── security/ # Security checks to exclude sensitive files
+│   │   ├── mcp/ # MCP server integration (packaging codebases for AI analysis)
 │   │   ├── tokenCount/ # Token counting using Tiktoken
 │   │   └── treeSitter/ # Code parsing using Tree-sitter and language-specific queries
 │   └── shared/ # Shared utilities and types (error handling, logging, helper functions)
