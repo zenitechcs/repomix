@@ -1,12 +1,10 @@
-import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { runCli } from '../../../cli/cliRun.js';
 import type { CliOptions } from '../../../cli/types.js';
-import { logger } from '../../../shared/logger.js';
+import { createToolWorkspace, formatToolError, formatToolResponse } from './mcpToolRuntime.js';
 
 export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
   mcpServer.tool(
@@ -39,9 +37,11 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
         .describe('Number of top files to display in the metrics (default: 5)'),
     },
     async ({ remote, compress, includePatterns, ignorePatterns, topFilesLength }): Promise<CallToolResult> => {
+      let tempDir = '';
+
       try {
-        const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repomix-'));
-        const outputFilePath = path.join(tempDir, 'output.txt');
+        tempDir = await createToolWorkspace();
+        const outputFilePath = path.join(tempDir, 'repomix-output.xml');
 
         const cliOptions = {
           remote,
@@ -70,71 +70,10 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
 
         // Extract metrics information from the pack result
         const { packResult } = result;
-        const { totalFiles, totalCharacters, totalTokens, fileCharCounts, fileTokenCounts } = packResult;
 
-        // Get top files by character count
-        const topFiles = Object.entries(fileCharCounts)
-          .map(([filePath, charCount]) => ({
-            path: filePath,
-            charCount,
-            tokenCount: fileTokenCounts[filePath] || 0,
-          }))
-          .sort((a, b) => b.charCount - a.charCount)
-          .slice(0, cliOptions.topFilesLen);
-
-        // Create JSON string with all the metrics information
-        const jsonResult = JSON.stringify(
-          {
-            repository: remote,
-            metrics: {
-              totalFiles,
-              totalCharacters,
-              totalTokens,
-              topFiles,
-            },
-          },
-          null,
-          2,
-        );
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: '🎉 Successfully packed codebase!\nPlease review the metrics below and consider adjusting compress/includePatterns/ignorePatterns if the token count is too high and you need to reduce it before reading the file content.',
-            },
-            {
-              type: 'text',
-              text: jsonResult,
-            },
-            {
-              type: 'resource',
-              resource: {
-                text: 'Repomix output file',
-                uri: `file://${outputFilePath}`,
-                mimeType: 'text/plain',
-              },
-            },
-          ],
-        };
+        return formatToolResponse({ repository: remote }, packResult, outputFilePath, topFilesLength);
       } catch (error) {
-        logger.error(`Error packing repository: ${error instanceof Error ? error.message : String(error)}`);
-        return {
-          isError: true,
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  success: false,
-                  error: error instanceof Error ? error.message : String(error),
-                },
-                null,
-                2,
-              ),
-            },
-          ],
-        };
+        return formatToolError(error);
       }
     },
   );
