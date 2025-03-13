@@ -1,8 +1,22 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { logger } from '../../../shared/logger.js';
+
+// Map to store generated output files
+const outputFileRegistry = new Map<string, string>();
+
+// Register an output file
+export const registerOutputFile = (id: string, filePath: string): void => {
+  outputFileRegistry.set(id, filePath);
+};
+
+// Get file path from output ID
+export const getOutputFilePath = (id: string): string | undefined => {
+  return outputFileRegistry.get(id);
+};
 
 export interface McpToolMetrics {
   totalFiles: number;
@@ -33,6 +47,13 @@ export const createToolWorkspace = async (): Promise<string> => {
 };
 
 /**
+ * Generate a unique output ID
+ */
+export const generateOutputId = (): string => {
+  return crypto.randomBytes(8).toString('hex');
+};
+
+/**
  * Creates a result object with metrics information for MCP tools
  */
 export const formatToolResponse = (
@@ -41,6 +62,10 @@ export const formatToolResponse = (
   outputFilePath: string,
   topFilesLen = 5,
 ): CallToolResult => {
+  // Generate output ID and register the file
+  const outputId = generateOutputId();
+  registerOutputFile(outputId, outputFilePath);
+
   // Get top files by character count
   const topFiles = Object.entries(metrics.fileCharCounts)
     .map(([filePath, charCount]) => ({
@@ -57,6 +82,7 @@ export const formatToolResponse = (
       ...(context.directory ? { directory: context.directory } : {}),
       ...(context.repository ? { repository: context.repository } : {}),
       outputFilePath,
+      outputId,
       metrics: {
         totalFiles: metrics.totalFiles,
         totalCharacters: metrics.totalCharacters,
@@ -85,6 +111,10 @@ export const formatToolResponse = (
           uri: `file://${outputFilePath}`,
           mimeType: 'application/xml',
         },
+      },
+      {
+        type: 'text',
+        text: `To read the full contents of the packed codebase when direct file access is not possible (e.g., in web environments or sandboxed applications), use the read_repomix_output tool with the outputId: ${outputId}`,
       },
     ],
   };

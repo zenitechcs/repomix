@@ -4,6 +4,7 @@ import { logger } from '../../shared/logger.js';
 import { getVersion } from '../file/packageJsonParse.js';
 import { registerPackCodebaseTool } from './tools/packCodebaseTool.js';
 import { registerPackRemoteRepositoryTool } from './tools/packRemoteRepositoryTool.js';
+import { registerReadRepomixOutputTool } from './tools/readRepomixOutputTool.js';
 
 export const createMcpServer = async () => {
   const mcpServer = new McpServer({
@@ -11,11 +12,10 @@ export const createMcpServer = async () => {
     version: await getVersion(),
   });
 
-  // Pack Codebase
+  // Register the tools
   registerPackCodebaseTool(mcpServer);
-
-  // Pack Remote Repository
   registerPackRemoteRepositoryTool(mcpServer);
+  registerReadRepomixOutputTool(mcpServer);
 
   return mcpServer;
 };
