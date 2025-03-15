@@ -2,10 +2,15 @@
  * @see https://unpkg.com/browse/tree-sitter-wasms@latest/out/
  */
 export const ext2Lang = {
-  vue: 'javascript',
+  vue: 'vue',
   cjs: 'javascript',
+  mjs: 'javascript',
+  mjsx: 'javascript',
   js: 'javascript',
   jsx: 'javascript',
+  ctx: 'typescript',
+  mts: 'typescript',
+  mtsx: 'typescript',
   ts: 'typescript',
   tsx: 'typescript',
   h: 'c',
@@ -20,4 +25,5 @@ export const ext2Lang = {
   rb: 'ruby',
   php: 'php',
   swift: 'swift',
+  css: 'css',
 };
