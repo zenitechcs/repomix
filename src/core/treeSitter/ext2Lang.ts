@@ -20,4 +20,5 @@ export const ext2Lang = {
   rb: 'ruby',
   php: 'php',
   swift: 'swift',
+  css: 'css',
 };

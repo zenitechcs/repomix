@@ -1,6 +1,7 @@
 import type { Query, SyntaxNode, Tree } from 'web-tree-sitter';
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
 import type { SupportedLang } from '../lang2Query.js';
+import { CssParseStrategy } from './CssParseStrategy.js';
 import { DefaultParseStrategy } from './DefaultParseStrategy.js';
 import { GoParseStrategy } from './GoParseStrategy.js';
 import { PythonParseStrategy } from './PythonParseStrategy.js';
@@ -31,6 +32,8 @@ export function createParseStrategy(lang: SupportedLang): ParseStrategy {
       return new PythonParseStrategy();
     case 'go':
       return new GoParseStrategy();
+    case 'css':
+      return new CssParseStrategy();
     default:
       return new DefaultParseStrategy();
   }
