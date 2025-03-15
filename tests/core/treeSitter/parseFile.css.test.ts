@@ -45,9 +45,6 @@ describe('parseFile for CSS', () => {
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
 
-    // Output the result for debugging
-    console.log('CSS Parse Result:', result);
-
     const expectContents = [
       // Comments (all lines should be extracted)
       'Main styles for the application',
