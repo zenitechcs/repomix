@@ -4,8 +4,13 @@
 export const ext2Lang = {
   vue: 'vue',
   cjs: 'javascript',
+  mjs: 'javascript',
+  mjsx: 'javascript',
   js: 'javascript',
   jsx: 'javascript',
+  ctx: 'typescript',
+  mts: 'typescript',
+  mtsx: 'typescript',
   ts: 'typescript',
   tsx: 'typescript',
   h: 'c',
