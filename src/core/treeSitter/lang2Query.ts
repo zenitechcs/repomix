@@ -11,6 +11,7 @@ import { queryRuby } from './queries/queryRuby.js';
 import { queryRust } from './queries/queryRust.js';
 import { querySwift } from './queries/querySwift.js';
 import { queryTypescript } from './queries/queryTypescript.js';
+import { queryVue } from './queries/queryVue.js';
 
 export const lang2Query = {
   javascript: queryJavascript,
@@ -26,6 +27,7 @@ export const lang2Query = {
   php: queryPhp,
   swift: querySwift,
   css: queryCss,
+  vue: queryVue,
 };
 
 export type SupportedLang = keyof typeof lang2Query;

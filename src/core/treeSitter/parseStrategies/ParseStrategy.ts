@@ -6,6 +6,7 @@ import { DefaultParseStrategy } from './DefaultParseStrategy.js';
 import { GoParseStrategy } from './GoParseStrategy.js';
 import { PythonParseStrategy } from './PythonParseStrategy.js';
 import { TypeScriptParseStrategy } from './TypeScriptParseStrategy.js';
+import { VueParseStrategy } from './VueParseStrategy.js';
 
 export interface ParseContext {
   fileContent: string;
@@ -34,6 +35,8 @@ export function createParseStrategy(lang: SupportedLang): ParseStrategy {
       return new GoParseStrategy();
     case 'css':
       return new CssParseStrategy();
+    case 'vue':
+      return new VueParseStrategy();
     default:
       return new DefaultParseStrategy();
   }
