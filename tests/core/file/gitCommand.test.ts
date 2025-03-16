@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { execGitShallowClone, isGitInstalled } from '../../../src/core/file/gitCommand.js';
+import { execGitShallowClone, getFileChangeCount, isGitInstalled } from '../../../src/core/file/gitCommand.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');
@@ -7,6 +7,45 @@ vi.mock('../../../src/shared/logger');
 describe('gitCommand', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+
+  describe('getFileChangeCount', () => {
+    test('should count file changes correctly', async () => {
+      const mockOutput = `
+file1.ts
+file2.ts
+file1.ts
+file3.ts
+file2.ts
+`.trim();
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await getFileChangeCount('/test/dir', 5, { execFileAsync: mockFileExecAsync });
+
+      expect(result).toEqual({
+        'file1.ts': 2,
+        'file2.ts': 2,
+        'file3.ts': 1,
+      });
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', [
+        '-C',
+        '/test/dir',
+        'log',
+        '--pretty=format:',
+        '--name-only',
+        '-n',
+        '5',
+      ]);
+    });
+
+    test('should return empty object when git command fails', async () => {
+      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('git command failed'));
+
+      const result = await getFileChangeCount('/test/dir', 5, { execFileAsync: mockFileExecAsync });
+
+      expect(result).toEqual({});
+      expect(logger.trace).toHaveBeenCalledWith('Failed to get file change counts:', 'git command failed');
+    });
   });
 
   describe('isGitInstalled', () => {
@@ -19,7 +58,7 @@ describe('gitCommand', () => {
       expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
     });
 
-    test('should return false when git command fails', async () => {
+    test('should return false and log error when git command fails', async () => {
       const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('Command not found: git'));
 
       const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
@@ -27,6 +66,28 @@ describe('gitCommand', () => {
       expect(result).toBe(false);
       expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
       expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', 'Command not found: git');
+    });
+
+    test('should return false and log error with custom error message', async () => {
+      const customError = new Error('Custom git error message');
+      const mockFileExecAsync = vi.fn().mockRejectedValue(customError);
+
+      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(false);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
+      expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', 'Custom git error message');
+    });
+
+    test('should return false when git command fails with empty error message', async () => {
+      const customError = new Error('');
+      const mockFileExecAsync = vi.fn().mockRejectedValue(customError);
+
+      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(false);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
+      expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', '');
     });
 
     test('should return false when git command returns stderr', async () => {
