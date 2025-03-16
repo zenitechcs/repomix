@@ -697,6 +697,10 @@ Example configuration:
     "copyToClipboard": true,
     "topFilesLength": 5,
     "includeEmptyDirectories": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
   },
   "include": [
     "**/*"

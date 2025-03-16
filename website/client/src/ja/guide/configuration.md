@@ -26,7 +26,11 @@ repomix --init
     "topFilesLength": 5,
     "showLineNumbers": false,
     "copyToClipboard": false,
-    "includeEmptyDirectories": false
+    "includeEmptyDirectories": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
   },
   "include": ["**/*"],
   "ignore": {
@@ -89,32 +93,31 @@ dist/**
 
 ### コード圧縮
 
-`output.compress`を`true`に設定すると、Repomixは実装の詳細を削除しながら、本質的なコード構造を抽出します。これは、重要な構造情報を維持しながらトークン数を削減する場合に特に有用です。
+`output.compress`を`true`に設定すると、Repomixは実装の詳細を削除しながら、本質的なコード構造を抽出します。これにより、トークン数を削減しながら重要な構造情報を維持できます。
 
-例えば、このコード：
+詳細と例については[コード圧縮ガイド](code-compress)をご覧ください。
 
-```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.price * item.quantity;
+### Git統合
+
+`output.git`設定では、Gitの履歴に基づいてファイルをソートする方法を制御できます：
+
+- `sortByChanges`: `true`に設定すると、ファイルはGitの変更回数（そのファイルを変更したコミット数）でソートされます。より多くの変更があるファイルが出力の下部に表示されます。これは、より活発に開発されているファイルを優先するのに役立ちます。デフォルト: `true`
+- `sortByChangesMaxCommits`: ファイルの変更回数を数える際に分析する最大コミット数。デフォルト: `100`
+
+設定例：
+```json
+{
+  "output": {
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
   }
-  return total;
 }
-interface Item {
-  name: string;
-  price: number;
-  quantity: number;
-}
-```
-
-は以下のように圧縮されます：
-
-```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
-interface Item {
 ```
 
 ### コメントの削除
 
-`output.removeComments`を`true`に設定すると、全てのコードコメントが削除されます。これは、コードの実装に焦点を当てたい場合や、トークン数をさらに削減したい場合に有用です。
+`output.removeComments`を`true`に設定すると、サポートされているファイルタイプからコメントが削除され、出力サイズを削減し、本質的なコード内容に焦点を当てることができます。
+
+サポートされている言語と詳細な例については[コメント削除ガイド](comment-removal)をご覧ください。
