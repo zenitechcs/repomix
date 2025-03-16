@@ -28,18 +28,27 @@ export const createMcpServer = async () => {
   return mcpServer;
 };
 
-export const runMcpServer = async () => {
+type Dependencies = {
+  processExit?: (code?: number) => never;
+};
+
+const defaultDependencies: Dependencies = {
+  processExit: process.exit,
+};
+
+export const runMcpServer = async (deps: Dependencies = defaultDependencies) => {
   const server = await createMcpServer();
   const transport = new StdioServerTransport();
+  const processExit = deps.processExit ?? process.exit;
 
   const handleExit = async () => {
     try {
       await server.close();
       logger.trace('Repomix MCP Server shutdown complete');
-      process.exit(0);
+      processExit(0);
     } catch (error) {
       logger.error('Error during MCP server shutdown:', error);
-      process.exit(1);
+      processExit(1);
     }
   };
 
@@ -51,6 +60,6 @@ export const runMcpServer = async () => {
     logger.trace('Repomix MCP Server running on stdio');
   } catch (error) {
     logger.error('Failed to start MCP server:', error);
-    process.exit(1);
+    processExit(1);
   }
 };
