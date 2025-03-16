@@ -40,12 +40,7 @@ repomix --remote user/repo --remote-branch 935b695
 
 ## 출력 형식
 
-### 일반 텍스트 (기본값)
-```bash
-repomix --style plain
-```
-
-### XML
+### XML (기본값)
 ```bash
 repomix --style xml
 ```
@@ -53,6 +48,11 @@ repomix --style xml
 ### Markdown
 ```bash
 repomix --style markdown
+```
+
+### 일반 텍스트
+```bash
+repomix --style plain
 ```
 
 ## 추가 옵션

@@ -1,42 +1,9 @@
 # Ausgabeformate
 
 Repomix unterstützt drei Ausgabeformate:
-- Klartext (Standard)
-- XML
+- XML (Standard)
 - Markdown
-
-## Klartext-Format
-
-```bash
-repomix --style plain
-```
-
-Ausgabestruktur:
-```text
-Diese Datei ist eine zusammengeführte Darstellung der gesamten Codebasis...
-
-================
-Dateizusammenfassung
-================
-(Metadaten und KI-Anweisungen)
-
-================
-Verzeichnisstruktur
-================
-src/
-  index.ts
-  utils/
-    helper.ts
-
-================
-Dateien
-================
-
-================
-Datei: src/index.ts
-================
-// Dateiinhalt hier
-```
+- Klartext
 
 ## XML-Format
 
@@ -98,3 +65,36 @@ src/
 ```typescript
 // Dateiinhalt hier
 ``` 
+
+## Klartext-Format
+
+```bash
+repomix --style plain
+```
+
+Ausgabestruktur:
+```text
+Diese Datei ist eine zusammengeführte Darstellung der gesamten Codebasis...
+
+================
+Dateizusammenfassung
+================
+(Metadaten und KI-Anweisungen)
+
+================
+Verzeichnisstruktur
+================
+src/
+  index.ts
+  utils/
+    helper.ts
+
+================
+Dateien
+================
+
+================
+Datei: src/index.ts
+================
+// Dateiinhalt hier
+```

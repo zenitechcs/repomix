@@ -365,7 +365,7 @@ src/
 
 This format provides a clean, readable structure that is both human-friendly and easily parseable by AI systems.
 
-#### Plain Text Format (default)
+#### Plain Text Format
 
 To generate output in plain text format, use the `--style plain` option:
 
