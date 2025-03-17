@@ -2,6 +2,9 @@
 
 Repomix es compatible con el [Model Context Protocol (MCP)](https://modelcontextprotocol.io), lo que permite a los asistentes de IA interactuar directamente con tu código. Cuando se ejecuta como servidor MCP, Repomix proporciona herramientas que permiten a los asistentes de IA empaquetar repositorios locales o remotos para su análisis sin necesidad de preparación manual de archivos.
 
+> [!NOTE]  
+> Esta es una función experimental que mejoraremos activamente según los comentarios de los usuarios y el uso en el mundo real
+
 ## Ejecutar Repomix como servidor MCP
 
 Para ejecutar Repomix como servidor MCP, utiliza la opción `--mcp`:
