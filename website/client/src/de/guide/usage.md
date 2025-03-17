@@ -40,12 +40,7 @@ repomix --remote user/repo --remote-branch 935b695
 
 ## Ausgabeformate
 
-### Klartext (Standard)
-```bash
-repomix --style plain
-```
-
-### XML
+### XML (Standard)
 ```bash
 repomix --style xml
 ```
@@ -53,6 +48,11 @@ repomix --style xml
 ### Markdown
 ```bash
 repomix --style markdown
+```
+
+### Klartext
+```bash
+repomix --style plain
 ```
 
 ## Zusätzliche Optionen

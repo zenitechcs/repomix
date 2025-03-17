@@ -26,7 +26,11 @@ repomix --init
     "topFilesLength": 5,
     "showLineNumbers": false,
     "copyToClipboard": false,
-    "includeEmptyDirectories": false
+    "includeEmptyDirectories": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
   },
   "include": ["**/*"],
   "ignore": {
@@ -89,30 +93,31 @@ Full list: [defaultIgnore.ts](https://github.com/yamadashy/repomix/blob/main/src
 
 ### Code Compression
 
-When `output.compress` is set to `true`, Repomix will intelligently extract essential code structures while removing implementation details. This is particularly useful for reducing token count while maintaining important structural information.
+When `output.compress` is set to `true`, Repomix will intelligently extract essential code structures while removing implementation details. This helps reduce token count while maintaining important structural information.
 
-For example, this code:
+For more details and examples, see [Code Compression Guide](code-compress).
 
-```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
-  let total = 0;
-  for (const item of items) {
-    total += item.price * item.quantity;
+### Git Integration
+
+The `output.git` configuration allows you to control how files are sorted based on Git history:
+
+- `sortByChanges`: When set to `true`, files are sorted by the number of Git changes (commits that modified the file). Files with more changes appear at the bottom of the output. This can help prioritize more actively developed files. Default: `true`
+- `sortByChangesMaxCommits`: The maximum number of commits to analyze when counting file changes. Default: `100`
+
+Example configuration:
+```json
+{
+  "output": {
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100
+    }
   }
-  return total;
 }
-interface Item {
-  name: string;
-  price: number;
-  quantity: number;
-}
-```
-
-Will be compressed to:
-
-```typescript
-const calculateTotal = (items: ShoppingItem[]) => {
-interface Item {
 ```
 
 ### Comment Removal
+
+When `output.removeComments` is set to `true`, Repomix will remove comments from supported file types to reduce the output size and focus on essential code content.
+
+For supported languages and detailed examples, see [Comment Removal Guide](comment-removal).

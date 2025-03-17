@@ -1,42 +1,9 @@
 # Formatos de salida
 
 Repomix admite tres formatos de salida:
-- Texto sin formato (predeterminado)
-- XML
+- XML (predeterminado)
 - Markdown
-
-## Formato de texto sin formato
-
-```bash
-repomix --style plain
-```
-
-Estructura de salida:
-```text
-Este archivo es una representación fusionada de toda la base de código...
-
-================
-Resumen de archivos
-================
-(Metadatos e instrucciones de IA)
-
-================
-Estructura de directorios
-================
-src/
-  index.ts
-  utils/
-    helper.ts
-
-================
-Archivos
-================
-
-================
-Archivo: src/index.ts
-================
-// Contenido del archivo aquí
-```
+- Texto sin formato
 
 ## Formato XML
 
@@ -118,3 +85,36 @@ Establece el formato predeterminado en `repomix.config.json`:
     "filePath": "output.xml"
   }
 }
+
+## Formato de texto sin formato
+
+```bash
+repomix --style plain
+```
+
+Estructura de salida:
+```text
+Este archivo es una representación fusionada de toda la base de código...
+
+================
+Resumen de archivos
+================
+(Metadatos e instrucciones de IA)
+
+================
+Estructura de directorios
+================
+src/
+  index.ts
+  utils/
+    helper.ts
+
+================
+Archivos
+================
+
+================
+Archivo: src/index.ts
+================
+// Contenido del archivo aquí
+```
