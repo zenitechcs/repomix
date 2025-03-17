@@ -59,6 +59,47 @@ Esta ferramenta busca, clona e empacota um repositório GitHub em um arquivo con
 }
 ```
 
+### file_system_read_file e file_system_read_directory
+
+O servidor MCP do Repomix fornece duas ferramentas de sistema de arquivos que permitem que os assistentes de IA interajam com segurança com o sistema de arquivos local:
+
+1. `file_system_read_file`
+   - Lê conteúdo de arquivos usando caminhos absolutos
+   - Implementa validação de segurança usando [Secretlint](https://github.com/secretlint/secretlint)
+   - Previne acesso a arquivos contendo informações sensíveis
+   - Retorna mensagens de erro claras para caminhos inválidos e problemas de segurança
+
+2. `file_system_read_directory`
+   - Lista conteúdos de diretórios usando caminhos absolutos
+   - Mostra arquivos e diretórios com indicadores claros (`[FILE]` ou `[DIR]`)
+   - Fornece navegação segura de diretórios com tratamento apropriado de erros
+   - Valida caminhos e garante que sejam absolutos
+
+Ambas as ferramentas incorporam medidas de segurança robustas:
+- Validação de caminhos absolutos para prevenir ataques de travessia de diretórios
+- Verificações de permissões para garantir direitos de acesso apropriados
+- Integração com Secretlint para detecção de informações sensíveis
+- Mensagens de erro claras para depuração e consciência de segurança
+
+**Exemplo:**
+```typescript
+// Ler um arquivo
+const fileContent = await tools.file_system_read_file({
+  path: '/absolute/path/to/file.txt'
+});
+
+// Listar conteúdo do diretório
+const dirContent = await tools.file_system_read_directory({
+  path: '/absolute/path/to/directory'
+});
+```
+
+Essas ferramentas são particularmente úteis quando os assistentes de IA precisam:
+- Analisar arquivos específicos no código-base
+- Navegar estruturas de diretórios
+- Verificar existência e acessibilidade de arquivos
+- Garantir operações seguras do sistema de arquivos
+
 ## Configurando Servidores MCP
 
 Para usar o Repomix como um servidor MCP com assistentes de IA como o Claude, você precisa configurar as definições do MCP:

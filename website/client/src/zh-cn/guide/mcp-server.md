@@ -59,6 +59,47 @@ repomix --mcp
 }
 ```
 
+### file_system_read_file 和 file_system_read_directory
+
+Repomix的MCP服务器提供了两个文件系统工具，允许AI助手安全地与本地文件系统交互：
+
+1. `file_system_read_file`
+   - 使用绝对路径读取文件内容
+   - 使用[Secretlint](https://github.com/secretlint/secretlint)实现安全验证
+   - 防止访问包含敏感信息的文件
+   - 对无效路径和安全问题返回清晰的错误消息
+
+2. `file_system_read_directory`
+   - 使用绝对路径列出目录内容
+   - 使用清晰的指示符（`[FILE]`或`[DIR]`）显示文件和目录
+   - 提供安全的目录遍历和适当的错误处理
+   - 验证路径并确保使用绝对路径
+
+这两个工具都包含了强大的安全措施：
+- 绝对路径验证以防止目录遍历攻击
+- 权限检查以确保适当的访问权限
+- 与Secretlint集成以检测敏感信息
+- 清晰的错误消息以便于调试和安全意识
+
+**示例：**
+```typescript
+// 读取文件
+const fileContent = await tools.file_system_read_file({
+  path: '/absolute/path/to/file.txt'
+});
+
+// 列出目录内容
+const dirContent = await tools.file_system_read_directory({
+  path: '/absolute/path/to/directory'
+});
+```
+
+这些工具在AI助手需要执行以下操作时特别有用：
+- 分析代码库中的特定文件
+- 导航目录结构
+- 验证文件存在性和可访问性
+- 确保安全的文件系统操作
+
 ## 配置 MCP 服务器
 
 要将 Repomix 作为 MCP 服务器与 Claude 等 AI 助手一起使用，您需要配置 MCP 设置：

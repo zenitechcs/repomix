@@ -610,6 +610,22 @@ When running as an MCP server, Repomix provides the following tools:
     - `includePatterns`: (Optional) Comma-separated list of include patterns
     - `ignorePatterns`: (Optional) Comma-separated list of ignore patterns
 
+3. **file_system_read_file**: Read a file using an absolute path with security validation
+  - Parameters:
+    - `path`: Absolute path to the file to read
+  - Security features:
+    - Implements security validation using [Secretlint](https://github.com/secretlint/secretlint)
+    - Prevents access to files containing sensitive information
+    - Validates absolute paths to prevent directory traversal attacks
+
+4. **file_system_read_directory**: List contents of a directory using an absolute path
+  - Parameters:
+    - `path`: Absolute path to the directory to list
+  - Features:
+    - Shows files and directories with clear indicators (`[FILE]` or `[DIR]`)
+    - Provides safe directory traversal with proper error handling
+    - Validates paths and ensures they are absolute
+
 #### Configuring MCP Servers
 
 To use Repomix as an MCP server with AI assistants like Claude, you need to configure the MCP settings:

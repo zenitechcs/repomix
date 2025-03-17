@@ -59,6 +59,47 @@ This tool fetches, clones, and packages a GitHub repository into a consolidated 
 }
 ```
 
+### file_system_read_file and file_system_read_directory
+
+Repomix's MCP server provides two file system tools that allow AI assistants to safely interact with the local file system:
+
+1. `file_system_read_file`
+   - Reads file contents using absolute paths
+   - Implements security validation using [Secretlint](https://github.com/secretlint/secretlint)
+   - Prevents access to files containing sensitive information
+   - Returns formatted content with clear error messages for invalid paths or security issues
+
+2. `file_system_read_directory`
+   - Lists directory contents using absolute paths
+   - Shows both files and directories with clear indicators (`[FILE]` or `[DIR]`)
+   - Provides safe directory traversal with proper error handling
+   - Validates paths and ensures they are absolute
+
+Both tools incorporate robust security measures:
+- Absolute path validation to prevent directory traversal attacks
+- Permission checks to ensure proper access rights
+- Integration with Secretlint for sensitive information detection
+- Clear error messaging for better debugging and security awareness
+
+**Example:**
+```typescript
+// Reading a file
+const fileContent = await tools.file_system_read_file({
+  path: '/absolute/path/to/file.txt'
+});
+
+// Listing directory contents
+const dirContent = await tools.file_system_read_directory({
+  path: '/absolute/path/to/directory'
+});
+```
+
+These tools are particularly useful when AI assistants need to:
+- Analyze specific files in the codebase
+- Navigate directory structures
+- Verify file existence and accessibility
+- Ensure secure file system operations
+
 ## Configuring MCP Servers
 
 To use Repomix as an MCP server with AI assistants like Claude, you need to configure the MCP settings:
