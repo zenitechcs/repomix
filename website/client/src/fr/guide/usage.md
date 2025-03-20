@@ -47,7 +47,7 @@ repomix --remote user/repo --remote-branch 935b695
 ```bash
 repomix --compress
 # Vous pouvez également l'utiliser avec des dépôts distants:
-repomix --remote yamaadshy/repomix --compress
+repomix --remote yamadashy/repomix --compress
 ```
 
 ## Formats de sortie
