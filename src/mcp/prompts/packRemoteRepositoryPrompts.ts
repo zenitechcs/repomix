@@ -14,11 +14,11 @@ export const registerPackRemoteRepositoryPrompt = (mcpServer: McpServer) => {
       includePatterns: z
         .string()
         .optional()
-        .describe('Comma-separated list of glob patterns to include (e.g., "src/**,lib/**")'),
+        .describe('Comma-separated list of glob patterns to include (e.g., "src/**,lib/**"). It is recommended to pack only necessary files.'),
       ignorePatterns: z
         .string()
         .optional()
-        .describe('Comma-separated list of glob patterns to ignore (e.g., "**/*.test.js,**/*.spec.js")'),
+        .describe('Comma-separated list of glob patterns to ignore (e.g., "**/*.test.js,**/*.spec.js"). It is recommended to pack only necessary files.'),
     },
     async ({ repository, includePatterns, ignorePatterns }) => {
       // Convert compress string to boolean

@@ -105,17 +105,13 @@ export const formatToolResponse = (
         text: jsonResult,
       },
       {
-        type: 'resource',
-        resource: {
-          text: 'Repomix output file',
-          uri: `file://${outputFilePath}`,
-          mimeType: 'application/xml',
-        },
+        type: 'text',
+        text: `For environments with direct file system access, you can read the file directly using path: ${outputFilePath}`,
       },
       {
         type: 'text',
-        text: `For environments without direct file access (e.g., web browsers or sandboxed apps), use the read_repomix_output tool with this outputId: ${outputId} to access the packed codebase contents.`,
-      },
+        text: `For environments without direct file access (e.g., web browsers or sandboxed apps), use the \`read_repomix_output\` tool with this outputId: ${outputId} to access the packed codebase contents.`,
+      }
     ],
   };
 };
