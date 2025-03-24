@@ -59,6 +59,25 @@ repomix --mcp
 }
 ```
 
+### read_repomix_output
+
+此工具在无法直接访问文件的环境中读取Repomix输出文件的内容。
+
+**参数：**
+- `outputId`：（必需）要读取的Repomix输出文件的ID
+
+**功能：**
+- 专为基于Web的环境或沙箱应用程序设计
+- 使用其ID检索先前生成的输出内容
+- 无需文件系统访问权限即可安全访问打包的代码库
+
+**示例：**
+```json
+{
+  "outputId": "8f7d3b1e2a9c6054"
+}
+```
+
 ### file_system_read_file 和 file_system_read_directory
 
 Repomix的MCP服务器提供了两个文件系统工具，允许AI助手安全地与本地文件系统交互：

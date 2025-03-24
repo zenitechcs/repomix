@@ -610,7 +610,15 @@ When running as an MCP server, Repomix provides the following tools:
     - `includePatterns`: (Optional) Comma-separated list of include patterns
     - `ignorePatterns`: (Optional) Comma-separated list of ignore patterns
 
-3. **file_system_read_file**: Read a file using an absolute path with security validation
+3. **read_repomix_output**: Read the contents of a Repomix output file in environments where direct file access is not possible
+  - Parameters:
+    - `outputId`: ID of the Repomix output file to read
+  - Features:
+    - Specifically designed for web-based environments or sandboxed applications
+    - Retrieves the content of previously generated outputs using their ID
+    - Provides secure access to packed codebase without requiring file system access
+
+4. **file_system_read_file**: Read a file using an absolute path with security validation
   - Parameters:
     - `path`: Absolute path to the file to read
   - Security features:
@@ -618,7 +626,7 @@ When running as an MCP server, Repomix provides the following tools:
     - Prevents access to files containing sensitive information
     - Validates absolute paths to prevent directory traversal attacks
 
-4. **file_system_read_directory**: List contents of a directory using an absolute path
+5. **file_system_read_directory**: List contents of a directory using an absolute path
   - Parameters:
     - `path`: Absolute path to the directory to list
   - Features:
