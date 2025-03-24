@@ -59,6 +59,25 @@ Esta ferramenta busca, clona e empacota um repositório GitHub em um arquivo con
 }
 ```
 
+### read_repomix_output
+
+Esta ferramenta lê o conteúdo de um arquivo de saída do Repomix em ambientes onde o acesso direto a arquivos não é possível.
+
+**Parâmetros:**
+- `outputId`: (Obrigatório) ID do arquivo de saída do Repomix a ser lido
+
+**Funcionalidades:**
+- Projetado especificamente para ambientes baseados na web ou aplicações em sandbox
+- Recupera o conteúdo de saídas geradas anteriormente usando seu ID
+- Fornece acesso seguro à base de código empacotada sem requerer acesso ao sistema de arquivos
+
+**Exemplo:**
+```json
+{
+  "outputId": "8f7d3b1e2a9c6054"
+}
+```
+
 ### file_system_read_file e file_system_read_directory
 
 O servidor MCP do Repomix fornece duas ferramentas de sistema de arquivos que permitem que os assistentes de IA interajam com segurança com o sistema de arquivos local:

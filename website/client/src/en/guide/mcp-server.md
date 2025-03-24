@@ -59,6 +59,25 @@ This tool fetches, clones, and packages a GitHub repository into a consolidated 
 }
 ```
 
+### read_repomix_output
+
+This tool reads the contents of a Repomix output file in environments where direct file access is not possible.
+
+**Parameters:**
+- `outputId`: (Required) ID of the Repomix output file to read
+
+**Features:**
+- Specifically designed for web-based environments or sandboxed applications
+- Retrieves the content of previously generated outputs using their ID
+- Provides secure access to packed codebase without requiring file system access
+
+**Example:**
+```json
+{
+  "outputId": "8f7d3b1e2a9c6054"
+}
+```
+
 ### file_system_read_file and file_system_read_directory
 
 Repomix's MCP server provides two file system tools that allow AI assistants to safely interact with the local file system:

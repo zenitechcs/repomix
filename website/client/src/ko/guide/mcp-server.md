@@ -59,6 +59,25 @@ MCP 서버로 실행할 때 Repomix는 다음 도구를 제공합니다:
 }
 ```
 
+### read_repomix_output
+
+이 도구는 직접 파일 접근이 불가능한 환경에서 Repomix 출력 파일의 내용을 읽습니다.
+
+**매개변수:**
+- `outputId`: (필수) 읽을 Repomix 출력 파일의 ID
+
+**기능:**
+- 웹 기반 환경이나 샌드박스 애플리케이션을 위해 특별히 설계됨
+- ID를 사용하여 이전에 생성된 출력의 내용을 검색
+- 파일 시스템 접근 없이 패키징된 코드베이스에 안전하게 접근 제공
+
+**예시:**
+```json
+{
+  "outputId": "8f7d3b1e2a9c6054"
+}
+```
+
 ### file_system_read_file 및 file_system_read_directory
 
 Repomix의 MCP 서버는 AI 어시스턴트가 로컬 파일 시스템과 안전하게 상호 작용할 수 있는 두 가지 파일 시스템 도구를 제공합니다:

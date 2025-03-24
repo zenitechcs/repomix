@@ -22,19 +22,19 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         .string()
         .optional()
         .describe(
-          'Specify which files to include using fast-glob compatible patterns (e.g., "**/*.js,src/**"). Only files matching these patterns will be processed',
+          'Specify which files to include using fast-glob compatible patterns (e.g., "**/*.js,src/**"). Only files matching these patterns will be processed. It is recommended to pack only necessary files.',
         ),
       ignorePatterns: z
         .string()
         .optional()
         .describe(
-          'Specify additional files to exclude using fast-glob compatible patterns (e.g., "test/**,*.spec.js"). These patterns complement .gitignore and default ignores',
+          'Specify additional files to exclude using fast-glob compatible patterns (e.g., "test/**,*.spec.js"). These patterns complement .gitignore and default ignores. It is recommended to pack only necessary files.',
         ),
       topFilesLength: z
         .number()
         .optional()
-        .default(5)
-        .describe('Number of top files to display in the metrics (default: 5)'),
+        .default(10)
+        .describe('Number of top files to display in the metrics (default: 10)'),
     },
     async ({ directory, compress, includePatterns, ignorePatterns, topFilesLength }): Promise<CallToolResult> => {
       let tempDir = '';
