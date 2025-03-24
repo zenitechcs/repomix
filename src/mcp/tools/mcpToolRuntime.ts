@@ -111,7 +111,7 @@ export const formatToolResponse = (
       {
         type: 'text',
         text: `For environments without direct file access (e.g., web browsers or sandboxed apps), use the \`read_repomix_output\` tool with this outputId: ${outputId} to access the packed codebase contents.`,
-      }
+      },
     ],
   };
 };
