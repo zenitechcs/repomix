@@ -167,6 +167,11 @@ class CompositeManipulator extends BaseManipulator {
 
 const manipulators: Record<string, FileManipulator> = {
   '.c': new StripCommentsManipulator('c'),
+  '.h': new StripCommentsManipulator('c'),
+  '.hpp': new StripCommentsManipulator('c'),
+  '.cpp': new StripCommentsManipulator('c'),
+  '.cc': new StripCommentsManipulator('c'),
+  '.cxx': new StripCommentsManipulator('c'),
   '.cs': new StripCommentsManipulator('csharp'),
   '.css': new StripCommentsManipulator('css'),
   '.dart': new StripCommentsManipulator('c'),
