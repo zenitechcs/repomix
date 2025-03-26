@@ -183,6 +183,7 @@ const manipulators: Record<string, FileManipulator> = {
   '.sass': new StripCommentsManipulator('sass'),
   '.scss': new StripCommentsManipulator('sass'),
   '.sh': new StripCommentsManipulator('perl'),
+  '.sol': new StripCommentsManipulator('javascript'),
   '.sql': new StripCommentsManipulator('sql'),
   '.swift': new StripCommentsManipulator('swift'),
   '.ts': new StripCommentsManipulator('javascript'),
