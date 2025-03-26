@@ -9,6 +9,7 @@ import { queryPhp } from './queries/queryPhp.js';
 import { queryPython } from './queries/queryPython.js';
 import { queryRuby } from './queries/queryRuby.js';
 import { queryRust } from './queries/queryRust.js';
+import { querySolidity } from './queries/querySolidity.js';
 import { querySwift } from './queries/querySwift.js';
 import { queryTypescript } from './queries/queryTypescript.js';
 import { queryVue } from './queries/queryVue.js';
@@ -26,6 +27,7 @@ export const lang2Query = {
   java: queryJava,
   php: queryPhp,
   swift: querySwift,
+  solidity: querySolidity,
   css: queryCss,
   vue: queryVue,
 };

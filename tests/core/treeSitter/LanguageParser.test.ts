@@ -1,8 +1,6 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest';
-import Parser from 'web-tree-sitter';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { LanguageParser } from '../../../src/core/treeSitter/languageParser.js';
-// Mock external modules
-vi.mock('web-treeSitter');
+
 describe('LanguageParser', () => {
   let parser: LanguageParser;
 
@@ -12,10 +10,18 @@ describe('LanguageParser', () => {
 
   describe('guessTheLang', () => {
     it('should return the correct language based on file extension', () => {
-      const filePath = 'file.js';
-      const lang = parser.guessTheLang(filePath);
+      const testCases = [
+        { filePath: 'file.js', expected: 'javascript' },
+        { filePath: 'file.ts', expected: 'typescript' },
+        { filePath: 'file.sol', expected: 'solidity' },
+        { filePath: 'Contract.sol', expected: 'solidity' },
+        { filePath: 'path/to/MyContract.sol', expected: 'solidity' },
+      ];
 
-      expect(lang).toBe('javascript');
+      for (const { filePath, expected } of testCases) {
+        const lang = parser.guessTheLang(filePath);
+        expect(lang).toBe(expected);
+      }
     });
 
     it('should return undefined for unsupported extensions', () => {
