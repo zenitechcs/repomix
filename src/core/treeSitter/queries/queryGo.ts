@@ -45,7 +45,18 @@ export const queryGo = `
 
 (type_declaration (type_spec name: (type_identifier) @name type: (struct_type)))
 
-(import_declaration (import_spec) @name)
+; Import statements
+(import_declaration
+  (import_spec_list
+    (import_spec
+      path: (interpreted_string_literal) @name.reference.module))) @definition.import
+
+(import_declaration
+  (import_spec
+    path: (interpreted_string_literal) @name.reference.module)) @definition.import
+
+(package_clause
+  (package_identifier) @name.reference.module) @definition.package
 
 (var_declaration (var_spec name: (identifier) @name))
 
