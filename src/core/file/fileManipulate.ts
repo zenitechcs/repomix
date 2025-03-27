@@ -42,6 +42,28 @@ class StripCommentsManipulator extends BaseManipulator {
   }
 }
 
+class CppManipulator extends BaseManipulator {
+  removeComments(content: string): string {
+    let result = strip(content, {
+      language: 'c',
+      preserveNewlines: true,
+    });
+
+    result = result
+      .split('\n')
+      .map(line => {
+        const tripleSlashIndex = line.indexOf('///');
+        if (tripleSlashIndex !== -1) {
+          return line.substring(0, tripleSlashIndex).trimEnd();
+        }
+        return line;
+      })
+      .join('\n');
+
+    return rtrimLines(result);
+  }
+}
+
 class PythonManipulator extends BaseManipulator {
   removeDocStrings(content: string): string {
     if (!content) return '';
@@ -168,10 +190,10 @@ class CompositeManipulator extends BaseManipulator {
 const manipulators: Record<string, FileManipulator> = {
   '.c': new StripCommentsManipulator('c'),
   '.h': new StripCommentsManipulator('c'),
-  '.hpp': new StripCommentsManipulator('c'),
-  '.cpp': new StripCommentsManipulator('c'),
-  '.cc': new StripCommentsManipulator('c'),
-  '.cxx': new StripCommentsManipulator('c'),
+  '.hpp': new CppManipulator(),
+  '.cpp': new CppManipulator(),
+  '.cc': new CppManipulator(),
+  '.cxx': new CppManipulator(),
   '.cs': new StripCommentsManipulator('csharp'),
   '.css': new StripCommentsManipulator('css'),
   '.dart': new StripCommentsManipulator('c'),
