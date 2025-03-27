@@ -26,4 +26,5 @@ export const ext2Lang = {
   php: 'php',
   swift: 'swift',
   css: 'css',
+  sol: 'solidity',
 };

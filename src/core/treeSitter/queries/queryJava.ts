@@ -2,6 +2,14 @@ export const queryJava = `
 (line_comment) @comment
 (block_comment) @comment
 
+(import_declaration
+  .
+  (identifier) @name.reference.module) @definition.import
+
+(package_declaration
+  .
+  (identifier) @name.reference.module) @definition.import
+
 (class_declaration
   name: (identifier) @name.definition.class) @definition.class
 

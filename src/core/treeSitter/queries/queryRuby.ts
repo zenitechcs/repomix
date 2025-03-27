@@ -1,6 +1,10 @@
 export const queryRuby = `
 (comment) @comment
 
+; Import statements
+(call
+  (identifier) @name.reference.module) @definition.import
+
 ; Method definitions
 
 (
