@@ -24,6 +24,138 @@ describe('fileManipulate', () => {
 `,
     },
     {
+      name: 'C++ header file comment removal',
+      ext: '.h',
+      input: `
+        // Single line comment
+        #ifndef MY_HEADER_H
+        #define MY_HEADER_H
+        /* Multi-line
+           comment block */
+        class MyClass {
+          // Method comment
+          void method();
+          /**
+           * Documentation comment
+           */
+          int value;
+        };
+        #endif // MY_HEADER_H
+      `,
+      expected: `
+
+        #ifndef MY_HEADER_H
+        #define MY_HEADER_H
+
+
+        class MyClass {
+
+          void method();
+
+
+
+          int value;
+        };
+        #endif
+`,
+    },
+    {
+      name: 'C++ source file comment removal',
+      ext: '.cc',
+      input: `
+        // Single line comment
+        #include "myheader.h"
+        /* Multi-line
+           comment block */
+        void MyClass::method() {
+          // Implementation comment
+          /* Another
+             multi-line comment */
+          int x = 0; // Inline comment
+        }
+      `,
+      expected: `
+
+        #include "myheader.h"
+
+
+        void MyClass::method() {
+
+
+
+          int x = 0;
+        }
+`,
+    },
+    {
+      name: 'C++ .cpp file comment removal',
+      ext: '.cpp',
+      input: `
+        // Single line comment
+        #include <iostream>
+        /* Multi-line
+           comment block */
+        int main() {
+          // Implementation comment
+          std::cout << "Hello, world!" << std::endl; // Inline comment
+          /* Another
+             multi-line comment */
+          return 0;
+        }
+      `,
+      expected: `
+
+        #include <iostream>
+
+
+        int main() {
+
+          std::cout << "Hello, world!" << std::endl;
+
+
+          return 0;
+        }
+`,
+    },
+    {
+      name: 'C++ .hpp file comment removal',
+      ext: '.hpp',
+      input: `
+        // Single line comment
+        #pragma once
+        /* Multi-line
+           comment block */
+        namespace test {
+          // Class comment
+          template <typename T>
+          class Test {
+            /**
+             * Documentation comment
+             */
+            public:
+              T value;
+          };
+        } // namespace test
+      `,
+      expected: `
+
+        #pragma once
+
+
+        namespace test {
+
+          template <typename T>
+          class Test {
+
+
+
+            public:
+              T value;
+          };
+        }
+`,
+    },
+    {
       name: 'C# comment removal',
       ext: '.cs',
       input: `
@@ -735,6 +867,59 @@ describe('fileManipulate', () => {
         div { color: red; }
         </style>
 `,
+    },
+    {
+      name: 'C++ triple slash comment removal (.cpp)',
+      ext: '.cpp',
+      input: `
+        /// Triple slash documentation comment
+        #include <iostream>
+        // Single line comment
+        int main() {
+          std::cout << "Hello, world!" << std::endl; /// Inline triple slash comment
+          return 0; // Normal comment
+        }
+      `,
+      expected: `
+
+        #include <iostream>
+
+        int main() {
+          std::cout << "Hello, world!" << std::endl;
+          return 0;
+        }
+`,
+    },
+    {
+      name: 'C++ triple slash comment removal (.hpp)',
+      ext: '.hpp',
+      input: `
+        /// Class documentation with triple slash
+        class Test {
+          public:
+            /// Method documentation
+            void method();
+            int value; /// Variable documentation
+        };
+      `,
+      expected: `
+
+        class Test {
+          public:
+
+            void method();
+            int value;
+        };
+`,
+    },
+    {
+      name: 'C++ triple slash comment removal',
+      ext: '.cpp',
+      input: `
+        /// This is a triple slash comment.\n        int foo = 1; /// Another triple slash comment.\n// Regular single line comment\n/* Multi-line\n   comment */\nint bar = 2; /// Comment with trailing spaces  \n`,
+      expected: `
+
+        int foo = 1;\n\n\n\nint bar = 2;\n`,
     },
   ];
 
