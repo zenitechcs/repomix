@@ -868,6 +868,59 @@ describe('fileManipulate', () => {
         </style>
 `,
     },
+    {
+      name: 'C++ triple slash comment removal (.cpp)',
+      ext: '.cpp',
+      input: `
+        /// Triple slash documentation comment
+        #include <iostream>
+        // Single line comment
+        int main() {
+          std::cout << "Hello, world!" << std::endl; /// Inline triple slash comment
+          return 0; // Normal comment
+        }
+      `,
+      expected: `
+
+        #include <iostream>
+
+        int main() {
+          std::cout << "Hello, world!" << std::endl;
+          return 0;
+        }
+`,
+    },
+    {
+      name: 'C++ triple slash comment removal (.hpp)',
+      ext: '.hpp',
+      input: `
+        /// Class documentation with triple slash
+        class Test {
+          public:
+            /// Method documentation
+            void method();
+            int value; /// Variable documentation
+        };
+      `,
+      expected: `
+
+        class Test {
+          public:
+
+            void method();
+            int value;
+        };
+`,
+    },
+    {
+      name: 'C++ triple slash comment removal',
+      ext: '.cpp',
+      input: `
+        /// This is a triple slash comment.\n        int foo = 1; /// Another triple slash comment.\n// Regular single line comment\n/* Multi-line\n   comment */\nint bar = 2; /// Comment with trailing spaces  \n`,
+      expected: `
+
+        int foo = 1;\n\n\n\nint bar = 2;\n`,
+    },
   ];
 
   for (const { name, ext, input, expected } of testCases) {

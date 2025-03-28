@@ -51,7 +51,7 @@ class CppManipulator extends BaseManipulator {
 
     result = result
       .split('\n')
-      .map(line => {
+      .map((line) => {
         const tripleSlashIndex = line.indexOf('///');
         if (tripleSlashIndex !== -1) {
           return line.substring(0, tripleSlashIndex).trimEnd();
