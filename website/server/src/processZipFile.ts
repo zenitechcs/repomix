@@ -75,6 +75,7 @@ export async function processZipFile(
     outputShowLineNumbers: validatedData.options.showLineNumbers,
     fileSummary: validatedData.options.fileSummary,
     directoryStructure: validatedData.options.directoryStructure,
+    compress: validatedData.options.compress,
     securityCheck: false,
     topFilesLen: 10,
     include: sanitizedIncludePatterns,
