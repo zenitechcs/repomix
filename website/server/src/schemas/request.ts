@@ -24,6 +24,7 @@ export const packOptionsSchema = z
       .optional()
       .transform((val) => val?.trim()),
     outputParsable: z.boolean().optional(),
+    compress: z.boolean().optional(),
   })
   .strict();
 

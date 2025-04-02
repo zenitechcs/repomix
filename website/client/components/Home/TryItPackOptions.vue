@@ -13,6 +13,7 @@ const props = defineProps<{
   removeEmptyLines: boolean;
   showLineNumbers: boolean;
   outputParsable: boolean;
+  compress: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -25,6 +26,7 @@ const emit = defineEmits<{
   'update:removeEmptyLines': [value: boolean];
   'update:showLineNumbers': [value: boolean];
   'update:outputParsable': [value: boolean];
+  'update:compress': [value: boolean];
 }>();
 
 function handleFormatChange(newFormat: 'xml' | 'markdown' | 'plain') {
@@ -71,6 +73,11 @@ function handleOutputParsableToggle(enabled: boolean) {
   emit('update:outputParsable', enabled);
   handleOptionChange(enabled, AnalyticsAction.TOGGLE_OUTPUT_PARSABLE);
 }
+
+function handleCompressToggle(enabled: boolean) {
+  emit('update:compress', enabled);
+  handleOptionChange(enabled, AnalyticsAction.TOGGLE_COMPRESS);
+}
 </script>
 
 <template>
@@ -107,33 +114,38 @@ function handleOutputParsableToggle(enabled: boolean) {
       </div>
 
       <div class="option-section">
-        <p class="option-label">Include Patterns (using <a href="https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax" target="_blank" rel="noopener noreferrer">glob patterns</a>)</p>
-        <input
-          :value="includePatterns"
-          @input="event => handleIncludePatternsUpdate((event.target as HTMLInputElement).value)"
-          type="text"
-          class="repository-input"
-          placeholder="Comma-separated patterns to include. e.g., src/**/*.ts"
-          aria-label="Include patterns"
-        />
+        <p class="option-label">Include Patterns (using <a href="https://github.com/mrmlnc/fast-glob#pattern-syntax" target="_blank" rel="noopener noreferrer">glob patterns</a>)</p>
+        <div class="input-group">
+          <input
+            :value="includePatterns"
+            @input="event => handleIncludePatternsUpdate((event.target as HTMLInputElement).value)"
+            type="text"
+            class="pattern-input"
+            placeholder="Comma-separated patterns to include. e.g., src/**/*.ts"
+            aria-label="Include patterns"
+          />
+        </div>
       </div>
 
       <div class="option-section">
         <p class="option-label">Ignore Patterns</p>
-        <input
-          :value="ignorePatterns"
-          @input="event => handleIgnorePatternsUpdate((event.target as HTMLInputElement).value)"
-          type="text"
-          class="repository-input"
-          placeholder="Comma-separated patterns to ignore. e.g., **/*.test.ts,README.md"
-          aria-label="Ignore patterns"
-        />
+        <div class="input-group">
+          <input
+            :value="ignorePatterns"
+            @input="event => handleIgnorePatternsUpdate((event.target as HTMLInputElement).value)"
+            type="text"
+            class="pattern-input"
+            placeholder="Comma-separated patterns to ignore. e.g., **/*.test.ts,README.md"
+            aria-label="Ignore patterns"
+          />
+        </div>
       </div>
     </div>
 
     <div class="right-column">
+
       <div class="option-section">
-        <p class="option-label">Output Options</p>
+        <p class="option-label">Output Format Options</p>
         <div class="checkbox-group">
           <label class="checkbox-label">
             <input
@@ -152,24 +164,6 @@ function handleOutputParsableToggle(enabled: boolean) {
               class="checkbox-input"
             />
             <span>Include Directory Structure</span>
-          </label>
-          <label class="checkbox-label">
-            <input
-              :checked="removeComments"
-              @change="event => handleRemoveCommentsToggle((event.target as HTMLInputElement).checked)"
-              type="checkbox"
-              class="checkbox-input"
-            />
-            <span>Remove Comments</span>
-          </label>
-          <label class="checkbox-label">
-            <input
-              :checked="removeEmptyLines"
-              @change="event => handleRemoveEmptyLinesToggle((event.target as HTMLInputElement).checked)"
-              type="checkbox"
-              class="checkbox-input"
-            />
-            <span>Remove Empty Lines</span>
           </label>
           <label class="checkbox-label">
             <input
@@ -204,6 +198,53 @@ function handleOutputParsableToggle(enabled: boolean) {
           </label>
         </div>
       </div>
+
+      <div class="option-section">
+        <p class="option-label">File Processing Options</p>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input
+              :checked="compress"
+              @change="event => handleCompressToggle((event.target as HTMLInputElement).checked)"
+              type="checkbox"
+              class="checkbox-input"
+            />
+            <div class="option-with-tooltip">
+              <span>Compress Code</span>
+              <div class="tooltip-container">
+                <HelpCircle
+                  :size="16"
+                  class="help-icon"
+                  aria-label="More information about code compression"
+                />
+                <div class="tooltip-content">
+                  Utilize Tree-sitter to intelligently extract essential code signatures and structure while removing implementation details, significantly reducing token usage.
+                  <div class="tooltip-arrow"></div>
+                </div>
+              </div>
+            </div>
+          </label>
+          <label class="checkbox-label">
+            <input
+              :checked="removeComments"
+              @change="event => handleRemoveCommentsToggle((event.target as HTMLInputElement).checked)"
+              type="checkbox"
+              class="checkbox-input"
+            />
+            <span>Remove Comments</span>
+          </label>
+          <label class="checkbox-label">
+            <input
+              :checked="removeEmptyLines"
+              @change="event => handleRemoveEmptyLinesToggle((event.target as HTMLInputElement).checked)"
+              type="checkbox"
+              class="checkbox-input"
+            />
+            <span>Remove Empty Lines</span>
+          </label>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -223,20 +264,14 @@ function handleOutputParsableToggle(enabled: boolean) {
   gap: 20px;
 }
 
+.right-column {
+  gap: 18px;
+}
+
 .option-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.option-section input {
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  transition: border-color 0.2s;
+  gap: 2px;
 }
 
 .option-label {
@@ -244,14 +279,22 @@ function handleOutputParsableToggle(enabled: boolean) {
   font-weight: 500;
   margin: 0;
   color: var(--vp-c-text-2);
+  padding-bottom: 4px;
 }
 
 .option-label a {
   color: var(--vp-c-brand-1);
+  text-decoration: none;
 }
 
 .option-label a:hover {
   text-decoration: underline;
+}
+
+.option-with-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .format-buttons {
@@ -284,7 +327,7 @@ function handleOutputParsableToggle(enabled: boolean) {
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
 }
 
 .checkbox-label {
@@ -367,5 +410,30 @@ function handleOutputParsableToggle(enabled: boolean) {
   .right-column {
     gap: 24px;
   }
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.pattern-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  transition: border-color 0.2s;
+}
+
+.pattern-input:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.pattern-input:focus {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
 }
 </style>

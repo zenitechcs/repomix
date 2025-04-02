@@ -7,6 +7,7 @@ export interface PackOptions {
   includePatterns?: string;
   ignorePatterns?: string;
   outputParsable?: boolean;
+  compress?: boolean;
 }
 
 export interface PackRequest {

@@ -41,7 +41,7 @@
           />
           <TryItUrlInput
             v-else
-            v-model:url="url"
+            v-model:url="inputUrl"
             :loading="loading"
             @keydown="handleKeydown"
             :show-button="false"
@@ -57,15 +57,16 @@
       </div>
 
       <TryItPackOptions
-        v-model:format="format"
-        v-model:include-patterns="includePatterns"
-        v-model:ignore-patterns="ignorePatterns"
-        v-model:file-summary="fileSummary"
-        v-model:directory-structure="directoryStructure"
-        v-model:remove-comments="removeComments"
-        v-model:remove-empty-lines="removeEmptyLines"
-        v-model:show-line-numbers="showLineNumbers"
-        v-model:output-parsable="outputParsable"
+        v-model:format="inputFormat"
+        v-model:include-patterns="inputIncludePatterns"
+        v-model:ignore-patterns="inputIgnorePatterns"
+        v-model:file-summary="inputFileSummary"
+        v-model:directory-structure="inputDirectoryStructure"
+        v-model:remove-comments="inputRemoveComments"
+        v-model:remove-empty-lines="inputRemoveEmptyLines"
+        v-model:show-line-numbers="inputShowLineNumbers"
+        v-model:output-parsable="inputOutputParsable"
+        v-model:compress="inputCompress"
       />
 
       <div v-if="hasExecuted">
@@ -94,17 +95,18 @@ import TryItResult from './TryItResult.vue';
 import TryItUrlInput from './TryItUrlInput.vue';
 
 // Form input states
-const url = ref('');
-const format = ref<'xml' | 'markdown' | 'plain'>('xml');
-const removeComments = ref(false);
-const removeEmptyLines = ref(false);
-const showLineNumbers = ref(false);
-const fileSummary = ref(true);
-const directoryStructure = ref(true);
-const includePatterns = ref('');
-const ignorePatterns = ref('');
-const outputParsable = ref(false);
+const inputUrl = ref('');
+const inputFormat = ref<'xml' | 'markdown' | 'plain'>('xml');
+const inputRemoveComments = ref(false);
+const inputRemoveEmptyLines = ref(false);
+const inputShowLineNumbers = ref(false);
+const inputFileSummary = ref(true);
+const inputDirectoryStructure = ref(true);
+const inputIncludePatterns = ref('');
+const inputIgnorePatterns = ref('');
+const inputOutputParsable = ref(false);
 const inputRepositoryUrl = ref('');
+const inputCompress = ref(false);
 
 // Processing states
 const loading = ref(false);
@@ -118,7 +120,7 @@ const uploadedFile = ref<File | null>(null);
 const isSubmitValid = computed(() => {
   switch (mode.value) {
     case 'url':
-      return !!url.value && isValidRemoteValue(url.value.trim());
+      return !!inputUrl.value && isValidRemoteValue(inputUrl.value.trim());
     case 'file':
     case 'folder':
       return !!uploadedFile.value;
@@ -149,7 +151,7 @@ async function handleSubmit() {
   error.value = null;
   result.value = null;
   hasExecuted.value = true;
-  inputRepositoryUrl.value = url.value;
+  inputRepositoryUrl.value = inputUrl.value;
 
   const timeoutId = setTimeout(() => {
     if (requestController) {
@@ -159,17 +161,18 @@ async function handleSubmit() {
   }, TIMEOUT_MS);
 
   await handlePackRequest(
-    mode.value === 'url' ? url.value : '',
-    format.value,
+    mode.value === 'url' ? inputUrl.value : '',
+    inputFormat.value,
     {
-      removeComments: removeComments.value,
-      removeEmptyLines: removeEmptyLines.value,
-      showLineNumbers: showLineNumbers.value,
-      fileSummary: fileSummary.value,
-      directoryStructure: directoryStructure.value,
-      includePatterns: includePatterns.value ? includePatterns.value.trim() : undefined,
-      ignorePatterns: ignorePatterns.value ? ignorePatterns.value.trim() : undefined,
-      outputParsable: outputParsable.value,
+      removeComments: inputRemoveComments.value,
+      removeEmptyLines: inputRemoveEmptyLines.value,
+      showLineNumbers: inputShowLineNumbers.value,
+      fileSummary: inputFileSummary.value,
+      directoryStructure: inputDirectoryStructure.value,
+      includePatterns: inputIncludePatterns.value ? inputIncludePatterns.value.trim() : undefined,
+      ignorePatterns: inputIgnorePatterns.value ? inputIgnorePatterns.value.trim() : undefined,
+      outputParsable: inputOutputParsable.value,
+      compress: inputCompress.value,
     },
     {
       onSuccess: (response) => {
