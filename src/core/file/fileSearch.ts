@@ -81,12 +81,12 @@ export const normalizeGlobPattern = (pattern: string): string => {
   if (pattern.endsWith('/') && !pattern.endsWith('**/')) {
     return pattern.slice(0, -1);
   }
-  
+
   // Convert **/folder to **/folder/** for consistent ignore pattern behavior
   if (pattern.startsWith('**/') && !pattern.includes('/**')) {
     return `${pattern}/**`;
   }
-  
+
   return pattern;
 };
 
