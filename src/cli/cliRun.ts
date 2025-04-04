@@ -14,30 +14,30 @@ import type { CliOptions } from './types.js';
 // Semantic mapping for CLI suggestions
 // This maps conceptually related terms (not typos) to valid options
 const semanticSuggestionMap: Record<string, string[]> = {
-  'exclude': ['--ignore'],
-  'reject': ['--ignore'],
-  'omit': ['--ignore'],
-  'skip': ['--ignore'], 
-  'blacklist': ['--ignore'],
-  'save': ['--output'],
-  'export': ['--output'],
-  'out': ['--output'],
-  'file': ['--output'],
-  'format': ['--style'],
-  'type': ['--style'],
-  'syntax': ['--style'],
-  'debug': ['--verbose'],
-  'detailed': ['--verbose'],
-  'silent': ['--quiet'],
-  'mute': ['--quiet'],
-  'add': ['--include'],
-  'with': ['--include'],
-  'whitelist': ['--include'],
-  'clone': ['--copy'],
-  'minimize': ['--compress'],
-  'reduce': ['--compress'],
+  exclude: ['--ignore'],
+  reject: ['--ignore'],
+  omit: ['--ignore'],
+  skip: ['--ignore'],
+  blacklist: ['--ignore'],
+  save: ['--output'],
+  export: ['--output'],
+  out: ['--output'],
+  file: ['--output'],
+  format: ['--style'],
+  type: ['--style'],
+  syntax: ['--style'],
+  debug: ['--verbose'],
+  detailed: ['--verbose'],
+  silent: ['--quiet'],
+  mute: ['--quiet'],
+  add: ['--include'],
+  with: ['--include'],
+  whitelist: ['--include'],
+  clone: ['--copy'],
+  minimize: ['--compress'],
+  reduce: ['--compress'],
   'strip-comments': ['--remove-comments'],
-  'no-comments': ['--remove-comments']
+  'no-comments': ['--remove-comments'],
 };
 
 export const run = async () => {
@@ -92,16 +92,16 @@ export const run = async () => {
     // Custom error handling function
     const configOutput = program.configureOutput();
     const originalOutputError = configOutput.outputError || ((str, write) => write(str));
-    
+
     program.configureOutput({
       outputError: (str, write) => {
         // Check if this is an unknown option error
         if (str.includes('unknown option')) {
           const match = str.match(/unknown option '?(-{1,2}[^ ']+)'?/i);
-          if (match && match[1]) {
+          if (match?.[1]) {
             const unknownOption = match[1];
             const cleanOption = unknownOption.replace(/^-+/, '');
-            
+
             // Check if the option has a semantic match
             const semanticMatches = semanticSuggestionMap[cleanOption];
             if (semanticMatches) {
@@ -112,10 +112,10 @@ export const run = async () => {
             }
           }
         }
-        
+
         // Fall back to the original Commander error handler
         originalOutputError(str, write);
-      }
+      },
     });
 
     await program.parseAsync(process.argv);
