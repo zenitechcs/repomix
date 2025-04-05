@@ -15,6 +15,57 @@ repomix --mcp
 
 これによりRepomixがMCPサーバーモードで起動し、Model Context ProtocolをサポートするAIアシスタントから利用できるようになります。
 
+## MCPサーバーの設定
+
+RepomixをMCPサーバーとしてClaudeなどのAIアシスタントで使用するには、MCP設定を構成する必要があります：
+
+### VS Code向け
+
+VS CodeにRepomix MCPサーバーをインストールするには、以下のいずれかの方法を使用します：
+
+1. **インストールバッジを使用：**
+
+   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
+   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+
+2. **コマンドラインを使用：**
+
+   ```bash
+   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+   VS Code Insiders の場合：
+   ```bash
+   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+### Cline（VS Code拡張機能）の場合
+
+`cline_mcp_settings.json`ファイルを編集します：
+
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### Cursorの場合
+
+Cursorでは、`Cursor Settings` > `MCP` > `+ Add new global MCP server`からClineと同様の設定を追加します。
+
+### Claude Desktopの場合
+
+`claude_desktop_config.json`ファイルをClineの設定と同様に編集します。
+
 ## 利用可能なMCPツール
 
 MCPサーバーとして実行すると、Repomixは以下のツールを提供します：
@@ -118,53 +169,6 @@ const dirContent = await tools.file_system_read_directory({
 - ディレクトリ構造をナビゲート
 - ファイルの存在とアクセス可能性を確認
 - 安全なファイルシステム操作を確保
-
-## MCPサーバーの設定
-
-RepomixをMCPサーバーとしてClaudeなどのAIアシスタントで使用するには、MCP設定を構成する必要があります：
-
-### VS Code向け
-
-VS CodeにRepomix MCPサーバーをインストールするには、以下のいずれかの方法を使用します：
-
-1. **インストールバッジを使用：**
-
-   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
-   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
-
-2. **コマンドラインを使用：**
-
-   ```bash
-   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
-
-   VS Code Insiders の場合：
-   ```bash
-   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
-
-### Cline（VS Code拡張機能）の場合
-
-`cline_mcp_settings.json`ファイルを編集します：
-
-```json
-{
-  "mcpServers": {
-    "repomix": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "repomix",
-        "--mcp"
-      ]
-    }
-  }
-}
-```
-
-### Claude Desktopの場合
-
-`claude_desktop_config.json`ファイルをClineの設定と同様に編集します。
 
 ## RepomixをMCPサーバーとして使用する利点
 

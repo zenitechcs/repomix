@@ -15,6 +15,57 @@ repomix --mcp
 
 Dadurch wird Repomix im MCP-Server-Modus gestartet und steht KI-Assistenten zur Verfügung, die das Model Context Protocol unterstützen.
 
+## MCP-Server konfigurieren
+
+Um Repomix als MCP-Server mit KI-Assistenten wie Claude zu verwenden, müssen Sie die MCP-Einstellungen konfigurieren:
+
+### Für VS Code
+
+Sie können den Repomix MCP-Server in VS Code mit einer dieser Methoden installieren:
+
+1. **Über das Installations-Badge:**
+
+   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
+   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+
+2. **Über die Kommandozeile:**
+
+   ```bash
+   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+   Für VS Code Insiders:
+   ```bash
+   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+### Für Cline (VS Code-Erweiterung)
+
+Bearbeiten Sie die `cline_mcp_settings.json`-Datei:
+
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### Für Cursor
+
+In Cursor fügen Sie einen neuen MCP-Server aus `Cursor Settings` > `MCP` > `+ Add new global MCP server` mit einer ähnlichen Konfiguration wie bei Cline hinzu.
+
+### Für Claude Desktop
+
+Bearbeiten Sie die `claude_desktop_config.json`-Datei mit einer ähnlichen Konfiguration wie bei Cline.
+
 ## Verfügbare MCP-Tools
 
 Wenn Repomix als MCP-Server ausgeführt wird, stellt es die folgenden Tools bereit:
@@ -99,53 +150,6 @@ Diese Werkzeuge sind besonders nützlich, wenn KI-Assistenten:
 - Verzeichnisstrukturen navigieren müssen
 - Existenz und Zugänglichkeit von Dateien überprüfen müssen
 - Sichere Dateisystemoperationen gewährleisten müssen
-
-## MCP-Server konfigurieren
-
-Um Repomix als MCP-Server mit KI-Assistenten wie Claude zu verwenden, müssen Sie die MCP-Einstellungen konfigurieren:
-
-### Für VS Code
-
-Sie können den Repomix MCP-Server in VS Code mit einer dieser Methoden installieren:
-
-1. **Über das Installations-Badge:**
-
-   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
-   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
-
-2. **Über die Kommandozeile:**
-
-   ```bash
-   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
-
-   Für VS Code Insiders:
-   ```bash
-   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
-
-### Für Cline (VS Code-Erweiterung)
-
-Bearbeiten Sie die `cline_mcp_settings.json`-Datei:
-
-```json
-{
-  "mcpServers": {
-    "repomix": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "repomix",
-        "--mcp"
-      ]
-    }
-  }
-}
-```
-
-### Für Claude Desktop
-
-Bearbeiten Sie die `claude_desktop_config.json`-Datei mit einer ähnlichen Konfiguration wie bei Cline.
 
 ## Vorteile der Verwendung von Repomix als MCP-Server
 
