@@ -634,6 +634,10 @@ Edit the `cline_mcp_settings.json` file:
 }
 ```
 
+**For Cursor:**
+
+In Cursor, add a new MCP server from `Cursor Settings` > `MCP` > `+ Add new global MCP server` with a configuration similar to Cline.
+
 **For Claude Desktop:**
 
 Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
