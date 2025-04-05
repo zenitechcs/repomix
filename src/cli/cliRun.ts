@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { Option, program } from 'commander';
+import { Command, Option, program } from 'commander';
 import pc from 'picocolors';
 import { getVersion } from '../core/file/packageJsonParse.js';
 import { handleError } from '../shared/errorHandle.js';
@@ -10,6 +10,36 @@ import { runMcpAction } from './actions/mcpAction.js';
 import { runRemoteAction } from './actions/remoteAction.js';
 import { runVersionAction } from './actions/versionAction.js';
 import type { CliOptions } from './types.js';
+
+// Semantic mapping for CLI suggestions
+// This maps conceptually related terms (not typos) to valid options
+const semanticSuggestionMap: Record<string, string[]> = {
+  exclude: ['--ignore'],
+  reject: ['--ignore'],
+  omit: ['--ignore'],
+  skip: ['--ignore'],
+  blacklist: ['--ignore'],
+  save: ['--output'],
+  export: ['--output'],
+  out: ['--output'],
+  file: ['--output'],
+  format: ['--style'],
+  type: ['--style'],
+  syntax: ['--style'],
+  debug: ['--verbose'],
+  detailed: ['--verbose'],
+  silent: ['--quiet'],
+  mute: ['--quiet'],
+  add: ['--include'],
+  with: ['--include'],
+  whitelist: ['--include'],
+  clone: ['--remote'],
+  git: ['--remote'],
+  minimize: ['--compress'],
+  reduce: ['--compress'],
+  'strip-comments': ['--remove-comments'],
+  'no-comments': ['--remove-comments'],
+};
 
 export const run = async () => {
   try {
@@ -59,6 +89,35 @@ export const run = async () => {
       .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
       .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .action(commanderActionEndpoint);
+
+    // Custom error handling function
+    const configOutput = program.configureOutput();
+    const originalOutputError = configOutput.outputError || ((str, write) => write(str));
+
+    program.configureOutput({
+      outputError: (str, write) => {
+        // Check if this is an unknown option error
+        if (str.includes('unknown option')) {
+          const match = str.match(/unknown option '?(-{1,2}[^ ']+)'?/i);
+          if (match?.[1]) {
+            const unknownOption = match[1];
+            const cleanOption = unknownOption.replace(/^-+/, '');
+
+            // Check if the option has a semantic match
+            const semanticMatches = semanticSuggestionMap[cleanOption];
+            if (semanticMatches) {
+              // We have a direct semantic match
+              logger.error(`✖ Unknown option: ${unknownOption}`);
+              logger.info(`Did you mean: ${semanticMatches.join(' or ')}?`);
+              return;
+            }
+          }
+        }
+
+        // Fall back to the original Commander error handler
+        originalOutputError(str, write);
+      },
+    });
 
     await program.parseAsync(process.argv);
   } catch (error) {
