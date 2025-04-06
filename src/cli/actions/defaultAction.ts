@@ -10,6 +10,7 @@ import {
 import { type PackResult, pack } from '../../core/packager.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
+import { splitPatterns } from '../../shared/patternUtils.js';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
 import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
@@ -104,10 +105,10 @@ const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.output = { filePath: options.output };
   }
   if (options.include) {
-    cliConfig.include = options.include.split(',');
+    cliConfig.include = splitPatterns(options.include);
   }
   if (options.ignore) {
-    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
+    cliConfig.ignore = { customPatterns: splitPatterns(options.ignore) };
   }
   // Only apply gitignore setting if explicitly set to false
   if (options.gitignore === false) {
