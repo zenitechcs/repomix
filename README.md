@@ -111,7 +111,7 @@ The website offers several convenient features:
 
 ### Using The VSCode Extension ⚡️
 
-A community-maintained VSCode extension lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 
+A community-maintained VSCode extension called [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) (created by [massdo](https://github.com/massdo)) lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 
 
 Want your output as a file or just the content? Need automatic cleanup? This extension has you covered. Plus, it works smoothly with your existing repomix.config.json.
 
@@ -584,7 +584,7 @@ interface Item {
 > [!NOTE]
 > This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
 
-### MCP Integration
+### MCP Server Integration
 
 Repomix supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), allowing AI assistants to directly interact with your codebase. When run as an MCP server, Repomix provides tools that enable AI assistants to package local or remote repositories for analysis without requiring manual file preparation.
 
