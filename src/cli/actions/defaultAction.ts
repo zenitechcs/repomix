@@ -97,17 +97,17 @@ export const runDefaultAction = async (
  * - For --no-* flags, we only apply the setting when it's explicitly false to respect config file values
  * - This allows the config file to maintain control unless explicitly overridden by CLI
  */
-const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
+export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   const cliConfig: RepomixConfigCli = {};
 
   if (options.output) {
     cliConfig.output = { filePath: options.output };
   }
   if (options.include) {
-    cliConfig.include = options.include.split(',');
+    cliConfig.include = options.include.split(',').map(pattern => pattern.trim());
   }
   if (options.ignore) {
-    cliConfig.ignore = { customPatterns: options.ignore.split(',') };
+    cliConfig.ignore = { customPatterns: options.ignore.split(',').map(pattern => pattern.trim()) };
   }
   // Only apply gitignore setting if explicitly set to false
   if (options.gitignore === false) {
