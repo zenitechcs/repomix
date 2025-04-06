@@ -1,6 +1,6 @@
 import process from 'node:process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { runDefaultAction } from '../../../src/cli/actions/defaultAction.js';
+import { buildCliConfig, runDefaultAction } from '../../../src/cli/actions/defaultAction.js';
 import type { CliOptions } from '../../../src/cli/types.js';
 import * as configLoader from '../../../src/config/configLoad.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParse.js';
@@ -478,4 +478,15 @@ describe('defaultAction', () => {
       );
     });
   });
+
+  it('should properly trim whitespace from comma-separated patterns', () => {
+  const options = {
+    include: 'src/**/*,  tests/**/*,   examples/**/*',
+    ignore: 'node_modules/**,  dist/**,  coverage/**',
+  };
+  const config = buildCliConfig(options as unknown as CliOptions);
+  
+  expect(config.include).toEqual(['src/**/*', 'tests/**/*', 'examples/**/*']);
+  expect(config.ignore?.customPatterns).toEqual(['node_modules/**', 'dist/**', 'coverage/**']);
+});
 });
