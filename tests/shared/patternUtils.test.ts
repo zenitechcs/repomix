@@ -51,4 +51,4 @@ describe('patternUtils', () => {
       expect(result).toEqual(['src/**', 'tests/**', '**/*.js']);
     });
   });
-}); 
+});
