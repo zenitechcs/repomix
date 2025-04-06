@@ -480,13 +480,13 @@ describe('defaultAction', () => {
   });
 
   it('should properly trim whitespace from comma-separated patterns', () => {
-  const options = {
-    include: 'src/**/*,  tests/**/*,   examples/**/*',
-    ignore: 'node_modules/**,  dist/**,  coverage/**',
-  };
-  const config = buildCliConfig(options as unknown as CliOptions);
-  
-  expect(config.include).toEqual(['src/**/*', 'tests/**/*', 'examples/**/*']);
-  expect(config.ignore?.customPatterns).toEqual(['node_modules/**', 'dist/**', 'coverage/**']);
-});
+    const options = {
+      include: 'src/**/*,  tests/**/*,   examples/**/*',
+      ignore: 'node_modules/**,  dist/**,  coverage/**',
+    };
+    const config = buildCliConfig(options as unknown as CliOptions);
+
+    expect(config.include).toEqual(['src/**/*', 'tests/**/*', 'examples/**/*']);
+    expect(config.ignore?.customPatterns).toEqual(['node_modules/**', 'dist/**', 'coverage/**']);
+  });
 });
