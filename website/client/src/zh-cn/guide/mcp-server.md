@@ -15,6 +15,57 @@ repomix --mcp
 
 这会以 MCP 服务器模式启动 Repomix，使其可供支持 Model Context Protocol 的 AI 助手使用。
 
+## 配置 MCP 服务器
+
+要将 Repomix 作为 MCP 服务器与 Claude 等 AI 助手一起使用，您需要配置 MCP 设置：
+
+### 对于 VS Code
+
+您可以使用以下方法之一在 VS Code 中安装 Repomix MCP 服务器：
+
+1. **使用安装徽章：**
+
+   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
+   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+
+2. **使用命令行：**
+
+   ```bash
+   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+   对于 VS Code Insiders：
+   ```bash
+   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+### 对于 Cline（VS Code 扩展）
+
+编辑 `cline_mcp_settings.json` 文件：
+
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### 对于 Cursor
+
+在 Cursor 中，从 `Cursor Settings` > `MCP` > `+ Add new global MCP server` 添加一个新的 MCP 服务器，配置与 Cline 类似。
+
+### 对于 Claude Desktop
+
+使用与 Cline 类似的配置编辑 `claude_desktop_config.json` 文件。
+
 ## 可用的 MCP 工具
 
 当作为 MCP 服务器运行时，Repomix 提供以下工具：
@@ -118,33 +169,6 @@ const dirContent = await tools.file_system_read_directory({
 - 导航目录结构
 - 验证文件存在性和可访问性
 - 确保安全的文件系统操作
-
-## 配置 MCP 服务器
-
-要将 Repomix 作为 MCP 服务器与 Claude 等 AI 助手一起使用，您需要配置 MCP 设置：
-
-### 对于 Cline（VS Code 扩展）
-
-编辑 `cline_mcp_settings.json` 文件：
-
-```json
-{
-  "mcpServers": {
-    "repomix": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "repomix",
-        "--mcp"
-      ]
-    }
-  }
-}
-```
-
-### 对于 Claude Desktop
-
-使用与 Cline 类似的配置编辑 `claude_desktop_config.json` 文件。
 
 ## 将 Repomix 作为 MCP 服务器使用的好处
 

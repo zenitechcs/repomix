@@ -5,7 +5,7 @@
 
 ## 输出选项
 - `-o, --output <file>`: 输出文件名（默认：`repomix-output.txt`）
-- `--style <type>`: 输出样式（`plain`、`xml`、`markdown`）（默认：`plain`）
+- `--style <type>`: 输出样式（`plain`、`xml`、`markdown`）（默认：`xml`）
 - `--parsable-style`: 启用基于所选样式模式的可解析输出（默认：`false`）
 - `--compress`: 执行智能代码提取，专注于函数和类的签名，同时删除实现细节。有关详细信息和示例，请参阅[代码压缩指南](code-compress)。
 - `--output-show-line-numbers`: 添加行号（默认：`false`）

@@ -15,6 +15,57 @@ repomix --mcp
 
 이렇게 하면 Repomix가 MCP 서버 모드로 시작되어 Model Context Protocol을 지원하는 AI 어시스턴트에서 사용할 수 있게 됩니다.
 
+## MCP 서버 구성하기
+
+Claude와 같은 AI 어시스턴트와 함께 Repomix를 MCP 서버로 사용하려면 MCP 설정을 구성해야 합니다:
+
+### VS Code의 경우
+
+VS Code에 Repomix MCP 서버를 설치하는 방법은 다음과 같습니다:
+
+1. **설치 배지 사용:**
+
+   [![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF)](vscode:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)<br>
+   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5)](vscode-insiders:mcp/install?%7B%22name%22%3A%22repomix%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+
+2. **명령줄 사용:**
+
+   ```bash
+   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+   VS Code Insiders의 경우:
+   ```bash
+   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+### Cline(VS Code 확장)의 경우
+
+`cline_mcp_settings.json` 파일을 편집하세요:
+
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### Cursor의 경우
+
+Cursor에서는 `Cursor Settings` > `MCP` > `+ Add new global MCP server`에서 Cline과 유사한 설정을 추가하세요.
+
+### Claude Desktop의 경우
+
+Cline의 구성과 유사하게 `claude_desktop_config.json` 파일을 편집하세요.
+
 ## 사용 가능한 MCP 도구
 
 MCP 서버로 실행할 때 Repomix는 다음 도구를 제공합니다:
@@ -118,33 +169,6 @@ const dirContent = await tools.file_system_read_directory({
 - 디렉토리 구조 탐색
 - 파일 존재 여부 및 접근 가능성 확인
 - 안전한 파일 시스템 작업 보장
-
-## MCP 서버 구성하기
-
-Claude와 같은 AI 어시스턴트와 함께 Repomix를 MCP 서버로 사용하려면 MCP 설정을 구성해야 합니다:
-
-### Cline(VS Code 확장)의 경우
-
-`cline_mcp_settings.json` 파일을 편집하세요:
-
-```json
-{
-  "mcpServers": {
-    "repomix": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "repomix",
-        "--mcp"
-      ]
-    }
-  }
-}
-```
-
-### Claude Desktop의 경우
-
-Cline의 구성과 유사하게 `claude_desktop_config.json` 파일을 편집하세요.
 
 ## Repomix를 MCP 서버로 사용하는 이점
 

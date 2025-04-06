@@ -98,7 +98,7 @@ export const runDefaultAction = async (
  * - For --no-* flags, we only apply the setting when it's explicitly false to respect config file values
  * - This allows the config file to maintain control unless explicitly overridden by CLI
  */
-const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
+export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   const cliConfig: RepomixConfigCli = {};
 
   if (options.output) {

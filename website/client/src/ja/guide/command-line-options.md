@@ -5,7 +5,7 @@
 
 ## 出力オプション
 - `-o, --output <file>`: 出力ファイル名（デフォルト: `repomix-output.txt`）
-- `--style <type>`: 出力形式（`plain`、`xml`、`markdown`）（デフォルト: `plain`）
+- `--style <type>`: 出力形式（`plain`、`xml`、`markdown`）（デフォルト: `xml`）
 - `--parsable-style`: 選択した形式のスキーマに基づいて解析可能な出力を有効化（デフォルト: `false`）
 - `--compress`: 関数やクラスのシグネチャなどの重要な構造を保持しながら、実装の詳細を削除するインテリジェントなコード抽出を実行します。詳細と例については、[コード圧縮ガイド](code-compress)を参照してください。
 - `--output-show-line-numbers`: 行番号を追加（デフォルト: `false`）

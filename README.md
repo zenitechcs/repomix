@@ -111,7 +111,7 @@ The website offers several convenient features:
 
 ### Using The VSCode Extension ⚡️
 
-A community-maintained VSCode extension lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 
+A community-maintained VSCode extension called [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) (created by [massdo](https://github.com/massdo)) lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 
 
 Want your output as a file or just the content? Need automatic cleanup? This extension has you covered. Plus, it works smoothly with your existing repomix.config.json.
 
@@ -455,7 +455,7 @@ Instruction
 - `--no-security-check`: Disable security check
 
 #### Token Count Options
-- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`)
+- `--token-count-encoding <encoding>`: Specify token count encoding used by OpenAI's [tiktoken](https://github.com/openai/tiktoken) tokenizer (e.g., `o200k_base` for GPT-4o, `cl100k_base` for GPT-4/3.5). See [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) for encoding details.
 
 #### MCP
 - `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server
@@ -584,13 +584,65 @@ interface Item {
 > [!NOTE]
 > This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
 
-### MCP Integration
+### MCP Server Integration
 
 Repomix supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), allowing AI assistants to directly interact with your codebase. When run as an MCP server, Repomix provides tools that enable AI assistants to package local or remote repositories for analysis without requiring manual file preparation.
 
 ```bash
 repomix --mcp
 ```
+
+#### Configuring MCP Servers
+
+To use Repomix as an MCP server with AI assistants like Claude, you need to configure the MCP settings:
+
+**For VS Code:**
+
+You can install the Repomix MCP server in VS Code using one of these methods:
+
+1. **Using the Install Badge:**
+
+   [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D&quality=insiders)
+
+2. **Using the Command Line:**
+
+   ```bash
+   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+   For VS Code Insiders:
+   ```bash
+   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+   ```
+
+**For Cline (VS Code extension):**
+
+Edit the `cline_mcp_settings.json` file:
+```json
+{
+  "mcpServers": {
+    "repomix": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+**For Cursor:**
+
+In Cursor, add a new MCP server from `Cursor Settings` > `MCP` > `+ Add new global MCP server` with a configuration similar to Cline.
+
+**For Claude Desktop:**
+
+Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
+
+Once configured, your AI assistant can directly use Repomix's capabilities to analyze codebases without manual file preparation, making code analysis workflows more efficient.
 
 #### Available MCP Tools
 
@@ -634,33 +686,7 @@ When running as an MCP server, Repomix provides the following tools:
     - Provides safe directory traversal with proper error handling
     - Validates paths and ensures they are absolute
 
-#### Configuring MCP Servers
 
-To use Repomix as an MCP server with AI assistants like Claude, you need to configure the MCP settings:
-
-**For Cline (VS Code extension):**
-
-Edit the `cline_mcp_settings.json` file:
-```json
-{
-  "mcpServers": {
-    "repomix": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "repomix",
-        "--mcp"
-      ]
-    }
-  }
-}
-```
-
-**For Claude Desktop:**
-
-Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
-
-Once configured, your AI assistant can directly use Repomix's capabilities to analyze codebases without manual file preparation, making code analysis workflows more efficient.
 
 ## ⚙️ Configuration
 
@@ -695,7 +721,7 @@ Here's an explanation of the configuration options:
 | `ignore.useDefaultPatterns`      | Whether to use default ignore patterns                                                                                       | `true`                 |
 | `ignore.customPatterns`          | Additional patterns to ignore (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) | `[]`                   |
 | `security.enableSecurityCheck`   | Whether to perform security checks on files                                                                                  | `true`                 |
-| `tokenCount.encoding`            | Token count encoding for AI model context limits (e.g., `o200k_base`, `cl100k_base`)                                         | `"o200k_base"`         |
+| `tokenCount.encoding`            | Token count encoding used by OpenAI's [tiktoken](https://github.com/openai/tiktoken) tokenizer (e.g., `o200k_base` for GPT-4o, `cl100k_base` for GPT-4/3.5). See [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) for encoding details. | `"o200k_base"`         |
 
 The configuration file supports [JSON5](https://json5.org/) syntax, which allows:
 - Comments (both single-line and multi-line)

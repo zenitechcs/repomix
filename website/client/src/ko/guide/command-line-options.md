@@ -5,7 +5,7 @@
 
 ## 출력 옵션
 - `-o, --output <file>`: 출력 파일 이름 (기본값: `repomix-output.txt`)
-- `--style <type>`: 출력 스타일 (`plain`, `xml`, `markdown`) (기본값: `plain`)
+- `--style <type>`: 출력 스타일 (`plain`, `xml`, `markdown`) (기본값: `xml`)
 - `--parsable-style`: 선택한 스타일 스키마에 기반한 파싱 가능한 출력 활성화 (기본값: `false`)
 - `--compress`: 함수와 클래스 시그니처에 중점을 두고 구현 세부 사항을 제거하는 지능형 코드 추출을 수행합니다. 자세한 내용과 예제는 [코드 압축 가이드](code-compress)를 참조하세요.
 - `--output-show-line-numbers`: 줄 번호 추가 (기본값: `false`)
