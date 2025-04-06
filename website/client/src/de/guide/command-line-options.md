@@ -5,7 +5,7 @@
 
 ## Ausgabeoptionen
 - `-o, --output <file>`: Ausgabedateiname (Standard: `repomix-output.txt`)
-- `--style <type>`: Ausgabeformat (`plain`, `xml`, `markdown`) (Standard: `plain`)
+- `--style <type>`: Ausgabeformat (`plain`, `xml`, `markdown`) (Standard: `xml`)
 - `--parsable-style`: Aktiviert parsbare Ausgabe basierend auf dem gewählten Formatschema (Standard: `false`)
 - `--compress`: Führt eine intelligente Code-Extraktion durch, die sich auf Funktions- und Klassensignaturen konzentriert und Implementierungsdetails entfernt. Weitere Details und Beispiele finden Sie im [Code-Komprimierungsleitfaden](code-compress)
 - `--output-show-line-numbers`: Fügt Zeilennummern hinzu (Standard: `false`)

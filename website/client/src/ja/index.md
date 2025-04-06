@@ -153,14 +153,14 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://
 LLMによっては得意・不得意があるので、適切なフォーマットを選択してください。
 
 ```bash
-# プレーンテキストフォーマット（デフォルト）
-repomix --style plain
-
-# XMLフォーマット
+# XMLフォーマット（デフォルト）
 repomix --style xml
 
 # Markdownフォーマット
 repomix --style markdown
+
+# プレーンテキストフォーマット
+repomix --style plain
 ```
 
 ### カスタマイズ
