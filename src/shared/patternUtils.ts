@@ -4,7 +4,7 @@
  * rather than being split at commas inside the braces.
  * Whitespace around patterns is also trimmed.
  */
-export const splitPatterns = (patterns: string): string[] => {
+export const splitPatterns = (patterns?: string): string[] => {
   if (!patterns) return [];
 
   const result: string[] = [];
