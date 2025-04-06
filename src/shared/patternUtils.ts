@@ -6,14 +6,14 @@
  */
 export const splitPatterns = (patterns: string): string[] => {
   if (!patterns) return [];
-  
+
   const result: string[] = [];
   let currentPattern = '';
   let braceLevel = 0;
-  
+
   for (let i = 0; i < patterns.length; i++) {
     const char = patterns[i];
-    
+
     if (char === '{') {
       braceLevel++;
       currentPattern += char;
@@ -30,11 +30,11 @@ export const splitPatterns = (patterns: string): string[] => {
       currentPattern += char;
     }
   }
-  
+
   // Add the last pattern
   if (currentPattern) {
     result.push(currentPattern.trim());
   }
-  
+
   return result;
-} 
+};
