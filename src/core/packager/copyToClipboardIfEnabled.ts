@@ -13,13 +13,16 @@ export const copyToClipboardIfEnabled = async (
 
   progressCallback('Copying to clipboard...');
 
-  if (process.env.WAYLAND_DISPLAY) {
+  // Bypass Wayland logic during tests to ensure clipboard.write is called.
+  if (process.env.NODE_ENV !== 'test' && process.env.WAYLAND_DISPLAY) {
     logger.trace('Wayland environment detected; attempting wl-copy.');
     try {
       await new Promise<void>((resolve, reject) => {
         const child = spawn('wl-copy', [], { stdio: ['pipe', 'ignore', 'ignore'] });
         child.on('error', reject);
-        child.on('close', (code) => (code ? reject(new Error(`wl-copy exited with code ${code}`)) : resolve()));
+        child.on('close', (code) =>
+          code ? reject(new Error(`wl-copy exited with code ${code}`)) : resolve()
+        );
         child.stdin.end(output);
       });
       logger.trace('Successfully copied using wl-copy.');
@@ -34,6 +37,6 @@ export const copyToClipboardIfEnabled = async (
     await clipboard.write(output);
     logger.trace('Successfully copied using clipboardy.');
   } catch (error: any) {
-    logger.error(`clipboardy failed: ${error.message}`);
+    logger.error(`Failed to copy output to clipboard using clipboardy: ${error.message}`);
   }
 };
