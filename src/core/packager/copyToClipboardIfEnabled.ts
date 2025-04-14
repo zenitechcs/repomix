@@ -10,33 +10,31 @@ export const copyToClipboardIfEnabled = async (
   config: RepomixConfigMerged,
 ): Promise<void> => {
   if (!config.output.copyToClipboard) return;
-
   progressCallback('Copying to clipboard...');
 
-  // Bypass Wayland logic during tests to ensure clipboard.write is called.
   if (process.env.NODE_ENV !== 'test' && process.env.WAYLAND_DISPLAY) {
-    logger.trace('Wayland environment detected; attempting wl-copy.');
+    logger.trace('Wayland detected; attempting wl-copy.');
     try {
       await new Promise<void>((resolve, reject) => {
-        const child = spawn('wl-copy', [], { stdio: ['pipe', 'ignore', 'ignore'] });
-        child.on('error', reject);
-        child.on('close', (code) =>
-          code ? reject(new Error(`wl-copy exited with code ${code}`)) : resolve()
-        );
-        child.stdin.end(output);
+        const proc = spawn('wl-copy', [], { stdio: ['pipe', 'ignore', 'ignore'] });
+        proc.on('error', reject);
+        proc.on('close', (code) => (code ? reject(new Error(`wl-copy exited with code ${code}`)) : resolve()));
+        proc.stdin.end(output);
       });
-      logger.trace('Successfully copied using wl-copy.');
+      logger.trace('Copied using wl-copy.');
       return;
-    } catch (error: any) {
-      logger.warn(`wl-copy failed (${error.message}); falling back to clipboardy.`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'unknown error';
+      logger.warn(`wl-copy failed (${msg}); falling back.`);
     }
   }
 
   try {
-    logger.trace('Using clipboardy for copying.');
+    logger.trace('Using clipboardy.');
     await clipboard.write(output);
-    logger.trace('Successfully copied using clipboardy.');
-  } catch (error: any) {
-    logger.error(`Failed to copy output to clipboard using clipboardy: ${error.message}`);
+    logger.trace('Copied using clipboardy.');
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'unknown error';
+    logger.error(`clipboardy failed: ${msg}`);
   }
 };
