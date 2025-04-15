@@ -5,7 +5,7 @@
 
 ## Opciones de Salida
 - `-o, --output <file>`: Nombre del archivo de salida (predeterminado: `repomix-output.txt`)
-- `--style <type>`: Estilo de salida (`plain`, `xml`, `markdown`) (predeterminado: `plain`)
+- `--style <type>`: Estilo de salida (`plain`, `xml`, `markdown`) (predeterminado: `xml`)
 - `--parsable-style`: Habilita la salida analizable basada en el esquema del estilo elegido (predeterminado: `false`)
 - `--compress`: Realiza una extracción inteligente de código, centrándose en las firmas de funciones y clases mientras elimina los detalles de implementación. Para más detalles y ejemplos, consulte la [Guía de Compresión de Código](code-compress)
 - `--output-show-line-numbers`: Agrega números de línea (predeterminado: `false`)
