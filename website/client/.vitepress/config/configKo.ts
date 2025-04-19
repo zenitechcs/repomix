@@ -35,6 +35,7 @@ export const configKo = defineConfig({
               items: [
                 { text: '기여하기', link: '/ko/guide/development/' },
                 { text: '환경 설정', link: '/ko/guide/development/setup' },
+                { text: 'Repomix를 라이브러리로 사용하기', link: '/ko/guide/development/using-repomix-as-a-library' },
               ],
             },
           ],
