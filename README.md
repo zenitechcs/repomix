@@ -932,7 +932,7 @@ repomix --no-security-check
 
 ## 📚 Using Repomix as a Library
 
-In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications. This allows you to integrate Repomix's functionality directly into your own tools, scripts, or applications.
+In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications.
 
 ### Installation
 
@@ -943,169 +943,64 @@ npm install repomix
 ### Basic Usage
 
 ```javascript
-import { pack, loadFileConfig, mergeConfigs } from 'repomix';
+import { runCli, type CliOptions } from 'repomix';
 
-// Basic usage - pack the current directory with default settings
-async function packRepository() {
-  try {
-    const result = await pack([process.cwd()], { 
-      output: { style: 'xml' },
-      cwd: process.cwd() 
-    });
-    
-    console.log(`Packed ${result.totalFiles} files with ${result.totalTokens} tokens`);
-  } catch (error) {
-    console.error('Error packing repository:', error);
-  }
-}
-
-// Use Repomix configuration system
-async function packWithConfig() {
-  // Load configuration from repomix.config.json
-  const fileConfig = await loadFileConfig(process.cwd(), null);
+// Process current directory with custom options
+async function packProject() {
+  const options = {
+    output: 'output.xml',
+    style: 'xml',
+    compress: true,
+    quiet: true
+  } as CliOptions;
   
-  // Merge with custom CLI options
-  const config = mergeConfigs(
-    process.cwd(),
-    fileConfig,
-    { output: { compress: true } }
-  );
-  
-  // Pack with the merged configuration
-  const result = await pack([process.cwd()], config);
-  console.log(`Generated output at ${config.output.filePath}`);
+  const result = await runCli(['.'], process.cwd(), options);
+  return result.packResult;
 }
 ```
 
-### Core Functions
-
-Repomix exports several core functions that you can use individually:
+### Process Remote Repository
 
 ```javascript
-import { 
-  searchFiles,
-  collectFiles,
-  processFiles,
-  generateOutput,
-  validateFileSafety,
-  TokenCounter
-} from 'repomix';
+import { runCli, type CliOptions } from 'repomix';
 
-async function customPacking() {
-  const config = { /* your config */ };
+// Clone and process a GitHub repo
+async function processRemoteRepo(repoUrl) {
+  const options = {
+    remote: repoUrl,
+    output: 'output.xml',
+    compress: true
+  } as CliOptions;
   
-  // Search for files matching your criteria
-  const { filePaths } = await searchFiles(process.cwd(), config);
+  return await runCli(['.'], process.cwd(), options);
+}
+```
+
+### Using Core Components
+
+If you need more control, you can use the low-level APIs:
+
+```javascript
+import { searchFiles, collectFiles, processFiles, TokenCounter } from 'repomix';
+
+async function analyzeFiles(directory) {
+  // Find and collect files
+  const { filePaths } = await searchFiles(directory, { /* config */ });
+  const rawFiles = await collectFiles(filePaths, directory);
+  const processedFiles = await processFiles(rawFiles, { /* config */ });
   
-  // Collect file contents
-  const rawFiles = await collectFiles(filePaths, process.cwd());
-  
-  // Validate files for security risks
-  const { safeRawFiles } = await validateFileSafety(rawFiles, () => {}, config);
-  
-  // Process files (remove comments, etc.)
-  const processedFiles = await processFiles(safeRawFiles, config);
-  
-  // Generate output in your preferred format
-  const output = await generateOutput([process.cwd()], config, processedFiles, filePaths);
-  
-  // Count tokens using tiktoken
+  // Count tokens
   const tokenCounter = new TokenCounter('o200k_base');
-  const tokenCount = tokenCounter.countTokens(output);
-  console.log(`Output contains ${tokenCount} tokens`);
-}
-```
-
-### Git Integration
-
-Repomix also provides utilities for working with Git repositories:
-
-```javascript
-import { execGitShallowClone, isGitInstalled, getFileChangeCount } from 'repomix';
-
-async function gitOperations() {
-  // Check if Git is installed
-  const gitAvailable = await isGitInstalled();
   
-  if (gitAvailable) {
-    // Clone a remote repository
-    await execGitShallowClone(
-      'https://github.com/yamadashy/repomix',
-      './temp-repo'
-    );
-    
-    // Get file change frequency
-    const changeCount = await getFileChangeCount('./temp-repo');
-    console.log('Files sorted by change frequency:', changeCount);
-  }
-}
-```
-
-### Remote Repository Processing
-
-You can also process remote repositories directly:
-
-```javascript
-import { runRemoteAction, isValidRemoteValue } from 'repomix';
-
-async function processRemote() {
-  const repoUrl = 'yamadashy/repomix';
-  
-  if (isValidRemoteValue(repoUrl)) {
-    const options = {
-      remote: repoUrl,
-      output: { compress: true }
-    };
-    
-    await runRemoteAction(options);
-  }
-}
-```
-
-### Advanced Example: Building a Custom Processing Tool
-
-```javascript
-import { loadFileConfig, mergeConfigs, searchFiles, collectFiles, processFiles, TokenCounter } from 'repomix';
-import * as fs from 'node:fs/promises';
-
-async function buildCustomTool() {
-  // Load and merge configuration
-  const fileConfig = await loadFileConfig(process.cwd(), null);
-  const config = mergeConfigs(
-    process.cwd(),
-    fileConfig,
-    { include: ['**/*.js', '**/*.ts'] }
-  );
-  
-  // Find and process files
-  const { filePaths } = await searchFiles(process.cwd(), config);
-  const rawFiles = await collectFiles(filePaths, process.cwd());
-  const processedFiles = await processFiles(rawFiles, config);
-  
-  // Custom analysis
-  const tokenCounter = new TokenCounter('o200k_base');
-  const fileMetrics = processedFiles.map(file => ({
+  // Return analysis results
+  return processedFiles.map(file => ({
     path: file.path,
-    lines: file.content.split('\n').length,
-    chars: file.content.length,
     tokens: tokenCounter.countTokens(file.content)
   }));
-  
-  // Sort by token count
-  fileMetrics.sort((a, b) => b.tokens - a.tokens);
-  
-  // Output custom analysis
-  await fs.writeFile(
-    'code-metrics.json', 
-    JSON.stringify(fileMetrics, null, 2)
-  );
-  
-  console.log(`Analyzed ${fileMetrics.length} files`);
 }
 ```
 
-By using Repomix as a library, you can build custom code analysis tools, integrate with existing workflows, or create specialized processing scripts tailored to your specific needs.
-
+For more examples, check the source code at [website/server/src/remoteRepo.ts](https://github.com/yamadashy/repomix/blob/main/website/server/src/remoteRepo.ts) which demonstrates how repomix.com uses the library.
 
 ## 🤝 Contribution
 
@@ -1148,206 +1043,3 @@ This project is licensed under the [MIT License](LICENSE).
   </a>
 
 </p>
-
-## 📚 Using Repomix as a Library
-
-In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications. This allows you to integrate Repomix's functionality directly into your own tools, scripts, or applications.
-
-### Installation
-
-```bash
-npm install repomix
-```
-
-### Basic Usage
-
-```javascript
-import { runCli, setLogLevel, type CliOptions } from 'repomix';
-
-async function processCodebase(options) {
-  // Configure Repomix options
-  const cliOptions = {
-    output: 'repomix-output.xml',
-    style: 'xml',    // 'xml', 'markdown', or 'plain'
-    compress: true,  // Enable intelligent code extraction
-    securityCheck: false,
-    quiet: true      // Suppress console output
-  } as CliOptions;
-  
-  // Run Repomix programmatically
-  const result = await runCli(['.'], process.cwd(), cliOptions);
-  
-  return result.packResult;
-}
-```
-
-### Real-World Example: Processing Remote Repositories
-
-This example shows how to clone and process a remote repository, based on the approach used by [repomix.com](https://repomix.com):
-
-```typescript
-import { randomUUID } from 'node:crypto';
-import fs from 'node:fs/promises';
-import { runCli, type CliOptions } from 'repomix';
-
-async function processRemoteRepo(repoUrl, format, options) {
-  // Generate a unique output filename
-  const outputFilePath = `repomix-output-${randomUUID()}.txt`;
-  
-  // Create CLI options for Repomix
-  const cliOptions = {
-    remote: repoUrl,
-    output: outputFilePath,
-    style: format,             // 'xml', 'markdown', or 'plain'
-    compress: options.compress,
-    removeComments: options.removeComments,
-    removeEmptyLines: options.removeEmptyLines,
-    outputShowLineNumbers: options.showLineNumbers,
-    include: options.includePatterns,
-    ignore: options.ignorePatterns,
-    quiet: true                // Suppress console output
-  } as CliOptions;
-  
-  try {
-    // Execute Repomix
-    const result = await runCli(['.'], process.cwd(), cliOptions);
-    
-    // Read the generated file
-    const content = await fs.readFile(outputFilePath, 'utf-8');
-    
-    // Return processed data
-    return {
-      content,
-      metadata: {
-        repository: repoUrl,
-        summary: {
-          totalFiles: result.packResult.totalFiles,
-          totalCharacters: result.packResult.totalCharacters,
-          totalTokens: result.packResult.totalTokens
-        },
-        topFiles: Object.entries(result.packResult.fileCharCounts)
-          .map(([path, charCount]) => ({
-            path,
-            charCount,
-            tokenCount: result.packResult.fileTokenCounts[path] || 0
-          }))
-          .sort((a, b) => b.charCount - a.charCount)
-          .slice(0, 10)
-      }
-    };
-  } finally {
-    // Clean up the output file
-    try {
-      await fs.unlink(outputFilePath);
-    } catch (err) {
-      // Ignore file deletion errors
-    }
-  }
-}
-```
-
-### Processing Local Files or ZIP Archives
-
-This example demonstrates how to process a local ZIP file or directory:
-
-```typescript
-import fs from 'node:fs/promises';
-import { runDefaultAction, setLogLevel, type CliOptions } from 'repomix';
-
-async function processZipOrDirectory(directoryPath, format, options) {
-  const outputFilePath = 'repomix-output.txt';
-  
-  // Configure logging level (-1 to disable all logs)
-  setLogLevel(-1);
-  
-  // Create CLI options
-  const cliOptions = {
-    output: outputFilePath,
-    style: format,  // 'xml', 'markdown', or 'plain'
-    compress: options.compress,
-    removeComments: options.removeComments,
-    removeEmptyLines: options.removeEmptyLines,
-    include: options.includePatterns,
-    ignore: options.ignorePatterns,
-    quiet: true     // Suppress console output
-  } as CliOptions;
-  
-  try {
-    // Process the directory
-    const result = await runDefaultAction([directoryPath], directoryPath, cliOptions);
-    
-    // Read the generated output
-    const content = await fs.readFile(result.config.output.filePath, 'utf-8');
-    
-    return {
-      content,
-      metadata: {
-        totalFiles: result.packResult.totalFiles,
-        totalCharacters: result.packResult.totalCharacters,
-        totalTokens: result.packResult.totalTokens
-      }
-    };
-  } finally {
-    // Clean up
-    try {
-      await fs.unlink(outputFilePath);
-    } catch (err) {
-      // Ignore cleanup errors
-    }
-  }
-}
-```
-
-### Advanced: Using Low-Level APIs
-
-For more granular control, you can use Repomix's low-level APIs directly:
-
-```typescript
-import { 
-  loadFileConfig, 
-  mergeConfigs, 
-  searchFiles, 
-  collectFiles, 
-  processFiles,
-  generateOutput,
-  validateFileSafety,
-  TokenCounter 
-} from 'repomix';
-
-async function customProcessing(directoryPath) {
-  // Load and merge configurations
-  const fileConfig = await loadFileConfig(directoryPath, null);
-  const config = mergeConfigs(
-    directoryPath,
-    fileConfig,
-    { compress: true }
-  );
-  
-  // Find files
-  const { filePaths } = await searchFiles(directoryPath, config);
-  
-  // Collect file contents
-  const rawFiles = await collectFiles(filePaths, directoryPath);
-  
-  // Security validation
-  const { safeRawFiles } = await validateFileSafety(rawFiles, () => {}, config);
-  
-  // Process files (comment removal, etc.)
-  const processedFiles = await processFiles(safeRawFiles, config);
-  
-  // Generate output
-  const output = await generateOutput([directoryPath], config, processedFiles, filePaths);
-  
-  // Token counting
-  const tokenCounter = new TokenCounter('o200k_base');
-  const tokenCount = tokenCounter.countTokens(output);
-  
-  return {
-    output,
-    tokenCount,
-    fileCount: filePaths.length
-  };
-}
-```
-
-By using Repomix as a library, you can build powerful code analysis tools, create custom processing workflows, or integrate Repomix functionality into your existing applications.
