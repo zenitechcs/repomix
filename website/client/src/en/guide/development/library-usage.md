@@ -107,55 +107,6 @@ async function loadAndUseConfig() {
 }
 ```
 
-## Available Exports
-
-Repomix exports the following components:
-
-### Core Functions
-- `pack`: Main function to pack files
-- `searchFiles`: Find files matching specific patterns
-- `collectFiles`: Read file contents
-- `processFiles`: Process files (remove comments, etc.)
-- `sortPaths`: Sort file paths
-- `generateOutput`: Generate formatted output
-- `validateFileSafety`: Check files for security risks
-
-### Git Utilities
-- `isGitInstalled`: Check if Git is installed
-- `execGitShallowClone`: Clone a remote repository
-- `getFileChangeCount`: Get file change frequency
-
-### Configuration
-- `loadFileConfig`: Load configuration from file
-- `mergeConfigs`: Merge configuration objects
-- `defaultIgnoreList`: Default patterns to ignore
-
-### CLI Actions
-- `runCli`: Run Repomix CLI
-- `runDefaultAction`: Process local files
-- `runRemoteAction`: Process remote repository
-- `runInitAction`: Initialize configuration file
-- `isValidRemoteValue`: Validate remote repository URL
-
-### Utilities
-- `TokenCounter`: Calculate token counts
-- `parseFile`: Parse and extract key code elements
-- `setLogLevel`: Configure logging level
-
 ## Real-World Example
 
-The Repomix website ([repomix.com](https://repomix.com)) uses Repomix as a library to process remote repositories. You can see the implementation in [website/server/src/remoteRepo.ts](https://github.com/yamadashy/repomix/blob/main/website/server/src/remoteRepo.ts).
-
-## Type Definitions
-
-The library exports TypeScript type definitions for all its components, making it easy to integrate into TypeScript projects:
-
-```typescript
-import { 
-  type CliOptions,
-  type RepomixConfig,
-  type PackResult,
-  type FileSearchResult,
-  type SuspiciousFileResult
-} from 'repomix';
-``` 
+The Repomix website ([repomix.com](https://repomix.com)) uses Repomix as a library to process remote repositories. You can see the implementation in [website/server/src/remoteRepo.ts](https://github.com/yamadashy/repomix/blob/main/website/server/src/remoteRepo.ts). 
