@@ -17,7 +17,7 @@ export const copyToClipboardIfEnabled = async (
     try {
       await new Promise<void>((resolve, reject) => {
         const proc = spawn('wl-copy', [], { stdio: ['pipe', 'ignore', 'ignore'] });
-        proc.on('error', reject);
+        proc.on('error', (err) => reject(new Error(`Failed to execute wl-copy: ${err.message}`)));
         proc.on('close', (code) => (code ? reject(new Error(`wl-copy exited with code ${code}`)) : resolve()));
         proc.stdin.end(output);
       });
