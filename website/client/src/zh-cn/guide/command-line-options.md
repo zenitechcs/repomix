@@ -12,6 +12,7 @@
 - `--copy`: 复制到剪贴板（默认：`false`）
 - `--no-file-summary`: 禁用文件摘要（默认：`true`）
 - `--no-directory-structure`: 禁用目录结构（默认：`true`）
+- `--no-files`: 禁用文件内容输出（仅元数据模式）（默认：`true`）
 - `--remove-comments`: 移除注释（默认：`false`）
 - `--remove-empty-lines`: 移除空行（默认：`false`）
 - `--header-text <text>`: 文件头部包含的自定义文本

@@ -21,6 +21,7 @@ export interface RenderContext {
   readonly processedFiles: ReadonlyArray<ProcessedFile>;
   readonly fileSummaryEnabled: boolean;
   readonly directoryStructureEnabled: boolean;
+  readonly filesEnabled: boolean;
   readonly escapeFileContent: boolean;
   readonly markdownCodeBlockDelimiter: string;
 }

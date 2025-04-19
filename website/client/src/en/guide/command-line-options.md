@@ -12,6 +12,7 @@
 - `--copy`: Copy to clipboard (default: `false`)
 - `--no-file-summary`: Disable file summary (default: `true`)
 - `--no-directory-structure`: Disable directory structure (default: `true`)
+- `--no-files`: Disable files content output (metadata-only mode) (default: `true`)
 - `--remove-comments`: Remove comments (default: `false`)
 - `--remove-empty-lines`: Remove empty lines (default: `false`)
 - `--header-text <text>`: Custom text to include in the file header

@@ -57,6 +57,7 @@ export const run = async () => {
       .option('--copy', 'copy generated output to system clipboard')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
+      .option('--no-files', 'disable files content output (metadata-only mode)')
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
       .option('--header-text <text>', 'specify the header text')

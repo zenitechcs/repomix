@@ -36,6 +36,7 @@ export const getMarkdownTemplate = () => {
 \`\`\`
 
 {{/if}}
+{{#if filesEnabled}}
 # Files
 
 {{#each processedFiles}}
@@ -45,6 +46,7 @@ export const getMarkdownTemplate = () => {
 {{{../markdownCodeBlockDelimiter}}}
 
 {{/each}}
+{{/if}}
 
 {{#if instruction}}
 # Instruction

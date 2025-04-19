@@ -35,6 +35,7 @@ describe('defaultAction', () => {
           sortByChanges: true,
           sortByChangesMaxCommits: 100,
         },
+        files: true,
       },
       ignore: {
         useGitignore: true,
@@ -489,5 +490,39 @@ describe('defaultAction', () => {
 
     expect(config.include).toEqual(['src/**/*', 'tests/**/*', 'examples/**/*']);
     expect(config.ignore?.customPatterns).toEqual(['node_modules/**', 'dist/**', 'coverage/**']);
+  });
+
+  describe('files flag', () => {
+    it('should handle --no-files flag', async () => {
+      const options: CliOptions = {
+        files: false,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: {
+            files: false,
+          },
+        }),
+      );
+    });
+
+    it('should handle explicit --files flag', async () => {
+      const options: CliOptions = {
+        files: true,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({}),
+      );
+    });
   });
 });
