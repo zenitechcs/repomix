@@ -1,4 +1,6 @@
 [files]
 extend-exclude = [
-    "website/client/src/**/*.md"
+    "website/client/.vitepress/config/*.ts",
+    "website/client/src/**/*.md",
 ]
+ignore-hidden = false
