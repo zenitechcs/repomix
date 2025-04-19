@@ -10,6 +10,7 @@ vi.mock('../../../src/core/packager');
 vi.mock('../../../src/config/configLoad');
 vi.mock('../../../src/core/file/packageJsonParse');
 vi.mock('../../../src/shared/logger');
+vi.mock('../../../src/cli/cliSpinner');
 
 describe('defaultAction', () => {
   beforeEach(() => {

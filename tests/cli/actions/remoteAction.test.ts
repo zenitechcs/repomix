@@ -19,6 +19,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   };
 });
 vi.mock('../../../src/shared/logger');
+vi.mock('../../../src/cli/cliSpinner');
 
 describe('remoteAction functions', () => {
   beforeEach(() => {

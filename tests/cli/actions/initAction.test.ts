@@ -32,8 +32,6 @@ describe('initAction', () => {
 
       const configPath = path.resolve('/test/dir/repomix.config.json');
 
-      console.log('configPath', configPath);
-
       expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"filePath": "custom-output.txt"'));
       expect(fs.writeFile).toHaveBeenCalledWith(configPath, expect.stringContaining('"style": "xml"'));
     });

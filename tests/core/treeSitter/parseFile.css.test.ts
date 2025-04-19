@@ -34,7 +34,7 @@ describe('parseFile for CSS', () => {
         .nav {
           flex-direction: column;
         }
-        
+
         .container {
           width: 95%;
         }
@@ -113,14 +113,14 @@ describe('parseFile for CSS', () => {
   test('should handle various at-rules', async () => {
     const fileContent = `
       @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-      
+
       @charset "UTF-8";
-      
+
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
       }
-      
+
       @media screen and (min-width: 768px) {
         body { font-size: 16px; }
       }
@@ -129,9 +129,6 @@ describe('parseFile for CSS', () => {
     const config = {};
     const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
     expect(typeof result).toBe('string');
-
-    // Output the result for debugging
-    console.log('At-Rules Parse Result:', result);
 
     // Skip testing at-rules as they are not extracted in the current implementation
     // Enable this test when at-rule extraction is implemented in the future
@@ -151,13 +148,13 @@ describe('parseFile for CSS', () => {
         color: white;
         background-color: #333;
       }
-      
+
       .sidebar ul li a:hover,
       .sidebar ul li a:focus {
         text-decoration: underline;
         color: blue;
       }
-      
+
       #main-content h1 + p::first-line {
         font-weight: bold;
         font-size: 1.2em;
