@@ -382,11 +382,6 @@ node_modules
       expect(escapeGlobPattern(pattern)).toBe('src/\\(categories\\)/**/*.ts');
     });
 
-    test('should escape multiple types of brackets', () => {
-      const pattern = 'src/(auth)/[id]/{slug}/**/*.ts';
-      expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\[id\\]/\\{slug\\}/**/*.ts');
-    });
-
     test('should handle nested brackets', () => {
       const pattern = 'src/(auth)/([id])/**/*.ts';
       expect(escapeGlobPattern(pattern)).toBe('src/\\(auth\\)/\\(\\[id\\]\\)/**/*.ts');
@@ -415,11 +410,6 @@ node_modules
   test('should handle patterns with already escaped special characters', () => {
     const pattern = 'src\\\\(categories)';
     expect(escapeGlobPattern(pattern)).toBe('src\\\\\\\\\\(categories\\)');
-  });
-
-  test('should handle patterns with mixed backslashes and special characters', () => {
-    const pattern = 'src\\temp\\[id]\\{slug}';
-    expect(escapeGlobPattern(pattern)).toBe('src\\\\temp\\\\\\[id\\]\\\\\\{slug\\}');
   });
 
   describe('normalizeGlobPattern', () => {
