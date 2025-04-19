@@ -969,7 +969,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 <p align="center">
   &nbsp;&nbsp;&nbsp;
-  <a href="#-repomix" target="_blank">
+  <a href="#repo-content-pjax-container" target="_blank">
     Back To Top
   </a>
 
