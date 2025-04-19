@@ -14,6 +14,7 @@ export interface CliOptions extends OptionValues {
   copy?: boolean;
   fileSummary?: boolean;
   directoryStructure?: boolean;
+  files?: boolean;
   removeComments?: boolean;
   removeEmptyLines?: boolean;
   headerText?: string;

@@ -48,6 +48,7 @@ ${PLAIN_LONG_SEPARATOR}
 {{{treeString}}}
 
 {{/if}}
+{{#if filesEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Files
 ${PLAIN_LONG_SEPARATOR}
@@ -59,6 +60,7 @@ ${PLAIN_SEPARATOR}
 {{{this.content}}}
 
 {{/each}}
+{{/if}}
 
 {{#if instruction}}
 ${PLAIN_LONG_SEPARATOR}

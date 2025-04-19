@@ -31,6 +31,8 @@ describe('markdownStyle', () => {
         ],
         fileSummaryEnabled: true,
         directoryStructureEnabled: true,
+        filesEnabled: true,
+        markdownCodeBlockDelimiter: '```',
       };
 
       const result = compiledTemplate(data);

@@ -43,6 +43,7 @@ This section contains a summary of this file.
 </directory_structure>
 
 {{/if}}
+{{#if filesEnabled}}
 <files>
 This section contains the contents of the repository's files.
 
@@ -53,6 +54,7 @@ This section contains the contents of the repository's files.
 
 {{/each}}
 </files>
+{{/if}}
 
 {{#if instruction}}
 <instruction>

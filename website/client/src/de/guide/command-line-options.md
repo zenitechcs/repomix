@@ -12,6 +12,7 @@
 - `--copy`: In die Zwischenablage kopieren (Standard: `false`)
 - `--no-file-summary`: Deaktiviert die Dateizusammenfassung (Standard: `true`)
 - `--no-directory-structure`: Deaktiviert die Verzeichnisstruktur (Standard: `true`)
+- `--no-files`: Deaktiviert die Ausgabe des Dateiinhalts (Nur-Metadaten-Modus) (Standard: `true`)
 - `--remove-comments`: Entfernt Kommentare (Standard: `false`)
 - `--remove-empty-lines`: Entfernt leere Zeilen (Standard: `false`)
 - `--header-text <text>`: Benutzerdefinierter Text für den Dateikopf

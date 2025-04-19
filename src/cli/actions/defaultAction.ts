@@ -166,6 +166,13 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
       directoryStructure: false,
     };
   }
+  // Only apply files setting if explicitly set to false
+  if (options.files === false) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      files: false,
+    };
+  }
   if (options.removeComments !== undefined) {
     cliConfig.output = {
       ...cliConfig.output,

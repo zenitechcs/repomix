@@ -103,6 +103,7 @@ The content is organized as follows:
 1. This summary section
 2. Repository information
 3. Directory structure
+4. Repository files (if enabled)
 `.trim();
 };
 

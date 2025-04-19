@@ -36,6 +36,7 @@ describe('outputGenerate', () => {
       treeString: '',
       generationDate: new Date().toISOString(),
       instruction: '',
+      filesEnabled: true,
     });
     mockDeps.generateHandlebarOutput.mockResolvedValue('mock output');
 

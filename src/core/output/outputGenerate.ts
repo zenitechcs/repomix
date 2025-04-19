@@ -43,6 +43,7 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     processedFiles: outputGeneratorContext.processedFiles,
     fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
     directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
+    filesEnabled: outputGeneratorContext.config.output.files,
     escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
     markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
   };
@@ -69,13 +70,15 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
           }
         : undefined,
       directory_structure: renderContext.directoryStructureEnabled ? renderContext.treeString : undefined,
-      files: {
-        '#text': "This section contains the contents of the repository's files.",
-        file: renderContext.processedFiles.map((file) => ({
-          '#text': file.content,
-          '@_path': file.path,
-        })),
-      },
+      files: renderContext.filesEnabled
+        ? {
+            '#text': "This section contains the contents of the repository's files.",
+            file: renderContext.processedFiles.map((file) => ({
+              '#text': file.content,
+              '@_path': file.path,
+            })),
+          }
+        : undefined,
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
     },
   };

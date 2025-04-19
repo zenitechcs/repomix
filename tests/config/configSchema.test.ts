@@ -66,6 +66,7 @@ describe('configSchema', () => {
           parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
+          files: true,
           removeComments: false,
           removeEmptyLines: false,
           compress: false,
@@ -79,9 +80,9 @@ describe('configSchema', () => {
         },
         include: [],
         ignore: {
-          customPatterns: [],
           useGitignore: true,
           useDefaultPatterns: true,
+          customPatterns: [],
         },
         security: {
           enableSecurityCheck: true,
@@ -155,6 +156,7 @@ describe('configSchema', () => {
           parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
+          files: true,
           removeComments: true,
           removeEmptyLines: false,
           compress: false,
