@@ -65,8 +65,8 @@ const isGitWorktreeRef = async (gitPath: string): Promise<boolean> => {
 export const escapeGlobPattern = (pattern: string): string => {
   // First escape backslashes
   const escapedBackslashes = pattern.replace(/\\/g, '\\\\');
-  // Then escape special characters
-  return escapedBackslashes.replace(/[()[\]{}]/g, '\\$&');
+  // Then escape special characters () and [], but NOT {}
+  return escapedBackslashes.replace(/[()[\]]/g, '\\$&');
 };
 
 /**
