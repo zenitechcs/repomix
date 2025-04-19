@@ -35,6 +35,7 @@ export const configPtBr = defineConfig({
               items: [
                 { text: 'Contribuindo', link: '/pt-br/guide/development/' },
                 { text: 'Configuração', link: '/pt-br/guide/development/setup' },
+                { text: 'Usando Repomix como Biblioteca', link: '/pt-br/guide/development/using-repomix-as-a-library' },
               ],
             },
           ],

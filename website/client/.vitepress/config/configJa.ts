@@ -36,6 +36,7 @@ export const configJa = defineConfig({
               items: [
                 { text: '開発への貢献', link: '/ja/guide/development/' },
                 { text: '環境構築', link: '/ja/guide/development/setup' },
+                { text: 'ライブラリとしての使用', link: '/ja/guide/development/using-repomix-as-a-library' },
               ],
             },
           ],

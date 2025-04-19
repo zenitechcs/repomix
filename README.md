@@ -930,8 +930,77 @@ repomix --no-security-check
 > Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such
 > as when working with test files or documentation that contains example credentials.
 
+## 📚 Using Repomix as a Library
 
+In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications.
 
+### Installation
+
+```bash
+npm install repomix
+```
+
+### Basic Usage
+
+```javascript
+import { runCli, type CliOptions } from 'repomix';
+
+// Process current directory with custom options
+async function packProject() {
+  const options = {
+    output: 'output.xml',
+    style: 'xml',
+    compress: true,
+    quiet: true
+  } as CliOptions;
+  
+  const result = await runCli(['.'], process.cwd(), options);
+  return result.packResult;
+}
+```
+
+### Process Remote Repository
+
+```javascript
+import { runCli, type CliOptions } from 'repomix';
+
+// Clone and process a GitHub repo
+async function processRemoteRepo(repoUrl) {
+  const options = {
+    remote: repoUrl,
+    output: 'output.xml',
+    compress: true
+  } as CliOptions;
+  
+  return await runCli(['.'], process.cwd(), options);
+}
+```
+
+### Using Core Components
+
+If you need more control, you can use the low-level APIs:
+
+```javascript
+import { searchFiles, collectFiles, processFiles, TokenCounter } from 'repomix';
+
+async function analyzeFiles(directory) {
+  // Find and collect files
+  const { filePaths } = await searchFiles(directory, { /* config */ });
+  const rawFiles = await collectFiles(filePaths, directory);
+  const processedFiles = await processFiles(rawFiles, { /* config */ });
+  
+  // Count tokens
+  const tokenCounter = new TokenCounter('o200k_base');
+  
+  // Return analysis results
+  return processedFiles.map(file => ({
+    path: file.path,
+    tokens: tokenCounter.countTokens(file.content)
+  }));
+}
+```
+
+For more examples, check the source code at [website/server/src/remoteRepo.ts](https://github.com/yamadashy/repomix/blob/main/website/server/src/remoteRepo.ts) which demonstrates how repomix.com uses the library.
 
 ## 🤝 Contribution
 
