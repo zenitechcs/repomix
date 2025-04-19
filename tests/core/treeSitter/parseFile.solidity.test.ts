@@ -8,7 +8,7 @@ describe('Solidity File Parsing', () => {
   const defaultConfig: RepomixConfigMerged = {
     cwd: process.cwd(),
     output: {
-      filePath: 'repomix-output.xml',
+      filePath: 'output.txt',
       style: 'xml',
       parsableStyle: false,
       fileSummary: true,
@@ -19,6 +19,7 @@ describe('Solidity File Parsing', () => {
       topFilesLength: 5,
       showLineNumbers: false,
       copyToClipboard: false,
+      files: true,
       git: {
         sortByChanges: true,
         sortByChangesMaxCommits: 100,

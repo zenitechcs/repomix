@@ -66,6 +66,7 @@ describe('PackCodebaseTool', () => {
           topFilesLength: opts.topFilesLen ?? 5,
           showLineNumbers: false,
           copyToClipboard: false,
+          files: true,
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
