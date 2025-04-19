@@ -602,19 +602,19 @@ You can install the Repomix MCP server in VS Code using one of these methods:
 
 1. **Using the Install Badge:**
 
-   [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
-   [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D&quality=insiders)
+  [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D)
+  [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=repomix&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22repomix%22%2C%22--mcp%22%5D%7D&quality=insiders)
 
 2. **Using the Command Line:**
 
-   ```bash
-   code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
+  ```bash
+  code --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+  ```
 
-   For VS Code Insiders:
-   ```bash
-   code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
-   ```
+  For VS Code Insiders:
+  ```bash
+  code-insiders --add-mcp '{"name":"repomix","command":"npx","args":["-y","repomix","--mcp"]}'
+  ```
 
 **For Cline (VS Code extension):**
 
@@ -685,8 +685,6 @@ When running as an MCP server, Repomix provides the following tools:
     - Shows files and directories with clear indicators (`[FILE]` or `[DIR]`)
     - Provides safe directory traversal with proper error handling
     - Validates paths and ensures they are absolute
-
-
 
 ## ⚙️ Configuration
 
@@ -1012,11 +1010,10 @@ We welcome contributions from the community! To get started, please refer to our
   <img alt="contributors" src="https://contrib.rocks/image?repo=yamadashy/repomix"/>
 </a>
 
-
-
 ## 🔒 Privacy Policy
 
 ### Repomix CLI Tool
+
 - **Data Collection**: The Repomix CLI tool does **not** collect, transmit, or store any user data, telemetry, or repository information.
 - **Network Usage**: Repomix CLI operates fully offline after installation. The only cases where an internet connection is needed are:
   - Installation via npm/yarn.
@@ -1025,12 +1022,13 @@ We welcome contributions from the community! To get started, please refer to our
 - **Security Considerations**: Since all processing is local, Repomix CLI is safe to use with private and internal repositories.
 
 ### Repomix Website ([repomix.com](https://repomix.com/))
+
 - **Data Collection**: The Repomix website uses **Google Analytics** to collect usage data, such as page views and user interactions. This helps us understand how the website is used and improve the user experience.
 
 ### Liability Disclaimer
+
 Repomix (both the CLI tool and the website) is provided "as is" without any warranties or guarantees.  
 We do not take responsibility for how the generated output is used, including but not limited to its accuracy, legality, or any potential consequences arising from its use.
-
 
 ## 📜 License
 
@@ -1041,5 +1039,4 @@ This project is licensed under the [MIT License](LICENSE).
   <a href="#repo-content-pjax-container" target="_blank">
     Back To Top
   </a>
-
 </p>
