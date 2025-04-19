@@ -1148,3 +1148,206 @@ This project is licensed under the [MIT License](LICENSE).
   </a>
 
 </p>
+
+## 📚 Using Repomix as a Library
+
+In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications. This allows you to integrate Repomix's functionality directly into your own tools, scripts, or applications.
+
+### Installation
+
+```bash
+npm install repomix
+```
+
+### Basic Usage
+
+```javascript
+import { runCli, setLogLevel, type CliOptions } from 'repomix';
+
+async function processCodebase(options) {
+  // Configure Repomix options
+  const cliOptions = {
+    output: 'repomix-output.xml',
+    style: 'xml',    // 'xml', 'markdown', or 'plain'
+    compress: true,  // Enable intelligent code extraction
+    securityCheck: false,
+    quiet: true      // Suppress console output
+  } as CliOptions;
+  
+  // Run Repomix programmatically
+  const result = await runCli(['.'], process.cwd(), cliOptions);
+  
+  return result.packResult;
+}
+```
+
+### Real-World Example: Processing Remote Repositories
+
+This example shows how to clone and process a remote repository, based on the approach used by [repomix.com](https://repomix.com):
+
+```typescript
+import { randomUUID } from 'node:crypto';
+import fs from 'node:fs/promises';
+import { runCli, type CliOptions } from 'repomix';
+
+async function processRemoteRepo(repoUrl, format, options) {
+  // Generate a unique output filename
+  const outputFilePath = `repomix-output-${randomUUID()}.txt`;
+  
+  // Create CLI options for Repomix
+  const cliOptions = {
+    remote: repoUrl,
+    output: outputFilePath,
+    style: format,             // 'xml', 'markdown', or 'plain'
+    compress: options.compress,
+    removeComments: options.removeComments,
+    removeEmptyLines: options.removeEmptyLines,
+    outputShowLineNumbers: options.showLineNumbers,
+    include: options.includePatterns,
+    ignore: options.ignorePatterns,
+    quiet: true                // Suppress console output
+  } as CliOptions;
+  
+  try {
+    // Execute Repomix
+    const result = await runCli(['.'], process.cwd(), cliOptions);
+    
+    // Read the generated file
+    const content = await fs.readFile(outputFilePath, 'utf-8');
+    
+    // Return processed data
+    return {
+      content,
+      metadata: {
+        repository: repoUrl,
+        summary: {
+          totalFiles: result.packResult.totalFiles,
+          totalCharacters: result.packResult.totalCharacters,
+          totalTokens: result.packResult.totalTokens
+        },
+        topFiles: Object.entries(result.packResult.fileCharCounts)
+          .map(([path, charCount]) => ({
+            path,
+            charCount,
+            tokenCount: result.packResult.fileTokenCounts[path] || 0
+          }))
+          .sort((a, b) => b.charCount - a.charCount)
+          .slice(0, 10)
+      }
+    };
+  } finally {
+    // Clean up the output file
+    try {
+      await fs.unlink(outputFilePath);
+    } catch (err) {
+      // Ignore file deletion errors
+    }
+  }
+}
+```
+
+### Processing Local Files or ZIP Archives
+
+This example demonstrates how to process a local ZIP file or directory:
+
+```typescript
+import fs from 'node:fs/promises';
+import { runDefaultAction, setLogLevel, type CliOptions } from 'repomix';
+
+async function processZipOrDirectory(directoryPath, format, options) {
+  const outputFilePath = 'repomix-output.txt';
+  
+  // Configure logging level (-1 to disable all logs)
+  setLogLevel(-1);
+  
+  // Create CLI options
+  const cliOptions = {
+    output: outputFilePath,
+    style: format,  // 'xml', 'markdown', or 'plain'
+    compress: options.compress,
+    removeComments: options.removeComments,
+    removeEmptyLines: options.removeEmptyLines,
+    include: options.includePatterns,
+    ignore: options.ignorePatterns,
+    quiet: true     // Suppress console output
+  } as CliOptions;
+  
+  try {
+    // Process the directory
+    const result = await runDefaultAction([directoryPath], directoryPath, cliOptions);
+    
+    // Read the generated output
+    const content = await fs.readFile(result.config.output.filePath, 'utf-8');
+    
+    return {
+      content,
+      metadata: {
+        totalFiles: result.packResult.totalFiles,
+        totalCharacters: result.packResult.totalCharacters,
+        totalTokens: result.packResult.totalTokens
+      }
+    };
+  } finally {
+    // Clean up
+    try {
+      await fs.unlink(outputFilePath);
+    } catch (err) {
+      // Ignore cleanup errors
+    }
+  }
+}
+```
+
+### Advanced: Using Low-Level APIs
+
+For more granular control, you can use Repomix's low-level APIs directly:
+
+```typescript
+import { 
+  loadFileConfig, 
+  mergeConfigs, 
+  searchFiles, 
+  collectFiles, 
+  processFiles,
+  generateOutput,
+  validateFileSafety,
+  TokenCounter 
+} from 'repomix';
+
+async function customProcessing(directoryPath) {
+  // Load and merge configurations
+  const fileConfig = await loadFileConfig(directoryPath, null);
+  const config = mergeConfigs(
+    directoryPath,
+    fileConfig,
+    { compress: true }
+  );
+  
+  // Find files
+  const { filePaths } = await searchFiles(directoryPath, config);
+  
+  // Collect file contents
+  const rawFiles = await collectFiles(filePaths, directoryPath);
+  
+  // Security validation
+  const { safeRawFiles } = await validateFileSafety(rawFiles, () => {}, config);
+  
+  // Process files (comment removal, etc.)
+  const processedFiles = await processFiles(safeRawFiles, config);
+  
+  // Generate output
+  const output = await generateOutput([directoryPath], config, processedFiles, filePaths);
+  
+  // Token counting
+  const tokenCounter = new TokenCounter('o200k_base');
+  const tokenCount = tokenCounter.countTokens(output);
+  
+  return {
+    output,
+    tokenCount,
+    fileCount: filePaths.length
+  };
+}
+```
+
+By using Repomix as a library, you can build powerful code analysis tools, create custom processing workflows, or integrate Repomix functionality into your existing applications.
