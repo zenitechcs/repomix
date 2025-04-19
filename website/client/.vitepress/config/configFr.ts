@@ -35,7 +35,10 @@ export const configFr = defineConfig({
               items: [
                 { text: 'Contribuer', link: '/fr/guide/development/' },
                 { text: 'Configuration', link: '/fr/guide/development/setup' },
-                { text: 'Utiliser Repomix comme bibliothèque', link: '/fr/guide/development/using-repomix-as-a-library' },
+                {
+                  text: 'Utiliser Repomix comme bibliothèque',
+                  link: '/fr/guide/development/using-repomix-as-a-library',
+                },
               ],
             },
           ],
