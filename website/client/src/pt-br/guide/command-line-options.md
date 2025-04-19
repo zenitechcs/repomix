@@ -12,6 +12,7 @@
 - `--copy`: Copia para a área de transferência (padrão: `false`)
 - `--no-file-summary`: Desabilita o resumo de arquivos (padrão: `true`)
 - `--no-directory-structure`: Desabilita a estrutura de diretórios (padrão: `true`)
+- `--no-files`: Desabilita a saída de conteúdo de arquivos (modo somente metadados) (padrão: `true`)
 - `--remove-comments`: Remove comentários (padrão: `false`)
 - `--remove-empty-lines`: Remove linhas vazias (padrão: `false`)
 - `--header-text <text>`: Texto personalizado para incluir no cabeçalho do arquivo

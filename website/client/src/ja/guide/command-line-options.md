@@ -12,6 +12,7 @@
 - `--copy`: クリップボードにコピー（デフォルト: `false`）
 - `--no-file-summary`: ファイルサマリーを無効化（デフォルト: `true`）
 - `--no-directory-structure`: ディレクトリ構造を無効化（デフォルト: `true`）
+- `--no-files`: ファイル内容の出力を無効化（メタデータのみモード）（デフォルト: `true`）
 - `--remove-comments`: コメントを削除（デフォルト: `false`）
 - `--remove-empty-lines`: 空行を削除（デフォルト: `false`）
 - `--header-text <text>`: ファイルヘッダーに含めるカスタムテキスト

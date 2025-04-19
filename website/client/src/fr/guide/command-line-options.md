@@ -12,6 +12,7 @@
 - `--copy`: Copier dans le presse-papiers (par défaut: `false`)
 - `--no-file-summary`: Désactiver le résumé des fichiers (par défaut: `true`)
 - `--no-directory-structure`: Désactiver la structure des répertoires (par défaut: `true`)
+- `--no-files`: Désactiver la sortie du contenu des fichiers (mode métadonnées uniquement) (par défaut: `true`)
 - `--remove-comments`: Supprimer les commentaires (par défaut: `false`)
 - `--remove-empty-lines`: Supprimer les lignes vides (par défaut: `false`)
 - `--header-text <texte>`: Texte personnalisé à inclure dans l'en-tête du fichier

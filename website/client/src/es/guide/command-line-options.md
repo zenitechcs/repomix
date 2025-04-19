@@ -12,6 +12,7 @@
 - `--copy`: Copiar al portapapeles (predeterminado: `false`)
 - `--no-file-summary`: Deshabilita el resumen de archivos (predeterminado: `true`)
 - `--no-directory-structure`: Deshabilita la estructura de directorios (predeterminado: `true`)
+- `--no-files`: Deshabilita la salida del contenido de archivos (modo solo metadatos) (predeterminado: `true`)
 - `--remove-comments`: Elimina comentarios (predeterminado: `false`)
 - `--remove-empty-lines`: Elimina líneas vacías (predeterminado: `false`)
 - `--header-text <text>`: Texto personalizado para incluir en el encabezado del archivo

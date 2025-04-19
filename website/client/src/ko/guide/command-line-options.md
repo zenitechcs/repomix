@@ -12,6 +12,7 @@
 - `--copy`: 클립보드에 복사 (기본값: `false`)
 - `--no-file-summary`: 파일 요약 비활성화 (기본값: `true`)
 - `--no-directory-structure`: 디렉토리 구조 비활성화 (기본값: `true`)
+- `--no-files`: 파일 내용 출력 비활성화 (메타데이터 전용 모드) (기본값: `true`)
 - `--remove-comments`: 주석 제거 (기본값: `false`)
 - `--remove-empty-lines`: 빈 줄 제거 (기본값: `false`)
 - `--header-text <text>`: 파일 헤더에 포함할 사용자 정의 텍스트
