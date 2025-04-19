@@ -12,7 +12,8 @@ export { processFiles } from './core/file/fileProcess.js';
 export { sortPaths } from './core/file/filePathSort.js';
 
 // Security
-export { runSecurityCheck, SuspiciousFileResult } from './core/security/securityCheck.js';
+export { runSecurityCheck } from './core/security/securityCheck.js';
+export type { SuspiciousFileResult } from './core/security/securityCheck.js';
 
 // Token Count
 export { TokenCounter } from './core/tokenCount/tokenCount.js';
