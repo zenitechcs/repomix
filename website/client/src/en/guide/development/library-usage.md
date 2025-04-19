@@ -81,32 +81,6 @@ async function analyzeFiles(directory) {
 }
 ```
 
-## Configuration and Config Loading
-
-Repomix exports functions to load and merge configurations:
-
-```javascript
-import { loadFileConfig, mergeConfigs } from 'repomix';
-
-async function loadAndUseConfig() {
-  // Load config from repomix.config.json
-  const fileConfig = await loadFileConfig(process.cwd(), null);
-  
-  // Merge with default config and custom options
-  const config = mergeConfigs(
-    process.cwd(),
-    fileConfig,
-    { 
-      include: ['src/**/*.ts'],
-      output: { compress: true }
-    }
-  );
-  
-  // Use the merged config
-  return config;
-}
-```
-
 ## Real-World Example
 
 The Repomix website ([repomix.com](https://repomix.com)) uses Repomix as a library to process remote repositories. You can see the implementation in [website/server/src/remoteRepo.ts](https://github.com/yamadashy/repomix/blob/main/website/server/src/remoteRepo.ts). 
