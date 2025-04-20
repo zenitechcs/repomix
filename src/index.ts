@@ -16,7 +16,7 @@ export { runSecurityCheck } from './core/security/securityCheck.js';
 export type { SuspiciousFileResult } from './core/security/securityCheck.js';
 
 // Token Count
-export { TokenCounter } from './core/tokenCount/tokenCount.js';
+export { TokenCounter } from './core/metrics/TokenCounter.js';
 
 // Tree-sitter
 export { parseFile } from './core/treeSitter/parseFile.js';

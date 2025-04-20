@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { pack } from '../../src/core/packager.js';
-import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
+import { TokenCounter } from '../../src/core/metrics/TokenCounter.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('node:fs/promises');
