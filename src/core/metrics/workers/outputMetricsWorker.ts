@@ -1,6 +1,6 @@
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
-import { TokenCounter } from '../../tokenCount/tokenCount.js';
+import { TokenCounter } from '../TokenCounter.js';
 
 export interface OutputMetricsTask {
   content: string;

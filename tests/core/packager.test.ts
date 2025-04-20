@@ -1,17 +1,23 @@
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { TokenCounter } from '../../src/core/metrics/TokenCounter.js';
 import { pack } from '../../src/core/packager.js';
-import { TokenCounter } from '../../src/core/tokenCount/tokenCount.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
 vi.mock('node:fs/promises');
 vi.mock('fs/promises');
-vi.mock('../../src/core/tokenCount/tokenCount');
+vi.mock('../../src/core/metrics/TokenCounter.js', () => {
+  return {
+    TokenCounter: vi.fn().mockImplementation(() => ({
+      countTokens: vi.fn().mockReturnValue(10),
+      free: vi.fn(),
+    })),
+  };
+});
 
 describe('packager', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(TokenCounter.prototype.countTokens).mockReturnValue(10);
   });
 
   test('pack should orchestrate packing files and generating output', async () => {
