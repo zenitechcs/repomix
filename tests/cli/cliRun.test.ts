@@ -33,6 +33,7 @@ vi.mock('../../src/shared/logger', () => ({
     }),
     getLogLevel: vi.fn(() => logLevel),
   },
+  setLogLevelByEnv: vi.fn(),
 }));
 
 vi.mock('commander', () => ({
