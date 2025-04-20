@@ -113,7 +113,7 @@ describe('TokenCounter', () => {
       ## Subheading
       * List item 1
       * List item 2
-      
+
       **Bold text** and _italic text_
     `;
     const mockTokens = Array(15).fill(1); // 15 tokens
