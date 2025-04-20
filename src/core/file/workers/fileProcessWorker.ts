@@ -8,6 +8,9 @@ export interface FileProcessTask {
   config: RepomixConfigMerged;
 }
 
+// Set logger log level from environment variable if provided
+setLogLevelByEnv();
+
 export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFile> => {
   const processedContent = await processContent(rawFile, config);
   return {
@@ -15,6 +18,3 @@ export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFi
     content: processedContent,
   };
 };
-
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
