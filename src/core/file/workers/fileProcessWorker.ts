@@ -1,5 +1,5 @@
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
-import { logger } from '../../../shared/logger.js';
+import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
 import { parseFile } from '../../treeSitter/parseFile.js';
 import { getFileManipulator } from '../fileManipulate.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
@@ -59,3 +59,6 @@ export const processContent = async (rawFile: RawFile, config: RepomixConfigMerg
 
   return processedContent;
 };
+
+// Set logger log level from environment variable if provided
+setLogLevelByEnv();

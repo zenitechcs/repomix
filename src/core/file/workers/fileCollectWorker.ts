@@ -4,13 +4,16 @@ import iconv from 'iconv-lite';
 import { isBinary } from 'istextorbinary';
 import jschardet from 'jschardet';
 import pc from 'picocolors';
-import { logger } from '../../../shared/logger.js';
+import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
 
 export interface FileCollectTask {
   filePath: string;
   rootDir: string;
   maxFileSize: number;
 }
+
+// Set logger log level from environment variable if provided
+setLogLevelByEnv();
 
 export default async ({ filePath, rootDir, maxFileSize }: FileCollectTask) => {
   const fullPath = path.resolve(rootDir, filePath);
