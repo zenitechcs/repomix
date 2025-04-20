@@ -140,7 +140,7 @@ describe('calculateOutputMetrics', () => {
 
     // Check that chunks are roughly equal in size
     const expectedChunkSize = Math.ceil(content.length / 1000); // CHUNK_SIZE is 1000
-    const chunkSizes = processedChunks.map(chunk => chunk.length);
+    const chunkSizes = processedChunks.map((chunk) => chunk.length);
 
     expect(processedChunks.length).toBe(1000); // Should have 1000 chunks
     expect(Math.max(...chunkSizes) - Math.min(...chunkSizes)).toBeLessThanOrEqual(1); // Chunks should be almost equal in size

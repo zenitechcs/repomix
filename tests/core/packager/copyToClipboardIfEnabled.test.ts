@@ -1,12 +1,12 @@
-import clipboard from 'clipboardy';
 import { spawn } from 'node:child_process';
+import clipboard from 'clipboardy';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { copyToClipboardIfEnabled } from '../../../src/core/packager/copyToClipboardIfEnabled.js';
 import type { RepomixProgressCallback } from '../../../src/shared/types.js';
 
 vi.mock('clipboardy');
-vi.mock('../../shared/logger');
+vi.mock('../../../src/shared/logger');
 vi.mock('node:child_process');
 
 describe('copyToClipboardIfEnabled', () => {
@@ -15,7 +15,7 @@ describe('copyToClipboardIfEnabled', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     process.env = { ...originalEnv };
-    delete process.env.WAYLAND_DISPLAY;
+    process.env.WAYLAND_DISPLAY = undefined;
   });
 
   afterEach(() => {
@@ -58,11 +58,16 @@ describe('copyToClipboardIfEnabled', () => {
     } as RepomixConfigMerged;
     const progressCallback: RepomixProgressCallback = vi.fn();
 
-    const mockProc = {
+    type MockProc = {
+      on: ReturnType<typeof vi.fn>;
+      stdin: { end: ReturnType<typeof vi.fn> };
+    };
+
+    const mockProc: MockProc = {
       on: vi.fn(),
       stdin: { end: vi.fn() },
     };
-    vi.mocked(spawn).mockReturnValue(mockProc as any);
+    vi.mocked(spawn).mockReturnValue(mockProc as unknown as ReturnType<typeof spawn>);
 
     // Simulate successful wl-copy execution
     mockProc.on.mockImplementation((event, callback) => {
@@ -89,11 +94,16 @@ describe('copyToClipboardIfEnabled', () => {
     } as RepomixConfigMerged;
     const progressCallback: RepomixProgressCallback = vi.fn();
 
-    const mockProc = {
+    type MockProc = {
+      on: ReturnType<typeof vi.fn>;
+      stdin: { end: ReturnType<typeof vi.fn> };
+    };
+
+    const mockProc: MockProc = {
       on: vi.fn(),
       stdin: { end: vi.fn() },
     };
-    vi.mocked(spawn).mockReturnValue(mockProc as any);
+    vi.mocked(spawn).mockReturnValue(mockProc as unknown as ReturnType<typeof spawn>);
 
     // Simulate wl-copy failure
     mockProc.on.mockImplementation((event, callback) => {

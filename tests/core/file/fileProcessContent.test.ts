@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
-import { processContent } from '../../../src/core/file/fileProcessContent.js';
 import { getFileManipulator } from '../../../src/core/file/fileManipulate.js';
-import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { processContent } from '../../../src/core/file/fileProcessContent.js';
 import type { RawFile } from '../../../src/core/file/fileTypes.js';
+import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
 
 vi.mock('../../../src/core/file/fileManipulate.js');
 vi.mock('../../../src/core/treeSitter/parseFile.js');
