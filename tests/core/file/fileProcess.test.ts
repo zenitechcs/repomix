@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { FileManipulator } from '../../../src/core/file/fileManipulate.js';
 import { processFiles } from '../../../src/core/file/fileProcess.js';
 import type { RawFile } from '../../../src/core/file/fileTypes.js';
-import { type FileProcessTask, processContent } from '../../../src/core/file/workers/fileProcessWorker.js';
+import { processContent } from '../../../src/core/file/fileProcessContent.js';
+import type { FileProcessTask } from '../../../src/core/file/workers/fileProcessWorker.js';
 import fileProcessWorker from '../../../src/core/file/workers/fileProcessWorker.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
