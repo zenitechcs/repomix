@@ -1,7 +1,7 @@
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import type { SecretLintCoreConfig } from '@secretlint/types';
-import { logger } from '../../../shared/logger.js';
+import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
 
 export interface SecurityCheckTask {
   filePath: string;
@@ -12,6 +12,9 @@ export interface SuspiciousFileResult {
   filePath: string;
   messages: string[];
 }
+
+// Set logger log level from environment variable if provided
+setLogLevelByEnv();
 
 export default async ({ filePath, content }: SecurityCheckTask) => {
   const config = createSecretLintConfig();
