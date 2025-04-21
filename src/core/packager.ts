@@ -3,7 +3,7 @@ import type { RepomixProgressCallback } from '../shared/types.js';
 import { collectFiles } from './file/fileCollect.js';
 import { sortPaths } from './file/filePathSort.js';
 import { processFiles } from './file/fileProcess.js';
-import { FileSearchResult, searchFiles } from './file/fileSearch.js';
+import { searchFiles } from './file/fileSearch.js';
 import type { RawFile } from './file/fileTypes.js';
 import { calculateMetrics } from './metrics/calculateMetrics.js';
 import { generateOutput } from './output/outputGenerate.js';
@@ -21,22 +21,29 @@ export interface PackResult {
   suspiciousFilesResults: SuspiciousFileResult[];
 }
 
+const defaultDeps = {
+  searchFiles,
+  collectFiles,
+  processFiles,
+  generateOutput,
+  validateFileSafety,
+  handleOutput: writeOutputToDisk,
+  copyToClipboardIfEnabled,
+  calculateMetrics,
+  sortPaths,
+};
+
 export const pack = async (
   rootDirs: string[],
   config: RepomixConfigMerged,
   progressCallback: RepomixProgressCallback = () => {},
-  deps = {
-    searchFiles,
-    collectFiles,
-    processFiles,
-    generateOutput,
-    validateFileSafety,
-    writeOutputToDisk,
-    copyToClipboardIfEnabled,
-    calculateMetrics,
-    sortPaths,
-  },
+  overrideDeps: Partial<typeof defaultDeps> = {},
 ): Promise<PackResult> => {
+  const deps = {
+    ...defaultDeps,
+    ...overrideDeps,
+  };
+
   progressCallback('Searching for files...');
   const filePathsByDir = await Promise.all(
     rootDirs.map(async (rootDir) => ({
@@ -80,7 +87,7 @@ export const pack = async (
   const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths);
 
   progressCallback('Writing output file...');
-  await deps.writeOutputToDisk(output, config);
+  await deps.handleOutput(output, config);
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 

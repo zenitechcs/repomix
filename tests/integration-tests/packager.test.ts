@@ -97,7 +97,7 @@ describe.runIf(!isWindows)('packager integration', () => {
             filterOutUntrustedFiles,
           });
         },
-        writeOutputToDisk,
+        handleOutput: writeOutputToDisk,
         copyToClipboardIfEnabled,
         calculateMetrics: async (processedFiles, output, progressCallback, config) => {
           return {
