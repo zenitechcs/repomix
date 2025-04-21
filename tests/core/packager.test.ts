@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { TokenCounter } from '../../src/core/metrics/TokenCounter.js';
 import { pack } from '../../src/core/packager.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
@@ -51,7 +50,7 @@ describe('packager', () => {
         suspiciousFilesResults: [],
       }),
       generateOutput: vi.fn().mockResolvedValue(mockOutput),
-      writeOutputToDisk: vi.fn().mockResolvedValue(undefined),
+      handleOutput: vi.fn().mockResolvedValue(undefined),
       copyToClipboardIfEnabled: vi.fn().mockResolvedValue(undefined),
       calculateMetrics: vi.fn().mockResolvedValue({
         totalFiles: 2,
@@ -76,14 +75,14 @@ describe('packager', () => {
     expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root', mockConfig, progressCallback);
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
-    expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();
+    expect(mockDeps.handleOutput).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
     expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig, progressCallback);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(['root'], mockConfig, mockProcessedFiles, mockFilePaths);
-    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
+    expect(mockDeps.handleOutput).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
     expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
       mockProcessedFiles,

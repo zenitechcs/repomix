@@ -5,11 +5,12 @@ export { pack } from './core/packager.js';
 export type { PackResult } from './core/packager.js';
 
 // File
+export { collectFiles } from './core/file/fileCollect.js';
+export { sortPaths } from './core/file/filePathSort.js';
+export { processFiles } from './core/file/fileProcess.js';
 export { searchFiles } from './core/file/fileSearch.js';
 export type { FileSearchResult } from './core/file/fileSearch.js';
-export { collectFiles } from './core/file/fileCollect.js';
-export { processFiles } from './core/file/fileProcess.js';
-export { sortPaths } from './core/file/filePathSort.js';
+export { generateFileTree } from './core/file/fileTreeGenerate.js';
 
 // Security
 export { runSecurityCheck } from './core/security/securityCheck.js';
@@ -24,8 +25,8 @@ export { parseFile } from './core/treeSitter/parseFile.js';
 // ---------------------------------------------------------------------------------------------------------------------
 // Config
 // ---------------------------------------------------------------------------------------------------------------------
-export type { RepomixConfigFile as RepomixConfig } from './config/configSchema.js';
 export { loadFileConfig, mergeConfigs } from './config/configLoad.js';
+export type { RepomixConfigFile as RepomixConfig } from './config/configSchema.js';
 export { defaultIgnoreList } from './config/defaultIgnore.js';
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -50,5 +51,7 @@ export { runInitAction } from './cli/actions/initAction.js';
 export { runDefaultAction } from './cli/actions/defaultAction.js';
 
 // Remote action
-export { runRemoteAction } from './cli/actions/remoteAction.js';
-export { isValidRemoteValue } from './cli/actions/remoteAction.js';
+export {
+  isValidRemoteValue,
+  runRemoteAction,
+} from './cli/actions/remoteAction.js';
