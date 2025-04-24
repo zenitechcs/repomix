@@ -54,12 +54,12 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
         return {
           content: [
             {
-              type: 'resource',
-              resource: {
-                text: content,
-                uri: `file://${filePath}`,
-                mimeType: 'application/xml',
-              },
+              type: 'text',
+              text: `Content of Repomix output file (ID: ${outputId}):`,
+            },
+            {
+              type: 'text',
+              text: content,
             },
           ],
         };
