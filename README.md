@@ -944,7 +944,7 @@ repomix --no-security-check
 > Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such
 > as when working with test files or documentation that contains example credentials.
 
-## 🤖 GitHub Action
+## 🤖 Using Repomix with GitHub Actions
 
 You can also use Repomix in your GitHub Actions workflows. This is useful for automating the process of packing your codebase for AI analysis.
 
