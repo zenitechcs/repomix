@@ -944,7 +944,7 @@ repomix --no-security-check
 > Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such
 > as when working with test files or documentation that contains example credentials.
 
-### GitHub Action Usage 🤖
+## 🤖 GitHub Action
 
 You can also use Repomix in your GitHub Actions workflows. This is useful for automating the process of packing your codebase for AI analysis.
 
@@ -989,7 +989,7 @@ Upload the output file as an artifact:
     path: repomix-output.txt
 ```
 
-#### Action Inputs
+### Action Inputs
 
 | Name | Description | Default |
 |------|-------------|---------|
@@ -1001,7 +1001,7 @@ Upload the output file as an artifact:
 | `additional-args` | Extra raw arguments for the repomix CLI | `""` |
 | `repomix-version` | Version of the npm package to install | `latest` |
 
-#### Action Outputs
+### Action Outputs
 
 | Name | Description |
 |------|-------------|
