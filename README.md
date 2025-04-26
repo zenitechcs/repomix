@@ -261,6 +261,13 @@ Upload the output file as an artifact:
 
 ```yaml
 - name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    directories: src
+    output: repomix-output.txt
+    compress: true
+
+- name: Upload Repomix output
   uses: actions/upload-artifact@v4
   with:
     name: repomix-output
