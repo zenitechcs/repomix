@@ -1,3 +1,18 @@
+<div align="center" markdown="1">
+   <sup>Special thanks to:</sup>
+   <br>
+   <br>
+   <a href="https://www.warp.dev/repomix">
+      <img alt="Warp sponsorship" width="400" src="website/client/src/public/images/sponsors/warp/Terminal-Image.png">
+   </a>
+
+### [Warp, the agent terminal for developers](https://www.warp.dev/repomix)
+[Available for MacOS, Linux, & Windows](https://www.warp.dev/repomix)<br>
+
+</div>
+
+<hr />
+
 <div align="center">
   <a href="https://repomix.com">
     <img src="website/client/src/public/images/repomix-title.png" alt="Repomix" width="500" height="auto" />
@@ -6,8 +21,6 @@
     <b>Pack your codebase into AI-friendly formats</b>
   </p>
 </div>
-
-<hr />
 
 <p align="center">
   <a href="https://repomix.com"><b>Use Repomix online! 👉 repomix.com</b></a><br>
