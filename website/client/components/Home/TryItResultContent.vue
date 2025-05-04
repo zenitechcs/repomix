@@ -134,7 +134,7 @@ const handleEditorMount = (editor: Ace.Editor) => {
       <div class="support-message">
         <a href="https://github.com/sponsors/yamadashy" target="_blank" rel="noopener noreferrer" class="support-link">
           <HeartHandshake :size="14" class="support-icon" />
-          This tool is independently developed. Your support helps maintain and improve it. Thank you!
+          Your support helps maintain and improve it. Thank you!
         </a>
       </div>
     </div>
@@ -317,8 +317,12 @@ dd {
   color: var(--vp-c-brand-1);
 }
 
+.support-icon {
+  color: #db61a2;
+}
+
 .support-link:hover .support-icon {
-  color: var(--vp-c-brand-1);
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {

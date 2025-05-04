@@ -47,10 +47,9 @@ When discussing specific changes, the AI can help generate code. With features l
 Happy coding! 🚀
 
 
+## Using the CLI Tool
 
-## Power User Guide
-
-For advanced users who need more control, Repomix offers extensive customization options through its CLI interface.
+Repomix can be used as a command-line tool, offering powerful features and customization options.
 
 ### Quick Start
 
