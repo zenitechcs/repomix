@@ -37,3 +37,7 @@ repomix-output.md
 
 # aider
 .aider*
+
+# copilot
+.github/instructions/*.md
+!.github/instructions/base.instructions.md
