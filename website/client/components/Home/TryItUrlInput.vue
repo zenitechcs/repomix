@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AlertTriangle } from 'lucide-vue-next';
-import { computed, ref, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 
@@ -45,13 +45,13 @@ function loadUrlHistory() {
 // Save URL to history
 function saveUrlToHistory(url: string) {
   if (!url || !isValidRemoteValue(url.trim())) return;
-  
+
   const trimmedUrl = url.trim();
-  
+
   // Remove existing entry and add to the beginning
-  const filteredHistory = urlHistory.value.filter(item => item !== trimmedUrl);
+  const filteredHistory = urlHistory.value.filter((item) => item !== trimmedUrl);
   urlHistory.value = [trimmedUrl, ...filteredHistory].slice(0, 10); // Keep only the latest 10 entries
-  
+
   try {
     localStorage.setItem('repomix-url-history', JSON.stringify(urlHistory.value));
   } catch (error) {
