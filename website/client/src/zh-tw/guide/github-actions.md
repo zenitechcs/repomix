@@ -113,4 +113,3 @@ jobs:
 ```
 
 查看完整工作流示例[點擊這裡](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)。
-```

@@ -113,4 +113,3 @@ jobs:
 ```
 
 Consultez l'exemple complet du workflow [ici](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml).
-``` 

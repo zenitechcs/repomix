@@ -113,4 +113,3 @@ jobs:
 ```
 
 전체 워크플로우 예시는 [여기](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)에서 확인할 수 있습니다.
-``` 

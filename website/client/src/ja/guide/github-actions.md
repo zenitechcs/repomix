@@ -113,4 +113,3 @@ jobs:
 ```
 
 完全なワークフロー例は[こちら](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)をご参照ください。
-``` 
