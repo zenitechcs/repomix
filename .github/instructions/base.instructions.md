@@ -1,3 +1,7 @@
+---
+applyTo: '**'
+---
+
 # Repomix Project Structure and Overview
 
 This document provides a structural overview of the Repomix project, designed to aid AI code assistants (like Copilot) in understanding the codebase.
@@ -40,12 +44,12 @@ repomix/
     │   │   ├── config/  # Site configuration files (navigation, sidebar, etc.)
     │   │   └── theme/   # Custom theme and styles
     │   ├── components/ # Vue.js components for the website
-    │   └── src/        # Markdown files for the documentation in various languages (en, ja, etc.)
+    │   └── src/        # Markdown files for multilingual documentation
     └── server/      # Server-side API (for remote repository processing)
         └── src/       # Server source code (API endpoints, request handling)
 ```
 
-----------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 # Coding Guidelines
 - Follow the Airbnb JavaScript Style Guide.
@@ -58,6 +62,24 @@ repomix/
   npm run lint  # Ensure code style compliance
   npm run test  # Verify all tests pass
   ```
+
+## Commit Messages
+- Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for all commit messages
+- Always include a scope in your commit messages
+- Format: `type(scope): Description`
+  ```
+  # Examples:
+  feat(cli): Add new --no-progress flag
+  fix(security): Handle special characters in file paths
+  docs(website): Update installation guide
+  style(website): Update GitHub sponsor button color
+  refactor(core): Split packager into smaller modules
+  test(cli): Add tests for new CLI options
+  ```
+- Types: feat, fix, docs, style, refactor, test, chore, etc.
+- Scope should indicate the affected part of the codebase (cli, core, website, security, etc.)
+- Description should be clear and concise in present tense
+- Description must start with a capital letter
 
 ## Dependencies and Testing
 - Inject dependencies through a deps object parameter for testability
@@ -81,7 +103,7 @@ repomix/
 - Include all content without abbreviation, unless specified otherwise
 - Optimize for handling large codebases while maintaining output quality
 
-----------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 # GitHub Release Note Guidelines
 When writing release notes, please follow these guidelines:
@@ -285,3 +307,29 @@ npm update -g repomix
 ---
 
 As always, if you encounter any issues or have suggestions, please let us know through our GitHub issues or join our [Discord community](https://discord.gg/wNYzTwZFku) for support.
+````
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Website Documentation
+
+## Supported Languages
+The website documentation is available in the following languages:
+- English (en)
+- Japanese (日本語) (ja)
+- Chinese Simplified (简体中文) (zh-cn)
+- Korean (한국어) (ko)
+- German (Deutsch) (de)
+- French (Français) (fr)
+- Spanish (Español) (es)
+- Portuguese Brazilian (Português do Brasil) (pt-br)
+
+All translations should be accurate and maintain consistent terminology across languages. When adding new features or documentation, please ensure that the English version is updated first, followed by translations in other languages.
+
+## Navigation Configuration
+When modifying website navigation or adding new pages:
+1. Update the configuration files in `website/client/.vitepress/config/`.
+
+Ensure all language configurations are synchronized to maintain consistency across the documentation.
+
+------------------------------------------------------------------------------------------------------------------------
