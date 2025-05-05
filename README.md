@@ -944,6 +944,69 @@ repomix --no-security-check
 > Disabling security checks may expose sensitive information. Use this option with caution and only when necessary, such
 > as when working with test files or documentation that contains example credentials.
 
+## 🤖 Using Repomix with GitHub Actions
+
+You can also use Repomix in your GitHub Actions workflows. This is useful for automating the process of packing your codebase for AI analysis.
+
+Basic usage:
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    directories: src
+    include: "**/*.ts"
+    output: repomix-output.txt
+```
+
+Pack specific directories with compression:
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    directories: src tests
+    include: "**/*.ts,**/*.md"
+    ignore: "**/*.test.ts"
+    output: repomix-output.txt
+    compress: true
+```
+
+Upload the output file as an artifact:
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    directories: src
+    output: repomix-output.txt
+    compress: true
+
+- name: Upload Repomix output
+  uses: actions/upload-artifact@v4
+  with:
+    name: repomix-output
+    path: repomix-output.txt
+```
+
+### Action Inputs
+
+| Name | Description | Default |
+|------|-------------|---------|
+| `directories` | Space-separated list of directories to process (e.g., `src tests docs`) | `.` |
+| `include` | Comma-separated glob patterns to include files (e.g., `**/*.ts,**/*.md`) | `""` |
+| `ignore` | Comma-separated glob patterns to ignore files (e.g., `**/*.test.ts,**/node_modules/**`) | `""` |
+| `output` | Relative path for the packed file (extension determines format: `.txt`, `.md`, `.xml`) | `repomix.txt` |
+| `compress` | Enable smart compression to reduce output size by pruning implementation details | `true` |
+| `additional-args` | Extra raw arguments for the repomix CLI (e.g., `--no-file-summary --no-security-check`) | `""` |
+| `repomix-version` | Version of the npm package to install (supports semver ranges, tags, or specific versions like `0.2.25`) | `latest` |
+
+### Action Outputs
+
+| Name | Description |
+|------|-------------|
+| `output_file` | Path to the generated output file. Can be used in subsequent steps for artifact upload, LLM processing, or other operations. The file contains a formatted representation of your codebase based on the specified options. |
+
 ## 📚 Using Repomix as a Library
 
 In addition to using Repomix as a CLI tool, you can also use it as a library in your Node.js applications.
