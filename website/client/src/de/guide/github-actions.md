@@ -10,9 +10,19 @@ Fügen Sie den folgenden Schritt zu Ihrer Workflow-YAML-Datei hinzu, um Ihr Repo
 - name: Pack repository with Repomix
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
-    directories: src
-    include: "**/*.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
+```
+
+## Verwendung verschiedener Ausgabeformate
+
+Sie können verschiedene Ausgabeformate mit dem Parameter `style` festlegen (Standard ist `xml`):
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.md
+    style: markdown
 ```
 
 ## Mehrere Verzeichnisse mit Komprimierung verpacken
@@ -26,7 +36,7 @@ Sie können mehrere Verzeichnisse, Include-/Exclude-Patterns und intelligente Ko
     directories: src tests
     include: "**/*.ts,**/*.md"
     ignore: "**/*.test.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 ```
 
@@ -39,14 +49,14 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
     directories: src
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 
 - name: Upload Repomix output
   uses: actions/upload-artifact@v4
   with:
     name: repomix-output
-    path: repomix-output.txt
+    path: repomix-output.xml
 ```
 
 ## Action-Eingabeparameter
@@ -56,7 +66,8 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
 | `directories`      | Zu verpackende Verzeichnisse (Leerzeichen-getrennt) | `.`         |
 | `include`          | Einzuschließende Glob-Patterns (kommagetrennt) | `""`         |
 | `ignore`           | Auszuschließende Glob-Patterns (kommagetrennt) | `""`         |
-| `output`           | Pfad der Ausgabedatei                         | `repomix.txt`     |
+| `output`           | Pfad der Ausgabedatei                         | `repomix-output.xml`     |
+| `style`            | Ausgabestil (xml, markdown, plain)            | `xml`             |
 | `compress`         | Intelligente Komprimierung aktivieren          | `true`            |
 | `additional-args`  | Zusätzliche Argumente für repomix CLI          | `""`         |
 | `repomix-version`  | Zu installierende npm-Paketversion             | `latest`          |
@@ -69,29 +80,39 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
 
 ## Komplettes Workflow-Beispiel
 
+## Beispiel: Vollständiger Workflow
+
 Hier ein vollständiges Beispiel für einen GitHub Actions Workflow mit Repomix:
 
 ```yaml
-name: Pack and Upload Codebase
+name: Pack repository with Repomix
+
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  pack:
+  pack-repo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
         with:
-          directories: src
-          include: "**/*.ts"
-          output: repomix-output.txt
-          compress: true
+          output: repomix-output.xml
+
       - name: Upload Repomix output
         uses: actions/upload-artifact@v4
         with:
-          name: repomix-output
-          path: repomix-output.txt
+          name: repomix-output.xml
+          path: repomix-output.xml
+          retention-days: 30
+```
+
+Das vollständige Workflow-Beispiel finden Sie [hier](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml).
 ``` 

@@ -10,9 +10,19 @@
 - name: Pack repository with Repomix
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
-    directories: src
-    include: "**/*.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
+```
+
+## 使用不同的輸出格式
+
+可以使用 `style` 參數指定不同的輸出格式（默認為 `xml`）：
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.md
+    style: markdown
 ```
 
 ## 多目錄與壓縮選項
@@ -39,14 +49,14 @@
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
     directories: src
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 
 - name: Upload Repomix output
   uses: actions/upload-artifact@v4
   with:
     name: repomix-output
-    path: repomix-output.txt
+    path: repomix-output.xml
 ```
 
 ## Action 輸入參數
@@ -56,7 +66,8 @@
 | `directories`       | 要打包的目錄（空格分隔）               | `.`              |
 | `include`           | 包含的 glob 模式（逗號分隔）           | `""`           |
 | `ignore`            | 排除的 glob 模式（逗號分隔）           | `""`           |
-| `output`            | 輸出文件路徑                            | `repomix.txt`    |
+| `output`            | 輸出文件路徑                            | `repomix-output.xml`    |
+| `style`             | 輸出樣式（xml、markdown、plain）        | `xml`            |
 | `compress`          | 啟用智能壓縮                            | `true`           |
 | `additional-args`   | 傳遞給 repomix CLI 的額外參數           | `""`           |
 | `repomix-version`   | 要安裝的 npm 包版本                     | `latest`         |
@@ -72,26 +83,34 @@
 以下是使用 Repomix 的 GitHub Actions 工作流完整示例：
 
 ```yaml
-name: Pack and Upload Codebase
+name: Pack repository with Repomix
+
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  pack:
+  pack-repo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
         with:
-          directories: src
-          include: "**/*.ts"
-          output: repomix-output.txt
-          compress: true
+          output: repomix-output.xml
+
       - name: Upload Repomix output
         uses: actions/upload-artifact@v4
         with:
-          name: repomix-output
-          path: repomix-output.txt
+          name: repomix-output.xml
+          path: repomix-output.xml
+          retention-days: 30
+```
+
+查看完整工作流示例[點擊這裡](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)。
 ```
