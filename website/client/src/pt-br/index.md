@@ -45,7 +45,7 @@ Ao discutir mudanças específicas, a IA pode ajudar a gerar código. Com recurs
 
 Feliz codificação! 🚀
 
-## Usando a Ferramenta CLI
+## Usando a Ferramenta CLI {#using-the-cli-tool}
 
 O Repomix pode ser usado como uma ferramenta de linha de comando, oferecendo recursos poderosos e opções de personalização.
 

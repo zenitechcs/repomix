@@ -47,7 +47,7 @@ When discussing specific changes, the AI can help generate code. With features l
 Happy coding! 🚀
 
 
-## Using the CLI Tool
+## Using the CLI Tool {#using-the-cli-tool}
 
 Repomix can be used as a command-line tool, offering powerful features and customization options.
 

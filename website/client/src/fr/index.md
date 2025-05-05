@@ -42,7 +42,7 @@ Lors de la discussion de modifications spécifiques, l'IA peut vous aider à gé
 
 Bon codage ! 🚀
 
-## Utilisation de l'outil CLI
+## Utilisation de l'outil CLI {#using-the-cli-tool}
 
 Repomix peut être utilisé comme un outil en ligne de commande, offrant des fonctionnalités puissantes et des options de personnalisation.
 

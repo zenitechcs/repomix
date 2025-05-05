@@ -45,7 +45,7 @@ Bei der Diskussion spezifischer Änderungen kann die KI bei der Code-Generierung
 
 Viel Spaß beim Programmieren! 🚀
 
-## Verwendung des CLI-Tools
+## Verwendung des CLI-Tools {#using-the-cli-tool}
 
 Repomix kann als Kommandozeilen-Tool verwendet werden und bietet leistungsstarke Funktionen und Anpassungsoptionen.
 
