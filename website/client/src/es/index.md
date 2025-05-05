@@ -183,8 +183,8 @@ Crea un archivo `repomix.config.json` para configuraciones persistentes:
 ```
 
 ### Más ejemplos
-::: tip
-💡 ¡Consulta nuestro [repositorio de GitHub](https://github.com/yamadashy/repomix) para obtener la documentación completa y más ejemplos!
+::: tip ¿Necesitas más ayuda? 💡
+Consulta nuestra [guía](./guide/) para instrucciones detalladas, o visita nuestro [repositorio de GitHub](https://github.com/yamadashy/repomix) para más ejemplos y código fuente.
 :::
 
 </div>

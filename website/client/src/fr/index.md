@@ -176,8 +176,8 @@ Créez un `repomix.config.json` pour des paramètres persistants :
 ```
 
 ### Plus d'exemples
-::: tip
-💡 Consultez notre [dépôt GitHub](https://github.com/yamadashy/repomix) pour une documentation complète et plus d'exemples !
+::: tip Besoin de plus d'aide ? 💡
+Consultez notre [guide](./guide/) pour des instructions détaillées, ou visitez notre [dépôt GitHub](https://github.com/yamadashy/repomix) pour plus d'exemples et le code source.
 :::
 
 </div>

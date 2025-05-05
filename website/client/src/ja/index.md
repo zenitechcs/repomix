@@ -181,8 +181,8 @@ repomix --style plain
 ```
 
 ### その他の例
-::: tip
-💡 詳細なドキュメントと更なる例については、[GitHubリポジトリ](https://github.com/yamadashy/repomix)をご覧ください！
+::: tip もっと詳しく知りたい場合は？ 💡
+詳しい使い方は[ガイド](./guide/)をご覧ください。コード例やソースコードは[GitHubリポジトリ](https://github.com/yamadashy/repomix)で確認できます。
 :::
 
 </div>
