@@ -52,21 +52,35 @@ runs:
       shell: bash
       run: |
         set -e
-        CMD="repomix ${{ inputs.directories }}"
+        # Using an array for safer command execution
+        ARGS=(${{ inputs.directories }})
+        
         if [ -n "${{ inputs.include }}" ]; then
-          CMD="$CMD --include \"${{ inputs.include }}\""
+          ARGS+=(--include "${{ inputs.include }}")
         fi
+        
         if [ -n "${{ inputs.ignore }}" ]; then
-          CMD="$CMD --ignore \"${{ inputs.ignore }}\""
+          ARGS+=(--ignore "${{ inputs.ignore }}")
         fi
+        
         if [ "${{ inputs.compress }}" = "false" ]; then
-          CMD="$CMD --no-compress"
+          ARGS+=(--no-compress)
         else
-          CMD="$CMD --compress"
+          ARGS+=(--compress)
         fi
-        CMD="$CMD --output \"${{ inputs.output }}\" ${{ inputs.additional-args }}"
-        echo "Running: $CMD"
-        eval $CMD
+        
+        ARGS+=(--output "${{ inputs.output }}")
+        
+        # Only add additional args if not empty
+        if [ -n "${{ inputs.additional-args }}" ]; then
+          # Use word splitting for additional arguments
+          ADDITIONAL_ARGS=(${{ inputs.additional-args }})
+          ARGS+=("${ADDITIONAL_ARGS[@]}")
+        fi
+        
+        echo "Running: repomix ${ARGS[*]}"
+        repomix "${ARGS[@]}"
+        
         echo "output_file=${{ inputs.output }}" >> "$GITHUB_OUTPUT"
 
 outputs:
