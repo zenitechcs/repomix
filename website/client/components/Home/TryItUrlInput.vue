@@ -39,14 +39,18 @@ function loadUrlHistory() {
     }
   } catch (error) {
     console.error('Failed to load URL history from localStorage:', error);
+    // Continue with empty history rather than displaying an error to the user
+    // as this is a non-critical feature
+    urlHistory.value = [];
   }
 }
 
 // Save URL to history
 function saveUrlToHistory(url: string) {
-  if (!url || !isValidRemoteValue(url.trim())) return;
+  if (!url) return;
 
   const trimmedUrl = url.trim();
+  if (!isValidRemoteValue(trimmedUrl)) return;
 
   // Remove existing entry and add to the beginning
   const filteredHistory = urlHistory.value.filter((item) => item !== trimmedUrl);
@@ -56,6 +60,7 @@ function saveUrlToHistory(url: string) {
     localStorage.setItem('repomix-url-history', JSON.stringify(urlHistory.value));
   } catch (error) {
     console.error('Failed to save URL history to localStorage:', error);
+    // Non-critical error, so we don't need to show it to the user
   }
 }
 
@@ -64,16 +69,21 @@ function handleUrlInput(event: Event) {
   emit('update:url', input.value);
 }
 
-function handleSubmit() {
+// Process and save valid URL
+function processValidUrl() {
   if (isValidUrl.value) {
     saveUrlToHistory(props.url);
-    emit('submit');
   }
+}
+
+function handleSubmit() {
+  processValidUrl();
+  emit('submit');
 }
 
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Enter' && isValidUrl.value) {
-    saveUrlToHistory(props.url);
+    processValidUrl();
   }
   emit('keydown', event);
 }
