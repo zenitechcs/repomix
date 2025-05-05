@@ -993,19 +993,19 @@ Upload the output file as an artifact:
 
 | Name | Description | Default |
 |------|-------------|---------|
-| `directories` | Space-separated list of directories to process | `.` |
-| `include` | Comma-separated glob patterns to include | `""` |
-| `ignore` | Comma-separated glob patterns to ignore | `""` |
-| `output` | Relative path for the packed file | `repomix.txt` |
-| `compress` | Enable smart compression | `true` |
-| `additional-args` | Extra raw arguments for the repomix CLI | `""` |
-| `repomix-version` | Version of the npm package to install | `latest` |
+| `directories` | Space-separated list of directories to process (e.g., `src tests docs`) | `.` |
+| `include` | Comma-separated glob patterns to include files (e.g., `**/*.ts,**/*.md`) | `""` |
+| `ignore` | Comma-separated glob patterns to ignore files (e.g., `**/*.test.ts,**/node_modules/**`) | `""` |
+| `output` | Relative path for the packed file (extension determines format: `.txt`, `.md`, `.xml`) | `repomix.txt` |
+| `compress` | Enable smart compression to reduce output size by pruning implementation details | `true` |
+| `additional-args` | Extra raw arguments for the repomix CLI (e.g., `--no-file-summary --no-security-check`) | `""` |
+| `repomix-version` | Version of the npm package to install (supports semver ranges, tags, or specific versions like `0.2.25`) | `latest` |
 
 ### Action Outputs
 
 | Name | Description |
 |------|-------------|
-| `output-file` | Path to the generated output file |
+| `output-file` | Path to the generated output file. Can be used in subsequent steps for artifact upload, LLM processing, or other operations. The file contains a formatted representation of your codebase based on the specified options. |
 
 ## 📚 Using Repomix as a Library
 
