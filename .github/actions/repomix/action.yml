@@ -74,8 +74,8 @@ runs:
         
         # Only add additional args if not empty
         if [ -n "${{ inputs.additional-args }}" ]; then
-          # Use word splitting for additional arguments
-          ADDITIONAL_ARGS=(${{ inputs.additional-args }})
+          # Use safer parsing for additional arguments
+          IFS=' ' read -r -a ADDITIONAL_ARGS <<< "${{ inputs.additional-args }}"
           ARGS+=("${ADDITIONAL_ARGS[@]}")
         fi
         
