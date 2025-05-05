@@ -10,9 +10,19 @@ GitHub ActionsワークフローにRepomixを組み込むことで、AI解析用
 - name: Pack repository with Repomix
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
-    directories: src
-    include: "**/*.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
+```
+
+## 異なる出力形式の使用
+
+`style`パラメータを使用して異なる出力形式を指定できます（デフォルトは`xml`です）：
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.md
+    style: markdown
 ```
 
 ## 複数ディレクトリ・圧縮オプション
@@ -26,7 +36,7 @@ GitHub ActionsワークフローにRepomixを組み込むことで、AI解析用
     directories: src tests
     include: "**/*.ts,**/*.md"
     ignore: "**/*.test.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 ```
 
@@ -39,14 +49,14 @@ GitHub ActionsワークフローにRepomixを組み込むことで、AI解析用
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
     directories: src
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 
 - name: Upload Repomix output
   uses: actions/upload-artifact@v4
   with:
     name: repomix-output
-    path: repomix-output.txt
+    path: repomix-output.xml
 ```
 
 ## Actionの入力パラメータ
@@ -56,8 +66,9 @@ GitHub ActionsワークフローにRepomixを組み込むことで、AI解析用
 | `directories`       | パック対象ディレクトリ（空白区切り）    | `.`                |
 | `include`           | 含めるファイルのglobパターン（カンマ区切り） | `""`           |
 | `ignore`            | 除外するファイルのglobパターン（カンマ区切り） | `""`           |
-| `output`            | 出力ファイルパス                        | `repomix.txt`      |
+| `output`            | 出力ファイルパス                        | `repomix-output.xml`      |
 | `compress`          | スマート圧縮の有効化                    | `true`             |
+| `style`             | 出力スタイル（xml, markdown, plain）      | `xml`             |
 | `additional-args`   | repomix CLIへの追加引数                 | `""`           |
 | `repomix-version`   | インストールするnpmパッケージのバージョン | `latest`           |
 
@@ -72,26 +83,33 @@ GitHub ActionsワークフローにRepomixを組み込むことで、AI解析用
 Repomixを使ったGitHub Actionsワークフローの例です。
 
 ```yaml
-name: Pack and Upload Codebase
+name: Pack repository with Repomix
+
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  pack:
+  pack-repo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
         with:
-          directories: src
-          include: "**/*.ts"
-          output: repomix-output.txt
-          compress: true
+          output: repomix-output.xml
+
       - name: Upload Repomix output
         uses: actions/upload-artifact@v4
         with:
-          name: repomix-output
-          path: repomix-output.txt
-``` 
+          name: repomix-output.xml
+          path: repomix-output.xml
+          retention-days: 30
+```
+
+完全なワークフロー例は[こちら](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)をご参照ください。

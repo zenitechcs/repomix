@@ -10,9 +10,19 @@ GitHub Actions 워크플로우에 Repomix를 통합하면 AI 분석을 위한 �
 - name: Pack repository with Repomix
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
-    directories: src
-    include: "**/*.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
+```
+
+## 다양한 출력 형식 사용하기
+
+`style` 매개변수를 사용하여 다양한 출력 형식을 지정할 수 있습니다(기본값은 `xml`):
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.md
+    style: markdown
 ```
 
 ## 여러 디렉터리 및 압축 옵션
@@ -39,14 +49,14 @@ GitHub Actions 워크플로우에 Repomix를 통합하면 AI 분석을 위한 �
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
     directories: src
-    output: repomix-output.txt
+    output: repomix-output.xml
     compress: true
 
 - name: Upload Repomix output
   uses: actions/upload-artifact@v4
   with:
     name: repomix-output
-    path: repomix-output.txt
+    path: repomix-output.xml
 ```
 
 ## Action 입력 파라미터
@@ -56,7 +66,8 @@ GitHub Actions 워크플로우에 Repomix를 통합하면 AI 분석을 위한 �
 | `directories`       | 패킹할 디렉터리(공백 구분)             | `.`              |
 | `include`           | 포함할 glob 패턴(쉼표 구분)            | `""`           |
 | `ignore`            | 제외할 glob 패턴(쉼표 구분)            | `""`           |
-| `output`            | 출력 파일 경로                          | `repomix.txt`    |
+| `output`            | 출력 파일 경로                          | `repomix-output.xml`    |
+| `style`             | 출력 스타일 (xml, markdown, plain)      | `xml`            |
 | `compress`          | 스마트 압축 활성화                      | `true`           |
 | `additional-args`   | repomix CLI에 전달할 추가 인자          | `""`           |
 | `repomix-version`   | 설치할 npm 패키지 버전                  | `latest`         |
@@ -72,26 +83,33 @@ GitHub Actions 워크플로우에 Repomix를 통합하면 AI 분석을 위한 �
 Repomix를 사용하는 GitHub Actions 워크플로우 전체 예시입니다.
 
 ```yaml
-name: Pack and Upload Codebase
+name: Pack repository with Repomix
+
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  pack:
+  pack-repo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
         with:
-          directories: src
-          include: "**/*.ts"
-          output: repomix-output.txt
-          compress: true
+          output: repomix-output.xml
+
       - name: Upload Repomix output
         uses: actions/upload-artifact@v4
         with:
-          name: repomix-output
-          path: repomix-output.txt
-``` 
+          name: repomix-output.xml
+          path: repomix-output.xml
+          retention-days: 30
+```
+
+전체 워크플로우 예시는 [여기](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)에서 확인할 수 있습니다.

@@ -21,11 +21,15 @@ inputs:
   output:
     description: "Relative path to write packed file"
     required: false
-    default: "repomix.txt"
+    default: "repomix-output.xml"
   compress:
     description: "Set to 'false' to disable smart compression"
     required: false
     default: "true"
+  style:
+    description: "Output style (xml, markdown, plain)"
+    required: false
+    default: "xml"
   additional-args:
     description: "Any extra raw arguments to pass directly to the repomix CLI"
     required: false
@@ -68,6 +72,10 @@ runs:
           ARGS+=(--no-compress)
         else
           ARGS+=(--compress)
+        fi
+        
+        if [ -n "${{ inputs.style }}" ]; then
+          ARGS+=(--style "${{ inputs.style }}")
         fi
         
         ARGS+=(--output "${{ inputs.output }}")

@@ -954,9 +954,18 @@ Basic usage:
 - name: Pack repository with Repomix
   uses: yamadashy/repomix/.github/actions/repomix@main
   with:
-    directories: src
-    include: "**/*.ts"
-    output: repomix-output.txt
+    output: repomix-output.xml
+    style: xml
+```
+
+Use `--style` to generate output in different formats:
+
+```yaml
+- name: Pack repository with Repomix
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.md
+    style: markdown
 ```
 
 Pack specific directories with compression:
@@ -989,6 +998,40 @@ Upload the output file as an artifact:
     path: repomix-output.txt
 ```
 
+Complete workflow example:
+
+```yaml
+name: Pack repository with Repomix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pack-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Pack repository with Repomix
+        uses: yamadashy/repomix/.github/actions/repomix@main
+        with:
+          output: repomix-output.xml
+
+      - name: Upload Repomix output
+        uses: actions/upload-artifact@v4
+        with:
+          name: repomix-output.xml
+          path: repomix-output.xml
+          retention-days: 30
+```
+
+See the complete workflow example [here](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml).
+
 ### Action Inputs
 
 | Name | Description | Default |
@@ -996,8 +1039,9 @@ Upload the output file as an artifact:
 | `directories` | Space-separated list of directories to process (e.g., `src tests docs`) | `.` |
 | `include` | Comma-separated glob patterns to include files (e.g., `**/*.ts,**/*.md`) | `""` |
 | `ignore` | Comma-separated glob patterns to ignore files (e.g., `**/*.test.ts,**/node_modules/**`) | `""` |
-| `output` | Relative path for the packed file (extension determines format: `.txt`, `.md`, `.xml`) | `repomix.txt` |
+| `output` | Relative path for the packed file (extension determines format: `.txt`, `.md`, `.xml`) | `repomix-output.xml` |
 | `compress` | Enable smart compression to reduce output size by pruning implementation details | `true` |
+| `style` | Output style (`xml`, `markdown`, `plain`) | `xml` |
 | `additional-args` | Extra raw arguments for the repomix CLI (e.g., `--no-file-summary --no-security-check`) | `""` |
 | `repomix-version` | Version of the npm package to install (supports semver ranges, tags, or specific versions like `0.2.25`) | `latest` |
 
