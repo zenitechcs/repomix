@@ -47,9 +47,9 @@ Al discutir cambios específicos, la IA puede ayudar a generar código. Con func
 
 
 
-## Guía para usuarios avanzados
+## Usando la herramienta CLI
 
-Para los usuarios avanzados que necesitan más control, Repomix ofrece amplias opciones de personalización a través de su interfaz de línea de comandos.
+Repomix puede usarse como una herramienta de línea de comandos, ofreciendo potentes funciones y opciones de personalización.
 
 ### Inicio rápido
 

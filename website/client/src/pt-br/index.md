@@ -45,9 +45,9 @@ Ao discutir mudanças específicas, a IA pode ajudar a gerar código. Com recurs
 
 Feliz codificação! 🚀
 
-## Guia do Usuário Avançado
+## Usando a Ferramenta CLI
 
-Para usuários avançados que precisam de mais controle, o Repomix oferece extensas opções de personalização através de sua interface CLI.
+O Repomix pode ser usado como uma ferramenta de linha de comando, oferecendo recursos poderosos e opções de personalização.
 
 ### Início Rápido
 

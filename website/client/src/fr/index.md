@@ -42,9 +42,9 @@ Lors de la discussion de modifications spécifiques, l'IA peut vous aider à gé
 
 Bon codage ! 🚀
 
-## Guide de l'utilisateur avancé
+## Utilisation de l'outil CLI
 
-Pour les utilisateurs avancés qui ont besoin de plus de contrôle, Repomix offre de nombreuses options de personnalisation via son interface en ligne de commande.
+Repomix peut être utilisé comme un outil en ligne de commande, offrant des fonctionnalités puissantes et des options de personnalisation.
 
 ### Démarrage rapide
 

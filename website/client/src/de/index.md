@@ -45,9 +45,9 @@ Bei der Diskussion spezifischer Änderungen kann die KI bei der Code-Generierung
 
 Viel Spaß beim Programmieren! 🚀
 
-## Leitfaden für fortgeschrittene Benutzer
+## Verwendung des CLI-Tools
 
-Für fortgeschrittene Benutzer, die mehr Kontrolle benötigen, bietet Repomix umfangreiche Anpassungsmöglichkeiten über seine CLI-Schnittstelle.
+Repomix kann als Kommandozeilen-Tool verwendet werden und bietet leistungsstarke Funktionen und Anpassungsoptionen.
 
 ### Schnellstart
 
