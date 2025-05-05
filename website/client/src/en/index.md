@@ -29,7 +29,7 @@ features:
 
 ## Quick Start
 
-Once you've generated a packed file (`repomix-output.txt`) using Repomix, you can send it to an AI assistant with a prompt like:
+Once you've generated a packed file (`repomix-output.xml`) using Repomix, you can send it to an AI assistant (like ChatGPT, Claude) with a prompt like:
 
 ```
 This file contains all the files in the repository combined into one.
@@ -75,7 +75,7 @@ brew install repomix
 repomix
 ```
 
-That's it! Repomix will generate a `repomix-output.txt` file in your current directory, containing your entire repository in an AI-friendly format.
+That's it! Repomix will generate a `repomix-output.xml` file in your current directory, containing your entire repository in an AI-friendly format.
 
 
 

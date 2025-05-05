@@ -28,7 +28,7 @@ features:
 
 ## 빠른 시작
 
-Repomix를 사용하여 패키지 파일(`repomix-output.txt`)을 생성한 후, 다음과 같은 프롬프트와 함께 AI 어시스턴트에게 전송할 수 있습니다:
+Repomix를 사용하여 패키지 파일(`repomix-output.xml`)을 생성한 후, 다음과 같은 프롬프트와 함께 AI 어시스턴트(예: ChatGPT, Claude)에게 전송할 수 있습니다:
 
 ```
 이 파일은 저장소의 모든 파일을 하나로 통합한 것입니다.
@@ -75,7 +75,7 @@ brew install repomix
 repomix
 ```
 
-이게 전부입니다! Repomix가 현재 디렉토리에 `repomix-output.txt` 파일을 생성하며, 이 파일에는 AI 친화적인 형식으로 정리된 전체 코드베이스가 포함됩니다.
+이게 전부입니다! Repomix가 현재 디렉토리에 `repomix-output.xml` 파일을 생성하며, 이 파일에는 AI 친화적인 형식으로 정리된 전체 코드베이스가 포함됩니다.
 
 
 

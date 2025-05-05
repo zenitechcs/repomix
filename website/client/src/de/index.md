@@ -28,7 +28,7 @@ features:
 
 ## Schnellstart
 
-Sobald Sie mit Repomix eine gepackte Datei (`repomix-output.txt`) erstellt haben, können Sie diese mit einer Aufforderung wie dieser an einen KI-Assistenten senden:
+Sobald Sie mit Repomix eine gepackte Datei (`repomix-output.xml`) erstellt haben, können Sie diese mit einer Aufforderung wie dieser an einen KI-Assistenten (wie ChatGPT, Claude) senden:
 
 ```
 Diese Datei enthält alle Dateien im Repository in einer Datei zusammengefasst.
@@ -73,7 +73,7 @@ brew install repomix
 repomix
 ```
 
-Das war's! Repomix generiert eine `repomix-output.txt` Datei in Ihrem aktuellen Verzeichnis, die Ihr gesamtes Repository in einem KI-freundlichen Format enthält.
+Das war's! Repomix generiert eine `repomix-output.xml` Datei in Ihrem aktuellen Verzeichnis, die Ihr gesamtes Repository in einem KI-freundlichen Format enthält.
 
 ### Verwendung
 

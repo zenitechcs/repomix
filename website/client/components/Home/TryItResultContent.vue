@@ -318,11 +318,7 @@ dd {
 }
 
 .support-icon {
-  color: #db61a2;
-}
-
-.support-link:hover .support-icon {
-  opacity: 0.8;
+  color: #b04386;
 }
 
 @media (max-width: 768px) {

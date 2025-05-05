@@ -28,7 +28,7 @@ features:
 
 ## Inicio rápido
 
-Una vez que hayas generado un archivo empaquetado (`repomix-output.txt`) usando Repomix, puedes enviarlo a un asistente de IA con un prompt como:
+Una vez que hayas generado un archivo empaquetado (`repomix-output.xml`) usando Repomix, puedes enviarlo a un asistente de IA (como ChatGPT, Claude) con un prompt como:
 
 ```
 Este archivo contiene todos los archivos del repositorio combinados en uno.
@@ -75,7 +75,7 @@ brew install repomix
 repomix
 ```
 
-¡Eso es todo! Repomix generará un archivo `repomix-output.txt` en tu directorio actual, que contendrá todo tu repositorio en un formato amigable para la IA.
+¡Eso es todo! Repomix generará un archivo `repomix-output.xml` en tu directorio actual, que contendrá todo tu repositorio en un formato amigable para la IA.
 
 
 
