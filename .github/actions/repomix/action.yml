@@ -53,7 +53,8 @@ runs:
       run: |
         set -e
         # Using an array for safer command execution
-        ARGS=(${{ inputs.directories }})
+        # Safely split directories input into an array, handling spaces correctly
+        IFS=' ' read -r -a ARGS <<< "${{ inputs.directories }}"
         
         if [ -n "${{ inputs.include }}" ]; then
           ARGS+=(--include "${{ inputs.include }}")
