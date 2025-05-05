@@ -9,6 +9,7 @@ The website documentation is available in the following languages:
 - English (en)
 - Japanese (日本語) (ja)
 - Chinese Simplified (简体中文) (zh-cn)
+- Chinese Traditional (繁體中文) (zh-tw)
 - Korean (한국어) (ko)
 - German (Deutsch) (de)
 - French (Français) (fr)
