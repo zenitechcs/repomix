@@ -31,7 +31,8 @@
     "repomix-src": "npm run repomix -- --include 'src,tests'",
     "repomix-website": "npm run repomix -- --include 'website'",
     "website": "docker compose -f website/compose.yml up --build",
-    "npm-publish": "npm run lint && npm run test-coverage && npm run build && npm publish",
+    "npm-publish": "npm run npm-publish-check-branch && npm run lint && npm run test-coverage && npm run build && npm publish",
+    "npm-publish-check-branch": "git branch --show-current | grep -q '^main$' || (echo 'Release is only allowed from the main branch' && exit 1)",
     "npm-release-patch": "npm version patch && npm run npm-publish",
     "npm-release-minor": "npm version minor && npm run npm-publish",
     "npm-release-prerelease": "npm version prerelease && npm run npm-publish"
