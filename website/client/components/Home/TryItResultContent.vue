@@ -4,7 +4,7 @@ import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
 import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch, Star } from 'lucide-vue-next';
 import { useData } from 'vitepress';
-import { ref, watch, computed, onMounted } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from '../utils/resultViewer';
@@ -67,15 +67,15 @@ const messages = [
     link: 'https://github.com/sponsors/yamadashy',
     icon: HeartHandshake,
     text: 'Your support helps maintain and improve it. Thank you!',
-    color: '#b04386'
+    color: '#b04386',
   },
   {
     type: 'star',
     link: 'https://github.com/yamadashy/repomix',
     icon: Star,
     text: 'If you like Repomix, please give us a star on GitHub!',
-    color: '#f1c40f'
-  }
+    color: '#f1c40f',
+  },
 ];
 
 const currentMessageIndex = ref(Math.floor(Math.random() * messages.length));
@@ -84,7 +84,7 @@ const supportMessage = computed(() => ({
   link: messages[currentMessageIndex.value].link,
   icon: messages[currentMessageIndex.value].icon,
   text: messages[currentMessageIndex.value].text,
-  color: messages[currentMessageIndex.value].color
+  color: messages[currentMessageIndex.value].color,
 }));
 </script>
 
