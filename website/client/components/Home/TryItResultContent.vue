@@ -2,9 +2,9 @@
 import ace, { type Ace } from 'ace-builds';
 import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
-import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch } from 'lucide-vue-next';
+import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch, Star } from 'lucide-vue-next';
 import { useData } from 'vitepress';
-import { computed, ref, watch } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from '../utils/resultViewer';
@@ -60,6 +60,32 @@ const handleDownload = (event: Event) => {
 const handleEditorMount = (editor: Ace.Editor) => {
   editorInstance.value = editor;
 };
+
+const messages = [
+  {
+    type: 'sponsor',
+    link: 'https://github.com/sponsors/yamadashy',
+    icon: HeartHandshake,
+    text: 'Your support helps maintain and improve it. Thank you!',
+    color: '#b04386'
+  },
+  {
+    type: 'star',
+    link: 'https://github.com/yamadashy/repomix',
+    icon: Star,
+    text: 'If you like Repomix, please give us a star on GitHub!',
+    color: '#f1c40f'
+  }
+];
+
+const currentMessageIndex = ref(Math.floor(Math.random() * messages.length));
+const supportMessage = computed(() => ({
+  type: messages[currentMessageIndex.value].type,
+  link: messages[currentMessageIndex.value].link,
+  icon: messages[currentMessageIndex.value].icon,
+  text: messages[currentMessageIndex.value].text,
+  color: messages[currentMessageIndex.value].color
+}));
 </script>
 
 <template>
@@ -132,9 +158,9 @@ const handleEditorMount = (editor: Ace.Editor) => {
     </div>
     <div class="support-notice">
       <div class="support-message">
-        <a href="https://github.com/sponsors/yamadashy" target="_blank" rel="noopener noreferrer" class="support-link">
-          <HeartHandshake :size="14" class="support-icon" />
-          Your support helps maintain and improve it. Thank you!
+        <a :href="supportMessage.link" target="_blank" rel="noopener noreferrer" class="support-link">
+          <component :is="supportMessage.icon" :size="14" class="support-icon" />
+          {{ supportMessage.text }}
         </a>
       </div>
     </div>
@@ -294,7 +320,7 @@ dd {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
   font-size: 12px;
   width: 100%;
 }
@@ -302,6 +328,7 @@ dd {
 .support-icon {
   flex-shrink: 0;
   transition: color 0.3s ease;
+  color: v-bind('supportMessage.color');
 }
 
 .support-link {
@@ -315,10 +342,6 @@ dd {
 
 .support-link:hover {
   color: var(--vp-c-brand-1);
-}
-
-.support-icon {
-  color: #b04386;
 }
 
 @media (max-width: 768px) {
