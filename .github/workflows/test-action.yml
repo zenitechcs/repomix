@@ -24,13 +24,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run Repomix Action (Minimal)
-        if: matrix.test-case == 'minimal'
+        if: matrix['test-case'] == 'minimal'
         uses: ./.github/actions/repomix
         with:
           output: "repomix-minimal-output.txt"
 
       - name: Run Repomix Action (Basic)
-        if: matrix.test-case == 'basic'
+        if: matrix['test-case'] == 'basic'
         uses: ./.github/actions/repomix
         with:
           directories: "src"
@@ -39,7 +39,7 @@ jobs:
           compress: "true"
 
       - name: Run Repomix Action (Full)
-        if: matrix.test-case == 'full'
+        if: matrix['test-case'] == 'full'
         uses: ./.github/actions/repomix
         with:
           directories: "src tests"
