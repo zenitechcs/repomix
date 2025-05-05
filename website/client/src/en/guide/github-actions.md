@@ -65,7 +65,7 @@ To make the packed file available for later workflow steps or for download, uplo
 
 | Name          | Description                        |
 |---------------|------------------------------------|
-| `output-file` | Path to the generated output file   |
+| `output_file` | Path to the generated output file   |
 
 ## Example: Full Workflow
 

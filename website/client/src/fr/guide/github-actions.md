@@ -65,7 +65,7 @@ Pour rendre le fichier packagé disponible pour les étapes suivantes ou pour le
 
 | Nom           | Description                        |
 |---------------|------------------------------------|
-| `output-file` | Chemin du fichier généré            |
+| `output_file` | Chemin du fichier généré            |
 
 ## Exemple de workflow complet
 

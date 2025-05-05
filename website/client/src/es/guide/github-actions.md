@@ -65,7 +65,7 @@ Para que el archivo empaquetado esté disponible para pasos posteriores o para d
 
 | Nombre         | Descripción                        |
 |---------------|------------------------------------|
-| `output-file` | Ruta del archivo generado           |
+| `output_file` | Ruta del archivo generado           |
 
 ## Ejemplo de workflow completo
 

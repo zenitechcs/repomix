@@ -65,7 +65,7 @@ Para disponibilizar o arquivo empacotado para etapas posteriores ou para downloa
 
 | Nome          | Descrição                        |
 |---------------|----------------------------------|
-| `output-file` | Caminho do arquivo gerado         |
+| `output_file` | Caminho do arquivo gerado         |
 
 ## Exemplo de workflow completo
 

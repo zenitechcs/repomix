@@ -1005,7 +1005,7 @@ Upload the output file as an artifact:
 
 | Name | Description |
 |------|-------------|
-| `output-file` | Path to the generated output file. Can be used in subsequent steps for artifact upload, LLM processing, or other operations. The file contains a formatted representation of your codebase based on the specified options. |
+| `output_file` | Path to the generated output file. Can be used in subsequent steps for artifact upload, LLM processing, or other operations. The file contains a formatted representation of your codebase based on the specified options. |
 
 ## 📚 Using Repomix as a Library
 

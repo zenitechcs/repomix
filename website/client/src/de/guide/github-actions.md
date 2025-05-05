@@ -65,7 +65,7 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
 
 | Name          | Beschreibung                        |
 |---------------|-------------------------------------|
-| `output-file` | Pfad zur generierten Ausgabedatei    |
+| `output_file` | Pfad zur generierten Ausgabedatei    |
 
 ## Komplettes Workflow-Beispiel
 
