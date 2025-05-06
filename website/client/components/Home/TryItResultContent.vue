@@ -171,7 +171,7 @@ const supportMessage = computed(() => ({
 .content-wrapper {
   display: grid;
   grid-template-columns: 300px 1fr;
-  grid-template-rows: 500px auto;
+  grid-template-rows: 445px auto;
 }
 
 .metadata-panel {

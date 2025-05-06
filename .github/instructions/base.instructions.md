@@ -81,6 +81,20 @@ repomix/
 - Description should be clear and concise in present tense
 - Description must start with a capital letter
 
+## Pull Request Guidelines
+- All pull requests must follow the template:
+  ```md
+  <!-- Please include a summary of the changes -->
+
+  ## Checklist
+
+  - [ ] Run `npm run test`
+  - [ ] Run `npm run lint`
+  ```
+- Include a clear summary of the changes at the top of the pull request description
+- Reference any related issues using the format `#issue-number` 
+
+
 ## Dependencies and Testing
 - Inject dependencies through a deps object parameter for testability
 - Example:

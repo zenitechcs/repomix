@@ -73,11 +73,15 @@ export const printTopFiles = (
     .sort((a, b) => b[1] - a[1])
     .slice(0, topFilesLength);
 
+  // Calculate total token count
+  const totalTokens = Object.values(fileTokenCounts).reduce((sum, count) => sum + count, 0);
+
   topFiles.forEach(([filePath, charCount], index) => {
     const tokenCount = fileTokenCounts[filePath];
+    const percentageOfTotal = totalTokens > 0 ? Number(((tokenCount / totalTokens) * 100).toFixed(1)) : 0;
     const indexString = `${index + 1}.`.padEnd(3, ' ');
     logger.log(
-      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount.toLocaleString()} chars, ${tokenCount.toLocaleString()} tokens)`)}`,
+      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount.toLocaleString()} chars, ${tokenCount.toLocaleString()} tokens, ${percentageOfTotal}%)`)}`,
     );
   });
 };
