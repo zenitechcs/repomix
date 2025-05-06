@@ -11,6 +11,8 @@ describe('writeOutputToDisk', () => {
   let originalStdoutWrite: typeof process.stdout.write;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(fs.writeFile).mockResolvedValue(undefined);
     originalStdoutWrite = process.stdout.write;
     process.stdout.write = vi.fn();
   });
@@ -34,11 +36,11 @@ describe('writeOutputToDisk', () => {
     expect(process.stdout.write).not.toHaveBeenCalled();
   });
 
-  it('should write to stdout when filePath is "-"', async () => {
+  it('should write to stdout if stdout is true', async () => {
     const output = 'test output';
     const config: RepomixConfigMerged = {
       cwd: '/test/directory',
-      output: { filePath: '-' },
+      output: { stdout: true },
     } as RepomixConfigMerged;
 
     await writeOutputToDisk(output, config);

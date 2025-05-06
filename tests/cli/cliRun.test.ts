@@ -383,23 +383,6 @@ describe('cliRun', () => {
       );
     });
 
-    test('should automatically enable stdout mode when piped', async () => {
-      // Mock pipe detection
-      process.stdout.isTTY = false;
-      const options: CliOptions = {};
-
-      await runCli(['.'], process.cwd(), options);
-
-      // stdout should be true in the merged options
-      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
-        ['.'],
-        process.cwd(),
-        expect.objectContaining({
-          stdout: true,
-        }),
-      );
-    });
-
     test('should not enable stdout mode when explicitly setting output', async () => {
       // Mock pipe detection
       process.stdout.isTTY = false;
