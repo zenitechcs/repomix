@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { writeOutputToDisk } from '../../../src/core/packager/writeOutputToDisk.js';
 
@@ -8,6 +8,17 @@ vi.mock('node:fs/promises');
 vi.mock('../../shared/logger');
 
 describe('writeOutputToDisk', () => {
+  let originalStdoutWrite: typeof process.stdout.write;
+
+  beforeEach(() => {
+    originalStdoutWrite = process.stdout.write;
+    process.stdout.write = vi.fn();
+  });
+
+  afterEach(() => {
+    process.stdout.write = originalStdoutWrite;
+  });
+
   it('should write output to the specified file path', async () => {
     const output = 'test output';
     const config: RepomixConfigMerged = {
@@ -20,5 +31,19 @@ describe('writeOutputToDisk', () => {
     await writeOutputToDisk(output, config);
 
     expect(fs.writeFile).toHaveBeenCalledWith(outputPath, output);
+    expect(process.stdout.write).not.toHaveBeenCalled();
+  });
+
+  it('should write to stdout when filePath is "-"', async () => {
+    const output = 'test output';
+    const config: RepomixConfigMerged = {
+      cwd: '/test/directory',
+      output: { filePath: '-' },
+    } as RepomixConfigMerged;
+
+    await writeOutputToDisk(output, config);
+
+    expect(fs.writeFile).not.toHaveBeenCalled();
+    expect(process.stdout.write).toHaveBeenCalledWith(output);
   });
 });

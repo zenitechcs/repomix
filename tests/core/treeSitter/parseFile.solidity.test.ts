@@ -13,6 +13,7 @@ describe('Solidity File Parsing', () => {
     output: {
       filePath: 'output.txt',
       style: 'xml',
+      stdout: false,
       parsableStyle: false,
       fileSummary: true,
       directoryStructure: true,

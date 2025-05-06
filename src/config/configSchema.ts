@@ -125,10 +125,21 @@ export const repomixConfigDefaultSchema = z.object({
     .default({}),
 });
 
+// File-specific schema. Add options for file path and style
 export const repomixConfigFileSchema = repomixConfigBaseSchema;
 
-export const repomixConfigCliSchema = repomixConfigBaseSchema;
+// CLI-specific schema. Add options for standard output mode
+export const repomixConfigCliSchema = repomixConfigBaseSchema.and(
+  z.object({
+    output: z
+      .object({
+        stdout: z.boolean().optional(),
+      })
+      .optional(),
+  }),
+);
 
+// Merged schema for all configurations
 export const repomixConfigMergedSchema = repomixConfigDefaultSchema
   .and(repomixConfigFileSchema)
   .and(repomixConfigCliSchema)

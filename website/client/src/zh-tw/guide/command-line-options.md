@@ -5,6 +5,7 @@
 
 ## 輸出選項
 - `-o, --output <file>`: 輸出文件名（預設：`repomix-output.txt`）
+- `--stdout`: 輸出到標準輸出而不是寫入文件（不能與`--output`選項一起使用）
 - `--style <type>`: 輸出樣式（`plain`、`xml`、`markdown`）（預設：`xml`）
 - `--parsable-style`: 啟用基於所選樣式模式的可解析輸出（預設：`false`）
 - `--compress`: 執行智慧程式碼提取，專注於函數和類的簽名，同時刪除實現細節。有關詳細資訊和示例，請參閱[程式碼壓縮指南](code-compress)。
@@ -55,6 +56,12 @@ repomix
 
 # 自定義輸出
 repomix -o output.xml --style xml
+
+# 輸出到標準輸出
+repomix --stdout > custom-output.txt
+
+# 將輸出發送到標準輸出，然後通過管道傳遞到另一個命令（例如：simonw/llm）
+repomix --stdout | llm "請解釋這段程式碼的功能"
 
 # 使用壓縮的自定義輸出
 repomix --compress

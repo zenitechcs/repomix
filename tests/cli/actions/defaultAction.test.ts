@@ -34,6 +34,7 @@ describe('defaultAction', () => {
         removeEmptyLines: false,
         compress: false,
         copyToClipboard: false,
+        stdout: false,
         git: {
           sortByChanges: true,
           sortByChangesMaxCommits: 100,
@@ -176,6 +177,46 @@ describe('defaultAction', () => {
           output: {
             parsableStyle: false,
           },
+        }),
+      );
+    });
+  });
+
+  describe('stdout flag', () => {
+    it('should set stdout to true when --stdout flag is set', async () => {
+      const options: CliOptions = {
+        stdout: true,
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: expect.objectContaining({
+            stdout: true,
+          }),
+        }),
+      );
+    });
+
+    it('should handle both --stdout and custom style', async () => {
+      const options: CliOptions = {
+        stdout: true,
+        style: 'markdown',
+      };
+
+      await runDefaultAction(['.'], process.cwd(), options);
+
+      expect(configLoader.mergeConfigs).toHaveBeenCalledWith(
+        process.cwd(),
+        expect.anything(),
+        expect.objectContaining({
+          output: expect.objectContaining({
+            stdout: true,
+            style: 'markdown',
+          }),
         }),
       );
     });

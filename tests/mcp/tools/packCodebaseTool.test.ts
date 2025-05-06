@@ -63,6 +63,7 @@ describe('PackCodebaseTool', () => {
           filePath: opts.output ?? '/temp/dir/repomix-output.xml',
           style: opts.style ?? 'xml',
           parsableStyle: false,
+          stdout: false,
           fileSummary: true,
           directoryStructure: true,
           removeComments: false,

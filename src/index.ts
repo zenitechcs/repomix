@@ -48,7 +48,7 @@ export { runCli } from './cli/cliRun.js';
 export { runInitAction } from './cli/actions/initAction.js';
 
 // Default action
-export { runDefaultAction } from './cli/actions/defaultAction.js';
+export { runDefaultAction, buildCliConfig } from './cli/actions/defaultAction.js';
 
 // Remote action
 export {
