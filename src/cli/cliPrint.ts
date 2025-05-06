@@ -78,7 +78,9 @@ export const printTopFiles = (
 
   topFiles.forEach(([filePath, charCount], index) => {
     const tokenCount = fileTokenCounts[filePath];
-    const percentageOfTotal = ((tokenCount / totalTokens) * 100).toFixed(1);
+    const percentageOfTotal = totalTokens > 0 
+      ? Number(((tokenCount / totalTokens) * 100).toFixed(1))
+      : 0;
     const indexString = `${index + 1}.`.padEnd(3, ' ');
     logger.log(
       `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount.toLocaleString()} chars, ${tokenCount.toLocaleString()} tokens, ${percentageOfTotal}%)`)}`,
