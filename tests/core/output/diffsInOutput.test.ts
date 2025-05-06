@@ -70,7 +70,9 @@ index 123..456 100644
 
   test('buildOutputGeneratorContext should include diffs when enabled', async () => {
     // Enable diffs
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     const rootDirs = ['/test/repo'];
     const allFilePaths = ['file1.js', 'file2.js'];
@@ -78,12 +80,10 @@ index 123..456 100644
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
       {
         path: 'file2.js',
         content: 'console.log("file2");',
-        originalContent: 'console.log("file2");',
       },
     ];
 
@@ -96,12 +96,14 @@ index 123..456 100644
     expect(context.gitDiffs).toBe(sampleDiff);
 
     // Config should have the diffContent
-    expect(mockConfig.output.git!.diffContent).toBe(sampleDiff);
+    expect(mockConfig.output.git?.diffContent).toBe(sampleDiff);
   });
 
   test('buildOutputGeneratorContext should not include diffs when disabled', async () => {
     // Disable diffs
-    mockConfig.output.git!.includeDiffs = false;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = false;
+    }
 
     const rootDirs = ['/test/repo'];
     const allFilePaths = ['file1.js', 'file2.js'];
@@ -109,12 +111,10 @@ index 123..456 100644
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
       {
         path: 'file2.js',
         content: 'console.log("file2");',
-        originalContent: 'console.log("file2");',
       },
     ];
 
@@ -127,20 +127,21 @@ index 123..456 100644
     expect(context.gitDiffs).toBeUndefined();
 
     // Config should not have diffContent
-    expect(mockConfig.output.git!.diffContent).toBeUndefined();
+    expect(mockConfig.output.git?.diffContent).toBeUndefined();
   });
 
   test('generateOutput should include diffs in XML output via object', async () => {
     // Enable diffs
     mockConfig.output.style = 'xml';
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     const rootDirs = ['/test/repo'];
     const processedFiles: ProcessedFile[] = [
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
     ];
 
@@ -188,14 +189,15 @@ index 123..456 100644
   test('generateOutput should include diffs in Markdown output', async () => {
     // Enable diffs with markdown style
     mockConfig.output.style = 'markdown';
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     const rootDirs = ['/test/repo'];
     const processedFiles: ProcessedFile[] = [
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
     ];
 
@@ -214,7 +216,7 @@ index 123..456 100644
     const mockGenerateHandlebarOutput = vi.fn().mockImplementation(async (config, renderContext) => {
       // Check that renderContext has gitDiffs for markdown template
       expect(renderContext.gitDiffs).toBe(sampleDiff);
-      return '# Markdown output with diffs\n```diff\n' + sampleDiff + '\n```';
+      return `# Markdown output with diffs\n\`\`\`diff\n${sampleDiff}\n\`\`\``;
     });
 
     const mockGenerateParsableXmlOutput = vi.fn();
@@ -237,7 +239,9 @@ index 123..456 100644
 
   test('buildOutputGeneratorContext should handle errors gracefully', async () => {
     // Enable diffs
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     // Mock getWorkTreeDiff to throw an error
     vi.mocked(gitCommandModule.getWorkTreeDiff).mockRejectedValue(new Error('Git error'));
@@ -248,7 +252,6 @@ index 123..456 100644
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
     ];
 

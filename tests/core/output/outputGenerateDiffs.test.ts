@@ -164,7 +164,9 @@ describe('Output Generation with Diffs', () => {
 
   test('Output should not include diffs section when includeDiffs is disabled', async () => {
     // Disable the includeDiffs option
-    mockConfig.output.git!.includeDiffs = false;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = false;
+    }
 
     // Update the mock to not include diffs
     mockDeps.buildOutputGeneratorContext.mockImplementationOnce(async () => ({
@@ -182,7 +184,7 @@ describe('Output Generation with Diffs', () => {
       expect(renderContext.gitDiffs).toBeUndefined();
 
       // Simulate the output without diffs
-      return `Output without diffs`;
+      return 'Output without diffs';
     });
 
     // Generate the output

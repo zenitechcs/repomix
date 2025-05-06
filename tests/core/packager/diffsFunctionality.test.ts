@@ -93,7 +93,9 @@ index 123..456 100644
     const mockSortPaths = vi.fn().mockImplementation((paths) => paths);
 
     // Config with diffs disabled
-    mockConfig.output.git!.includeDiffs = false;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = false;
+    }
 
     await pack([mockRootDir], mockConfig, vi.fn(), {
       searchFiles: mockSearchFiles,
@@ -120,7 +122,9 @@ index 123..456 100644
     vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
 
     // Config with diffs enabled
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     // Test the buildOutputGeneratorContext function directly
     const rootDirs = [mockRootDir];
@@ -129,7 +133,6 @@ index 123..456 100644
       {
         path: 'file1.js',
         content: 'console.log("test");',
-        originalContent: 'console.log("test");',
       },
     ];
 
@@ -142,7 +145,7 @@ index 123..456 100644
     expect(context.gitDiffs).toBe(sampleDiff);
 
     // Config should have diffContent
-    expect(mockConfig.output.git!.diffContent).toBe(sampleDiff);
+    expect(mockConfig.output.git?.diffContent).toBe(sampleDiff);
   });
 
   test('should handle errors when getting diffs in output generation', async () => {
@@ -156,12 +159,13 @@ index 123..456 100644
       {
         path: 'file1.js',
         content: 'console.log("file1");',
-        originalContent: 'console.log("file1");',
       },
     ];
 
     // Enable diffs
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     // Testing the buildOutputGeneratorContext function directly, which should throw
     await expect(buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles)).rejects.toThrow(
@@ -175,7 +179,6 @@ index 123..456 100644
       {
         path: 'test.js',
         content: 'console.log("test");',
-        originalContent: 'console.log("test");',
       },
     ];
 
@@ -202,7 +205,9 @@ index 123..456 100644
     const mockSortPaths = vi.fn().mockImplementation((paths) => paths);
 
     // Config with diffs enabled
-    mockConfig.output.git!.includeDiffs = true;
+    if (mockConfig.output.git) {
+      mockConfig.output.git.includeDiffs = true;
+    }
 
     const result = await pack([mockRootDir], mockConfig, vi.fn(), {
       searchFiles: mockSearchFiles,

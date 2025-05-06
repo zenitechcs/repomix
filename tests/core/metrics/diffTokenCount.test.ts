@@ -20,7 +20,11 @@ describe('Diff Token Count Calculation', () => {
         return content.split(/\s+/).length;
       }),
       free: vi.fn(),
-    } as any);
+      encoding: {
+        encode: vi.fn(),
+        free: vi.fn(),
+      },
+    } as unknown as TokenCounter);
   });
 
   test('should calculate diff token count when diffs are included', async () => {
@@ -39,7 +43,6 @@ index 123..456 100644
       {
         path: 'test.js',
         content: 'console.log("test");',
-        originalContent: 'console.log("test");',
       },
     ];
 
@@ -122,7 +125,6 @@ index 123..456 100644
       {
         path: 'test.js',
         content: 'console.log("test");',
-        originalContent: 'console.log("test");',
       },
     ];
 
@@ -198,7 +200,6 @@ index 123..456 100644
       {
         path: 'test.js',
         content: 'console.log("test");',
-        originalContent: 'console.log("test");',
       },
     ];
 
