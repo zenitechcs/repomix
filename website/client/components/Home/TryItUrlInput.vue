@@ -54,7 +54,7 @@ function saveUrlToHistory(url: string) {
 
   // Remove existing entry and add to the beginning
   const filteredHistory = urlHistory.value.filter((item) => item !== trimmedUrl);
-  urlHistory.value = [trimmedUrl, ...filteredHistory].slice(0, 10); // Keep only the latest 10 entries
+  urlHistory.value = [trimmedUrl, ...filteredHistory].slice(0, 5); // Keep only the latest 10 entries
 
   try {
     localStorage.setItem('repomix-url-history', JSON.stringify(urlHistory.value));
