@@ -112,4 +112,4 @@ jobs:
           retention-days: 30
 ```
 
-完全なワークフロー例は[こちら](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)をご参照ください。
+[完全なワークフロー例](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)をご参照ください。
