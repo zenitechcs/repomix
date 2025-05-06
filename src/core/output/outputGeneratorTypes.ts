@@ -1,5 +1,6 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 
 export interface OutputGeneratorContext {
   generationDate: string;
@@ -7,7 +8,7 @@ export interface OutputGeneratorContext {
   processedFiles: ProcessedFile[];
   config: RepomixConfigMerged;
   instruction: string;
-  gitDiffs?: string;
+  gitDiffResult: GitDiffResult | undefined;
 }
 
 export interface RenderContext {
@@ -25,5 +26,7 @@ export interface RenderContext {
   readonly filesEnabled: boolean;
   readonly escapeFileContent: boolean;
   readonly markdownCodeBlockDelimiter: string;
-  readonly gitDiffs?: string;
+  readonly gitDiffEnabled: boolean;
+  readonly gitDiffWorkTree: string | undefined;
+  readonly gitDiffStaged: string | undefined;
 }

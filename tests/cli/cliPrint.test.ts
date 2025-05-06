@@ -2,6 +2,7 @@ import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../../src/cli/cliPrint.js';
 import type { SuspiciousFileResult } from '../../src/core/security/securityCheck.js';
+import type { PackResult } from '../../src/index.js';
 import { logger } from '../../src/shared/logger.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
@@ -32,7 +33,17 @@ describe('cliPrint', () => {
         { filePath: 'suspicious.txt', messages: ['Contains sensitive data'] },
       ];
 
-      printSummary(10, 1000, 200, 'output.txt', suspiciousFiles, config);
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: suspiciousFiles,
+        diffTokenCount: 0,
+      };
+
+      printSummary(packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 suspicious file(s) detected and excluded'));
     });
@@ -42,7 +53,17 @@ describe('cliPrint', () => {
         security: { enableSecurityCheck: false },
       });
 
-      printSummary(10, 1000, 200, 'output.txt', [], config);
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        diffTokenCount: 0,
+      };
+
+      printSummary(packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Security check disabled'));
     });

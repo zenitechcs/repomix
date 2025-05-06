@@ -3,6 +3,7 @@ import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import * as gitCommandModule from '../../../src/core/file/gitCommand.js';
 import { buildOutputGeneratorContext, generateOutput } from '../../../src/core/output/outputGenerate.js';
+import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
 
 // Mock the gitCommand module
 vi.mock('../../../src/core/file/gitCommand.js', () => ({
@@ -87,47 +88,15 @@ index 123..456 100644
       },
     ];
 
-    const context = await buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles);
+    const sampleDiff = 'diff --git a/file1.js b/file1.js';
 
-    // Should call getWorkTreeDiff
-    expect(gitCommandModule.getWorkTreeDiff).toHaveBeenCalledWith('/test/repo');
+    const context = await buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles, {
+      workTreeDiffContent: sampleDiff,
+      stagedDiffContent: '',
+    });
 
     // Context should include gitDiffs
-    expect(context.gitDiffs).toBe(sampleDiff);
-
-    // Config should have the diffContent
-    expect(mockConfig.output.git?.diffContent).toBe(sampleDiff);
-  });
-
-  test('buildOutputGeneratorContext should not include diffs when disabled', async () => {
-    // Disable diffs
-    if (mockConfig.output.git) {
-      mockConfig.output.git.includeDiffs = false;
-    }
-
-    const rootDirs = ['/test/repo'];
-    const allFilePaths = ['file1.js', 'file2.js'];
-    const processedFiles: ProcessedFile[] = [
-      {
-        path: 'file1.js',
-        content: 'console.log("file1");',
-      },
-      {
-        path: 'file2.js',
-        content: 'console.log("file2");',
-      },
-    ];
-
-    const context = await buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles);
-
-    // Should not call getWorkTreeDiff
-    expect(gitCommandModule.getWorkTreeDiff).not.toHaveBeenCalled();
-
-    // Context should not include gitDiffs
-    expect(context.gitDiffs).toBeUndefined();
-
-    // Config should not have diffContent
-    expect(mockConfig.output.git?.diffContent).toBeUndefined();
+    expect(context.gitDiffResult?.workTreeDiffContent).toBe(sampleDiff);
   });
 
   test('generateOutput should include diffs in XML output via object', async () => {
@@ -158,16 +127,21 @@ index 123..456 100644
     });
 
     const mockGenerateHandlebarOutput = vi.fn().mockResolvedValue('<xml>output with diffs</xml>');
-    const mockGenerateParsableXmlOutput = vi.fn().mockImplementation(async (renderContext) => {
+    const mockGenerateParsableXmlOutput = vi.fn().mockImplementation(async (renderContext: RenderContext) => {
       // Check that renderContext has gitDiffs
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
       return '<xml>parsable output with diffs object</xml>';
     });
 
     const mockSortOutputFiles = vi.fn().mockImplementation((files) => Promise.resolve(files));
 
+    const gitDiffResult = {
+      workTreeDiffContent: sampleDiff,
+      stagedDiffContent: '',
+    };
+
     // Call generateOutput with mocked deps
-    const output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], {
+    const output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], gitDiffResult, {
       buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
       generateHandlebarOutput: mockGenerateHandlebarOutput,
       generateParsableXmlOutput: mockGenerateParsableXmlOutput,
@@ -209,21 +183,28 @@ index 123..456 100644
         processedFiles,
         config: mockConfig,
         instruction: '',
-        gitDiffs: sampleDiff,
+        gitDiffResult: {
+          workTreeDiffContent: sampleDiff,
+          stagedDiffContent: '',
+        },
       };
     });
 
-    const mockGenerateHandlebarOutput = vi.fn().mockImplementation(async (config, renderContext) => {
+    const mockGenerateHandlebarOutput = vi.fn().mockImplementation(async (config, renderContext: RenderContext) => {
       // Check that renderContext has gitDiffs for markdown template
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
       return `# Markdown output with diffs\n\`\`\`diff\n${sampleDiff}\n\`\`\``;
     });
 
     const mockGenerateParsableXmlOutput = vi.fn();
     const mockSortOutputFiles = vi.fn().mockImplementation((files) => Promise.resolve(files));
+    const gitDiffResult = {
+      workTreeDiffContent: sampleDiff,
+      stagedDiffContent: '',
+    };
 
     // Call generateOutput with mocked deps
-    const output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], {
+    const output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], gitDiffResult, {
       buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
       generateHandlebarOutput: mockGenerateHandlebarOutput,
       generateParsableXmlOutput: mockGenerateParsableXmlOutput,
@@ -235,29 +216,5 @@ index 123..456 100644
 
     // XML generator should not be called for markdown
     expect(mockGenerateParsableXmlOutput).not.toHaveBeenCalled();
-  });
-
-  test('buildOutputGeneratorContext should handle errors gracefully', async () => {
-    // Enable diffs
-    if (mockConfig.output.git) {
-      mockConfig.output.git.includeDiffs = true;
-    }
-
-    // Mock getWorkTreeDiff to throw an error
-    vi.mocked(gitCommandModule.getWorkTreeDiff).mockRejectedValue(new Error('Git error'));
-
-    const rootDirs = ['/test/repo'];
-    const allFilePaths = ['file1.js'];
-    const processedFiles: ProcessedFile[] = [
-      {
-        path: 'file1.js',
-        content: 'console.log("file1");',
-      },
-    ];
-
-    // An error should be thrown
-    await expect(buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles)).rejects.toThrow(
-      'Failed to get git diffs: Git error',
-    );
   });
 });

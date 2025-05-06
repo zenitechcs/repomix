@@ -1,22 +1,16 @@
 import path from 'node:path';
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../config/configSchema.js';
+import type { PackResult } from '../core/packager.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheck.js';
 import { logger } from '../shared/logger.js';
 
-export const printSummary = (
-  totalFiles: number,
-  totalCharacters: number,
-  totalTokens: number,
-  outputPath: string,
-  suspiciousFilesResults: SuspiciousFileResult[] & { diffTokenCount?: number },
-  config: RepomixConfigMerged,
-) => {
+export const printSummary = (packResult: PackResult, config: RepomixConfigMerged) => {
   let securityCheckMessage = '';
   if (config.security.enableSecurityCheck) {
-    if (suspiciousFilesResults.length > 0) {
+    if (packResult.suspiciousFilesResults.length > 0) {
       securityCheckMessage = pc.yellow(
-        `${suspiciousFilesResults.length.toLocaleString()} suspicious file(s) detected and excluded`,
+        `${packResult.suspiciousFilesResults.length.toLocaleString()} suspicious file(s) detected and excluded`,
       );
     } else {
       securityCheckMessage = pc.white('✔ No suspicious files detected');
@@ -27,17 +21,20 @@ export const printSummary = (
 
   logger.log(pc.white('📊 Pack Summary:'));
   logger.log(pc.dim('────────────────'));
-  logger.log(`${pc.white('  Total Files:')} ${pc.white(totalFiles.toLocaleString())} files`);
-  logger.log(`${pc.white('  Total Chars:')} ${pc.white(totalCharacters.toLocaleString())} chars`);
-  logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toLocaleString())} tokens`);
-  logger.log(`${pc.white('       Output:')} ${pc.white(outputPath)}`);
+  logger.log(`${pc.white('  Total Files:')} ${pc.white(packResult.totalFiles.toLocaleString())} files`);
+  logger.log(`${pc.white('  Total Chars:')} ${pc.white(packResult.totalCharacters.toLocaleString())} chars`);
+  logger.log(`${pc.white(' Total Tokens:')} ${pc.white(packResult.totalTokens.toLocaleString())} tokens`);
+  logger.log(`${pc.white('       Output:')} ${pc.white(config.output.filePath)}`);
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 
   if (config.output.git?.includeDiffs) {
-    const diffTokens = suspiciousFilesResults.diffTokenCount
-      ? ` (${suspiciousFilesResults.diffTokenCount.toLocaleString()} tokens)`
-      : '';
-    logger.log(`${pc.white('   Git Diffs:')} ${pc.green('✔')} ${pc.white(`Working tree diffs included${diffTokens}`)}`);
+    let gitDiffsMessage = '';
+    if (packResult.diffTokenCount) {
+      gitDiffsMessage = pc.white(`✔ Working tree diffs included${packResult.diffTokenCount.toLocaleString()} tokens`);
+    } else {
+      gitDiffsMessage = pc.dim('✖ No working tree diffs included');
+    }
+    logger.log(`${pc.white('   Git Diffs:')} ${gitDiffsMessage}`);
   }
 };
 

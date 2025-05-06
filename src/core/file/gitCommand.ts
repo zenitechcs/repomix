@@ -68,6 +68,36 @@ export const getWorkTreeDiff = async (
   }
 };
 
+export const getStagedDiff = async (
+  directory: string,
+  deps = {
+    execFileAsync,
+  },
+): Promise<string> => {
+  try {
+    // Check if the directory is a git repository
+    const isGitRepo = await isGitRepository(directory, deps);
+    if (!isGitRepo) {
+      logger.trace('Not a git repository, skipping staged diff generation');
+      return '';
+    }
+
+    // Get the diff from the staging area
+    const result = await deps.execFileAsync('git', [
+      '-C',
+      directory,
+      'diff',
+      '--cached',
+      '--no-color', // Avoid ANSI color codes
+    ]);
+
+    return result.stdout || '';
+  } catch (error) {
+    logger.trace('Failed to get staged diff:', (error as Error).message);
+    return '';
+  }
+};
+
 export const isGitRepository = async (
   directory: string,
   deps = {

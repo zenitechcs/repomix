@@ -3,9 +3,9 @@ import { buildCliConfig } from '../../../src/cli/actions/defaultAction.js';
 import type { CliOptions } from '../../../src/cli/types.js';
 
 describe('Diffs Flag in CLI', () => {
-  test('should set includeDiffs to true when --diffs flag is provided', () => {
+  test('should set includeDiffs to true when --include-diffs flag is provided', () => {
     const options: CliOptions = {
-      diffs: true,
+      includeDiffs: true,
     };
 
     const config = buildCliConfig(options);
@@ -13,7 +13,7 @@ describe('Diffs Flag in CLI', () => {
     expect(config.output?.git?.includeDiffs).toBe(true);
   });
 
-  test('should not set includeDiffs when --diffs flag is not provided', () => {
+  test('should not set includeDiffs when --include-diffs flag is not provided', () => {
     const options: CliOptions = {};
 
     const config = buildCliConfig(options);
@@ -21,9 +21,9 @@ describe('Diffs Flag in CLI', () => {
     expect(config.output?.git?.includeDiffs).toBeUndefined();
   });
 
-  test('should include other git options when provided alongside --diffs', () => {
+  test('should include other git options when provided alongside --include-diffs', () => {
     const options: CliOptions = {
-      diffs: true,
+      includeDiffs: true,
       gitSortByChanges: false,
     };
 

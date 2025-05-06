@@ -1,6 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
+import type { GitDiffResult } from '../../../src/core/file/gitDiff.js';
 import { generateOutput } from '../../../src/core/output/outputGenerate.js';
+import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('Output Generation with Diffs', () => {
@@ -38,10 +40,14 @@ describe('Output Generation with Diffs', () => {
       style: 'xml',
       git: {
         includeDiffs: true,
-        diffContent: sampleDiff,
       },
     },
   });
+
+  const gitDiffResult: GitDiffResult = {
+    workTreeDiffContent: sampleDiff,
+    stagedDiffContent: '',
+  };
 
   // Mock dependencies
   const mockDeps = {
@@ -51,7 +57,7 @@ describe('Output Generation with Diffs', () => {
       processedFiles: mockProcessedFiles,
       config: mockConfig,
       instruction: '',
-      gitDiffs: sampleDiff,
+      gitDiffResult,
     })),
     generateHandlebarOutput: vi.fn(),
     generateParsableXmlOutput: vi.fn(),
@@ -64,16 +70,23 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function to check for diffs in the template
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
       // Verify that the renderContext has the gitDiffs property
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
       // Simulate the rendered output to check later
-      return `<diffs>${renderContext.gitDiffs}</diffs>`;
+      return `<diffs>${renderContext.gitDiffWorkTree}</diffs>`;
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, mockDeps);
+    const output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      mockProcessedFiles,
+      allFilePaths,
+      gitDiffResult,
+      mockDeps,
+    );
 
     // Verify the diffs are included in the output
     expect(output).toContain('<diffs>');
@@ -90,16 +103,16 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = true;
 
     // Mock the parsable XML output function
-    mockDeps.generateParsableXmlOutput.mockImplementation((renderContext) => {
+    mockDeps.generateParsableXmlOutput.mockImplementation((renderContext: RenderContext) => {
       // Verify that the renderContext has the gitDiffs property
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
       // Simulate the XML output
-      return `<repomix><diffs>${renderContext.gitDiffs}</diffs></repomix>`;
+      return `<repomix><diffs>${renderContext.gitDiffWorkTree}</diffs></repomix>`;
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, mockDeps);
+    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
 
     // Verify the diffs are included in the output
     expect(output).toContain('<repomix><diffs>');
@@ -116,16 +129,16 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function for markdown
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
       // Verify that the renderContext has the gitDiffs property
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
       // Simulate the markdown output
-      return `# Git Diffs\n\`\`\`diff\n${renderContext.gitDiffs}\n\`\`\``;
+      return `# Git Diffs\n\`\`\`diff\n${renderContext.gitDiffWorkTree}\n\`\`\``;
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, mockDeps);
+    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
 
     // Verify the diffs are included in the output
     expect(output).toContain('# Git Diffs');
@@ -143,16 +156,15 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function for plain text
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext) => {
-      // Verify that the renderContext has the gitDiffs property
-      expect(renderContext.gitDiffs).toBe(sampleDiff);
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
+      expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
       // Simulate the plain text output
-      return `===============\nGit Diffs\n===============\n${renderContext.gitDiffs}`;
+      return `===============\nGit Diffs\n===============\n${renderContext.gitDiffWorkTree}`;
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, mockDeps);
+    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
 
     // Verify the diffs are included in the output
     expect(output).toContain('===============\nGit Diffs\n===============');
@@ -179,16 +191,16 @@ describe('Output Generation with Diffs', () => {
     }));
 
     // Mock the Handlebars output function
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
       // Verify that the renderContext does not have the gitDiffs property
-      expect(renderContext.gitDiffs).toBeUndefined();
+      expect(renderContext.gitDiffWorkTree).toBeUndefined();
 
       // Simulate the output without diffs
       return 'Output without diffs';
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, mockDeps);
+    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
 
     // Verify the diffs are not included in the output
     expect(output).not.toContain('Git Diffs');

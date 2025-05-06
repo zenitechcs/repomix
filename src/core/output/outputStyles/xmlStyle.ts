@@ -56,10 +56,15 @@ This section contains the contents of the repository's files.
 </files>
 {{/if}}
 
-{{#if gitDiffs}}
-<diffs>
-{{{gitDiffs}}}
-</diffs>
+{{#if gitDiffEnabled}}
+<git_diffs>
+<git_diff_work_tree>
+{{{gitDiffWorkTree}}}
+</git_diff_work_tree>
+<git_diff_staged>
+{{{gitDiffStaged}}}
+</git_diff_staged>
+</git_diffs>
 {{/if}}
 
 {{#if instruction}}

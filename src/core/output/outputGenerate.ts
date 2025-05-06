@@ -7,7 +7,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import { getWorkTreeDiff } from '../file/gitCommand.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import { sortOutputFiles } from './outputSort.js';
 import {
@@ -47,7 +47,9 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     filesEnabled: outputGeneratorContext.config.output.files,
     escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
     markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
-    gitDiffs: outputGeneratorContext.gitDiffs,
+    gitDiffEnabled: outputGeneratorContext.config.output.git?.includeDiffs,
+    gitDiffWorkTree: outputGeneratorContext.gitDiffResult?.workTreeDiffContent,
+    gitDiffStaged: outputGeneratorContext.gitDiffResult?.stagedDiffContent,
   };
 };
 
@@ -81,7 +83,12 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
             })),
           }
         : undefined,
-      diffs: renderContext.gitDiffs ? { '#text': renderContext.gitDiffs } : undefined,
+      git_diffs: renderContext.gitDiffEnabled
+        ? {
+            git_diff_work_tree: renderContext.gitDiffWorkTree,
+            git_diff_staged: renderContext.gitDiffStaged,
+          }
+        : undefined,
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
     },
   };
@@ -123,6 +130,7 @@ export const generateOutput = async (
   config: RepomixConfigMerged,
   processedFiles: ProcessedFile[],
   allFilePaths: string[],
+  gitDiffResult: GitDiffResult | undefined = undefined,
   deps = {
     buildOutputGeneratorContext,
     generateHandlebarOutput,
@@ -138,6 +146,7 @@ export const generateOutput = async (
     config,
     allFilePaths,
     sortedProcessedFiles,
+    gitDiffResult,
   );
   const renderContext = createRenderContext(outputGeneratorContext);
 
@@ -157,6 +166,7 @@ export const buildOutputGeneratorContext = async (
   config: RepomixConfigMerged,
   allFilePaths: string[],
   processedFiles: ProcessedFile[],
+  gitDiffResult: GitDiffResult | undefined = undefined,
 ): Promise<OutputGeneratorContext> => {
   let repositoryInstruction = '';
 
@@ -187,31 +197,12 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
-  // Get git diffs if enabled
-  let gitDiffs: string | undefined;
-  if (config.output.git?.includeDiffs) {
-    try {
-      // Use the first directory as the git repository root
-      // Usually this would be the root of the project
-      gitDiffs = await getWorkTreeDiff(rootDirs[0] || config.cwd);
-
-      // Store the diff content in the config for token counting
-      if (gitDiffs && config.output.git) {
-        config.output.git.diffContent = gitDiffs;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new RepomixError(`Failed to get git diffs: ${error.message}`);
-      }
-    }
-  }
-
   return {
     generationDate: new Date().toISOString(),
     treeString: generateTreeString(allFilePaths, emptyDirPaths),
     processedFiles,
     config,
     instruction: repositoryInstruction,
-    gitDiffs,
+    gitDiffResult,
   };
 };

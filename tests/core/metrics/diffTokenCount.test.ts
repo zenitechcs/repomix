@@ -70,7 +70,6 @@ index 123..456 100644
           sortByChanges: true,
           sortByChangesMaxCommits: 100,
           includeDiffs: true,
-          diffContent: sampleDiff,
         },
       },
       include: [],
@@ -103,6 +102,10 @@ index 123..456 100644
       output,
       vi.fn(), // Progress callback
       config,
+      {
+        workTreeDiffContent: sampleDiff,
+        stagedDiffContent: '',
+      },
       {
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateOutputMetrics: mockCalculateOutputMetrics,
@@ -184,6 +187,7 @@ index 123..456 100644
       output,
       vi.fn(), // Progress callback
       config,
+      undefined, // No diff content
       {
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateOutputMetrics: mockCalculateOutputMetrics,
@@ -260,6 +264,7 @@ index 123..456 100644
       output,
       vi.fn(), // Progress callback
       config,
+      undefined, // No diff content
       {
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateOutputMetrics: mockCalculateOutputMetrics,

@@ -62,11 +62,18 @@ ${PLAIN_SEPARATOR}
 {{/each}}
 {{/if}}
 
-{{#if gitDiffs}}
+{{#if gitDiffEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Git Diffs
 ${PLAIN_LONG_SEPARATOR}
-{{{gitDiffs}}}
+${PLAIN_SEPARATOR}
+{{{gitDiffWorkTree}}}
+${PLAIN_SEPARATOR}
+
+${PLAIN_SEPARATOR}
+Git Diffs Staged
+${PLAIN_SEPARATOR}
+{{{gitDiffStaged}}}
 
 {{/if}}
 

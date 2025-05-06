@@ -8,6 +8,7 @@ import { pack } from '../../../src/core/packager.js';
 // Mock the dependencies
 vi.mock('../../../src/core/file/gitCommand.js', () => ({
   getWorkTreeDiff: vi.fn(),
+  getStagedDiff: vi.fn(),
   isGitRepository: vi.fn(),
 }));
 
@@ -68,6 +69,7 @@ index 123..456 100644
     // Set up our mocks
     vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);
     vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
+    vi.mocked(gitCommandModule.getStagedDiff).mockResolvedValue('');
   });
 
   test('should not fetch diffs when includeDiffs is disabled', async () => {
@@ -111,66 +113,6 @@ index 123..456 100644
 
     // Should not call getWorkTreeDiff
     expect(gitCommandModule.getWorkTreeDiff).not.toHaveBeenCalled();
-  });
-
-  test('should include diffs in output context when enabled', async () => {
-    // Reset all mocks to make sure they're clean
-    vi.resetAllMocks();
-
-    // Mock the git command to return our sample diff
-    vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);
-    vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
-
-    // Config with diffs enabled
-    if (mockConfig.output.git) {
-      mockConfig.output.git.includeDiffs = true;
-    }
-
-    // Test the buildOutputGeneratorContext function directly
-    const rootDirs = [mockRootDir];
-    const allFilePaths = ['file1.js'];
-    const processedFiles: ProcessedFile[] = [
-      {
-        path: 'file1.js',
-        content: 'console.log("test");',
-      },
-    ];
-
-    const context = await buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles);
-
-    // Should call getWorkTreeDiff
-    expect(gitCommandModule.getWorkTreeDiff).toHaveBeenCalledWith(mockRootDir);
-
-    // Context should include gitDiffs
-    expect(context.gitDiffs).toBe(sampleDiff);
-
-    // Config should have diffContent
-    expect(mockConfig.output.git?.diffContent).toBe(sampleDiff);
-  });
-
-  test('should handle errors when getting diffs in output generation', async () => {
-    // Mock getWorkTreeDiff to throw an error
-    vi.mocked(gitCommandModule.getWorkTreeDiff).mockRejectedValue(new Error('Git error'));
-
-    // Mock the buildOutputGeneratorContext function
-    const rootDirs = ['/test/repo'];
-    const allFilePaths = ['file1.js'];
-    const processedFiles: ProcessedFile[] = [
-      {
-        path: 'file1.js',
-        content: 'console.log("file1");',
-      },
-    ];
-
-    // Enable diffs
-    if (mockConfig.output.git) {
-      mockConfig.output.git.includeDiffs = true;
-    }
-
-    // Testing the buildOutputGeneratorContext function directly, which should throw
-    await expect(buildOutputGeneratorContext(rootDirs, mockConfig, allFilePaths, processedFiles)).rejects.toThrow(
-      'Failed to get git diffs: Git error',
-    );
   });
 
   test('should calculate diff token count correctly', async () => {
@@ -223,8 +165,5 @@ index 123..456 100644
 
     // Check diffTokenCount in the result
     expect(result.diffTokenCount).toBe(15);
-
-    // Check suspiciousFilesResults has diffTokenCount
-    expect(result.suspiciousFilesResults).toHaveProperty('diffTokenCount', 15);
   });
 });

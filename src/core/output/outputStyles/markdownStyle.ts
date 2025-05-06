@@ -48,10 +48,16 @@ export const getMarkdownTemplate = () => {
 {{/each}}
 {{/if}}
 
-{{#if gitDiffs}}
+{{#if gitDiffEnabled}}
 # Git Diffs
+## Git Diffs Working Tree
 \`\`\`diff
-{{{gitDiffs}}}
+{{{gitDiffWorkTree}}}
+\`\`\`
+
+## Git Diffs Staged
+\`\`\`diff
+{{{gitDiffStaged}}}
 \`\`\`
 
 {{/if}}

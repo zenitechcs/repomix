@@ -1,6 +1,7 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 import { calculateAllFileMetrics } from './calculateAllFileMetrics.js';
 import { calculateOutputMetrics } from './calculateOutputMetrics.js';
 
@@ -20,6 +21,7 @@ export const calculateMetrics = async (
   output: string,
   progressCallback: RepomixProgressCallback,
   config: RepomixConfigMerged,
+  gitDiffResult: GitDiffResult | undefined,
   deps = {
     calculateAllFileMetrics,
     calculateOutputMetrics,
@@ -29,9 +31,9 @@ export const calculateMetrics = async (
 
   // Calculate token count for git diffs if included
   let diffTokenCount: number | undefined;
-  if (config.output.git?.includeDiffs && config.output.git.diffContent) {
+  if (config.output.git?.includeDiffs && gitDiffResult?.workTreeDiffContent) {
     const tokenCounter = new TokenCounter(config.tokenCount.encoding);
-    diffTokenCount = tokenCounter.countTokens(config.output.git.diffContent);
+    diffTokenCount = tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
     tokenCounter.free();
   }
 
