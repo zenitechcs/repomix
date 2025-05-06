@@ -114,4 +114,4 @@ jobs:
           retention-days: 30
 ```
 
-Das vollständige Workflow-Beispiel finden Sie [hier](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml).
+Das [vollständige Workflow-Beispiel](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml) finden Sie hier.

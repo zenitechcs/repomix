@@ -112,4 +112,4 @@ jobs:
           retention-days: 30
 ```
 
-查看完整工作流示例[点击这里](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)。
+查看[完整工作流示例](https://github.com/yamadashy/repomix/blob/main/.github/workflows/pack-repository.yml)。
