@@ -18,6 +18,7 @@ export interface PackResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
+  diffTokenCount?: number;
   suspiciousFilesResults: SuspiciousFileResult[];
 }
 
@@ -93,8 +94,19 @@ export const pack = async (
 
   const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config);
 
-  return {
+  // Create a result object that has both the metrics and the diffTokenCount at the top level
+  const result = {
     ...metrics,
     suspiciousFilesResults,
   };
+
+  // Additionally, attach diffTokenCount to the suspiciousFilesResults array
+  if (metrics.diffTokenCount !== undefined) {
+    Object.defineProperty(result.suspiciousFilesResults, 'diffTokenCount', {
+      value: metrics.diffTokenCount,
+      enumerable: true,
+    });
+  }
+
+  return result;
 };

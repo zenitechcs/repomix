@@ -62,6 +62,14 @@ ${PLAIN_SEPARATOR}
 {{/each}}
 {{/if}}
 
+{{#if gitDiffs}}
+${PLAIN_LONG_SEPARATOR}
+Git Diffs
+${PLAIN_LONG_SEPARATOR}
+{{{gitDiffs}}}
+
+{{/if}}
+
 {{#if instruction}}
 ${PLAIN_LONG_SEPARATOR}
 Instruction

@@ -10,7 +10,10 @@ export interface CalculateMetricsResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
+  diffTokenCount?: number;
 }
+
+import { TokenCounter } from './TokenCounter.js';
 
 export const calculateMetrics = async (
   processedFiles: ProcessedFile[],
@@ -23,6 +26,14 @@ export const calculateMetrics = async (
   },
 ): Promise<CalculateMetricsResult> => {
   progressCallback('Calculating metrics...');
+
+  // Calculate token count for git diffs if included
+  let diffTokenCount: number | undefined;
+  if (config.output.git?.includeDiffs && config.output.git.diffContent) {
+    const tokenCounter = new TokenCounter(config.tokenCount.encoding);
+    diffTokenCount = tokenCounter.countTokens(config.output.git.diffContent);
+    tokenCounter.free();
+  }
 
   const [fileMetrics, totalTokens] = await Promise.all([
     deps.calculateAllFileMetrics(processedFiles, config.tokenCount.encoding, progressCallback),
@@ -45,5 +56,6 @@ export const calculateMetrics = async (
     totalTokens,
     fileCharCounts,
     fileTokenCounts,
+    diffTokenCount,
   };
 };

@@ -26,6 +26,7 @@ describe('Solidity File Parsing', () => {
       git: {
         sortByChanges: true,
         sortByChangesMaxCommits: 100,
+        includeDiffs: false,
       },
     },
     include: [],

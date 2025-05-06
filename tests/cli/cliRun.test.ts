@@ -77,6 +77,7 @@ describe('cliRun', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: [],
@@ -124,6 +125,7 @@ describe('cliRun', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: [],

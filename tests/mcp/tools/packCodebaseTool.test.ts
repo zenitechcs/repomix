@@ -73,6 +73,7 @@ describe('PackCodebaseTool', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
           includeEmptyDirectories: false,
         },

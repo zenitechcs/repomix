@@ -39,6 +39,50 @@ export const getFileChangeCount = async (
   }
 };
 
+export const getWorkTreeDiff = async (
+  directory: string,
+  deps = {
+    execFileAsync,
+  },
+): Promise<string> => {
+  try {
+    // Check if the directory is a git repository
+    const isGitRepo = await isGitRepository(directory, deps);
+    if (!isGitRepo) {
+      logger.trace('Not a git repository, skipping diff generation');
+      return '';
+    }
+
+    // Get the diff from the working tree
+    const result = await deps.execFileAsync('git', [
+      '-C',
+      directory,
+      'diff',
+      '--no-color', // Avoid ANSI color codes
+    ]);
+
+    return result.stdout || '';
+  } catch (error) {
+    logger.trace('Failed to get working tree diff:', (error as Error).message);
+    return '';
+  }
+};
+
+export const isGitRepository = async (
+  directory: string,
+  deps = {
+    execFileAsync,
+  },
+): Promise<boolean> => {
+  try {
+    // Check if the directory is a git repository
+    await deps.execFileAsync('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const isGitInstalled = async (
   deps = {
     execFileAsync,

@@ -56,6 +56,12 @@ This section contains the contents of the repository's files.
 </files>
 {{/if}}
 
+{{#if gitDiffs}}
+<diffs>
+{{{gitDiffs}}}
+</diffs>
+{{/if}}
+
 {{#if instruction}}
 <instruction>
 {{{instruction}}}

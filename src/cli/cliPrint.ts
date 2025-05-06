@@ -9,7 +9,7 @@ export const printSummary = (
   totalCharacters: number,
   totalTokens: number,
   outputPath: string,
-  suspiciousFilesResults: SuspiciousFileResult[],
+  suspiciousFilesResults: SuspiciousFileResult[] & { diffTokenCount?: number },
   config: RepomixConfigMerged,
 ) => {
   let securityCheckMessage = '';
@@ -32,6 +32,13 @@ export const printSummary = (
   logger.log(`${pc.white(' Total Tokens:')} ${pc.white(totalTokens.toLocaleString())} tokens`);
   logger.log(`${pc.white('       Output:')} ${pc.white(outputPath)}`);
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
+
+  if (config.output.git?.includeDiffs) {
+    const diffTokens = suspiciousFilesResults.diffTokenCount
+      ? ` (${suspiciousFilesResults.diffTokenCount.toLocaleString()} tokens)`
+      : '';
+    logger.log(`${pc.white('   Git Diffs:')} ${pc.green('✔')} ${pc.white(`Working tree diffs included${diffTokens}`)}`);
+  }
 };
 
 export const printSecurityCheck = (

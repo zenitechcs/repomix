@@ -7,6 +7,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
+import { getWorkTreeDiff } from '../file/gitCommand.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import { sortOutputFiles } from './outputSort.js';
 import {
@@ -29,7 +30,7 @@ const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string
 
 const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
   return {
-    generationHeader: generateHeader(outputGeneratorContext.config, outputGeneratorContext.generationDate), // configを追加
+    generationHeader: generateHeader(outputGeneratorContext.config, outputGeneratorContext.generationDate),
     summaryPurpose: generateSummaryPurpose(),
     summaryFileFormat: generateSummaryFileFormat(),
     summaryUsageGuidelines: generateSummaryUsageGuidelines(
@@ -46,6 +47,7 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     filesEnabled: outputGeneratorContext.config.output.files,
     escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
     markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
+    gitDiffs: outputGeneratorContext.gitDiffs,
   };
 };
 
@@ -79,6 +81,7 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
             })),
           }
         : undefined,
+      diffs: renderContext.gitDiffs ? { '#text': renderContext.gitDiffs } : undefined,
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
     },
   };
@@ -184,11 +187,31 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
+  // Get git diffs if enabled
+  let gitDiffs: string | undefined;
+  if (config.output.git?.includeDiffs) {
+    try {
+      // Use the first directory as the git repository root
+      // Usually this would be the root of the project
+      gitDiffs = await getWorkTreeDiff(rootDirs[0] || config.cwd);
+
+      // Store the diff content in the config for token counting
+      if (gitDiffs && config.output.git) {
+        config.output.git.diffContent = gitDiffs;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new RepomixError(`Failed to get git diffs: ${error.message}`);
+      }
+    }
+  }
+
   return {
     generationDate: new Date().toISOString(),
     treeString: generateTreeString(allFilePaths, emptyDirPaths),
     processedFiles,
     config,
     instruction: repositoryInstruction,
+    gitDiffs,
   };
 };

@@ -7,6 +7,7 @@ export interface OutputGeneratorContext {
   processedFiles: ProcessedFile[];
   config: RepomixConfigMerged;
   instruction: string;
+  gitDiffs?: string;
 }
 
 export interface RenderContext {
@@ -24,4 +25,5 @@ export interface RenderContext {
   readonly filesEnabled: boolean;
   readonly escapeFileContent: boolean;
   readonly markdownCodeBlockDelimiter: string;
+  readonly gitDiffs?: string;
 }

@@ -37,6 +37,7 @@ describe('defaultAction', () => {
         git: {
           sortByChanges: true,
           sortByChangesMaxCommits: 100,
+          includeDiffs: false,
         },
         files: true,
       },

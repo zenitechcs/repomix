@@ -220,6 +220,16 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     };
   }
 
+  if (options.diffs) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      git: {
+        ...cliConfig.output?.git,
+        includeDiffs: true,
+      },
+    };
+  }
+
   try {
     return repomixConfigCliSchema.parse(cliConfig);
   } catch (error) {
