@@ -30,10 +30,15 @@ export const calculateMetrics = async (
   progressCallback('Calculating metrics...');
 
   // Calculate token count for git diffs if included
-  let diffTokenCount: number | undefined;
-  if (config.output.git?.includeDiffs && gitDiffResult?.workTreeDiffContent) {
+  let diffTokenCount = 0;
+  if (config.output.git?.includeDiffs) {
     const tokenCounter = new TokenCounter(config.tokenCount.encoding);
-    diffTokenCount = tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
+    if (gitDiffResult?.workTreeDiffContent) {
+      diffTokenCount += tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
+    }
+    if (gitDiffResult?.stagedDiffContent) {
+      diffTokenCount += tokenCounter.countTokens(gitDiffResult.stagedDiffContent);
+    }
     tokenCounter.free();
   }
 

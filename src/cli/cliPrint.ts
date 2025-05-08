@@ -30,17 +30,18 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
   if (config.output.git?.includeDiffs) {
     let gitDiffsMessage = '';
     if (packResult.diffTokenCount) {
-      gitDiffsMessage = pc.white(`✔ Working tree diffs included ${pc.dim(`(${packResult.diffTokenCount.toLocaleString()} tokens)`)}`);
+      gitDiffsMessage = pc.white(`✔ Git diffs included ${pc.dim(`(${packResult.diffTokenCount.toLocaleString()} tokens)`)}`);
     } else {
-      gitDiffsMessage = pc.dim('✖ No working tree diffs included');
+      gitDiffsMessage = pc.dim('✖ No git diffs included');
     }
-    logger.log(`${pc.white('   Git Diffs:')} ${gitDiffsMessage}`);
+    logger.log(`${pc.white('    Git Diffs:')} ${gitDiffsMessage}`);
   }
 };
 
 export const printSecurityCheck = (
   rootDir: string,
   suspiciousFilesResults: SuspiciousFileResult[],
+  suspiciousGitDiffResults: SuspiciousFileResult[] = [],
   config: RepomixConfigMerged,
 ) => {
   if (!config.security.enableSecurityCheck) {
@@ -50,6 +51,7 @@ export const printSecurityCheck = (
   logger.log(pc.white('🔎 Security Check:'));
   logger.log(pc.dim('──────────────────'));
 
+  // Print results for files
   if (suspiciousFilesResults.length === 0) {
     logger.log(`${pc.green('✔')} ${pc.white('No suspicious files detected.')}`);
   } else {
@@ -61,6 +63,18 @@ export const printSecurityCheck = (
     });
     logger.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
     logger.log(pc.yellow('Please review these files for potential sensitive information.'));
+  }
+
+  // Print results for git diffs
+  if (suspiciousGitDiffResults.length > 0) {
+    logger.log('');
+    logger.log(pc.yellow(`${suspiciousGitDiffResults.length} security issue(s) found in Git diffs:`));
+    suspiciousGitDiffResults.forEach((suspiciousResult, index) => {
+      logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(suspiciousResult.filePath)}`);
+      logger.log(pc.dim(`   - ${suspiciousResult.messages.join('\n   - ')}`));
+    });
+    logger.log(pc.yellow('\nNote: Git diffs with security issues are still included in the output.'));
+    logger.log(pc.yellow('Please review the diffs before sharing the output.'));
   }
 };
 

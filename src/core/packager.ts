@@ -21,6 +21,7 @@ export interface PackResult {
   fileTokenCounts: Record<string, number>;
   diffTokenCount?: number;
   suspiciousFilesResults: SuspiciousFileResult[];
+  suspiciousGitDiffResults: SuspiciousFileResult[];
 }
 
 const defaultDeps = {
@@ -77,19 +78,21 @@ export const pack = async (
     )
   ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []);
 
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults } = await deps.validateFileSafety(
+  // Get git diffs if enabled - run this before security check
+  progressCallback('Getting git diffs...');
+  const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
+
+  // Run security check and get filtered safe files
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await deps.validateFileSafety(
     rawFiles,
     progressCallback,
     config,
+    gitDiffResult,
   );
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
   const processedFiles = await deps.processFiles(safeRawFiles, config, progressCallback);
-
-  // Get git diffs if enabled
-  progressCallback('Getting git diffs...');
-  const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
 
   progressCallback('Generating output...');
   const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult);
@@ -101,10 +104,11 @@ export const pack = async (
 
   const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult);
 
-  // Create a result object that has both the metrics and the diffTokenCount at the top level
+  // Create a result object that includes metrics and security results
   const result = {
     ...metrics,
     suspiciousFilesResults,
+    suspiciousGitDiffResults,
   };
 
   return result;

@@ -68,7 +68,7 @@ export const runDefaultAction = async (
     logger.log('');
   }
 
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults, config);
+  printSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
   logger.log('');
 
   printSummary(packResult, config);

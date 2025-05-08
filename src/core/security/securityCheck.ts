@@ -2,6 +2,7 @@ import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { initPiscina } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { SecurityCheckTask } from './workers/securityCheckWorker.js';
 
@@ -18,12 +19,32 @@ const initTaskRunner = (numOfTasks: number) => {
 export const runSecurityCheck = async (
   rawFiles: RawFile[],
   progressCallback: RepomixProgressCallback = () => {},
+  gitDiffResult?: GitDiffResult,
   deps = {
     initTaskRunner,
   },
 ): Promise<SuspiciousFileResult[]> => {
-  const runTask = deps.initTaskRunner(rawFiles.length);
-  const tasks = rawFiles.map(
+  const gitDiffTasks: SecurityCheckTask[] = [];
+
+  // Add Git diff content for security checking if available
+  if (gitDiffResult) {
+    if (gitDiffResult.workTreeDiffContent) {
+      gitDiffTasks.push({
+        filePath: "[git-diff] Working tree changes",
+        content: gitDiffResult.workTreeDiffContent,
+      });
+    }
+
+    if (gitDiffResult.stagedDiffContent) {
+      gitDiffTasks.push({
+        filePath: "[git-diff] Staged changes",
+        content: gitDiffResult.stagedDiffContent,
+      });
+    }
+  }
+
+  const runTask = deps.initTaskRunner(rawFiles.length + gitDiffTasks.length);
+  const fileTasks = rawFiles.map(
     (file) =>
       ({
         filePath: file.path,
@@ -31,8 +52,11 @@ export const runSecurityCheck = async (
       }) satisfies SecurityCheckTask,
   );
 
+  // Combine file tasks and Git diff tasks
+  const tasks = [...fileTasks, ...gitDiffTasks];
+
   try {
-    logger.trace(`Starting security check for ${tasks.length} files`);
+    logger.trace(`Starting security check for ${tasks.length} files/content`);
     const startTime = process.hrtime.bigint();
 
     let completedTasks = 0;
