@@ -30,7 +30,7 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
   if (config.output.git?.includeDiffs) {
     let gitDiffsMessage = '';
     if (packResult.diffTokenCount) {
-      gitDiffsMessage = pc.white(`✔ Working tree diffs included${packResult.diffTokenCount.toLocaleString()} tokens`);
+      gitDiffsMessage = pc.white(`✔ Working tree diffs included ${pc.dim(`(${packResult.diffTokenCount.toLocaleString()} tokens)`)}`);
     } else {
       gitDiffsMessage = pc.dim('✖ No working tree diffs included');
     }
