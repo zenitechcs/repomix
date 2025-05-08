@@ -22,9 +22,15 @@ export const getGitDiffs = async (
     try {
       // Use the first directory as the git repository root
       // Usually this would be the root of the project
+      const gitRoot = rootDirs[0] || config.cwd;
+      const [workTreeDiffContent, stagedDiffContent] = await Promise.all([
+        deps.getWorkTreeDiff(gitRoot),
+        deps.getStagedDiff(gitRoot),
+      ]);
+
       gitDiffResult = {
-        workTreeDiffContent: await deps.getWorkTreeDiff(rootDirs[0] || config.cwd),
-        stagedDiffContent: await deps.getStagedDiff(rootDirs[0] || config.cwd),
+        workTreeDiffContent,
+        stagedDiffContent,
       };
     } catch (error) {
       if (error instanceof Error) {
