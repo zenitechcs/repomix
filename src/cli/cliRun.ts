@@ -64,6 +64,10 @@ export const run = async () => {
       .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
       .option('--include-empty-directories', 'include empty directories in the output')
       .option('--no-git-sort-by-changes', 'disable sorting files by git change count')
+      .option(
+        '--include-diffs',
+        'include git diffs in the output (includes both work tree and staged changes separately)',
+      )
       // Filter Options
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')

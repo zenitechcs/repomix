@@ -79,6 +79,7 @@ describe('configSchema', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: [],
@@ -172,6 +173,7 @@ describe('configSchema', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: ['**/*.js', '**/*.ts'],

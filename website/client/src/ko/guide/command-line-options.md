@@ -18,6 +18,8 @@
 - `--header-text <text>`: 파일 헤더에 포함할 사용자 정의 텍스트
 - `--instruction-file-path <path>`: 상세한 사용자 정의 지침이 포함된 파일 경로
 - `--include-empty-directories`: 출력에 빈 디렉토리 포함 (기본값: `false`)
+- `--include-diffs`: git 차이점을 출력에 포함 (작업 트리 및 스테이지된 변경 사항이 별도로 포함됨) (기본값: `false`)
+- `--no-git-sort-by-changes`: git 변경 횟수로 파일 정렬 비활성화 (기본값: `true`)
 
 ## 필터 옵션
 - `--include <patterns>`: 포함할 패턴 (쉼표로 구분)

@@ -37,6 +37,7 @@ describe('defaultAction', () => {
         git: {
           sortByChanges: true,
           sortByChangesMaxCommits: 100,
+          includeDiffs: false,
         },
         files: true,
       },
@@ -60,6 +61,8 @@ describe('defaultAction', () => {
       fileCharCounts: {},
       fileTokenCounts: {},
       suspiciousFilesResults: [],
+      suspiciousGitDiffResults: [],
+      gitDiffTokenCount: 0,
     });
   });
 

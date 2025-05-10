@@ -1,5 +1,6 @@
 import { type Mock, describe, expect, it, vi } from 'vitest';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
+import type { GitDiffResult } from '../../../src/core/file/gitDiff.js';
 import { TokenCounter } from '../../../src/core/metrics/TokenCounter.js';
 import { calculateAllFileMetrics } from '../../../src/core/metrics/calculateAllFileMetrics.js';
 import { calculateMetrics } from '../../../src/core/metrics/calculateMetrics.js';
@@ -44,11 +45,14 @@ describe('calculateMetrics', () => {
         'file1.txt': 10,
         'file2.txt': 20,
       },
+      gitDiffTokenCount: 0,
     };
 
     const config = createMockConfig();
 
-    const result = await calculateMetrics(processedFiles, output, progressCallback, config, {
+    const gitDiffResult: GitDiffResult | undefined = undefined;
+
+    const result = await calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult, {
       calculateAllFileMetrics,
       calculateOutputMetrics: () => Promise.resolve(30),
     });

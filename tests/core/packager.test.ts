@@ -79,9 +79,15 @@ describe('packager', () => {
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
-    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
+    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig, undefined);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig, progressCallback);
-    expect(mockDeps.generateOutput).toHaveBeenCalledWith(['root'], mockConfig, mockProcessedFiles, mockFilePaths);
+    expect(mockDeps.generateOutput).toHaveBeenCalledWith(
+      ['root'],
+      mockConfig,
+      mockProcessedFiles,
+      mockFilePaths,
+      undefined,
+    );
     expect(mockDeps.handleOutput).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
     expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
@@ -89,6 +95,7 @@ describe('packager', () => {
       mockOutput,
       progressCallback,
       mockConfig,
+      undefined,
     );
 
     // Check the result of pack function

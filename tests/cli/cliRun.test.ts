@@ -77,6 +77,7 @@ describe('cliRun', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: [],
@@ -99,6 +100,8 @@ describe('cliRun', () => {
         fileCharCounts: {},
         fileTokenCounts: {},
         suspiciousFilesResults: [],
+        gitDiffTokenCount: 0,
+        suspiciousGitDiffResults: [],
       } satisfies PackResult,
     });
     vi.mocked(initAction.runInitAction).mockResolvedValue();
@@ -124,6 +127,7 @@ describe('cliRun', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
         },
         include: [],
@@ -146,6 +150,8 @@ describe('cliRun', () => {
         fileCharCounts: {},
         fileTokenCounts: {},
         suspiciousFilesResults: [],
+        gitDiffTokenCount: 0,
+        suspiciousGitDiffResults: [],
       } satisfies PackResult,
     });
     vi.mocked(versionAction.runVersionAction).mockResolvedValue();

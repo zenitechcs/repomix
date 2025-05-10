@@ -18,6 +18,8 @@
 - `--header-text <text>`: ファイルヘッダーに含めるカスタムテキスト
 - `--instruction-file-path <path>`: 詳細なカスタム指示を含むファイルのパス
 - `--include-empty-directories`: 空のディレクトリを出力に含める（デフォルト: `false`）
+- `--include-diffs`: Gitの差分を出力に含める（ワークツリーとステージングされた変更が別々に含まれます）（デフォルト: `false`）
+- `--no-git-sort-by-changes`: Gitの変更回数によるファイルのソートを無効化（デフォルト: `true`）
 
 ## フィルターオプション
 - `--include <patterns>`: 含めるパターン（カンマ区切り）

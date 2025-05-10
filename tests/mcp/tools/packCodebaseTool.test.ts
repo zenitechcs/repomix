@@ -30,6 +30,8 @@ describe('PackCodebaseTool', () => {
     fileCharCounts: { 'test.js': 100 },
     fileTokenCounts: { 'test.js': 50 },
     suspiciousFilesResults: [],
+    gitDiffTokenCount: 0,
+    suspiciousGitDiffResults: [],
   };
 
   beforeEach(() => {
@@ -73,6 +75,7 @@ describe('PackCodebaseTool', () => {
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
+            includeDiffs: false,
           },
           includeEmptyDirectories: false,
         },

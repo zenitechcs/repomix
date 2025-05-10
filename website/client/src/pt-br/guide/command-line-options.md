@@ -18,6 +18,8 @@
 - `--header-text <text>`: Texto personalizado para incluir no cabeçalho do arquivo
 - `--instruction-file-path <path>`: Caminho para um arquivo contendo instruções personalizadas detalhadas
 - `--include-empty-directories`: Inclui diretórios vazios na saída (padrão: `false`)
+- `--include-diffs`: Inclui diferenças do git na saída (inclui separadamente as alterações da árvore de trabalho e as alterações preparadas) (padrão: `false`)
+- `--no-git-sort-by-changes`: Desabilita a ordenação de arquivos por contagem de alterações do git (padrão: `true`)
 
 ## Opções de Filtro
 - `--include <patterns>`: Padrões para incluir (separados por vírgula)

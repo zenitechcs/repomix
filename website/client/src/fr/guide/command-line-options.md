@@ -18,6 +18,7 @@
 - `--header-text <texte>`: Texte personnalisé à inclure dans l'en-tête du fichier
 - `--instruction-file-path <chemin>`: Chemin vers un fichier contenant des instructions personnalisées détaillées
 - `--include-empty-directories`: Inclure les répertoires vides dans la sortie (par défaut: `false`)
+- `--include-diffs`: Inclure les différences git dans la sortie (inclut séparément les modifications de l'arbre de travail et les modifications indexées) (par défaut: `false`)
 
 ## Options de filtrage
 - `--include <motifs>`: Motifs d'inclusion (séparés par des virgules)

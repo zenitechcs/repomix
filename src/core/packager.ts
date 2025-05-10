@@ -5,6 +5,7 @@ import { sortPaths } from './file/filePathSort.js';
 import { processFiles } from './file/fileProcess.js';
 import { searchFiles } from './file/fileSearch.js';
 import type { RawFile } from './file/fileTypes.js';
+import { GitDiffResult, getGitDiffs } from './file/gitDiff.js';
 import { calculateMetrics } from './metrics/calculateMetrics.js';
 import { generateOutput } from './output/outputGenerate.js';
 import { copyToClipboardIfEnabled } from './packager/copyToClipboardIfEnabled.js';
@@ -18,7 +19,9 @@ export interface PackResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
+  gitDiffTokenCount: number;
   suspiciousFilesResults: SuspiciousFileResult[];
+  suspiciousGitDiffResults: SuspiciousFileResult[];
 }
 
 const defaultDeps = {
@@ -31,6 +34,7 @@ const defaultDeps = {
   copyToClipboardIfEnabled,
   calculateMetrics,
   sortPaths,
+  getGitDiffs,
 };
 
 export const pack = async (
@@ -74,27 +78,34 @@ export const pack = async (
     )
   ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []);
 
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults } = await deps.validateFileSafety(
-    rawFiles,
-    progressCallback,
-    config,
-  );
+  // Get git diffs if enabled - run this before security check
+  progressCallback('Getting git diffs...');
+  const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
+
+  // Run security check and get filtered safe files
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } =
+    await deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult);
+
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
   const processedFiles = await deps.processFiles(safeRawFiles, config, progressCallback);
 
   progressCallback('Generating output...');
-  const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths);
+  const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult);
 
   progressCallback('Writing output file...');
   await deps.handleOutput(output, config);
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
-  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config);
+  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult);
 
-  return {
+  // Create a result object that includes metrics and security results
+  const result = {
     ...metrics,
     suspiciousFilesResults,
+    suspiciousGitDiffResults,
   };
+
+  return result;
 };

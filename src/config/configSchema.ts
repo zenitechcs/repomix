@@ -40,6 +40,7 @@ export const repomixConfigBaseSchema = z.object({
         .object({
           sortByChanges: z.boolean().optional(),
           sortByChangesMaxCommits: z.number().optional(),
+          includeDiffs: z.boolean().optional(),
         })
         .optional(),
     })
@@ -96,6 +97,7 @@ export const repomixConfigDefaultSchema = z.object({
         .object({
           sortByChanges: z.boolean().default(true),
           sortByChangesMaxCommits: z.number().int().min(1).default(100),
+          includeDiffs: z.boolean().default(false),
         })
         .default({}),
     })

@@ -68,17 +68,10 @@ export const runDefaultAction = async (
     logger.log('');
   }
 
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults, config);
+  printSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
   logger.log('');
 
-  printSummary(
-    packResult.totalFiles,
-    packResult.totalCharacters,
-    packResult.totalTokens,
-    config.output.filePath,
-    packResult.suspiciousFilesResults,
-    config,
-  );
+  printSummary(packResult, config);
   logger.log('');
 
   printCompletion();
@@ -216,6 +209,16 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
       git: {
         ...cliConfig.output?.git,
         sortByChanges: false,
+      },
+    };
+  }
+
+  if (options.includeDiffs) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      git: {
+        ...cliConfig.output?.git,
+        includeDiffs: true,
       },
     };
   }
