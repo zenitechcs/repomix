@@ -40,7 +40,8 @@ describe('cliPrint', () => {
         fileCharCounts: { 'file1.txt': 100 },
         fileTokenCounts: { 'file1.txt': 50 },
         suspiciousFilesResults: suspiciousFiles,
-        diffTokenCount: 0,
+        suspiciousGitDiffResults: [],
+        gitDiffTokenCount: 0,
       };
 
       printSummary(packResult, config);
@@ -60,7 +61,8 @@ describe('cliPrint', () => {
         fileCharCounts: { 'file1.txt': 100 },
         fileTokenCounts: { 'file1.txt': 50 },
         suspiciousFilesResults: [],
-        diffTokenCount: 0,
+        suspiciousGitDiffResults: [],
+        gitDiffTokenCount: 0,
       };
 
       printSummary(packResult, config);
@@ -75,7 +77,7 @@ describe('cliPrint', () => {
         security: { enableSecurityCheck: false },
       });
 
-      printSecurityCheck('/root', [], config);
+      printSecurityCheck('/root', [], [], config);
       expect(logger.log).not.toHaveBeenCalled();
     });
 
@@ -84,7 +86,7 @@ describe('cliPrint', () => {
         security: { enableSecurityCheck: true },
       });
 
-      printSecurityCheck('/root', [], config);
+      printSecurityCheck('/root', [], [], config);
 
       expect(logger.log).toHaveBeenCalledWith('WHITE:🔎 Security Check:');
       expect(logger.log).toHaveBeenCalledWith('DIM:──────────────────');
@@ -103,7 +105,7 @@ describe('cliPrint', () => {
         },
       ];
 
-      printSecurityCheck('/root', suspiciousFiles, config);
+      printSecurityCheck('/root', suspiciousFiles, [], config);
 
       expect(logger.log).toHaveBeenCalledWith('YELLOW:1 suspicious file(s) detected and excluded from the output:');
       expect(logger.log).toHaveBeenCalledWith(`WHITE:1. WHITE:${configRelativePath}`);

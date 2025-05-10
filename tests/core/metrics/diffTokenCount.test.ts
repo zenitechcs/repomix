@@ -116,10 +116,10 @@ index 123..456 100644
     expect(TokenCounter).toHaveBeenCalledWith('o200k_base');
 
     // Check token counting was called with the diff content
-    expect(result).toHaveProperty('diffTokenCount');
+    expect(result).toHaveProperty('gitDiffTokenCount');
 
     // Our mock counts words as tokens - the sample diff should have multiple tokens
-    expect(result.diffTokenCount).toBeGreaterThan(0);
+    expect(result.gitDiffTokenCount).toBeGreaterThan(0);
   });
 
   test('should not calculate diff token count when diffs are disabled', async () => {
@@ -195,7 +195,7 @@ index 123..456 100644
     );
 
     // TokenCounter should not be called for diff content
-    expect(result.diffTokenCount).toBeUndefined();
+    expect(result.gitDiffTokenCount).toBe(0);
   });
 
   test('should handle undefined diffContent gracefully', async () => {
@@ -271,7 +271,7 @@ index 123..456 100644
       },
     );
 
-    // diffTokenCount should not be set
-    expect(result.diffTokenCount).toBeUndefined();
+    // gitDiffTokenCount should not be set
+    expect(result.gitDiffTokenCount).toBe(0);
   });
 });

@@ -2,8 +2,8 @@ import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
 import { initPiscina } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
-import type { GitDiffResult } from '../file/gitDiff.js';
 import type { RawFile } from '../file/fileTypes.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 import type { SecurityCheckTask } from './workers/securityCheckWorker.js';
 
 export interface SuspiciousFileResult {
@@ -30,14 +30,14 @@ export const runSecurityCheck = async (
   if (gitDiffResult) {
     if (gitDiffResult.workTreeDiffContent) {
       gitDiffTasks.push({
-        filePath: "[git-diff] Working tree changes",
+        filePath: '[git-diff] Working tree changes',
         content: gitDiffResult.workTreeDiffContent,
       });
     }
 
     if (gitDiffResult.stagedDiffContent) {
       gitDiffTasks.push({
-        filePath: "[git-diff] Staged changes",
+        filePath: '[git-diff] Staged changes',
         content: gitDiffResult.stagedDiffContent,
       });
     }

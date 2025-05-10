@@ -1,8 +1,8 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
-import type { GitDiffResult } from '../file/gitDiff.js';
 import type { RawFile } from '../file/fileTypes.js';
+import type { GitDiffResult } from '../file/gitDiff.js';
 import { filterOutUntrustedFiles } from './filterOutUntrustedFiles.js';
 import { type SuspiciousFileResult, runSecurityCheck } from './securityCheck.js';
 
@@ -27,14 +27,14 @@ export const validateFileSafety = async (
     const allResults = await deps.runSecurityCheck(rawFiles, progressCallback, gitDiffResult);
 
     // Separate Git diff results from regular file results
-    suspiciousFilesResults = allResults.filter(result => !result.filePath.startsWith('[git-diff]'));
-    suspiciousGitDiffResults = allResults.filter(result => result.filePath.startsWith('[git-diff]'));
+    suspiciousFilesResults = allResults.filter((result) => !result.filePath.startsWith('[git-diff]'));
+    suspiciousGitDiffResults = allResults.filter((result) => result.filePath.startsWith('[git-diff]'));
 
     if (suspiciousGitDiffResults.length > 0) {
       logger.warn('Security issues found in Git diffs, but they will still be included in the output');
-      suspiciousGitDiffResults.forEach(result => {
+      for (const result of suspiciousGitDiffResults) {
         logger.warn(`  - ${result.filePath}: ${result.messages.join(', ')}`);
-      });
+      }
     }
   }
 

@@ -29,8 +29,10 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
 
   if (config.output.git?.includeDiffs) {
     let gitDiffsMessage = '';
-    if (packResult.diffTokenCount) {
-      gitDiffsMessage = pc.white(`✔ Git diffs included ${pc.dim(`(${packResult.diffTokenCount.toLocaleString()} tokens)`)}`);
+    if (packResult.gitDiffTokenCount) {
+      gitDiffsMessage = pc.white(
+        `✔ Git diffs included ${pc.dim(`(${packResult.gitDiffTokenCount.toLocaleString()} tokens)`)}`,
+      );
     } else {
       gitDiffsMessage = pc.dim('✖ No git diffs included');
     }
@@ -41,7 +43,7 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
 export const printSecurityCheck = (
   rootDir: string,
   suspiciousFilesResults: SuspiciousFileResult[],
-  suspiciousGitDiffResults: SuspiciousFileResult[] = [],
+  suspiciousGitDiffResults: SuspiciousFileResult[],
   config: RepomixConfigMerged,
 ) => {
   if (!config.security.enableSecurityCheck) {

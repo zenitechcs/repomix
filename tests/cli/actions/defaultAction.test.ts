@@ -61,6 +61,8 @@ describe('defaultAction', () => {
       fileCharCounts: {},
       fileTokenCounts: {},
       suspiciousFilesResults: [],
+      suspiciousGitDiffResults: [],
+      gitDiffTokenCount: 0,
     });
   });
 

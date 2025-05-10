@@ -11,7 +11,7 @@ export interface CalculateMetricsResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
-  diffTokenCount?: number;
+  gitDiffTokenCount: number;
 }
 
 import { TokenCounter } from './TokenCounter.js';
@@ -30,14 +30,14 @@ export const calculateMetrics = async (
   progressCallback('Calculating metrics...');
 
   // Calculate token count for git diffs if included
-  let diffTokenCount = 0;
+  let gitDiffTokenCount = 0;
   if (config.output.git?.includeDiffs) {
     const tokenCounter = new TokenCounter(config.tokenCount.encoding);
     if (gitDiffResult?.workTreeDiffContent) {
-      diffTokenCount += tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
+      gitDiffTokenCount += tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
     }
     if (gitDiffResult?.stagedDiffContent) {
-      diffTokenCount += tokenCounter.countTokens(gitDiffResult.stagedDiffContent);
+      gitDiffTokenCount += tokenCounter.countTokens(gitDiffResult.stagedDiffContent);
     }
     tokenCounter.free();
   }
@@ -63,6 +63,6 @@ export const calculateMetrics = async (
     totalTokens,
     fileCharCounts,
     fileTokenCounts,
-    diffTokenCount,
+    gitDiffTokenCount: gitDiffTokenCount,
   };
 };

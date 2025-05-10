@@ -142,7 +142,7 @@ index 123..456 100644
       totalTokens: 10,
       fileCharCounts: { 'test.js': 10 },
       fileTokenCounts: { 'test.js': 5 },
-      diffTokenCount: 15, // Mock diff token count
+      gitDiffTokenCount: 15, // Mock diff token count
     });
     const mockSortPaths = vi.fn().mockImplementation((paths) => paths);
 
@@ -163,7 +163,7 @@ index 123..456 100644
       sortPaths: mockSortPaths,
     });
 
-    // Check diffTokenCount in the result
-    expect(result.diffTokenCount).toBe(15);
+    // Check gitDiffTokenCount in the result
+    expect(result.gitDiffTokenCount).toBe(15);
   });
 });

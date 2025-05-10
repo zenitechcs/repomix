@@ -19,7 +19,7 @@ export interface PackResult {
   totalTokens: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
-  diffTokenCount?: number;
+  gitDiffTokenCount: number;
   suspiciousFilesResults: SuspiciousFileResult[];
   suspiciousGitDiffResults: SuspiciousFileResult[];
 }
@@ -83,12 +83,8 @@ export const pack = async (
   const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
 
   // Run security check and get filtered safe files
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await deps.validateFileSafety(
-    rawFiles,
-    progressCallback,
-    config,
-    gitDiffResult,
-  );
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } =
+    await deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult);
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');

@@ -30,6 +30,8 @@ describe('PackCodebaseTool', () => {
     fileCharCounts: { 'test.js': 100 },
     fileTokenCounts: { 'test.js': 50 },
     suspiciousFilesResults: [],
+    gitDiffTokenCount: 0,
+    suspiciousGitDiffResults: [],
   };
 
   beforeEach(() => {

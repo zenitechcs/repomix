@@ -45,6 +45,7 @@ describe('calculateMetrics', () => {
         'file1.txt': 10,
         'file2.txt': 20,
       },
+      gitDiffTokenCount: 0,
     };
 
     const config = createMockConfig();

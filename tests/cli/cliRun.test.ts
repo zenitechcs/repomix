@@ -100,6 +100,8 @@ describe('cliRun', () => {
         fileCharCounts: {},
         fileTokenCounts: {},
         suspiciousFilesResults: [],
+        gitDiffTokenCount: 0,
+        suspiciousGitDiffResults: [],
       } satisfies PackResult,
     });
     vi.mocked(initAction.runInitAction).mockResolvedValue();
@@ -148,6 +150,8 @@ describe('cliRun', () => {
         fileCharCounts: {},
         fileTokenCounts: {},
         suspiciousFilesResults: [],
+        gitDiffTokenCount: 0,
+        suspiciousGitDiffResults: [],
       } satisfies PackResult,
     });
     vi.mocked(versionAction.runVersionAction).mockResolvedValue();

@@ -79,7 +79,7 @@ describe('packager', () => {
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
-    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig);
+    expect(mockDeps.validateFileSafety).toHaveBeenCalledWith(mockRawFiles, progressCallback, mockConfig, undefined);
     expect(mockDeps.processFiles).toHaveBeenCalledWith(mockSafeRawFiles, mockConfig, progressCallback);
     expect(mockDeps.generateOutput).toHaveBeenCalledWith(
       ['root'],
