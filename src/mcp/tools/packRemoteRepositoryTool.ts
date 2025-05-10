@@ -7,14 +7,6 @@ import type { CliOptions } from '../../cli/types.js';
 import { createToolWorkspace, formatToolError, formatToolResponse } from './mcpToolRuntime.js';
 
 export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
-  const annotations = {
-    title: 'Pack Remote Repository',
-    readOnlyHint: false,
-    destructiveHint: false,
-    idempotentHint: false,
-    openWorldHint: true,
-  };
-
   mcpServer.tool(
     'pack_remote_repository',
     'Fetch, clone and package a GitHub repository into a consolidated file for AI analysis',
@@ -44,7 +36,13 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
         .default(10)
         .describe('Number of top files to display in the metrics (default: 10)'),
     },
-    annotations,
+    {
+      title: 'Pack Remote Repository',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
     async ({ remote, compress, includePatterns, ignorePatterns, topFilesLength }): Promise<CallToolResult> => {
       let tempDir = '';
 

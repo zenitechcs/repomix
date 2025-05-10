@@ -9,21 +9,19 @@ import { getOutputFilePath } from './mcpToolRuntime.js';
  * Register the tool to read Repomix output files
  */
 export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
-  const annotations = {
-    title: 'Read Repomix Output',
-    readOnlyHint: true,
-    destructiveHint: false,
-    idempotentHint: true,
-    openWorldHint: false,
-  };
-
   mcpServer.tool(
     'read_repomix_output',
     'Read the contents of a Repomix output file in environments where direct file access is not possible. This tool is specifically intended for cases where the client cannot access the file system directly, such as in web-based environments or sandboxed applications. For systems with direct file access, use standard file operations instead.',
     {
       outputId: z.string().describe('ID of the Repomix output file to read'),
     },
-    annotations,
+    {
+      title: 'Read Repomix Output',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     async ({ outputId }): Promise<CallToolResult> => {
       try {
         logger.trace(`Reading Repomix output with ID: ${outputId}`);
