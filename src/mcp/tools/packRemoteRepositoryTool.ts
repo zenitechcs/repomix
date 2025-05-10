@@ -38,7 +38,7 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
     },
     {
       title: 'Pack Remote Repository',
-      readOnlyHint: false,
+      readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,

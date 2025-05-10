@@ -38,7 +38,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
     },
     {
       title: 'Pack Local Codebase',
-      readOnlyHint: false,
+      readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: false,
