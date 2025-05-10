@@ -76,5 +76,12 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
         return formatToolError(error);
       }
     },
+    {
+      title: 'Pack Remote Repository',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true
+    }
   );
 };

@@ -82,5 +82,12 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         return formatToolError(error);
       }
     },
+    {
+      title: 'Pack Local Codebase',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false
+    }
   );
 };

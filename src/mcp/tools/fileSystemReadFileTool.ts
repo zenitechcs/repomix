@@ -108,5 +108,12 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
         };
       }
     },
+    {
+      title: 'Read File',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false
+    }
   );
 };

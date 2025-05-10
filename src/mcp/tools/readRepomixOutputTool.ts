@@ -76,5 +76,12 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
         };
       }
     },
+    {
+      title: 'Read Repomix Output',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false
+    }
   );
 };

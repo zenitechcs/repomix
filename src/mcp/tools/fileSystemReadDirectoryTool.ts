@@ -89,5 +89,12 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
         };
       }
     },
+    {
+      title: 'Read Directory',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false
+    }
   );
 };
