@@ -15,6 +15,13 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
     {
       outputId: z.string().describe('ID of the Repomix output file to read'),
     },
+    {
+      title: 'Read Repomix Output',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     async ({ outputId }): Promise<CallToolResult> => {
       try {
         logger.trace(`Reading Repomix output with ID: ${outputId}`);

@@ -37,7 +37,7 @@ describe('PackCodebaseTool', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     registerPackCodebaseTool(mockServer);
-    toolHandler = (mockServer.tool as ReturnType<typeof vi.fn>).mock.calls[0][3];
+    toolHandler = (mockServer.tool as ReturnType<typeof vi.fn>).mock.calls[0][4];
 
     // デフォルトのパスの動作をモック
     vi.mocked(path.join).mockImplementation((...args) => args.join('/'));
@@ -102,6 +102,7 @@ describe('PackCodebaseTool', () => {
       'pack_codebase',
       'Package local code directory into a consolidated file for AI analysis',
       expect.any(Object),
+      expect.any(Object), // annotations
       expect.any(Function),
     );
   });

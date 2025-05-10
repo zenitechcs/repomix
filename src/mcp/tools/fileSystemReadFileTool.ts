@@ -17,6 +17,13 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
     {
       path: z.string().describe('Absolute path to the file to read'),
     },
+    {
+      title: 'Read File',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     async ({ path: filePath }): Promise<CallToolResult> => {
       try {
         logger.trace(`Reading file at absolute path: ${filePath}`);
