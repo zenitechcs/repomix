@@ -68,7 +68,7 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
 
         // Perform security check using the existing worker
         const config = createSecretLintConfig();
-        const securityCheckResult = await runSecretLint(filePath, fileContent, config);
+        const securityCheckResult = await runSecretLint(filePath, fileContent, 'file', config);
 
         // If security check found issues, block the file
         if (securityCheckResult !== null) {

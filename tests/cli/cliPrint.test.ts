@@ -30,7 +30,7 @@ describe('cliPrint', () => {
         security: { enableSecurityCheck: true },
       });
       const suspiciousFiles: SuspiciousFileResult[] = [
-        { filePath: 'suspicious.txt', messages: ['Contains sensitive data'] },
+        { filePath: 'suspicious.txt', messages: ['Contains sensitive data'], type: 'file' },
       ];
 
       const packResult: PackResult = {
@@ -102,6 +102,7 @@ describe('cliPrint', () => {
         {
           filePath: path.join('/root', configRelativePath),
           messages: ['Contains API key', 'Contains password'],
+          type: 'file',
         },
       ];
 

@@ -4,7 +4,7 @@ import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../file/gitDiff.js';
 import { filterOutUntrustedFiles } from './filterOutUntrustedFiles.js';
-import { FILE_PATH_PREFIX_GIT_DIFF, type SuspiciousFileResult, runSecurityCheck } from './securityCheck.js';
+import { type SuspiciousFileResult, runSecurityCheck } from './securityCheck.js';
 
 // Marks which files are suspicious and which are safe
 // Returns Git diff results separately so they can be included in the output
@@ -27,8 +27,8 @@ export const validateFileSafety = async (
     const allResults = await deps.runSecurityCheck(rawFiles, progressCallback, gitDiffResult);
 
     // Separate Git diff results from regular file results
-    suspiciousFilesResults = allResults.filter((result) => !result.filePath.startsWith(FILE_PATH_PREFIX_GIT_DIFF));
-    suspiciousGitDiffResults = allResults.filter((result) => result.filePath.startsWith(FILE_PATH_PREFIX_GIT_DIFF));
+    suspiciousFilesResults = allResults.filter((result) => result.type === 'file');
+    suspiciousGitDiffResults = allResults.filter((result) => result.type === 'gitDiff');
 
     if (suspiciousGitDiffResults.length > 0) {
       logger.warn('Security issues found in Git diffs, but they will still be included in the output');

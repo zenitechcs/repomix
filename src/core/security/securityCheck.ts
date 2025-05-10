@@ -4,13 +4,12 @@ import { initPiscina } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../file/gitDiff.js';
-import type { SecurityCheckTask } from './workers/securityCheckWorker.js';
-
-export const FILE_PATH_PREFIX_GIT_DIFF = '[git-diff]';
+import type { SecurityCheckTask, SecurityCheckType } from './workers/securityCheckWorker.js';
 
 export interface SuspiciousFileResult {
   filePath: string;
   messages: string[];
+  type: SecurityCheckType;
 }
 
 const initTaskRunner = (numOfTasks: number) => {
@@ -32,15 +31,17 @@ export const runSecurityCheck = async (
   if (gitDiffResult) {
     if (gitDiffResult.workTreeDiffContent) {
       gitDiffTasks.push({
-        filePath: `${FILE_PATH_PREFIX_GIT_DIFF} Working tree changes`,
+        filePath: 'Working tree changes',
         content: gitDiffResult.workTreeDiffContent,
+        type: 'gitDiff',
       });
     }
 
     if (gitDiffResult.stagedDiffContent) {
       gitDiffTasks.push({
-        filePath: `${FILE_PATH_PREFIX_GIT_DIFF} Staged changes`,
+        filePath: 'Staged changes',
         content: gitDiffResult.stagedDiffContent,
+        type: 'gitDiff',
       });
     }
   }
@@ -51,6 +52,7 @@ export const runSecurityCheck = async (
       ({
         filePath: file.path,
         content: file.content,
+        type: 'file',
       }) satisfies SecurityCheckTask,
   );
 

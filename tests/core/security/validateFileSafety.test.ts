@@ -18,7 +18,7 @@ describe('validateFileSafety', () => {
     } as RepomixConfigMerged;
     const progressCallback: RepomixProgressCallback = vi.fn();
     const suspiciousFilesResults: SuspiciousFileResult[] = [
-      { filePath: 'file2.txt', messages: ['something suspicious.'] },
+      { filePath: 'file2.txt', messages: ['something suspicious.'], type: 'file' },
     ];
     const deps = {
       runSecurityCheck: vi.fn().mockResolvedValue(suspiciousFilesResults),
