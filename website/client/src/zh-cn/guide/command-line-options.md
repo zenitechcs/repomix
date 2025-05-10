@@ -18,6 +18,8 @@
 - `--header-text <text>`: 文件头部包含的自定义文本
 - `--instruction-file-path <path>`: 包含详细自定义指令的文件路径
 - `--include-empty-directories`: 在输出中包含空目录（默认：`false`）
+- `--include-diffs`: 在输出中包含 git 差异（包括工作树和已暂存的变更，它们将分开显示）（默认：`false`）
+- `--no-git-sort-by-changes`: 禁用按 git 变更计数排序文件（默认：`true`）
 
 ## 过滤选项
 - `--include <patterns>`: 包含模式（逗号分隔）

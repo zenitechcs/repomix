@@ -98,3 +98,22 @@ dist/**
 更多詳細信息和示例，請參閱[程式碼壓縮指南](code-compress)。
 
 ### Git 集成
+
+`output.git` 配置允許您控制如何基於 Git 歷史記錄對文件進行排序以及如何包含 Git 差異：
+
+- `sortByChanges`：當設置為 `true` 時，文件將按 Git 更改次數（修改該文件的提交數）進行排序。更改次數較多的文件將出現在輸出的底部。這有助於優先處理更活躍開發的文件。默認值：`true`
+- `sortByChangesMaxCommits`：計算文件更改次數時要分析的最大提交數。默認值：`100`
+- `includeDiffs`：當設置為 `true` 時，在輸出中包含 Git 差異（同時分別包含工作樹和暫存區的更改）。這允許讀者查看存儲庫中的待處理更改。默認值：`false`
+
+配置示例：
+```json
+{
+  "output": {
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": true
+    }
+  }
+}
+```

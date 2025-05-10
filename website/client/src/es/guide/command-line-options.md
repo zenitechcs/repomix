@@ -18,6 +18,7 @@
 - `--header-text <text>`: Texto personalizado para incluir en el encabezado del archivo
 - `--instruction-file-path <path>`: Ruta al archivo con instrucciones personalizadas detalladas
 - `--include-empty-directories`: Incluye directorios vacíos en la salida (predeterminado: `false`)
+- `--include-diffs`: Incluye las diferencias de git en la salida (incluye por separado los cambios del árbol de trabajo y los cambios preparados) (predeterminado: `false`)
 
 ## Opciones de Filtrado
 - `--include <patterns>`: Patrones a incluir (separados por comas)

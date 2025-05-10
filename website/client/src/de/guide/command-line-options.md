@@ -18,6 +18,7 @@
 - `--header-text <text>`: Benutzerdefinierter Text für den Dateikopf
 - `--instruction-file-path <path>`: Pfad zu einer Datei mit detaillierten benutzerdefinierten Anweisungen
 - `--include-empty-directories`: Leere Verzeichnisse in die Ausgabe einbeziehen (Standard: `false`)
+- `--include-diffs`: Git-Unterschiede in die Ausgabe einbeziehen (enthält sowohl Arbeitsbaum- als auch gestaged Änderungen separat) (Standard: `false`)
 
 ## Filteroptionen
 - `--include <patterns>`: Einzuschließende Muster (durch Komma getrennt)

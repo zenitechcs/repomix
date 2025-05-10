@@ -18,6 +18,8 @@
 - `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 - `--include-empty-directories`: Include empty directories in the output (default: `false`)
+- `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately) (default: `false`)
+- `--no-git-sort-by-changes`: Disable sorting files by git change count (default: `true`)
 
 ## Filter Options
 - `--include <patterns>`: Include patterns (comma-separated)
