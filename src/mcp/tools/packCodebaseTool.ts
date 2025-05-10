@@ -7,6 +7,14 @@ import type { CliOptions } from '../../cli/types.js';
 import { createToolWorkspace, formatToolError, formatToolResponse } from './mcpToolRuntime.js';
 
 export const registerPackCodebaseTool = (mcpServer: McpServer) => {
+  const annotations = {
+    title: 'Pack Local Codebase',
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
+  };
+
   mcpServer.tool(
     'pack_codebase',
     'Package local code directory into a consolidated file for AI analysis',
@@ -36,6 +44,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         .default(10)
         .describe('Number of top files to display in the metrics (default: 10)'),
     },
+    annotations,
     async ({ directory, compress, includePatterns, ignorePatterns, topFilesLength }): Promise<CallToolResult> => {
       let tempDir = '';
 
@@ -82,12 +91,5 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         return formatToolError(error);
       }
     },
-    {
-      title: 'Pack Local Codebase',
-      readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: false
-    }
   );
 };

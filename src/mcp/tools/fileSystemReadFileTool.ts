@@ -11,12 +11,21 @@ import { logger } from '../../shared/logger.js';
  * Register file system read file tool with security checks
  */
 export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
+  const annotations = {
+    title: 'Read File',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  };
+
   mcpServer.tool(
     'file_system_read_file',
     'Read a file using an absolute path with security validation.',
     {
       path: z.string().describe('Absolute path to the file to read'),
     },
+    annotations,
     async ({ path: filePath }): Promise<CallToolResult> => {
       try {
         logger.trace(`Reading file at absolute path: ${filePath}`);
@@ -108,12 +117,5 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
         };
       }
     },
-    {
-      title: 'Read File',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false
-    }
   );
 };

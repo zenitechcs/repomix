@@ -9,12 +9,21 @@ import { logger } from '../../shared/logger.js';
  * Register file system directory listing tool
  */
 export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
+  const annotations = {
+    title: 'Read Directory',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  };
+
   mcpServer.tool(
     'file_system_read_directory',
     'List contents of a directory using an absolute path.',
     {
       path: z.string().describe('Absolute path to the directory to list'),
     },
+    annotations,
     async ({ path: directoryPath }): Promise<CallToolResult> => {
       try {
         logger.trace(`Listing directory at absolute path: ${directoryPath}`);
@@ -89,12 +98,5 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
         };
       }
     },
-    {
-      title: 'Read Directory',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false
-    }
   );
 };
