@@ -6,6 +6,8 @@ import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../file/gitDiff.js';
 import type { SecurityCheckTask } from './workers/securityCheckWorker.js';
 
+export const FILE_PATH_PREFIX_GIT_DIFF = '[git-diff]';
+
 export interface SuspiciousFileResult {
   filePath: string;
   messages: string[];
@@ -30,14 +32,14 @@ export const runSecurityCheck = async (
   if (gitDiffResult) {
     if (gitDiffResult.workTreeDiffContent) {
       gitDiffTasks.push({
-        filePath: '[git-diff] Working tree changes',
+        filePath: `${FILE_PATH_PREFIX_GIT_DIFF} Working tree changes`,
         content: gitDiffResult.workTreeDiffContent,
       });
     }
 
     if (gitDiffResult.stagedDiffContent) {
       gitDiffTasks.push({
-        filePath: '[git-diff] Staged changes',
+        filePath: `${FILE_PATH_PREFIX_GIT_DIFF} Staged changes`,
         content: gitDiffResult.stagedDiffContent,
       });
     }
