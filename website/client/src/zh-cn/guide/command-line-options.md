@@ -5,6 +5,7 @@
 
 ## 输出选项
 - `-o, --output <file>`: 输出文件名（默认：`repomix-output.txt`）
+- `--stdout`: 输出到标准输出而不是写入文件（不能与`--output`选项一起使用）
 - `--style <type>`: 输出样式（`plain`、`xml`、`markdown`）（默认：`xml`）
 - `--parsable-style`: 启用基于所选样式模式的可解析输出（默认：`false`）
 - `--compress`: 执行智能代码提取，专注于函数和类的签名，同时删除实现细节。有关详细信息和示例，请参阅[代码压缩指南](code-compress)。
@@ -55,6 +56,12 @@ repomix
 
 # 自定义输出
 repomix -o output.xml --style xml
+
+# 输出到标准输出
+repomix --stdout > custom-output.txt
+
+# 将输出发送到标准输出，然后通过管道传递到另一个命令（例如：simonw/llm）
+repomix --stdout | llm "请解释这段代码的功能"
 
 # 使用压缩的自定义输出
 repomix --compress

@@ -141,6 +141,12 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
       parsableStyle: options.parsableStyle,
     };
   }
+  if (options.stdout) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      stdout: true,
+    };
+  }
   // Only apply securityCheck setting if explicitly set to false
   if (options.securityCheck === false) {
     cliConfig.security = { enableSecurityCheck: options.securityCheck };

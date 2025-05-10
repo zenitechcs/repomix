@@ -7,6 +7,7 @@ export interface CliOptions extends OptionValues {
 
   // Output Options
   output?: string;
+  stdout?: boolean;
   style?: RepomixOutputStyle;
   parsableStyle?: boolean;
   compress?: boolean;

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as defaultAction from '../../src/cli/actions/defaultAction.js';
 import * as initAction from '../../src/cli/actions/initAction.js';
 import * as remoteAction from '../../src/cli/actions/remoteAction.js';
@@ -64,6 +64,7 @@ describe('cliRun', () => {
         output: {
           filePath: 'repomix-output.txt',
           style: 'plain',
+          stdout: false,
           parsableStyle: false,
           fileSummary: true,
           directoryStructure: true,
@@ -113,6 +114,7 @@ describe('cliRun', () => {
         },
         output: {
           filePath: 'repomix-output.txt',
+          stdout: false,
           style: 'plain',
           parsableStyle: false,
           fileSummary: true,
@@ -355,6 +357,56 @@ describe('cliRun', () => {
       await runCli(['.'], process.cwd(), options);
 
       expect(logger.getLogLevel()).toBe(repomixLogLevels.INFO);
+    });
+  });
+
+  describe('stdout mode', () => {
+    const originalIsTTY = process.stdout.isTTY;
+
+    afterEach(() => {
+      process.stdout.isTTY = originalIsTTY;
+    });
+
+    test('should handle --stdout flag', async () => {
+      const options: CliOptions = {
+        stdout: true,
+      };
+
+      await runCli(['.'], process.cwd(), options);
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        ['.'],
+        process.cwd(),
+        expect.objectContaining({
+          stdout: true,
+        }),
+      );
+    });
+
+    test('should not enable stdout mode when explicitly setting output', async () => {
+      // Mock pipe detection
+      process.stdout.isTTY = false;
+      const options: CliOptions = {
+        output: 'custom-output.txt',
+      };
+
+      await runCli(['.'], process.cwd(), options);
+
+      // stdout should not be set
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        ['.'],
+        process.cwd(),
+        expect.objectContaining({
+          output: 'custom-output.txt',
+        }),
+      );
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalledWith(
+        ['.'],
+        process.cwd(),
+        expect.objectContaining({
+          stdout: true,
+        }),
+      );
     });
   });
 });

@@ -5,6 +5,7 @@
 
 ## Output Options
 - `-o, --output <file>`: Output file name (default: `repomix-output.txt`)
+- `--stdout`: Output to stdout instead of writing to a file (cannot be used with `--output` option)
 - `--style <type>`: Output style (`plain`, `xml`, `markdown`) (default: `xml`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema (default: `false`)
 - `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. For more details and examples, see [Code Compression Guide](code-compress).
@@ -55,6 +56,12 @@ repomix
 
 # Custom output
 repomix -o output.xml --style xml
+
+# Output to stdout
+repomix --stdout > custom-output.txt
+
+# Send output to stdout, then pipe into another command (for example, simonw/llm)
+repomix --stdout | llm "Please explain what this code does."
 
 # Custom output with compression
 repomix --compress

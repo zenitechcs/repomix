@@ -5,6 +5,7 @@
 
 ## Opções de Saída
 - `-o, --output <file>`: Nome do arquivo de saída (padrão: `repomix-output.txt`)
+- `--stdout`: Saída para a saída padrão em vez de escrever em um arquivo (não pode ser usado com a opção `--output`)
 - `--style <type>`: Estilo de saída (`plain`, `xml`, `markdown`) (padrão: `xml`)
 - `--parsable-style`: Habilita saída analisável baseada no esquema do estilo escolhido (padrão: `false`)
 - `--compress`: Realiza extração inteligente de código, focando nas assinaturas de funções e classes enquanto remove detalhes de implementação. Para mais detalhes e exemplos, consulte o [Guia de Compressão de Código](code-compress)
@@ -55,6 +56,12 @@ repomix
 
 # Saída personalizada
 repomix -o output.xml --style xml
+
+# Saída para a saída padrão
+repomix --stdout > custom-output.txt
+
+# Enviar saída para a saída padrão, depois canalizar para outro comando (por exemplo, simonw/llm)
+repomix --stdout | llm "Por favor, explique o que este código faz"
 
 # Saída personalizada com compressão
 repomix --compress

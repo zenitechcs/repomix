@@ -438,6 +438,7 @@ Instruction
 
 #### Output Options
 - `-o, --output <file>`: Specify the output file name
+- `--stdout`: Output to stdout instead of writing to a file (cannot be used with `--output` option)
 - `--style <style>`: Specify the output style (`xml`, `markdown`, `plain`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
 - `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures to reduce token count
@@ -485,12 +486,32 @@ Instruction
 Examples:
 
 ```bash
-repomix -o custom-output.txt
-repomix -i "*.log,tmp" -v
-repomix -c ./custom-config.json
-repomix --style xml
-repomix --remote https://github.com/user/repo
-npx repomix src
+# Basic usage
+repomix
+
+# Custom output
+repomix -o output.xml --style xml
+
+# Output to stdout
+repomix --stdout > custom-output.txt
+
+# Send output to stdout, then pipe into another command (for example, simonw/llm)
+repomix --stdout | llm "Please explain what this code does."
+
+# Custom output with compression
+repomix --compress
+
+# Process specific files
+repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
+
+# Remote repository with branch
+repomix --remote https://github.com/user/repo/tree/main
+
+# Remote repository with commit
+repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
+
+# Remote repository with shorthand
+repomix --remote user/repo
 ```
 
 ### Updating Repomix
