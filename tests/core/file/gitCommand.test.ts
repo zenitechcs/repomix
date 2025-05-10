@@ -177,7 +177,7 @@ file2.ts
         '--is-inside-work-tree',
       ]);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'diff', '--no-color']);
-      expect(logger.trace).toHaveBeenCalledWith('Failed to get working tree diff:', 'Failed to get diff');
+      expect(logger.trace).toHaveBeenCalledWith('Failed to get git diff:', 'Failed to get diff');
     });
   });
 
