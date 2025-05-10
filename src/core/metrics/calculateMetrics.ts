@@ -31,14 +31,22 @@ export const calculateMetrics = async (
 
   // Calculate token count for git diffs if included
   let gitDiffTokenCount = 0;
-  if (config.output.git?.includeDiffs) {
+  if (config.output.git?.includeDiffs && gitDiffResult) {
     const tokenCounter = new TokenCounter(config.tokenCount.encoding);
-    if (gitDiffResult?.workTreeDiffContent) {
-      gitDiffTokenCount += tokenCounter.countTokens(gitDiffResult.workTreeDiffContent);
+    
+    const countPromises = [];
+    if (gitDiffResult.workTreeDiffContent) {
+      countPromises.push(
+        Promise.resolve().then(() => tokenCounter.countTokens(gitDiffResult.workTreeDiffContent))
+      );
     }
-    if (gitDiffResult?.stagedDiffContent) {
-      gitDiffTokenCount += tokenCounter.countTokens(gitDiffResult.stagedDiffContent);
+    if (gitDiffResult.stagedDiffContent) {
+      countPromises.push(
+        Promise.resolve().then(() => tokenCounter.countTokens(gitDiffResult.stagedDiffContent))
+      );
     }
+    
+    gitDiffTokenCount = (await Promise.all(countPromises)).reduce((sum, count) => sum + count, 0);
     tokenCounter.free();
   }
 
