@@ -49,7 +49,7 @@ Happy coding! 🚀
 
 ## Using the CLI Tool {#using-the-cli-tool}
 
-Repomix can be used as a command-line tool, offering powerful features and customization options.
+Repomix can be used as a command-line tool, offering powerful features and customization options. **Unlike the web interface which is limited to public repositories only, the CLI tool can access private repositories** with proper authentication.
 
 ### Quick Start
 
@@ -117,8 +117,6 @@ npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 # Using commit's URL
 npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
-
-The CLI tool can also access private repositories with proper authentication, unlike the web interface which is limited to public repositories only.
 
 To initialize a new configuration file (`repomix.config.json`):
 
