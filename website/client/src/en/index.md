@@ -118,6 +118,8 @@ npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
 ```
 
+The CLI tool can also access private repositories with proper authentication, unlike the web interface which is limited to public repositories only.
+
 To initialize a new configuration file (`repomix.config.json`):
 
 ```bash
