@@ -49,6 +49,8 @@ Feliz codificação! 🚀
 
 O Repomix pode ser usado como uma ferramenta de linha de comando, oferecendo recursos poderosos e opções de personalização.
 
+**A ferramenta CLI pode acessar repositórios privados** pois utiliza o Git instalado localmente.
+
 ### Início Rápido
 
 Você pode experimentar o Repomix instantaneamente no diretório do seu projeto sem instalação:

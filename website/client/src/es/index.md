@@ -51,6 +51,8 @@ Al discutir cambios específicos, la IA puede ayudar a generar código. Con func
 
 Repomix puede usarse como una herramienta de línea de comandos, ofreciendo potentes funciones y opciones de personalización.
 
+**La herramienta CLI puede acceder a repositorios privados** ya que utiliza tu Git instalado localmente.
+
 ### Inicio rápido
 
 Puedes probar Repomix instantáneamente en el directorio de tu proyecto sin necesidad de instalación:

@@ -49,6 +49,8 @@ Viel Spaß beim Programmieren! 🚀
 
 Repomix kann als Kommandozeilen-Tool verwendet werden und bietet leistungsstarke Funktionen und Anpassungsoptionen.
 
+**Das CLI-Tool kann auf private Repositories zugreifen**, da es Ihr lokal installiertes Git verwendet.
+
 ### Schnellstart
 
 Sie können Repomix sofort in Ihrem Projektverzeichnis ohne Installation ausprobieren:
@@ -183,4 +185,4 @@ Erstellen Sie eine `repomix.config.json` für dauerhafte Einstellungen:
 Schauen Sie sich unseren [Leitfaden](./guide/) für detaillierte Anleitungen an oder besuchen Sie das [GitHub-Repository](https://github.com/yamadashy/repomix) für weitere Beispiele und Quellcode.
 :::
 
-</div> 
+</div>  
