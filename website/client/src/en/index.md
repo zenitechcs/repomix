@@ -51,7 +51,7 @@ Happy coding! 🚀
 
 Repomix can be used as a command-line tool, offering powerful features and customization options.
 
-The **CLI tool can access private repositories** as it uses your locally installed git.
+**The CLI tool can access private repositories** as it uses your locally installed git.
 
 ### Quick Start
 
