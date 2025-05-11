@@ -49,7 +49,7 @@ Happy coding! 🚀
 
 ## Using the CLI Tool {#using-the-cli-tool}
 
-Repomix can be used as a command-line tool, offering powerful features and customization options. **Unlike the web interface which is limited to public repositories only, the CLI tool can access private repositories** with proper authentication.
+Repomix can be used as a command-line tool, offering powerful features and customization options. Unlike the web interface which is limited to public repositories only, the **CLI tool can access private repositories** with proper authentication.
 
 ### Quick Start
 
