@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for Python', () => {
-  const defaultConfig = {} as RepomixConfigMerged;
+  const defaultConfig = createMockConfig({});
 
   test('should parse basic Python correctly', async () => {
     const fileContent = `
@@ -17,7 +18,7 @@ describe('parseFile for Python', () => {
     `;
     const filePath = 'dummy.py';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

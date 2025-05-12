@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { CHUNK_SEPARATOR, parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for JavaScript', () => {
   test('should filter captures with same start row', async () => {
@@ -20,7 +21,7 @@ describe('parseFile for JavaScript', () => {
     `;
     const filePath = 'dummy.js';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
     // Check content
     expect(result).toContain('/**\n       * Greeting function\n       * @param name The name to greet\n       */');
@@ -47,7 +48,7 @@ describe('parseFile for JavaScript', () => {
     `;
     const filePath = 'dummy.jsx';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

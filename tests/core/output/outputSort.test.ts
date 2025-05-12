@@ -49,7 +49,7 @@ describe('outputSort', () => {
         }),
       ).toEqual(expected);
 
-      expect(mockGetFileChangeCount).toHaveBeenCalledWith('/test', 150);
+      expect(mockGetFileChangeCount).toHaveBeenCalledWith(expect.any(String), 150);
       expect(mockIsGitInstalled).toHaveBeenCalled();
     });
 

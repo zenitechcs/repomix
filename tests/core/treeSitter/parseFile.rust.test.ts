@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../../tests/testing/testUtils.js';
 
 describe('parseFile for Rust', () => {
   test('should parse Rust correctly', async () => {
@@ -45,7 +46,7 @@ describe('parseFile for Rust', () => {
     `;
     const filePath = 'dummy.rs';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

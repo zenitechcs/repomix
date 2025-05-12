@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for C/C++', () => {
   // Test for C++
@@ -16,7 +17,7 @@ describe('parseFile for C/C++', () => {
     `;
     const filePath = 'dummy.cpp';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -42,7 +43,7 @@ describe('parseFile for C/C++', () => {
     `;
     const filePath = 'dummy.hpp';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = ['main', 'Header file main function', 'This header declares the main function'];
@@ -63,7 +64,7 @@ describe('parseFile for C/C++', () => {
     `;
     const filePath = 'dummy.c';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = ['main', 'The main function', 'Prints a greeting to stdout', 'Entry point of the program'];
@@ -83,7 +84,7 @@ describe('parseFile for C/C++', () => {
     `;
     const filePath = 'dummy.h';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

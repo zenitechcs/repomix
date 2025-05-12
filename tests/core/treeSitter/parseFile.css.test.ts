@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for CSS', () => {
   test('should parse CSS correctly', async () => {
@@ -42,7 +43,7 @@ describe('parseFile for CSS', () => {
     `;
     const filePath = 'style.css';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -95,7 +96,7 @@ describe('parseFile for CSS', () => {
     `;
     const filePath = 'comments.css';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -127,7 +128,7 @@ describe('parseFile for CSS', () => {
     `;
     const filePath = 'at-rules.css';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     // Skip testing at-rules as they are not extracted in the current implementation
@@ -162,7 +163,7 @@ describe('parseFile for CSS', () => {
     `;
     const filePath = 'complex-selectors.css';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
