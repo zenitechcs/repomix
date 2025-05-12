@@ -2,8 +2,10 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import * as gitCommandModule from '../../../src/core/file/gitCommand.js';
+import type { GitDiffResult } from '../../../src/core/file/gitDiff.js';
 import { buildOutputGeneratorContext, generateOutput } from '../../../src/core/output/outputGenerate.js';
 import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the gitCommand module
 vi.mock('../../../src/core/file/gitCommand.js', () => ({
@@ -29,8 +31,8 @@ index 123..456 100644
     vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
     vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);
 
-    // Sample minimal config
-    mockConfig = {
+    // Sample minimal config using createMockConfig utility
+    mockConfig = createMockConfig({
       cwd: '/test/repo',
       input: {
         maxFileSize: 1000000,
@@ -38,35 +40,11 @@ index 123..456 100644
       output: {
         filePath: 'output.txt',
         style: 'plain',
-        parsableStyle: false,
-        fileSummary: true,
-        directoryStructure: true,
-        files: true,
-        removeComments: false,
-        removeEmptyLines: false,
-        compress: false,
-        topFilesLength: 5,
-        showLineNumbers: false,
-        copyToClipboard: false,
         git: {
-          sortByChanges: true,
-          sortByChangesMaxCommits: 100,
           includeDiffs: false,
         },
       },
-      include: [],
-      ignore: {
-        useGitignore: true,
-        useDefaultPatterns: true,
-        customPatterns: [],
-      },
-      security: {
-        enableSecurityCheck: true,
-      },
-      tokenCount: {
-        encoding: 'o200k_base',
-      },
-    };
+    });
   });
 
   test('buildOutputGeneratorContext should include diffs when enabled', async () => {
@@ -135,7 +113,7 @@ index 123..456 100644
 
     const mockSortOutputFiles = vi.fn().mockImplementation((files) => Promise.resolve(files));
 
-    const gitDiffResult = {
+    const gitDiffResult: GitDiffResult = {
       workTreeDiffContent: sampleDiff,
       stagedDiffContent: '',
     };
@@ -198,7 +176,7 @@ index 123..456 100644
 
     const mockGenerateParsableXmlOutput = vi.fn();
     const mockSortOutputFiles = vi.fn().mockImplementation((files) => Promise.resolve(files));
-    const gitDiffResult = {
+    const gitDiffResult: GitDiffResult = {
       workTreeDiffContent: sampleDiff,
       stagedDiffContent: '',
     };

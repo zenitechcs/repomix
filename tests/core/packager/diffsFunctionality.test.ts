@@ -4,6 +4,7 @@ import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import * as gitCommandModule from '../../../src/core/file/gitCommand.js';
 import { buildOutputGeneratorContext } from '../../../src/core/output/outputGenerate.js';
 import { pack } from '../../../src/core/packager.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the dependencies
 vi.mock('../../../src/core/file/gitCommand.js', () => ({
@@ -27,44 +28,17 @@ index 123..456 100644
   beforeEach(() => {
     vi.resetAllMocks();
 
-    // Sample minimal config
-    mockConfig = {
+    // Sample minimal config using createMockConfig utility
+    mockConfig = createMockConfig({
       cwd: mockRootDir,
-      input: {
-        maxFileSize: 50 * 1024 * 1024,
-      },
       output: {
         filePath: 'repomix-output.txt',
         style: 'plain',
-        parsableStyle: false,
-        fileSummary: true,
-        directoryStructure: true,
-        files: true,
-        removeComments: false,
-        removeEmptyLines: false,
-        compress: false,
-        topFilesLength: 5,
-        showLineNumbers: false,
-        copyToClipboard: false,
         git: {
-          sortByChanges: true,
-          sortByChangesMaxCommits: 100,
           includeDiffs: false,
         },
       },
-      include: [],
-      ignore: {
-        useGitignore: true,
-        useDefaultPatterns: true,
-        customPatterns: [],
-      },
-      security: {
-        enableSecurityCheck: true,
-      },
-      tokenCount: {
-        encoding: 'o200k_base',
-      },
-    };
+    });
 
     // Set up our mocks
     vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);

@@ -533,7 +533,7 @@ describe('defaultAction', () => {
       include: 'src/**/*,  tests/**/*,   examples/**/*',
       ignore: 'node_modules/**,  dist/**,  coverage/**',
     };
-    const config = buildCliConfig(options as unknown as CliOptions);
+    const config = buildCliConfig(options);
 
     expect(config.include).toEqual(['src/**/*', 'tests/**/*', 'examples/**/*']);
     expect(config.ignore?.customPatterns).toEqual(['node_modules/**', 'dist/**', 'coverage/**']);
