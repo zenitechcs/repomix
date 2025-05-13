@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { CHUNK_SEPARATOR, parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for Vue', () => {
   test('should parse Vue files correctly', async () => {
@@ -52,7 +53,7 @@ export default {
     `;
     const filePath = 'HelloWorld.vue';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -107,7 +108,7 @@ export default defineComponent({
     `;
     const filePath = 'Counter.vue';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -152,7 +153,7 @@ function updateMessage() {
     `;
     const filePath = 'Composition.vue';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

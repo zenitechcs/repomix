@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../../tests/testing/testUtils.js';
 
 describe('parseFile for Java', () => {
   test('should parse Java correctly', async () => {
@@ -20,7 +21,7 @@ describe('parseFile for Java', () => {
     `;
     const filePath = 'dummy.java';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

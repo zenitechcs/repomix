@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile comment support', () => {
   // Test for JavaScript/TypeScript comments
@@ -24,7 +25,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.ts';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -61,7 +62,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.py';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = ['Single line comment', 'Multi-line docstring', 'Double quote docstring', 'indented line'];
@@ -97,7 +98,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.java';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -136,7 +137,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.cs';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -170,7 +171,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.rs';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -209,7 +210,7 @@ describe('parseFile comment support', () => {
 
     const filePath = 'test.rb';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('parseFile for Swift', () => {
   test('should parse Swift correctly', async () => {
@@ -93,7 +94,7 @@ describe('parseFile for Swift', () => {
     `;
     const filePath = 'sample.swift';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -175,7 +176,7 @@ describe('parseFile for Swift', () => {
     `;
     const filePath = 'extensions.swift';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [
@@ -242,7 +243,7 @@ describe('parseFile for Swift', () => {
     `;
     const filePath = 'generics.swift';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
 
     const expectContents = [

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../../tests/testing/testUtils.js';
 
 describe('parseFile for PHP', () => {
   test('should parse PHP correctly', async () => {
@@ -49,7 +50,7 @@ enum GreeterEnum: string {
 `;
     const filePath = 'dummy.php';
     const config = {};
-    const result = await parseFile(fileContent, filePath, config as RepomixConfigMerged);
+    const result = await parseFile(fileContent, filePath, createMockConfig(config));
     expect(typeof result).toBe('string');
     const expectContents = [
       'namespace App;',

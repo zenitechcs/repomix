@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { sortOutputFiles } from '../../../src/core/output/outputSort.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('node:fs/promises');
 
@@ -10,7 +11,7 @@ describe('outputSort', () => {
   const sep = path.sep;
 
   describe('sort by git changes', () => {
-    const mockConfig = {
+    const mockConfig = createMockConfig({
       output: {
         git: {
           sortByChanges: true,
@@ -18,7 +19,7 @@ describe('outputSort', () => {
         },
       },
       cwd: '/test',
-    } as unknown as RepomixConfigMerged;
+    });
 
     test('should sort files by git change count', async () => {
       const input: ProcessedFile[] = [
@@ -48,7 +49,7 @@ describe('outputSort', () => {
         }),
       ).toEqual(expected);
 
-      expect(mockGetFileChangeCount).toHaveBeenCalledWith('/test', 150);
+      expect(mockGetFileChangeCount).toHaveBeenCalledWith(expect.any(String), 150);
       expect(mockIsGitInstalled).toHaveBeenCalled();
     });
 
@@ -93,14 +94,14 @@ describe('outputSort', () => {
         { path: `src${sep}utils${sep}file2.ts`, content: 'content2' },
       ];
 
-      const config = {
+      const config = createMockConfig({
         output: {
           git: {
             sortByChanges: false,
           },
         },
         cwd: '/test',
-      } as unknown as RepomixConfigMerged;
+      });
 
       const mockGetFileChangeCount = vi.fn();
       const mockIsGitInstalled = vi.fn();

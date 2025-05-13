@@ -4,6 +4,7 @@ import type { Edit, Range } from 'web-tree-sitter';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
 import { TypeScriptParseStrategy } from '../../../src/core/treeSitter/parseStrategies/TypeScriptParseStrategy.js';
+import { createMockConfig } from '../../../tests/testing/testUtils.js';
 
 interface MockContext {
   fileContent: string;

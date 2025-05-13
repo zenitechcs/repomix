@@ -63,7 +63,7 @@ describe('processConcurrency', () => {
   describe('initPiscina', () => {
     beforeEach(() => {
       vi.mocked(os).availableParallelism = vi.fn().mockReturnValue(4);
-      vi.mocked(Piscina).mockImplementation(() => ({}) as unknown as Piscina);
+      vi.mocked(Piscina).mockImplementation(() => ({}) as Piscina);
     });
 
     it('should initialize Piscina with correct configuration', () => {
