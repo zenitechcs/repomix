@@ -8,6 +8,7 @@ import type { RepomixConfigFile, RepomixConfigMerged, RepomixOutputStyle } from 
 import { collectFiles } from '../../src/core/file/fileCollect.js';
 import { searchFiles } from '../../src/core/file/fileSearch.js';
 import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
+import type { GitDiffResult } from '../../src/core/file/gitDiff.js';
 import type { FileCollectTask } from '../../src/core/file/workers/fileCollectWorker.js';
 import fileCollectWorker from '../../src/core/file/workers/fileCollectWorker.js';
 import fileProcessWorker from '../../src/core/file/workers/fileProcessWorker.js';
@@ -92,7 +93,7 @@ describe.runIf(!isWindows)('packager integration', () => {
         },
         generateOutput,
         validateFileSafety: (rawFiles, progressCallback, config) => {
-          const gitDiffMock = {
+          const gitDiffMock: GitDiffResult = {
             workTreeDiffContent: '',
             stagedDiffContent: '',
           };

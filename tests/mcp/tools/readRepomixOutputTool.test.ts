@@ -16,7 +16,7 @@ vi.mock('../../../src/shared/logger.js', () => ({
 describe('readRepomixOutputTool', () => {
   const mockMcpServer = {
     tool: vi.fn(),
-  };
+  } as const;
 
   type ToolHandlerType = (args: { outputId: string }) => Promise<{
     isError?: boolean;
