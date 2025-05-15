@@ -2,9 +2,10 @@ import Handlebars from 'handlebars';
 
 export const getMarkdownTemplate = () => {
   return /* md */ `
-{{{generationHeader}}}
 
 {{#if fileSummaryEnabled}}
+{{{generationHeader}}}
+
 # File Summary
 
 ## Purpose
@@ -23,10 +24,6 @@ export const getMarkdownTemplate = () => {
 {{{summaryNotes}}}
 
 ## Additional Info
-{{#if headerText}}
-### User Provided Header
-{{{headerText}}}
-{{/if}}
 
 {{/if}}
 {{#if directoryStructureEnabled}}
@@ -36,6 +33,13 @@ export const getMarkdownTemplate = () => {
 \`\`\`
 
 {{/if}}
+
+{{#if headerText}}
+### User Provided Header
+{{{headerText}}}
+{{/if}}
+
+
 {{#if filesEnabled}}
 # Files
 

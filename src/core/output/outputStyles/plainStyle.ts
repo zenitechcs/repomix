@@ -3,9 +3,9 @@ const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
 export const getPlainTemplate = () => {
   return `
+{{#if fileSummaryEnabled}}
 {{{generationHeader}}}
 
-{{#if fileSummaryEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 File Summary
 ${PLAIN_LONG_SEPARATOR}
@@ -34,13 +34,13 @@ Notes:
 
 Additional Info:
 ----------------
+{{/if}}
 {{#if headerText}}
 User Provided Header:
 -----------------------
 {{{headerText}}}
 {{/if}}
 
-{{/if}}
 {{#if directoryStructureEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Directory Structure

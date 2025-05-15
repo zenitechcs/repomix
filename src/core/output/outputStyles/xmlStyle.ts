@@ -1,8 +1,9 @@
 export const getXmlTemplate = () => {
   return /* xml */ `
-{{{generationHeader}}}
 
 {{#if fileSummaryEnabled}}
+{{{generationHeader}}}
+
 <file_summary>
 This section contains a summary of this file.
 
@@ -25,18 +26,16 @@ This section contains a summary of this file.
 {{{summaryNotes}}}
 </notes>
 
-<additional_info>
+</file_summary>
+
+{{/if}}
+
 {{#if headerText}}
 <user_provided_header>
 {{{headerText}}}
 </user_provided_header>
 {{/if}}
 
-</additional_info>
-
-</file_summary>
-
-{{/if}}
 {{#if directoryStructureEnabled}}
 <directory_structure>
 {{{treeString}}}

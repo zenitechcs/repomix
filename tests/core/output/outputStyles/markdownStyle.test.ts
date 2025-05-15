@@ -1,6 +1,8 @@
 import Handlebars from 'handlebars';
 import { describe, expect, test } from 'vitest';
+import { generateOutput } from '../../../../src/core/output/outputGenerate.js';
 import { getMarkdownTemplate } from '../../../../src/core/output/outputStyles/markdownStyle.js';
+import { createMockConfig } from '../../../testing/testUtils.js';
 
 describe('markdownStyle', () => {
   describe('getMarkdownTemplate', () => {
@@ -91,6 +93,35 @@ describe('markdownStyle', () => {
 
       expect(result).toContain('# Instruction');
       expect(result).toContain('Custom Instruction Text');
+    });
+
+    test('should display headerText if specified even if fileSummary is disabled', () => {
+      const template = getMarkdownTemplate();
+      const compiledTemplate = Handlebars.compile(template);
+      const data = {
+        headerText: 'MARKDOWN HEADER',
+        fileSummaryEnabled: false,
+        directoryStructureEnabled: true,
+        processedFiles: [],
+      };
+      const result = compiledTemplate(data);
+      expect(result).not.toContain('This file is a merged representation');
+      expect(result).toContain('MARKDOWN HEADER');
+    });
+
+    test('should not display generationHeader if fileSummary is disabled', () => {
+      const template = getMarkdownTemplate();
+      const compiledTemplate = Handlebars.compile(template);
+      const data = {
+        generationHeader: 'Generated Test Header',
+        fileSummaryEnabled: false,
+        directoryStructureEnabled: true,
+        processedFiles: [],
+      };
+      const result = compiledTemplate(data);
+      expect(result).not.toContain('This file is a merged representation');
+      expect(result).not.toContain('Generated Test Header');
+      expect(result).toContain('# Directory Structure');
     });
   });
 

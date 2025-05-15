@@ -57,10 +57,9 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
   const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
   const xmlDocument = {
     repomix: {
-      '#text': renderContext.generationHeader,
       file_summary: renderContext.fileSummaryEnabled
         ? {
-            '#text': 'This section contains a summary of this file.',
+            '#text': renderContext.generationHeader,
             purpose: renderContext.summaryPurpose,
             file_format: `${renderContext.summaryFileFormat}
 4. Repository files, each consisting of:
@@ -68,11 +67,9 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
   - Full contents of the file`,
             usage_guidelines: renderContext.summaryUsageGuidelines,
             notes: renderContext.summaryNotes,
-            additional_info: {
-              user_provided_header: renderContext.headerText,
-            },
           }
         : undefined,
+      user_provided_header: renderContext.headerText,
       directory_structure: renderContext.directoryStructureEnabled ? renderContext.treeString : undefined,
       files: renderContext.filesEnabled
         ? {

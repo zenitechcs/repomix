@@ -30,4 +30,18 @@ describe('plainStyle', () => {
     expect(output).toContain('Custom header text');
     expect(output).toContain('Files');
   });
+
+  test('plain style: headerText always present, generationHeader only if fileSummaryEnabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        fileSummary: false,
+        headerText: 'PLAIN HEADER',
+      },
+    });
+    const output = await generateOutput([process.cwd()], mockConfig, [], []);
+    expect(output).not.toContain('This file is a merged representation');
+    expect(output).toContain('PLAIN HEADER');
+  });
 });
