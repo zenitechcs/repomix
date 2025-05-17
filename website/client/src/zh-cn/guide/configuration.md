@@ -29,7 +29,8 @@ repomix --init
     "includeEmptyDirectories": false,
     "git": {
       "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false
     }
   },
   "include": ["**/*"],
