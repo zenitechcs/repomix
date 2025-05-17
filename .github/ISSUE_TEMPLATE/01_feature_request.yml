@@ -1,6 +1,5 @@
 name: 🚀 Feature Request
 description: Suggest an idea or improvement for Repomix
-labels: [enhancement]
 labels:
   - enhancement
 body:
@@ -8,7 +7,7 @@ body:
     attributes:
       value: |
         Thank you for helping improve Repomix!
-        
+
         We appreciate your feedback and will review your request as soon as possible.
 
   - type: textarea
