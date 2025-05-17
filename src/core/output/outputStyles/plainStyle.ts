@@ -17,7 +17,7 @@ Purpose:
 File Format:
 ------------
 {{{summaryFileFormat}}}
-4. Multiple file entries, each consisting of:
+5. Multiple file entries, each consisting of:
   a. A separator line (================)
   b. The file path (File: path/to/file)
   c. Another separator line

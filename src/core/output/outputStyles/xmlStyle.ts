@@ -12,7 +12,7 @@ This section contains a summary of this file.
 
 <file_format>
 {{{summaryFileFormat}}}
-4. Repository files, each consisting of:
+5. Multiple file entries, each consisting of:
   - File path as an attribute
   - Full contents of the file
 </file_format>

@@ -144,7 +144,7 @@ describe.runIf(!isWindows)('packager integration', () => {
       const actualOutput = await fs.readFile(actualOutputPath, 'utf-8');
       const expectedOutput = await fs.readFile(expectedOutputPath, 'utf-8');
 
-      // Compare the outputs - XML and plain style are different
+      // Compare the outputs - styles (e.g., XML, plain, markdown) may differ
       expect(actualOutput).toContain('This file is a merged representation of the entire codebase');
 
       // Common assertions for all styles

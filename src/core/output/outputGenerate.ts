@@ -62,7 +62,7 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
             '#text': renderContext.generationHeader,
             purpose: renderContext.summaryPurpose,
             file_format: `${renderContext.summaryFileFormat}
-4. Repository files, each consisting of:
+5. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file`,
             usage_guidelines: renderContext.summaryUsageGuidelines,

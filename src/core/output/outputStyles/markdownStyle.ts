@@ -12,7 +12,7 @@ export const getMarkdownTemplate = () => {
 
 ## File Format
 {{{summaryFileFormat}}}
-4. Multiple file entries, each consisting of:
+5. Multiple file entries, each consisting of:
   a. A header with the file path (## File: path/to/file)
   b. The full contents of the file in a code block
 
