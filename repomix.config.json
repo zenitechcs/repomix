@@ -18,7 +18,8 @@
     "includeEmptyDirectories": true,
     "git": {
       "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false
     }
   },
   "include": [],

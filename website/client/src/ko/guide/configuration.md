@@ -18,7 +18,7 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
-    "parsableStyle": true,
+    "parsableStyle": false,
     "compress": false,
     "headerText": "사용자 정의 헤더 텍스트",
     "instructionFilePath": "repomix-instruction.md",
@@ -33,7 +33,8 @@ repomix --init
     "includeEmptyDirectories": false,
     "git": {
       "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false
     }
   },
   "include": ["**/*"],
