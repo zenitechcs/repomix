@@ -66,7 +66,7 @@ No Cursor, adicione um novo servidor MCP a partir de `Cursor Settings` > `MCP` >
 
 Edite o arquivo `claude_desktop_config.json` com uma configuração similar à do Cline.
 
-### Para Docker
+### Usando Docker em vez de npx
 
 Em vez de usar npx, você pode usar o Docker para executar o Repomix como um servidor MCP:
 

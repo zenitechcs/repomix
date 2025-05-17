@@ -66,7 +66,7 @@ Cursorでは、`Cursor Settings` > `MCP` > `+ Add new global MCP server`からCl
 
 `claude_desktop_config.json`ファイルをClineの設定と同様に編集します。
 
-### Dockerの場合
+### npxの代わりにDockerを使用
 
 Dockerを使用してRepomixをMCPサーバーとして実行できます：
 
