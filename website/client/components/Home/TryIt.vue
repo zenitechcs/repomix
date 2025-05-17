@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { FolderArchive, FolderOpen, Link2 } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import type { PackResult } from '../api/client';
 import { handlePackRequest } from '../utils/requestHandlers';
 import { isValidRemoteValue } from '../utils/validation';
@@ -215,10 +215,10 @@ onMounted(() => {
 
     // If the URL is valid, trigger the pack process
     if (isValidRemoteValue(repoParam.trim())) {
-      // Use setTimeout to ensure the URL is set before submission
-      setTimeout(() => {
+      // Use nextTick to ensure the URL is set before submission
+      nextTick(() => {
         handleSubmit();
-      }, 0);
+      });
     }
   }
 });
