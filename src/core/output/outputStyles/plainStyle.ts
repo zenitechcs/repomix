@@ -3,9 +3,9 @@ const PLAIN_LONG_SEPARATOR = '='.repeat(64);
 
 export const getPlainTemplate = () => {
   return `
+{{#if fileSummaryEnabled}}
 {{{generationHeader}}}
 
-{{#if fileSummaryEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 File Summary
 ${PLAIN_LONG_SEPARATOR}
@@ -17,7 +17,7 @@ Purpose:
 File Format:
 ------------
 {{{summaryFileFormat}}}
-4. Multiple file entries, each consisting of:
+5. Multiple file entries, each consisting of:
   a. A separator line (================)
   b. The file path (File: path/to/file)
   c. Another separator line
@@ -32,13 +32,13 @@ Notes:
 ------
 {{{summaryNotes}}}
 
-Additional Info:
-----------------
-{{#if headerText}}
-User Provided Header:
------------------------
-{{{headerText}}}
 {{/if}}
+
+{{#if headerText}}
+${PLAIN_LONG_SEPARATOR}
+User Provided Header
+${PLAIN_LONG_SEPARATOR}
+{{{headerText}}}
 
 {{/if}}
 {{#if directoryStructureEnabled}}

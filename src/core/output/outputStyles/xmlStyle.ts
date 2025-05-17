@@ -1,8 +1,8 @@
 export const getXmlTemplate = () => {
   return /* xml */ `
+{{#if fileSummaryEnabled}}
 {{{generationHeader}}}
 
-{{#if fileSummaryEnabled}}
 <file_summary>
 This section contains a summary of this file.
 
@@ -12,7 +12,7 @@ This section contains a summary of this file.
 
 <file_format>
 {{{summaryFileFormat}}}
-4. Repository files, each consisting of:
+5. Multiple file entries, each consisting of:
   - File path as an attribute
   - Full contents of the file
 </file_format>
@@ -25,16 +25,13 @@ This section contains a summary of this file.
 {{{summaryNotes}}}
 </notes>
 
-<additional_info>
+</file_summary>
+
+{{/if}}
 {{#if headerText}}
 <user_provided_header>
 {{{headerText}}}
 </user_provided_header>
-{{/if}}
-
-</additional_info>
-
-</file_summary>
 
 {{/if}}
 {{#if directoryStructureEnabled}}

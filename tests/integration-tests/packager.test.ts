@@ -36,7 +36,9 @@ describe.runIf(!isWindows)('packager integration', () => {
       desc: 'simple plain style',
       input: 'simple-project',
       output: 'simple-project-output.txt',
-      config: {},
+      config: {
+        output: { style: 'plain', filePath: 'simple-project-output.txt' },
+      },
     },
     {
       desc: 'simple xml style',
@@ -44,6 +46,14 @@ describe.runIf(!isWindows)('packager integration', () => {
       output: 'simple-project-output.xml',
       config: {
         output: { style: 'xml', filePath: 'simple-project-output.xml' },
+      },
+    },
+    {
+      desc: 'simple markdown style',
+      input: 'simple-project',
+      output: 'simple-project-output.md',
+      config: {
+        output: { style: 'markdown', filePath: 'simple-project-output.md' },
       },
     },
   ];
@@ -134,29 +144,48 @@ describe.runIf(!isWindows)('packager integration', () => {
       const actualOutput = await fs.readFile(actualOutputPath, 'utf-8');
       const expectedOutput = await fs.readFile(expectedOutputPath, 'utf-8');
 
-      // Compare the outputs - XMLとプレーンテキストで異なる場合は条件分岐
+      // Compare the outputs - styles (e.g., XML, plain, markdown) may differ
       expect(actualOutput).toContain('This file is a merged representation of the entire codebase');
 
-      if (config.output?.style === 'xml') {
-        // XML形式のテスト
-        expect(actualOutput).toContain('<file_summary>');
-        expect(actualOutput).toContain('<directory_structure>');
-        expect(actualOutput).toContain('resources/');
-        expect(actualOutput).toContain('src/');
-        expect(actualOutput).toContain('<file path="src/index.js">');
-        expect(actualOutput).toContain('function main() {');
-        expect(actualOutput).toContain('<file path="src/utils.js">');
-        expect(actualOutput).toContain('function greet(name) {');
-      } else {
-        // プレーンテキスト形式のテスト
-        expect(actualOutput).toContain('File Summary');
-        expect(actualOutput).toContain('Directory Structure');
-        expect(actualOutput).toContain('resources/');
-        expect(actualOutput).toContain('src/');
-        expect(actualOutput).toContain('File: src/index.js');
-        expect(actualOutput).toContain('function main() {');
-        expect(actualOutput).toContain('File: src/utils.js');
-        expect(actualOutput).toContain('function greet(name) {');
+      // Common assertions for all styles
+      expect(actualOutput).toContain('resources/');
+      expect(actualOutput).toContain('src/');
+      expect(actualOutput).toContain('This repository is simple-project');
+
+      switch (config.output?.style) {
+        case 'xml':
+          expect(actualOutput).toContain('<file_summary>');
+          expect(actualOutput).toContain('<user_provided_header>');
+          expect(actualOutput).toContain('</user_provided_header>');
+          expect(actualOutput).toContain('<directory_structure>');
+          expect(actualOutput).toContain('<file path="src/index.js">');
+          expect(actualOutput).toContain('function main() {');
+          expect(actualOutput).toContain('<file path="src/utils.js">');
+          expect(actualOutput).toContain('function greet(name) {');
+          break;
+
+        case 'markdown':
+          expect(actualOutput).toContain('# File Summary');
+          expect(actualOutput).toContain('# User Provided Header');
+          expect(actualOutput).toContain('# Directory Structure');
+          expect(actualOutput).toContain('## File: src/index.js');
+          expect(actualOutput).toContain('````javascript\nconst { greet }');
+          expect(actualOutput).toContain('## File: src/utils.js');
+          expect(actualOutput).toContain('````javascript\nfunction greet(name) {');
+          break;
+
+        case 'plain':
+          expect(actualOutput).toContain('File Summary');
+          expect(actualOutput).toContain('User Provided Header');
+          expect(actualOutput).toContain('Directory Structure');
+          expect(actualOutput).toContain('File: src/index.js');
+          expect(actualOutput).toContain('function main() {');
+          expect(actualOutput).toContain('File: src/utils.js');
+          expect(actualOutput).toContain('function greet(name) {');
+          break;
+
+        default:
+          throw new Error(`Unsupported style: ${config.output?.style}`);
       }
 
       // Optionally, update the expected output if explicitly requested

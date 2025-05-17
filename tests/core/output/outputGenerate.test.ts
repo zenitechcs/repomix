@@ -138,4 +138,53 @@ describe('outputGenerate', () => {
     expect(output).toContain('## File: dir/file2.txt');
     expect(output).toContain('````\n```\ncontent2\n```\n````');
   });
+
+  test('generateOutput (txt) should omit generationHeader when fileSummaryEnabled is false, but always include headerText if provided', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        fileSummary: false,
+        headerText: 'ALWAYS SHOW THIS HEADER',
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
+    expect(output).not.toContain('This file is a merged representation'); // generationHeader
+    expect(output).toContain('ALWAYS SHOW THIS HEADER');
+  });
+
+  test('generateOutput (xml) omits generationHeader when fileSummaryEnabled is false, but always includes headerText', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.xml',
+        style: 'xml',
+        fileSummary: false,
+        headerText: 'XML HEADER',
+        parsableStyle: true,
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: '<div>foo</div>' }];
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const parsedOutput = parser.parse(output);
+    expect(parsedOutput.repomix['#text']).toBeUndefined();
+    expect(parsedOutput.repomix.user_provided_header).toBe('XML HEADER');
+  });
+
+  test('generateOutput (markdown) omits generationHeader when fileSummaryEnabled is false, but always includes headerText', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.md',
+        style: 'markdown',
+        fileSummary: false,
+        headerText: 'MARKDOWN HEADER',
+        parsableStyle: false,
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
+    expect(output).not.toContain('This file is a merged representation');
+    expect(output).toContain('MARKDOWN HEADER');
+  });
 });
