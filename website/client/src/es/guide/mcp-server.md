@@ -68,7 +68,7 @@ Edita el archivo `claude_desktop_config.json` con una configuración similar a l
 
 ### Para Docker
 
-Puedes usar Docker para ejecutar Repomix como servidor MCP:
+En lugar de usar npx, puedes usar Docker para ejecutar Repomix como servidor MCP:
 
 ```json
 {

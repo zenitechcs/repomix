@@ -68,7 +68,7 @@ repomix --mcp
 
 ### 对于 Docker
 
-您可以使用 Docker 运行 Repomix 作为 MCP 服务器：
+您可以使用 Docker 代替 npx 来运行 Repomix 作为 MCP 服务器：
 
 ```json
 {
