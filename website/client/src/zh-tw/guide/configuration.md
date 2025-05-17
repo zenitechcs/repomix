@@ -12,6 +12,9 @@ repomix --init
 `repomix.config.json`：
 ```json
 {
+  "input": {
+    "maxFileSize": 50000000
+  },
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
@@ -21,6 +24,7 @@ repomix --init
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
     "directoryStructure": true,
+    "files": true,
     "removeComments": false,
     "removeEmptyLines": false,
     "topFilesLength": 5,
@@ -41,6 +45,9 @@ repomix --init
   },
   "security": {
     "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
   }
 }
 ```
