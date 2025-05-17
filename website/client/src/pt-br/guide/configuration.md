@@ -15,7 +15,7 @@ repomix --init
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
-    "parsableStyle": true,
+    "parsableStyle": false,
     "compress": false,
     "headerText": "Texto personalizado do cabeçalho",
     "instructionFilePath": "repomix-instruction.md",
