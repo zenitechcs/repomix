@@ -773,7 +773,7 @@ Example configuration:
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
-    "parsableStyle": true,
+    "parsableStyle": false,
     "compress": false,
     "headerText": "Custom header information for the packed file.",
     "fileSummary": true,
