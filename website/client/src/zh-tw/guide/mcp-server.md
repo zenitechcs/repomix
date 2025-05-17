@@ -66,7 +66,7 @@ repomix --mcp
 
 使用與 Cline 類似的配置編輯 `claude_desktop_config.json` 文件。
 
-### 對於 Docker
+### 使用 Docker 代替 npx
 
 您可以使用 Docker 代替 npx 來運行 Repomix 作為 MCP 伺服器：
 
