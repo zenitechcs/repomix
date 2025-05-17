@@ -211,7 +211,7 @@ onMounted(() => {
 
   // If repository parameter exists and is valid, set it and trigger packing
   if (repoParam) {
-    inputUrl.value = repoParam;
+    inputUrl.value = repoParam.trim();
 
     // If the URL is valid, trigger the pack process
     if (isValidRemoteValue(repoParam.trim())) {
