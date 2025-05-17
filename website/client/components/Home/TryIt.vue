@@ -203,18 +203,18 @@ function handleFileUpload(file: File) {
   uploadedFile.value = file;
 }
 
-// Add URL parameter handling when component mounts
+// Add repository parameter handling when component mounts
 onMounted(() => {
   // Get URL parameters from window location
   const urlParams = new URLSearchParams(window.location.search);
-  const urlParam = urlParams.get('url');
-  
-  // If URL parameter exists and is valid, set it and trigger packing
-  if (urlParam) {
-    inputUrl.value = urlParam;
-    
+  const repoParam = urlParams.get('repo');
+
+  // If repository parameter exists and is valid, set it and trigger packing
+  if (repoParam) {
+    inputUrl.value = repoParam;
+
     // If the URL is valid, trigger the pack process
-    if (isValidRemoteValue(urlParam.trim())) {
+    if (isValidRemoteValue(repoParam.trim())) {
       // Use setTimeout to ensure the URL is set before submission
       setTimeout(() => {
         handleSubmit();
