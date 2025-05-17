@@ -11,7 +11,7 @@ export const configPtBr = defineConfig({
     sidebar: {
       '/pt-br/guide/': [
         {
-          text: 'Guia',
+          text: 'Docs',
           items: [
             { text: 'Começando', link: '/pt-br/guide/' },
             { text: 'Instalação', link: '/pt-br/guide/installation' },
