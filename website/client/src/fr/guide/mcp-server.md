@@ -64,6 +64,27 @@ Dans Cursor, ajoutez un nouveau serveur MCP depuis `Cursor Settings` > `MCP` > `
 
 Modifiez le fichier `claude_desktop_config.json` avec une configuration similaire à celle de Cline.
 
+### Pour Docker
+
+Vous pouvez utiliser Docker pour exécuter Repomix en tant que serveur MCP:
+
+```json
+{
+  "mcpServers": {
+    "repomix-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/yamadashy/repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
 ## Outils MCP disponibles
 
 En mode serveur MCP, Repomix fournit les outils suivants:
