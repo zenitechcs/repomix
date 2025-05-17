@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { FolderArchive, FolderOpen, Link2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { PackResult } from '../api/client';
 import { handlePackRequest } from '../utils/requestHandlers';
 import { isValidRemoteValue } from '../utils/validation';
@@ -202,6 +202,26 @@ function handleKeydown(event: KeyboardEvent) {
 function handleFileUpload(file: File) {
   uploadedFile.value = file;
 }
+
+// Add URL parameter handling when component mounts
+onMounted(() => {
+  // Get URL parameters from window location
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlParam = urlParams.get('url');
+  
+  // If URL parameter exists and is valid, set it and trigger packing
+  if (urlParam) {
+    inputUrl.value = urlParam;
+    
+    // If the URL is valid, trigger the pack process
+    if (isValidRemoteValue(urlParam.trim())) {
+      // Use setTimeout to ensure the URL is set before submission
+      setTimeout(() => {
+        handleSubmit();
+      }, 0);
+    }
+  }
+});
 </script>
 
 <style scoped>
