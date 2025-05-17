@@ -66,6 +66,27 @@ repomix --mcp
 
 使用与 Cline 类似的配置编辑 `claude_desktop_config.json` 文件。
 
+### 对于 Docker
+
+您可以使用 Docker 代替 npx 来运行 Repomix 作为 MCP 服务器：
+
+```json
+{
+  "mcpServers": {
+    "repomix-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/yamadashy/repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
 ## 可用的 MCP 工具
 
 当作为 MCP 服务器运行时，Repomix 提供以下工具：

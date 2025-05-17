@@ -680,6 +680,27 @@ In Cursor, add a new MCP server from `Cursor Settings` > `MCP` > `+ Add new glob
 
 Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
 
+**Using Docker instead of npx:**
+
+You can use Docker as an alternative to npx for running Repomix as an MCP server:
+
+```json
+{
+  "mcpServers": {
+    "repomix-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/yamadashy/repomix",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
 Once configured, your AI assistant can directly use Repomix's capabilities to analyze codebases without manual file preparation, making code analysis workflows more efficient.
 
 #### Available MCP Tools
