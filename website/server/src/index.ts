@@ -33,8 +33,6 @@ app.use(
       'http://localhost:5173',
       'https://repomix.com',
       'https://api.repomix.com',
-      'https://48d294c4.repomix.pages.dev',
-      'https://devin-1747462917-add-url-par.repomix.pages.dev',
       'https://*.repomix.pages.dev'
     ],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
