@@ -32,15 +32,15 @@ Notes:
 ------
 {{{summaryNotes}}}
 
-Additional Info:
-----------------
-{{/if}}
-{{#if headerText}}
-User Provided Header:
------------------------
-{{{headerText}}}
 {{/if}}
 
+{{#if headerText}}
+${PLAIN_LONG_SEPARATOR}
+User Provided Header
+${PLAIN_LONG_SEPARATOR}
+{{{headerText}}}
+
+{{/if}}
 {{#if directoryStructureEnabled}}
 ${PLAIN_LONG_SEPARATOR}
 Directory Structure

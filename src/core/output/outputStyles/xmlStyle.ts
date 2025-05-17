@@ -29,13 +29,12 @@ This section contains a summary of this file.
 </file_summary>
 
 {{/if}}
-
 {{#if headerText}}
 <user_provided_header>
 {{{headerText}}}
 </user_provided_header>
-{{/if}}
 
+{{/if}}
 {{#if directoryStructureEnabled}}
 <directory_structure>
 {{{treeString}}}

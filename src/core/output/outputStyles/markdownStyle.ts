@@ -23,7 +23,10 @@ export const getMarkdownTemplate = () => {
 ## Notes
 {{{summaryNotes}}}
 
-## Additional Info
+{{/if}}
+{{#if headerText}}
+# User Provided Header
+{{{headerText}}}
 
 {{/if}}
 {{#if directoryStructureEnabled}}
@@ -33,13 +36,6 @@ export const getMarkdownTemplate = () => {
 \`\`\`
 
 {{/if}}
-
-{{#if headerText}}
-### User Provided Header
-{{{headerText}}}
-{{/if}}
-
-
 {{#if filesEnabled}}
 # Files
 

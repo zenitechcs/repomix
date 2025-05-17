@@ -14,6 +14,7 @@ The content is organized as follows:
 1. This summary section
 2. Repository information
 3. Directory structure
+4. Repository files (if enabled)
 4. Repository files, each consisting of:
   - File path as an attribute
   - Full contents of the file
@@ -36,14 +37,11 @@ The content is organized as follows:
 - Files matching default ignore patterns are excluded
 </notes>
 
-<additional_info>
+</file_summary>
+
 <user_provided_header>
 This repository is simple-project
 </user_provided_header>
-
-</additional_info>
-
-</file_summary>
 
 <directory_structure>
 resources/

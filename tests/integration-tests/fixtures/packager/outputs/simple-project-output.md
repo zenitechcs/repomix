@@ -1,31 +1,23 @@
 This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
-================================================================
-File Summary
-================================================================
+# File Summary
 
-Purpose:
---------
+## Purpose
 This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 
-File Format:
-------------
+## File Format
 The content is organized as follows:
 1. This summary section
 2. Repository information
 3. Directory structure
 4. Repository files (if enabled)
 4. Multiple file entries, each consisting of:
-  a. A separator line (================)
-  b. The file path (File: path/to/file)
-  c. Another separator line
-  d. The full contents of the file
-  e. A blank line
+  a. A header with the file path (## File: path/to/file)
+  b. The full contents of the file in a code block
 
-Usage Guidelines:
------------------
+## Usage Guidelines
 - This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
 - When processing this file, use the file path to distinguish
@@ -34,22 +26,17 @@ Usage Guidelines:
   the same level of security as you would the original repository.
 - Pay special attention to the Repository Description. These contain important context and guidelines specific to this project.
 
-Notes:
-------
+## Notes
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 
-
-================================================================
-User Provided Header
-================================================================
+# User Provided Header
 This repository is simple-project
 
-================================================================
-Directory Structure
-================================================================
+# Directory Structure
+```
 resources/
   .repomixignore
   data.txt
@@ -60,24 +47,22 @@ src/
 package.json
 README.md
 repomix.config.json
+```
 
-================================================================
-Files
-================================================================
+# Files
 
-================
-File: resources/.repomixignore
-================
+## File: resources/.repomixignore
+````
 ignored-data.txt
+````
 
-================
-File: resources/data.txt
-================
+## File: resources/data.txt
+````
 dummy data
+````
 
-================
-File: src/index.js
-================
+## File: src/index.js
+````javascript
 const { greet } = require('./utils');
 
 function main() {
@@ -85,10 +70,10 @@ function main() {
 }
 
 main();
+````
 
-================
-File: src/utils.js
-================
+## File: src/utils.js
+````javascript
 function greet(name) {
   return `Hello, ${name}!`;
 }
@@ -96,15 +81,15 @@ function greet(name) {
 module.exports = {
   greet,
 };
+````
 
-================
-File: .repomixignore
-================
+## File: .repomixignore
+````
 **/build/**
+````
 
-================
-File: package.json
-================
+## File: package.json
+````json
 {
   "name": "simple-project",
   "version": "1.0.0",
@@ -117,10 +102,10 @@ File: package.json
   "author": "Test Author",
   "license": "MIT"
 }
+````
 
-================
-File: README.md
-================
+## File: README.md
+````markdown
 # Simple Project
 
 This is a simple project used for testing Repomix.
@@ -134,10 +119,10 @@ npm start
 ```
 
 This will output a greeting message to the console.
+````
 
-================
-File: repomix.config.json
-================
+## File: repomix.config.json
+````json
 {
   "output": {
     "filePath": "repomix-output.txt",
@@ -153,10 +138,4 @@ File: repomix.config.json
     "customPatterns": []
   }
 }
-
-
-
-
-================================================================
-End of Codebase
-================================================================
+````

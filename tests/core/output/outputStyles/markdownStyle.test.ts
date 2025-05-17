@@ -61,7 +61,7 @@ describe('markdownStyle', () => {
 
       const result = compiledTemplate(data);
 
-      expect(result).toContain('### User Provided Header');
+      expect(result).toContain('# User Provided Header');
       expect(result).toContain('Custom Header Text');
     });
 
@@ -76,7 +76,7 @@ describe('markdownStyle', () => {
 
       const result = compiledTemplate(data);
 
-      expect(result).not.toContain('### User Provided Header');
+      expect(result).not.toContain('# User Provided Header');
     });
 
     test('should render instruction section when provided', () => {
