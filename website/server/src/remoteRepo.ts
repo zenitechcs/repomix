@@ -51,7 +51,7 @@ export async function processRemoteRepo(
     remote: repoUrl,
     output: outputFilePath,
     style: validatedData.format,
-    parsableStyle: false,
+    parsableStyle: validatedData.options.outputParsable,
     removeComments: validatedData.options.removeComments,
     removeEmptyLines: validatedData.options.removeEmptyLines,
     outputShowLineNumbers: validatedData.options.showLineNumbers,
