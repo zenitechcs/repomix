@@ -1,6 +1,5 @@
 export const getXmlTemplate = () => {
   return /* xml */ `
-
 {{#if fileSummaryEnabled}}
 {{{generationHeader}}}
 

@@ -2,7 +2,6 @@ import Handlebars from 'handlebars';
 
 export const getMarkdownTemplate = () => {
   return /* md */ `
-
 {{#if fileSummaryEnabled}}
 {{{generationHeader}}}
 
