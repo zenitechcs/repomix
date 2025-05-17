@@ -11,6 +11,7 @@
     "instructionFilePath": "repomix-instruction.md",
     "fileSummary": true,
     "directoryStructure": true,
+    "files": true,
     "removeComments": false,
     "removeEmptyLines": false,
     "topFilesLength": 5,
