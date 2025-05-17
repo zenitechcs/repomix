@@ -1123,7 +1123,7 @@ async function packProject() {
     compress: true,
     quiet: true
   } as CliOptions;
-
+  
   const result = await runCli(['.'], process.cwd(), options);
   return result.packResult;
 }
@@ -1141,7 +1141,7 @@ async function processRemoteRepo(repoUrl) {
     output: 'output.xml',
     compress: true
   } as CliOptions;
-
+  
   return await runCli(['.'], process.cwd(), options);
 }
 ```
@@ -1158,10 +1158,10 @@ async function analyzeFiles(directory) {
   const { filePaths } = await searchFiles(directory, { /* config */ });
   const rawFiles = await collectFiles(filePaths, directory);
   const processedFiles = await processFiles(rawFiles, { /* config */ });
-
+  
   // Count tokens
   const tokenCounter = new TokenCounter('o200k_base');
-
+  
   // Return analysis results
   return processedFiles.map(file => ({
     path: file.path,
