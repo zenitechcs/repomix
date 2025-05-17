@@ -20,8 +20,7 @@ repomix --init
     "style": "xml",
     "parsableStyle": false,
     "compress": false,
-    "headerText": "自定義頭部文本",
-    "instructionFilePath": "repomix-instruction.md",
+    "headerText": "打包檔案的自定義頭部資訊",
     "fileSummary": true,
     "directoryStructure": true,
     "files": true,
@@ -41,7 +40,11 @@ repomix --init
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
-    "customPatterns": ["tmp/", "*.log"]
+    // 模式也可以在 .repomixignore 中指定
+    "customPatterns": [
+      "additional-folder",
+      "**/*.log"
+    ],
   },
   "security": {
     "enableSecurityCheck": true

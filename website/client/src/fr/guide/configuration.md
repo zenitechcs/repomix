@@ -20,8 +20,7 @@ repomix --init
     "style": "xml",
     "parsableStyle": false,
     "compress": false,
-    "headerText": "Texte d'en-tête personnalisé",
-    "instructionFilePath": "repomix-instruction.md",
+    "headerText": "Informations d'en-tête personnalisées pour le fichier empaqueté.",
     "fileSummary": true,
     "directoryStructure": true,
     "files": true,
@@ -41,7 +40,11 @@ repomix --init
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
-    "customPatterns": ["tmp/", "*.log"]
+    // Les motifs peuvent également être spécifiés dans .repomixignore
+    "customPatterns": [
+      "additional-folder",
+      "**/*.log"
+    ],
   },
   "security": {
     "enableSecurityCheck": true

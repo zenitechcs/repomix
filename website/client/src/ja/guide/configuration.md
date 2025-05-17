@@ -20,8 +20,7 @@ repomix --init
     "style": "xml",
     "parsableStyle": false,
     "compress": false,
-    "headerText": "カスタムヘッダーテキスト",
-    "instructionFilePath": "repomix-instruction.md",
+    "headerText": "パッケージ化されたファイルのカスタムヘッダー情報",
     "fileSummary": true,
     "directoryStructure": true,
     "files": true,
@@ -41,7 +40,11 @@ repomix --init
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
-    "customPatterns": ["tmp/", "*.log"]
+    // パターンは .repomixignore でも指定できます
+    "customPatterns": [
+      "additional-folder",
+      "**/*.log"
+    ],
   },
   "security": {
     "enableSecurityCheck": true

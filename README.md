@@ -736,6 +736,7 @@ Here's an explanation of the configuration options:
 
 | Option                           | Description                                                                                                                  | Default                |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| `input.maxFileSize`              | Maximum file size in bytes to process. Files larger than this will be skipped                                                | `50000000`            |
 | `output.filePath`                | The name of the output file                                                                                                  | `"repomix-output.xml"` |
 | `output.style`                   | The style of the output (`xml`, `markdown`, `plain`)                                                                         | `"xml"`                |
 | `output.parsableStyle`           | Whether to escape the output based on the chosen style schema. Note that this can increase token count.                      | `false`                |
@@ -744,6 +745,7 @@ Here's an explanation of the configuration options:
 | `output.instructionFilePath`     | Path to a file containing detailed custom instructions                                                                       | `null`                 |
 | `output.fileSummary`             | Whether to include a summary section at the beginning of the output                                                          | `true`                 |
 | `output.directoryStructure`      | Whether to include the directory structure in the output                                                                     | `true`                 |
+| `output.files`                   | Whether to include file contents in the output                                                                               | `true`                 |
 | `output.removeComments`          | Whether to remove comments from supported file types                                                                         | `false`                |
 | `output.removeEmptyLines`        | Whether to remove empty lines from the output                                                                                | `false`                |
 | `output.showLineNumbers`         | Whether to add line numbers to each line in the output                                                                       | `false`                |
@@ -770,6 +772,9 @@ Example configuration:
 
 ```json5
 {
+  "input": {
+    "maxFileSize": 50000000
+  },
   "output": {
     "filePath": "repomix-output.xml",
     "style": "xml",
@@ -778,20 +783,20 @@ Example configuration:
     "headerText": "Custom header information for the packed file.",
     "fileSummary": true,
     "directoryStructure": true,
+    "files": true,
     "removeComments": false,
     "removeEmptyLines": false,
-    "showLineNumbers": false,
-    "copyToClipboard": true,
     "topFilesLength": 5,
+    "showLineNumbers": false,
+    "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {
       "sortByChanges": true,
-      "sortByChangesMaxCommits": 100
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false
     }
   },
-  "include": [
-    "**/*"
-  ],
+  "include": ["**/*"],
   "ignore": {
     "useGitignore": true,
     "useDefaultPatterns": true,
@@ -806,7 +811,7 @@ Example configuration:
   },
   "tokenCount": {
     "encoding": "o200k_base"
-  },
+  }
 }
 ```
 
