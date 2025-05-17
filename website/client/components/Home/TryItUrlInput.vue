@@ -97,10 +97,10 @@ function handleKeydown(event: KeyboardEvent) {
         @input="handleUrlInput"
         @keydown="handleKeydown"
         type="text"
-        placeholder="GitHub repository or user/repo (e.g., yamadashy/repomix)"
+        placeholder="GitHub repository URL or user/repo (e.g., yamadashy/repomix)"
         class="repository-input"
         :class="{ 'invalid': url && !isValidUrl }"
-        aria-label="GitHub repository"
+        aria-label="GitHub repository URL"
         autocomplete="on"
         :list="historyListId"
       />
