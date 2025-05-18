@@ -38,7 +38,7 @@ export const configEnUs = defineConfig({
           text: 'Advanced',
           items: [
             { text: 'Using Repomix as a Library', link: '/guide/development/using-repomix-as-a-library', activeMatch: '^/guide/development/using-repomix-as-a-library' },
-            { text: 'Best Practices', link: '/guide/tips/best-practices', activeMatch: '^/guide/tips/best-practices' },
+            { text: 'AI-Assisted Development Tips', link: '/guide/tips/best-practices', activeMatch: '^/guide/tips/best-practices' },
             { text: 'Contributing to Repomix', link: '/guide/development/', activeMatch: '^/guide/development/' },
             { text: 'Development Setup', link: '/guide/development/setup', activeMatch: '^/guide/development/setup' },
           ],
