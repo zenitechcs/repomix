@@ -21,7 +21,6 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
-    "website-generate-schema": "tsx website/client/scripts/generate-schema.ts",
     "lint": "npm run lint-biome && npm run lint-ts && npm run lint-secretlint",
     "lint-biome": "biome check --write",
     "lint-ts": "tsc --noEmit",
@@ -32,6 +31,7 @@
     "repomix-src": "npm run repomix -- --include 'src,tests'",
     "repomix-website": "npm run repomix -- --include 'website'",
     "website": "docker compose -f website/compose.yml up --build",
+    "website-generate-schema": "tsx website/client/scripts/generate-schema.ts",
     "npm-publish": "npm run npm-publish-check-branch && npm run lint && npm run test-coverage && npm run build && npm publish",
     "npm-publish-check-branch": "git branch --show-current | grep -q '^main$' || (echo 'Release is only allowed from the main branch' && exit 1)",
     "npm-release-patch": "npm version patch && npm run npm-publish",
