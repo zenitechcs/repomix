@@ -40,7 +40,6 @@ export const configZhCn = defineConfig({
             { text: '作为库使用 Repomix', link: '/zh-cn/guide/development/using-repomix-as-a-library' },
             { text: 'AI辅助开发技巧', link: '/zh-cn/guide/tips/best-practices' },
             { text: '为Repomix做贡献', link: '/zh-cn/guide/development/' },
-            { text: '开发环境配置', link: '/zh-cn/guide/development/setup' },
           ],
         },
       ],

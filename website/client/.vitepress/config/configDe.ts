@@ -40,7 +40,6 @@ export const configDe = defineConfig({
             { text: 'Repomix als Bibliothek verwenden', link: '/de/guide/development/using-repomix-as-a-library' },
             { text: 'KI-unterstützte Entwicklungstipps', link: '/de/guide/tips/best-practices' },
             { text: 'Zu Repomix beitragen', link: '/de/guide/development/' },
-            { text: 'Entwicklungsumgebung', link: '/de/guide/development/setup' },
           ],
         },
       ],

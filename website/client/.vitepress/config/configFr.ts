@@ -43,7 +43,6 @@ export const configFr = defineConfig({
             },
             { text: 'Conseils pour le développement assisté par IA', link: '/fr/guide/tips/best-practices' },
             { text: 'Contribuer à Repomix', link: '/fr/guide/development/' },
-            { text: 'Configuration de développement', link: '/fr/guide/development/setup' },
           ],
         },
       ],
