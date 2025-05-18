@@ -5,7 +5,7 @@ export const configKo = defineConfig({
   description: '코드베이스를 AI 친화적인 형식으로 패키징',
   themeConfig: {
     nav: [
-      { text: '가이드', link: '/ko/guide/' },
+      { text: '가이드', link: '/ko/guide/', activeMatch: '^/ko/guide/' },
       { text: 'Discord 참여', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

@@ -5,7 +5,7 @@ export const configFr = defineConfig({
   description: "Empaquetez votre code dans des formats adaptés à l'IA",
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/fr/guide/' },
+      { text: 'Guide', link: '/fr/guide/', activeMatch: '^/fr/guide/' },
       { text: 'Rejoindre Discord', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

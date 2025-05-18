@@ -5,7 +5,7 @@ export const configZhCn = defineConfig({
   description: '将代码库打包成AI友好的格式',
   themeConfig: {
     nav: [
-      { text: '指南', link: '/zh-cn/guide/' },
+      { text: '指南', link: '/zh-cn/guide/', activeMatch: '^/zh-cn/guide/' },
       { text: '加入 Discord', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

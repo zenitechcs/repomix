@@ -5,7 +5,7 @@ export const configDe = defineConfig({
   description: 'Paketieren Sie Ihre Codebasis in KI-freundliche Formate',
   themeConfig: {
     nav: [
-      { text: 'Anleitung', link: '/de/guide/' },
+      { text: 'Anleitung', link: '/de/guide/', activeMatch: '^/de/guide/' },
       { text: 'Discord beitreten', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

@@ -5,7 +5,7 @@ export const configZhTw = defineConfig({
   description: '將程式碼庫打包成AI友好的格式',
   themeConfig: {
     nav: [
-      { text: '指南', link: '/zh-tw/guide/' },
+      { text: '指南', link: '/zh-tw/guide/', activeMatch: '^/zh-tw/guide/' },
       { text: '加入 Discord', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

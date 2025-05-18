@@ -6,7 +6,7 @@ export const configJa = defineConfig({
   themeConfig: {
     nav: [
       // guide
-      { text: '使い方', link: '/ja/guide/' },
+      { text: '使い方', link: '/ja/guide/', activeMatch: '^/ja/guide/' },
       { text: 'Discordに参加', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {

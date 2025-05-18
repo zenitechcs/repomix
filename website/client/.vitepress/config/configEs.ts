@@ -5,7 +5,7 @@ export const configEs = defineConfig({
   description: 'Empaqueta tu código en formatos amigables para IA',
   themeConfig: {
     nav: [
-      { text: 'Guía', link: '/es/guide/' },
+      { text: 'Guía', link: '/es/guide/', activeMatch: '^/es/guide/' },
       { text: 'Unirse a Discord', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {
