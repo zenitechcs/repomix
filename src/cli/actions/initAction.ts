@@ -104,7 +104,7 @@ export const createConfigFile = async (rootDir: string, isGlobal: boolean): Prom
   );
 
   const config: RepomixConfigFile = {
-    $schema: `https://repomix.com/schemas/latest/schema.json`,
+    $schema: 'https://repomix.com/schemas/latest/schema.json',
     ...defaultConfig,
     output: {
       ...defaultConfig.output,

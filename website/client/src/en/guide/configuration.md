@@ -15,32 +15,6 @@ This will create a `repomix.config.json` file with default settings. You can als
 repomix --init --global
 ```
 
-## Schema Validation
-
-You can enable schema validation for your configuration file by adding the `$schema` property:
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-This provides auto-completion and validation in editors that support JSON schema.
-
-## Configuration File Locations
-
-Repomix looks for configuration files in the following order:
-1. Local configuration file (`repomix.config.json`) in the current directory
-2. Global configuration file:
-   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux: `~/.config/repomix/repomix.config.json`
-
-Command-line options take precedence over configuration file settings.
-
 ## Configuration Options
 
 | Option                           | Description                                                                                                                  | Default                |
@@ -76,6 +50,22 @@ The configuration file supports [JSON5](https://json5.org/) syntax, which allows
 - Trailing commas in objects and arrays
 - Unquoted property names
 - More relaxed string syntax
+
+## Schema Validation
+
+You can enable schema validation for your configuration file by adding the `$schema` property:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+This provides auto-completion and validation in editors that support JSON schema.
 
 ## Example Configuration File
 
@@ -126,6 +116,16 @@ Here's an example of a complete configuration file (`repomix.config.json`):
   }
 }
 ```
+
+## Configuration File Locations
+
+Repomix looks for configuration files in the following order:
+1. Local configuration file (`repomix.config.json`) in the current directory
+2. Global configuration file:
+   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux: `~/.config/repomix/repomix.config.json`
+
+Command-line options take precedence over configuration file settings.
 
 ## Ignore Patterns
 

@@ -15,32 +15,6 @@ repomix --init
 repomix --init --global
 ```
 
-## 스키마 유효성 검사
-
-`$schema` 속성을 추가하여 설정 파일에 대한 스키마 유효성 검사를 활성화할 수 있습니다:
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-이렇게 하면 JSON 스키마를 지원하는 편집기에서 자동 완성 및 유효성 검사 기능을 제공합니다.
-
-## 설정 파일 위치
-
-Repomix는 다음 순서로 설정 파일을 찾습니다:
-1. 현재 디렉토리의 로컬 설정 파일(`repomix.config.json`)
-2. 전역 설정 파일:
-   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux: `~/.config/repomix/repomix.config.json`
-
-명령줄 옵션은 설정 파일의 설정보다 우선합니다.
-
 ## 설정 옵션
 
 | 옵션                             | 설명                                                                                                                         | 기본값                 |
@@ -76,6 +50,22 @@ Repomix는 다음 순서로 설정 파일을 찾습니다:
 - 객체와 배열의 후행 쉼표
 - 따옴표 없는 속성 이름
 - 더 유연한 문자열 구문
+
+## 스키마 유효성 검사
+
+`$schema` 속성을 추가하여 설정 파일에 대한 스키마 유효성 검사를 활성화할 수 있습니다:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+이렇게 하면 JSON 스키마를 지원하는 편집기에서 자동 완성 및 유효성 검사 기능을 제공합니다.
 
 ## 설정 파일 예시
 
@@ -126,6 +116,16 @@ Repomix는 다음 순서로 설정 파일을 찾습니다:
   }
 }
 ```
+
+## 설정 파일 위치
+
+Repomix는 다음 순서로 설정 파일을 찾습니다:
+1. 현재 디렉토리의 로컬 설정 파일(`repomix.config.json`)
+2. 전역 설정 파일:
+   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux: `~/.config/repomix/repomix.config.json`
+
+명령줄 옵션은 설정 파일의 설정보다 우선합니다.
 
 ## 무시 패턴
 

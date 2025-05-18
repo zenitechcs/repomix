@@ -15,32 +15,6 @@ repomix --init
 repomix --init --global
 ```
 
-## スキーマ検証
-
-設定ファイルに`$schema`プロパティを追加することで、スキーマ検証を有効にできます：
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-これにより、JSONスキーマをサポートするエディタでの自動補完と検証が可能になります。
-
-## 設定ファイルの場所
-
-Repomixは以下の順序で設定ファイルを探します：
-1. カレントディレクトリのローカル設定ファイル（`repomix.config.json`）
-2. グローバル設定ファイル：
-   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux: `~/.config/repomix/repomix.config.json`
-
-コマンドラインオプションは設定ファイルの設定よりも優先されます。
-
 ## 設定オプション
 
 | オプション                        | 説明                                                                                                                         | デフォルト値           |
@@ -76,6 +50,22 @@ Repomixは以下の順序で設定ファイルを探します：
 - オブジェクトと配列の末尾のカンマ
 - 引用符なしのプロパティ名
 - より柔軟な文字列構文
+
+## スキーマ検証
+
+設定ファイルに`$schema`プロパティを追加することで、スキーマ検証を有効にできます：
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+これにより、JSONスキーマをサポートするエディタでの自動補完と検証が可能になります。
 
 ## 設定ファイルの例
 
@@ -126,6 +116,16 @@ Repomixは以下の順序で設定ファイルを探します：
   }
 }
 ```
+
+## 設定ファイルの場所
+
+Repomixは以下の順序で設定ファイルを探します：
+1. カレントディレクトリのローカル設定ファイル（`repomix.config.json`）
+2. グローバル設定ファイル：
+   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux: `~/.config/repomix/repomix.config.json`
+
+コマンドラインオプションは設定ファイルの設定よりも優先されます。
 
 ## 除外パターン
 

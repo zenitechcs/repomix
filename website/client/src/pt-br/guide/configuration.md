@@ -15,32 +15,6 @@ Isso criará um arquivo `repomix.config.json` com as configurações padrão. Vo
 repomix --init --global
 ```
 
-## Validação de esquema
-
-Você pode habilitar a validação de esquema para seu arquivo de configuração adicionando a propriedade `$schema`:
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-Isso fornece autocompletar e validação em editores que suportam esquema JSON.
-
-## Locais dos arquivos de configuração
-
-O Repomix procura os arquivos de configuração na seguinte ordem:
-1. Arquivo de configuração local (`repomix.config.json`) no diretório atual
-2. Arquivo de configuração global:
-   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux: `~/.config/repomix/repomix.config.json`
-
-As opções de linha de comando têm precedência sobre as configurações do arquivo.
-
 ## Opções de configuração
 
 | Opção                           | Descrição                                                                                                                  | Padrão                |
@@ -76,6 +50,22 @@ O arquivo de configuração suporta a sintaxe [JSON5](https://json5.org/), que p
 - Vírgulas finais em objetos e arrays
 - Nomes de propriedades sem aspas
 - Sintaxe de string mais flexível
+
+## Validação de esquema
+
+Você pode habilitar a validação de esquema para seu arquivo de configuração adicionando a propriedade `$schema`:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+Isso fornece autocompletar e validação em editores que suportam esquema JSON.
 
 ## Exemplo de arquivo de configuração
 
@@ -126,6 +116,16 @@ Aqui está um exemplo de um arquivo de configuração completo (`repomix.config.
   }
 }
 ```
+
+## Locais dos arquivos de configuração
+
+O Repomix procura os arquivos de configuração na seguinte ordem:
+1. Arquivo de configuração local (`repomix.config.json`) no diretório atual
+2. Arquivo de configuração global:
+   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux: `~/.config/repomix/repomix.config.json`
+
+As opções de linha de comando têm precedência sobre as configurações do arquivo.
 
 ## Padrões de ignorar
 
