@@ -6,40 +6,42 @@ export const configJa = defineConfig({
   themeConfig: {
     nav: [
       // guide
-      { text: '使い方', link: '/ja/guide/' },
+      { text: '使い方', link: '/ja/guide/', activeMatch: '^/ja/guide/' },
       { text: 'Discordに参加', link: 'https://discord.gg/wNYzTwZFku' },
     ],
     sidebar: {
       '/ja/guide/': [
         {
-          text: '使い方',
+          text: 'はじめに',
           items: [
             { text: 'はじめに', link: '/ja/guide/' },
             { text: 'インストール', link: '/ja/guide/installation' },
             { text: '基本的な使い方', link: '/ja/guide/usage' },
             { text: 'プロンプト例', link: '/ja/guide/prompt-examples' },
+          ],
+        },
+        {
+          text: '使い方',
+          items: [
             { text: '出力フォーマット', link: '/ja/guide/output' },
             { text: 'コマンドラインオプション', link: '/ja/guide/command-line-options' },
-            { text: 'リモートリポジトリの処理', link: '/ja/guide/remote-repository-processing' },
             { text: '設定', link: '/ja/guide/configuration' },
             { text: 'カスタム指示', link: '/ja/guide/custom-instructions' },
+            { text: 'リモートリポジトリの処理', link: '/ja/guide/remote-repository-processing' },
             { text: 'コメントの削除', link: '/ja/guide/comment-removal' },
             { text: 'コード圧縮', link: '/ja/guide/code-compress' },
             { text: 'セキュリティ', link: '/ja/guide/security' },
             { text: 'MCPサーバー', link: '/ja/guide/mcp-server' },
             { text: 'GitHub Actions', link: '/ja/guide/github-actions' },
-            {
-              text: 'ヒント＆テクニック',
-              items: [{ text: 'ベストプラクティス', link: '/ja/guide/tips/best-practices' }],
-            },
-            {
-              text: '開発',
-              items: [
-                { text: '開発への貢献', link: '/ja/guide/development/' },
-                { text: '環境構築', link: '/ja/guide/development/setup' },
-                { text: 'ライブラリとしての使用', link: '/ja/guide/development/using-repomix-as-a-library' },
-              ],
-            },
+          ],
+        },
+        {
+          text: '高度な使い方',
+          items: [
+            { text: 'ライブラリとしての使用', link: '/ja/guide/development/using-repomix-as-a-library' },
+            { text: 'AI支援開発のヒント', link: '/ja/guide/tips/best-practices' },
+            { text: 'Repomixへの貢献', link: '/ja/guide/development/' },
+            { text: '開発環境構築', link: '/ja/guide/development/setup' },
           ],
         },
       ],
