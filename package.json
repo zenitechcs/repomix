@@ -21,7 +21,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration && npm run generate-schema",
-    "generate-schema": "tsx scripts/generate-schema.ts",
+    "generate-schema": "tsx website/client/scripts/generate-schema.ts",
     "lint": "npm run lint-biome && npm run lint-ts && npm run lint-secretlint",
     "lint-biome": "biome check --write",
     "lint-ts": "tsc --noEmit",
