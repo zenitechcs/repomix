@@ -2,6 +2,22 @@
 
 Repomix can be configured using a configuration file (`repomix.config.json`) or command-line options. The configuration file allows you to customize various aspects of how Repomix processes and outputs your codebase.
 
+## Schema Validation
+
+You can enable schema validation for your configuration file by adding the `$schema` property:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+This provides auto-completion and validation in editors that support JSON schema.
+
 ## Quick Start
 
 Create a configuration file in your project directory:
@@ -67,6 +83,7 @@ Here's an example of a complete configuration file (`repomix.config.json`):
 
 ```json
 {
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

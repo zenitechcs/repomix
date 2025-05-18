@@ -14,6 +14,7 @@ export const defaultFilePathMap: Record<RepomixOutputStyle, string> = {
 
 // Base config schema
 export const repomixConfigBaseSchema = z.object({
+  $schema: z.string().optional(),
   input: z
     .object({
       maxFileSize: z.number().optional(),
