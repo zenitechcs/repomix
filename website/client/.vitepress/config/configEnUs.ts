@@ -5,9 +5,19 @@ export const configEnUs = defineConfig({
   description: 'Pack your codebase into AI-friendly formats',
   themeConfig: {
     nav: [
-      // guide
-      { text: 'Guide', link: '/guide/' },
-      { text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' },
+      {
+        text: 'Documentation',
+        items: [
+          { text: 'Guide', link: '/guide/', activeMatch: '^/guide/' },
+        ]
+      },
+      {
+        text: 'Community',
+        items: [
+          { text: 'Join Discord', link: 'https://discord.gg/wNYzTwZFku' },
+          { text: 'GitHub', link: 'https://github.com/yamadashy/repomix' },
+        ]
+      },
     ],
     sidebar: {
       '/guide/': [
