@@ -4,10 +4,12 @@ Thank you for your interest in **Repomix**! 🚀 We'd love your help to make it 
 
 ## How to Contribute
 
-- **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by creating an issue.
+- **Star the Repository**: Show your support by [starring the repository](https://github.com/yamadashy/repomix)!
+- **Create an Issue**: Spot a bug? Have an idea for a new feature? Let us know by [creating an issue](https://github.com/yamadashy/repomix/issues).
 - **Submit a Pull Request**: Found something to fix or improve? Jump in and submit a PR!
 - **Spread the Word**: Share your experience with Repomix on social media, blogs, or with your tech community.
 - **Use Repomix**: The best feedback comes from real-world usage, so feel free to integrate Repomix into your own projects!
+- **Sponsor**: Support the development of Repomix by [becoming a sponsor](https://github.com/sponsors/yamadashy).
 
 ## Development Setup
 
