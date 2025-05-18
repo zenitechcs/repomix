@@ -118,7 +118,7 @@ export const configShard = defineConfig({
     [
       'script',
       {
-        async: true,
+        async: 'true',
         src: `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsTag}`,
       },
     ],
@@ -144,29 +144,17 @@ export const configShard = defineConfig({
         manifest,
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          skipWaiting: true,
+          clientsClaim: true,
           runtimeCaching: [
             {
-              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-              handler: 'CacheFirst',
+              urlPattern: /\.(?:js|css|png|jpg|jpeg|svg|gif|webp)$/i,
+              handler: 'NetworkFirst',
               options: {
-                cacheName: 'google-fonts-cache',
+                cacheName: 'static-resources-cache',
                 expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'gstatic-fonts-cache',
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 60 * 24, // 1 day
                 },
                 cacheableResponse: {
                   statuses: [0, 200],
