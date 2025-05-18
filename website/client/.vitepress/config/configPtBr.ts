@@ -40,7 +40,6 @@ export const configPtBr = defineConfig({
             { text: 'Usando Repomix como Biblioteca', link: '/pt-br/guide/development/using-repomix-as-a-library' },
             { text: 'Dicas de Desenvolvimento Assistido por IA', link: '/pt-br/guide/tips/best-practices' },
             { text: 'Contribuindo para o Repomix', link: '/pt-br/guide/development/' },
-            { text: 'Configuração de Desenvolvimento', link: '/pt-br/guide/development/setup' },
           ],
         },
       ],

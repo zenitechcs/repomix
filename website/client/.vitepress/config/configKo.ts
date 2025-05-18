@@ -40,7 +40,6 @@ export const configKo = defineConfig({
             { text: 'Repomix를 라이브러리로 사용하기', link: '/ko/guide/development/using-repomix-as-a-library' },
             { text: 'AI 지원 개발 팁', link: '/ko/guide/tips/best-practices' },
             { text: 'Repomix에 기여하기', link: '/ko/guide/development/' },
-            { text: '개발 환경 설정', link: '/ko/guide/development/setup' },
           ],
         },
       ],

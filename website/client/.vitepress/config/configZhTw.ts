@@ -40,7 +40,6 @@ export const configZhTw = defineConfig({
             { text: '作為庫使用 Repomix', link: '/zh-tw/guide/development/using-repomix-as-a-library' },
             { text: 'AI輔助開發技巧', link: '/zh-tw/guide/tips/best-practices' },
             { text: '為Repomix做貢獻', link: '/zh-tw/guide/development/' },
-            { text: '開發環境配置', link: '/zh-tw/guide/development/setup' },
           ],
         },
       ],
