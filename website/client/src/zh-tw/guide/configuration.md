@@ -15,9 +15,9 @@ repomix --init
 repomix --init --global
 ```
 
-## 結構描述驗證
+## 模式验证
 
-您可以透過添加`$schema`屬性為設定檔啟用結構描述驗證：
+您可以透過添加`$schema`屬性為設定檔啟用模式验证：
 
 ```json
 {
