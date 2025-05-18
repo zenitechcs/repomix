@@ -9,6 +9,7 @@ import {
   defaultFilePathMap,
 } from '../../config/configSchema.js';
 import { getGlobalDirectory } from '../../config/globalDirectory.js';
+import { getVersion } from '../../core/file/packageJsonParse.js';
 import { logger } from '../../shared/logger.js';
 
 const onCancelOperation = () => {
@@ -102,7 +103,9 @@ export const createConfigFile = async (rootDir: string, isGlobal: boolean): Prom
     },
   );
 
+  const version = await getVersion();
   const config: RepomixConfigFile = {
+    $schema: `https://repomix.com/schemas/${version}/schema.json`,
     ...defaultConfig,
     output: {
       ...defaultConfig.output,

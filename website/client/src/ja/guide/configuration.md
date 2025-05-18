@@ -15,6 +15,22 @@ repomix --init
 repomix --init --global
 ```
 
+## スキーマ検証
+
+設定ファイルに`$schema`プロパティを追加することで、スキーマ検証を有効にできます：
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+これにより、JSONスキーマをサポートするエディタでの自動補完と検証が可能になります。
+
 ## 設定ファイルの場所
 
 Repomixは以下の順序で設定ファイルを探します：
@@ -67,6 +83,7 @@ Repomixは以下の順序で設定ファイルを探します：
 
 ```json
 {
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

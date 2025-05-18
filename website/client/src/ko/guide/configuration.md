@@ -15,6 +15,22 @@ repomix --init
 repomix --init --global
 ```
 
+## 스키마 유효성 검사
+
+`$schema` 속성을 추가하여 설정 파일에 대한 스키마 유효성 검사를 활성화할 수 있습니다:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+이렇게 하면 JSON 스키마를 지원하는 편집기에서 자동 완성 및 유효성 검사 기능을 제공합니다.
+
 ## 설정 파일 위치
 
 Repomix는 다음 순서로 설정 파일을 찾습니다:
@@ -67,6 +83,7 @@ Repomix는 다음 순서로 설정 파일을 찾습니다:
 
 ```json
 {
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

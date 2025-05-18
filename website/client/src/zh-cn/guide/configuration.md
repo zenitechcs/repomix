@@ -15,6 +15,22 @@ repomix --init
 repomix --init --global
 ```
 
+## 模式验证
+
+您可以通过添加`$schema`属性为配置文件启用模式验证：
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+这在支持JSON模式的编辑器中提供自动完成和验证功能。
+
 ## 配置文件位置
 
 Repomix按以下顺序查找配置文件：
@@ -67,6 +83,7 @@ Repomix按以下顺序查找配置文件：
 
 ```json
 {
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

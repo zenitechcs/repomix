@@ -15,6 +15,22 @@ Esto creará un archivo `repomix.config.json` con la configuración predetermina
 repomix --init --global
 ```
 
+## Validación de esquema
+
+Puede habilitar la validación de esquema para su archivo de configuración agregando la propiedad `$schema`:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+Esto proporciona autocompletado y validación en editores que admiten esquemas JSON.
+
 ## Ubicaciones de los archivos de configuración
 
 Repomix busca los archivos de configuración en el siguiente orden:
@@ -67,6 +83,7 @@ Aquí hay un ejemplo de un archivo de configuración completo (`repomix.config.j
 
 ```json
 {
+  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
