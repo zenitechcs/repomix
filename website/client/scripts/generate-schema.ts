@@ -37,11 +37,7 @@ const generateSchema = async () => {
   const versionedOutputPath = path.resolve(versionedOutputDir, 'schema.json');
   await fs.writeFile(versionedOutputPath, JSON.stringify(schemaWithMeta, null, 2), 'utf-8');
 
-  const latestOutputPath = path.resolve(baseOutputDir, 'configuration_schema.json');
-  await fs.writeFile(latestOutputPath, JSON.stringify(schemaWithMeta, null, 2), 'utf-8');
-
   console.log(`Schema generated at ${versionedOutputPath}`);
-  console.log(`Latest schema also available at ${latestOutputPath}`);
 };
 
 generateSchema().catch(console.error);

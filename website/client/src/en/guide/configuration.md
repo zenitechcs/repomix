@@ -2,6 +2,19 @@
 
 Repomix can be configured using a configuration file (`repomix.config.json`) or command-line options. The configuration file allows you to customize various aspects of how Repomix processes and outputs your codebase.
 
+## Quick Start
+
+Create a configuration file in your project directory:
+```bash
+repomix --init
+```
+
+This will create a `repomix.config.json` file with default settings. You can also create a global configuration file that will be used as a fallback when no local configuration is found:
+
+```bash
+repomix --init --global
+```
+
 ## Schema Validation
 
 You can enable schema validation for your configuration file by adding the `$schema` property:
@@ -17,19 +30,6 @@ You can enable schema validation for your configuration file by adding the `$sch
 ```
 
 This provides auto-completion and validation in editors that support JSON schema.
-
-## Quick Start
-
-Create a configuration file in your project directory:
-```bash
-repomix --init
-```
-
-This will create a `repomix.config.json` file with default settings. You can also create a global configuration file that will be used as a fallback when no local configuration is found:
-
-```bash
-repomix --init --global
-```
 
 ## Configuration File Locations
 
