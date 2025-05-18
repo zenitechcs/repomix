@@ -15,32 +15,6 @@ repomix --init
 repomix --init --global
 ```
 
-## 模式验证
-
-您可以通过添加`$schema`属性为配置文件启用模式验证：
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-这在支持JSON模式的编辑器中提供自动完成和验证功能。
-
-## 配置文件位置
-
-Repomix按以下顺序查找配置文件：
-1. 当前目录中的本地配置文件（`repomix.config.json`）
-2. 全局配置文件：
-   - Windows：`%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux：`~/.config/repomix/repomix.config.json`
-
-命令行选项优先于配置文件设置。
-
 ## 配置选项
 
 | 选项                             | 说明                                                                                                                         | 默认值                 |
@@ -77,13 +51,29 @@ Repomix按以下顺序查找配置文件：
 - 无引号属性名
 - 更灵活的字符串语法
 
+## 模式验证
+
+您可以通过添加`$schema`属性为配置文件启用模式验证：
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+这在支持JSON模式的编辑器中提供自动完成和验证功能。
+
 ## 配置文件示例
 
 以下是完整配置文件（`repomix.config.json`）的示例：
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
@@ -126,6 +116,16 @@ Repomix按以下顺序查找配置文件：
   }
 }
 ```
+
+## 配置文件位置
+
+Repomix按以下顺序查找配置文件：
+1. 当前目录中的本地配置文件（`repomix.config.json`）
+2. 全局配置文件：
+   - Windows：`%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux：`~/.config/repomix/repomix.config.json`
+
+命令行选项优先于配置文件设置。
 
 ## 忽略模式
 

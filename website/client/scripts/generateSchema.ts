@@ -37,7 +37,13 @@ const generateSchema = async () => {
   const versionedOutputPath = path.resolve(versionedOutputDir, 'schema.json');
   await fs.writeFile(versionedOutputPath, JSON.stringify(schemaWithMeta, null, 2), 'utf-8');
 
+  const latestOutputDir = path.resolve(baseOutputDir, 'latest');
+  await fs.mkdir(latestOutputDir, { recursive: true });
+  const latestOutputPath = path.resolve(latestOutputDir, 'schema.json');
+  await fs.writeFile(latestOutputPath, JSON.stringify(schemaWithMeta, null, 2), 'utf-8');
+
   console.log(`Schema generated at ${versionedOutputPath}`);
+  console.log(`Schema also generated at ${latestOutputPath}`);
 };
 
 generateSchema().catch(console.error);

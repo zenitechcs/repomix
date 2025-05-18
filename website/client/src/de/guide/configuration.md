@@ -21,7 +21,7 @@ Sie können die Schema-Validierung für Ihre Konfigurationsdatei aktivieren, ind
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "output": {
     "filePath": "repomix-output.md",
     "style": "markdown"
@@ -30,16 +30,6 @@ Sie können die Schema-Validierung für Ihre Konfigurationsdatei aktivieren, ind
 ```
 
 Dies bietet Autovervollständigung und Validierung in Editoren, die JSON-Schema unterstützen.
-
-## Speicherorte der Konfigurationsdatei
-
-Repomix sucht in folgender Reihenfolge nach Konfigurationsdateien:
-1. Lokale Konfigurationsdatei (`repomix.config.json`) im aktuellen Verzeichnis
-2. Globale Konfigurationsdatei:
-   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux: `~/.config/repomix/repomix.config.json`
-
-Kommandozeilenoptionen haben Vorrang vor Einstellungen in der Konfigurationsdatei.
 
 ## Konfigurationsoptionen
 
@@ -83,7 +73,7 @@ Hier ist ein Beispiel einer vollständigen Konfigurationsdatei (`repomix.config.
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
@@ -126,6 +116,16 @@ Hier ist ein Beispiel einer vollständigen Konfigurationsdatei (`repomix.config.
   }
 }
 ```
+
+## Speicherorte der Konfigurationsdatei
+
+Repomix sucht in folgender Reihenfolge nach Konfigurationsdateien:
+1. Lokale Konfigurationsdatei (`repomix.config.json`) im aktuellen Verzeichnis
+2. Globale Konfigurationsdatei:
+   - Windows: `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux: `~/.config/repomix/repomix.config.json`
+
+Kommandozeilenoptionen haben Vorrang vor Einstellungen in der Konfigurationsdatei.
 
 ## Ignorier-Muster
 

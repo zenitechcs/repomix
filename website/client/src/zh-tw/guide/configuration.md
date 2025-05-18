@@ -15,32 +15,6 @@ repomix --init
 repomix --init --global
 ```
 
-## 模式验证
-
-您可以透過添加`$schema`屬性為設定檔啟用模式验证：
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-這在支援JSON結構描述的編輯器中提供自動完成和驗證功能。
-
-## 設定檔位置
-
-Repomix按以下順序尋找設定檔：
-1. 當前目錄中的本地設定檔（`repomix.config.json`）
-2. 全域設定檔：
-   - Windows：`%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux：`~/.config/repomix/repomix.config.json`
-
-命令列選項優先於設定檔設定。
-
 ## 設定選項
 
 | 選項                             | 說明                                                                                                                         | 預設值                 |
@@ -77,13 +51,29 @@ Repomix按以下順序尋找設定檔：
 - 無引號屬性名
 - 更靈活的字串語法
 
+## 模式验证
+
+您可以透過添加`$schema`屬性為設定檔啟用模式验证：
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+這在支援JSON結構描述的編輯器中提供自動完成和驗證功能。
+
 ## 設定檔範例
 
 以下是完整設定檔（`repomix.config.json`）的範例：
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
@@ -126,6 +116,16 @@ Repomix按以下順序尋找設定檔：
   }
 }
 ```
+
+## 設定檔位置
+
+Repomix按以下順序尋找設定檔：
+1. 當前目錄中的本地設定檔（`repomix.config.json`）
+2. 全域設定檔：
+   - Windows：`%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux：`~/.config/repomix/repomix.config.json`
+
+命令列選項優先於設定檔設定。
 
 ## 忽略模式
 

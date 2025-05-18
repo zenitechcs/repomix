@@ -15,32 +15,6 @@ Cela créera un fichier `repomix.config.json` avec les paramètres par défaut. 
 repomix --init --global
 ```
 
-## Validation de schéma
-
-Vous pouvez activer la validation de schéma pour votre fichier de configuration en ajoutant la propriété `$schema` :
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-Cela fournit l'auto-complétion et la validation dans les éditeurs qui prennent en charge le schéma JSON.
-
-## Emplacements des fichiers de configuration
-
-Repomix recherche les fichiers de configuration dans l'ordre suivant :
-1. Fichier de configuration local (`repomix.config.json`) dans le répertoire courant
-2. Fichier de configuration global :
-   - Windows : `%LOCALAPPDATA%\Repomix\repomix.config.json`
-   - macOS/Linux : `~/.config/repomix/repomix.config.json`
-
-Les options en ligne de commande ont la priorité sur les paramètres du fichier de configuration.
-
 ## Options de configuration
 
 | Option                           | Description                                                                                                                  | Défaut                |
@@ -77,13 +51,29 @@ Le fichier de configuration prend en charge la syntaxe [JSON5](https://json5.org
 - Les noms de propriétés non entre guillemets
 - Une syntaxe de chaîne plus souple
 
+## Validation de schéma
+
+Vous pouvez activer la validation de schéma pour votre fichier de configuration en ajoutant la propriété `$schema` :
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+Cela fournit l'auto-complétion et la validation dans les éditeurs qui prennent en charge le schéma JSON.
+
 ## Exemple de fichier de configuration
 
 Voici un exemple de fichier de configuration complet (`repomix.config.json`) :
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
@@ -126,6 +116,16 @@ Voici un exemple de fichier de configuration complet (`repomix.config.json`) :
   }
 }
 ```
+
+## Emplacements des fichiers de configuration
+
+Repomix recherche les fichiers de configuration dans l'ordre suivant :
+1. Fichier de configuration local (`repomix.config.json`) dans le répertoire courant
+2. Fichier de configuration global :
+   - Windows : `%LOCALAPPDATA%\Repomix\repomix.config.json`
+   - macOS/Linux : `~/.config/repomix/repomix.config.json`
+
+Les options en ligne de commande ont la priorité sur les paramètres du fichier de configuration.
 
 ## Motifs d'ignorance
 
