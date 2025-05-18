@@ -144,14 +144,16 @@ export const configShard = defineConfig({
         manifest,
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          skipWaiting: true,
+          clientsClaim: true,
           runtimeCaching: [
             {
-              urlPattern: /\.(?:js)$/i,
+              urlPattern: /\.(?:js|css|png|jpg|jpeg|svg|gif|webp)$/i,
               handler: 'NetworkFirst',
               options: {
-                cacheName: 'javascript-cache',
+                cacheName: 'static-resources-cache',
                 expiration: {
-                  maxEntries: 50,
+                  maxEntries: 100,
                   maxAgeSeconds: 60 * 60 * 24, // 1 day
                 },
                 cacheableResponse: {
