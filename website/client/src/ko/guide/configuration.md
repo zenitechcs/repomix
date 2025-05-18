@@ -21,7 +21,7 @@ repomix --init --global
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "output": {
     "filePath": "repomix-output.md",
     "style": "markdown"
@@ -83,7 +83,7 @@ Repomix는 다음 순서로 설정 파일을 찾습니다:
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

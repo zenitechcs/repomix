@@ -21,7 +21,7 @@ You can enable schema validation for your configuration file by adding the `$sch
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "output": {
     "filePath": "repomix-output.md",
     "style": "markdown"
@@ -83,7 +83,7 @@ Here's an example of a complete configuration file (`repomix.config.json`):
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },

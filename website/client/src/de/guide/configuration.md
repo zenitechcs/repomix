@@ -21,7 +21,7 @@ Sie können die Schema-Validierung für Ihre Konfigurationsdatei aktivieren, ind
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "output": {
     "filePath": "repomix-output.md",
     "style": "markdown"
@@ -83,7 +83,7 @@ Hier ist ein Beispiel einer vollständigen Konfigurationsdatei (`repomix.config.
 
 ```json
 {
-  "$schema": "https://repomix.com/schemas/0.3.5/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
     "maxFileSize": 50000000
   },
