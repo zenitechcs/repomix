@@ -5,7 +5,7 @@ import {
   getWorkTreeDiff,
   isGitInstalled,
   isGitRepository,
-} from '../../../src/core/file/gitCommand.js';
+} from '../../../src/core/git/gitCommand.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');

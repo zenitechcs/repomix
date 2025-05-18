@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import * as gitCommandModule from '../../../src/core/file/gitCommand.js';
-import type { GitDiffResult } from '../../../src/core/file/gitDiff.js';
+import * as gitCommandModule from '../../../src/core/git/gitCommand.js';
+import type { GitDiffResult } from '../../../src/core/git/gitDiff.js';
 import { buildOutputGeneratorContext, generateOutput } from '../../../src/core/output/outputGenerate.js';
 import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the gitCommand module
-vi.mock('../../../src/core/file/gitCommand.js', () => ({
+vi.mock('../../../src/core/git/gitCommand.js', () => ({
   getWorkTreeDiff: vi.fn(),
   isGitRepository: vi.fn(),
 }));

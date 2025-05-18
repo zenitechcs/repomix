@@ -8,10 +8,10 @@ import type { RepomixConfigFile, RepomixConfigMerged, RepomixOutputStyle } from 
 import { collectFiles } from '../../src/core/file/fileCollect.js';
 import { searchFiles } from '../../src/core/file/fileSearch.js';
 import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
-import type { GitDiffResult } from '../../src/core/file/gitDiff.js';
 import type { FileCollectTask } from '../../src/core/file/workers/fileCollectWorker.js';
 import fileCollectWorker from '../../src/core/file/workers/fileCollectWorker.js';
 import fileProcessWorker from '../../src/core/file/workers/fileProcessWorker.js';
+import type { GitDiffResult } from '../../src/core/git/gitDiff.js';
 import { generateOutput } from '../../src/core/output/outputGenerate.js';
 import { pack } from '../../src/core/packager.js';
 import { copyToClipboardIfEnabled } from '../../src/core/packager/copyToClipboardIfEnabled.js';
