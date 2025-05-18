@@ -11,34 +11,36 @@ export const configZhCn = defineConfig({
     sidebar: {
       '/zh-cn/guide/': [
         {
-          text: '指南',
+          text: '介绍',
           items: [
             { text: '开始使用', link: '/zh-cn/guide/' },
             { text: '安装', link: '/zh-cn/guide/installation' },
             { text: '基本用法', link: '/zh-cn/guide/usage' },
             { text: '提示示例', link: '/zh-cn/guide/prompt-examples' },
+          ],
+        },
+        {
+          text: '指南',
+          items: [
             { text: '输出格式', link: '/zh-cn/guide/output' },
             { text: '命令行选项', link: '/zh-cn/guide/command-line-options' },
-            { text: '远程仓库处理', link: '/zh-cn/guide/remote-repository-processing' },
             { text: '配置', link: '/zh-cn/guide/configuration' },
             { text: '自定义指令', link: '/zh-cn/guide/custom-instructions' },
+            { text: '远程仓库处理', link: '/zh-cn/guide/remote-repository-processing' },
             { text: '注释移除', link: '/zh-cn/guide/comment-removal' },
             { text: '代码压缩', link: '/zh-cn/guide/code-compress' },
             { text: '安全性', link: '/zh-cn/guide/security' },
             { text: 'MCP 服务器', link: '/zh-cn/guide/mcp-server' },
             { text: 'GitHub Actions', link: '/zh-cn/guide/github-actions' },
-            {
-              text: '技巧与窍门',
-              items: [{ text: '最佳实践', link: '/zh-cn/guide/tips/best-practices' }],
-            },
-            {
-              text: '开发',
-              items: [
-                { text: '贡献指南', link: '/zh-cn/guide/development/' },
-                { text: '环境配置', link: '/zh-cn/guide/development/setup' },
-                { text: '作为库使用 Repomix', link: '/zh-cn/guide/development/using-repomix-as-a-library' },
-              ],
-            },
+          ],
+        },
+        {
+          text: '高级',
+          items: [
+            { text: '作为库使用 Repomix', link: '/zh-cn/guide/development/using-repomix-as-a-library' },
+            { text: 'AI辅助开发技巧', link: '/zh-cn/guide/tips/best-practices' },
+            { text: '为Repomix做贡献', link: '/zh-cn/guide/development/' },
+            { text: '开发环境配置', link: '/zh-cn/guide/development/setup' },
           ],
         },
       ],

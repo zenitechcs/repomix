@@ -11,34 +11,36 @@ export const configEs = defineConfig({
     sidebar: {
       '/es/guide/': [
         {
-          text: 'Guía',
+          text: 'Introducción',
           items: [
             { text: 'Comenzar', link: '/es/guide/' },
             { text: 'Instalación', link: '/es/guide/installation' },
             { text: 'Uso Básico', link: '/es/guide/usage' },
             { text: 'Ejemplos de Prompts', link: '/es/guide/prompt-examples' },
+          ],
+        },
+        {
+          text: 'Guía',
+          items: [
             { text: 'Formatos de Salida', link: '/es/guide/output' },
             { text: 'Opciones de Línea de Comandos', link: '/es/guide/command-line-options' },
-            { text: 'Procesamiento de Repositorios Remotos', link: '/es/guide/remote-repository-processing' },
             { text: 'Configuración', link: '/es/guide/configuration' },
             { text: 'Instrucciones Personalizadas', link: '/es/guide/custom-instructions' },
+            { text: 'Procesamiento de Repositorios Remotos', link: '/es/guide/remote-repository-processing' },
             { text: 'Eliminación de Comentarios', link: '/es/guide/comment-removal' },
             { text: 'Compresión de Código', link: '/es/guide/code-compress' },
             { text: 'Seguridad', link: '/es/guide/security' },
             { text: 'Servidor MCP', link: '/es/guide/mcp-server' },
             { text: 'GitHub Actions', link: '/es/guide/github-actions' },
-            {
-              text: 'Consejos y Trucos',
-              items: [{ text: 'Mejores Prácticas', link: '/es/guide/tips/best-practices' }],
-            },
-            {
-              text: 'Desarrollo',
-              items: [
-                { text: 'Contribuir', link: '/es/guide/development/' },
-                { text: 'Configuración', link: '/es/guide/development/setup' },
-                { text: 'Usar Repomix como Biblioteca', link: '/es/guide/development/using-repomix-as-a-library' },
-              ],
-            },
+          ],
+        },
+        {
+          text: 'Avanzado',
+          items: [
+            { text: 'Usar Repomix como Biblioteca', link: '/es/guide/development/using-repomix-as-a-library' },
+            { text: 'Consejos para Desarrollo Asistido por IA', link: '/es/guide/tips/best-practices' },
+            { text: 'Contribuir a Repomix', link: '/es/guide/development/' },
+            { text: 'Configuración de Desarrollo', link: '/es/guide/development/setup' },
           ],
         },
       ],
