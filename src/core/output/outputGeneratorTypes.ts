@@ -1,6 +1,6 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import type { GitDiffResult } from '../file/gitDiff.js';
+import type { GitDiffResult } from '../git/gitDiff.js';
 
 export interface OutputGeneratorContext {
   generationDate: string;

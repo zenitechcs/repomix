@@ -128,6 +128,10 @@ export const execGitShallowClone = async (
     execFileAsync,
   },
 ) => {
+  if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
+    throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
+  }
+
   // Check if the URL is valid
   try {
     new URL(url);

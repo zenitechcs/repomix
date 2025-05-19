@@ -1,6 +1,6 @@
 import { type Mock, describe, expect, it, vi } from 'vitest';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import type { GitDiffResult } from '../../../src/core/file/gitDiff.js';
+import type { GitDiffResult } from '../../../src/core/git/gitDiff.js';
 import { TokenCounter } from '../../../src/core/metrics/TokenCounter.js';
 import { calculateAllFileMetrics } from '../../../src/core/metrics/calculateAllFileMetrics.js';
 import { calculateMetrics } from '../../../src/core/metrics/calculateMetrics.js';

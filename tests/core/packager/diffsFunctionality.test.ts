@@ -1,13 +1,12 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import * as gitCommandModule from '../../../src/core/file/gitCommand.js';
-import { buildOutputGeneratorContext } from '../../../src/core/output/outputGenerate.js';
+import * as gitCommandModule from '../../../src/core/git/gitCommand.js';
 import { pack } from '../../../src/core/packager.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the dependencies
-vi.mock('../../../src/core/file/gitCommand.js', () => ({
+vi.mock('../../../src/core/git/gitCommand.js', () => ({
   getWorkTreeDiff: vi.fn(),
   getStagedDiff: vi.fn(),
   isGitRepository: vi.fn(),

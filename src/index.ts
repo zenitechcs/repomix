@@ -12,6 +12,9 @@ export { searchFiles } from './core/file/fileSearch.js';
 export type { FileSearchResult } from './core/file/fileSearch.js';
 export { generateFileTree } from './core/file/fileTreeGenerate.js';
 
+// Git
+export { isValidRemoteValue, isValidShorthand, parseRemoteValue } from './core/git/gitRemoteParse.js';
+
 // Security
 export { runSecurityCheck } from './core/security/securityCheck.js';
 export type { SuspiciousFileResult } from './core/security/securityCheck.js';
@@ -51,7 +54,4 @@ export { runInitAction } from './cli/actions/initAction.js';
 export { runDefaultAction, buildCliConfig } from './cli/actions/defaultAction.js';
 
 // Remote action
-export {
-  isValidRemoteValue,
-  runRemoteAction,
-} from './cli/actions/remoteAction.js';
+export { runRemoteAction } from './cli/actions/remoteAction.js';
