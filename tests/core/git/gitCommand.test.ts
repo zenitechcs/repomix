@@ -319,4 +319,18 @@ file2.ts
       ]);
     });
   });
+
+  test('should reject URLs with dangerous parameters', async () => {
+    const mockFileExecAsync = vi.fn();
+
+    const url = 'https://github.com/user/repo.git --upload-pack=evil-command';
+    const directory = '/tmp/repo';
+    const remoteBranch = undefined;
+
+    await expect(
+      execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
+    ).rejects.toThrow('Invalid repository URL. URL contains potentially dangerous parameters');
+
+    expect(mockFileExecAsync).not.toHaveBeenCalled();
+  });
 });
