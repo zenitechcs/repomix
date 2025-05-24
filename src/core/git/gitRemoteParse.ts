@@ -13,7 +13,10 @@ export const isValidShorthand = (remoteValue: string): boolean => {
   return validShorthandRegex.test(remoteValue);
 };
 
-export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remoteBranch: string | undefined } => {
+export const parseRemoteValue = (
+  remoteValue: string,
+  refs: string[] = [],
+): { repoUrl: string; remoteBranch: string | undefined } => {
   if (isValidShorthand(remoteValue)) {
     logger.trace(`Formatting GitHub shorthand: ${remoteValue}`);
     return {
@@ -23,7 +26,7 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
   }
 
   try {
-    const parsedFields = gitUrlParse(remoteValue) as IGitUrl;
+    const parsedFields = gitUrlParse(remoteValue, refs) as IGitUrl;
 
     // This will make parsedFields.toString() automatically append '.git' to the returned url
     parsedFields.git_suffix = true;
@@ -40,7 +43,7 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
     if (parsedFields.ref) {
       return {
         repoUrl: repoUrl,
-        remoteBranch: parsedFields.filepath ? `${parsedFields.ref}/${parsedFields.filepath}` : parsedFields.ref,
+        remoteBranch: parsedFields.ref,
       };
     }
 
@@ -60,9 +63,9 @@ export const parseRemoteValue = (remoteValue: string): { repoUrl: string; remote
   }
 };
 
-export const isValidRemoteValue = (remoteValue: string): boolean => {
+export const isValidRemoteValue = (remoteValue: string, refs: string[] = []): boolean => {
   try {
-    parseRemoteValue(remoteValue);
+    parseRemoteValue(remoteValue, refs);
     return true;
   } catch (error) {
     return false;

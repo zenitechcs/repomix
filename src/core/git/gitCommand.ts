@@ -120,6 +120,40 @@ export const isGitInstalled = async (
   }
 };
 
+export const getRemoteRefs = async (
+  url: string,
+  deps = {
+    execFileAsync,
+  },
+): Promise<string[]> => {
+  validateGitUrl(url);
+
+  try {
+    const result = await deps.execFileAsync('git', ['ls-remote', '--heads', '--tags', url]);
+
+    // Extract ref names from the output
+    // Format is: hash\tref_name
+    const refs = result.stdout
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        // Skip the hash part and extract only the ref name
+        const parts = line.split('\t');
+        if (parts.length < 2) return '';
+
+        // Remove 'refs/heads/' or 'refs/tags/' prefix
+        return parts[1].replace(/^refs\/(heads|tags)\//, '');
+      })
+      .filter(Boolean);
+
+    logger.trace(`Found ${refs.length} refs in repository: ${url}`);
+    return refs;
+  } catch (error) {
+    logger.trace('Failed to get remote refs:', (error as Error).message);
+    throw new RepomixError(`Failed to get remote refs: ${(error as Error).message}`);
+  }
+};
+
 export const execGitShallowClone = async (
   url: string,
   directory: string,
@@ -128,16 +162,7 @@ export const execGitShallowClone = async (
     execFileAsync,
   },
 ) => {
-  if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
-    throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
-  }
-
-  // Check if the URL is valid
-  try {
-    new URL(url);
-  } catch (error) {
-    throw new RepomixError(`Invalid repository URL. Please provide a valid URL. url: ${url}`);
-  }
+  validateGitUrl(url);
 
   if (remoteBranch) {
     await deps.execFileAsync('git', ['-C', directory, 'init']);
@@ -176,4 +201,27 @@ export const execGitShallowClone = async (
 
   // Clean up .git directory
   await fs.rm(path.join(directory, '.git'), { recursive: true, force: true });
+};
+
+/**
+ * Validates a Git URL for security and format
+ * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters
+ */
+const validateGitUrl = (url: string): void => {
+  if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
+    throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
+  }
+
+  // Check if the URL starts with git@ or https://
+  if (!(url.startsWith('git@') || url.startsWith('https://'))) {
+    throw new RepomixError(`Invalid URL protocol for '${url}'. URL must start with 'git@' or 'https://'`);
+  }
+
+  try {
+    if (url.startsWith('https://')) {
+      new URL(url);
+    }
+  } catch (error) {
+    throw new RepomixError(`Invalid repository URL. Please provide a valid URL: ${url}`);
+  }
 };
