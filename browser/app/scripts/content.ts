@@ -79,36 +79,45 @@ function isRepositoryPage(): boolean {
 
 // Main integration functions
 function addRepomixButton(): void {
-  // Check if button already exists
-  if (isRepomixButtonAlreadyExists()) {
-    return;
+  try {
+    // Check if button already exists
+    if (isRepomixButtonAlreadyExists()) {
+      return;
+    }
+
+    // Check if we're on a repository page
+    if (!isRepositoryPage()) {
+      return;
+    }
+
+    // Get repository information
+    const repoInfo = extractRepositoryInfo();
+    if (!repoInfo) {
+      return;
+    }
+
+    // Find navigation container
+    const navContainer = findNavigationContainer();
+    if (!navContainer) {
+      return;
+    }
+
+    // Create Repomix URL
+    const repomixUrl = `${REPOMIX_BASE_URL}/?repo=${encodeURIComponent(repoInfo.url)}`;
+
+    // Create button
+    const buttonContainer = createRepomixButton({
+      text: BUTTON_TEXT,
+      href: repomixUrl,
+    });
+
+    // Insert button at the beginning (left side)
+    navContainer.prepend(buttonContainer);
+
+    console.log(`Repomix button added for ${repoInfo.owner}/${repoInfo.repo}`);
+  } catch (error) {
+    console.error('Error adding Repomix button:', error);
   }
-
-  // Get repository information
-  const repoInfo = extractRepositoryInfo();
-  if (!repoInfo) {
-    return;
-  }
-
-  // Find navigation container
-  const navContainer = findNavigationContainer();
-  if (!navContainer) {
-    return;
-  }
-
-  // Create Repomix URL
-  const repomixUrl = `${REPOMIX_BASE_URL}/?repo=${encodeURIComponent(repoInfo.url)}`;
-
-  // Create button
-  const buttonContainer = createRepomixButton({
-    text: BUTTON_TEXT,
-    href: repomixUrl,
-  });
-
-  // Insert button at the beginning (left side)
-  navContainer.prepend(buttonContainer);
-
-  console.log(`Repomix button added for ${repoInfo.owner}/${repoInfo.repo}`);
 }
 
 function observePageChanges(): void {
@@ -129,12 +138,12 @@ function observePageChanges(): void {
 }
 
 function initRepomixIntegration(): void {
-  if (!isRepositoryPage()) {
-    return;
+  try {
+    addRepomixButton();
+    observePageChanges();
+  } catch (error) {
+    console.error('Error initializing Repomix integration:', error);
   }
-
-  addRepomixButton();
-  observePageChanges();
 }
 
 // Initialize when DOM is ready

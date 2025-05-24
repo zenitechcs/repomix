@@ -1,5 +1,3 @@
-// This background.ts is kept minimal as all implementation is handled in content_scripts
-
 const injectContentToTab = async (tab: chrome.tabs.Tab): Promise<void> => {
   // Skip if URL is undefined
   if (!tab.url) {
@@ -44,31 +42,13 @@ const injectContentToTab = async (tab: chrome.tabs.Tab): Promise<void> => {
   }
 };
 
-// Handle installation
-chrome.runtime.onInstalled.addListener(async (): Promise<void> => {
-  console.log('Repomix extension installed');
-
-  try {
-    // Get all GitHub tabs
-    const tabs = await chrome.tabs.query({
-      url: 'https://github.com/*',
-    });
-
-    // Inject content script to existing GitHub tabs
-    for (const tab of tabs) {
+// Update extension content for tabs
+chrome.tabs.query({}, async (tabs: chrome.tabs.Tab[]) => {
+  for (const tab of tabs) {
+    try {
       await injectContentToTab(tab);
+    } catch (e) {
+      console.error(e);
     }
-  } catch (error) {
-    console.error('Error during installation:', error);
   }
 });
-
-// Handle tab updates
-chrome.tabs.onUpdated.addListener(
-  async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab): Promise<void> => {
-    // Only inject when page is completely loaded
-    if (changeInfo.status === 'complete') {
-      await injectContentToTab(tab);
-    }
-  },
-);
