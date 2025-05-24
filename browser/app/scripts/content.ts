@@ -30,7 +30,7 @@ function createRepomixButton(options: RepomixButtonOptions): HTMLElement {
   button.href = options.href;
   button.target = '_blank';
   button.rel = 'noopener noreferrer';
-  button.title = 'Open with Repomix';
+  button.title = chrome.i18n.getMessage('openWithRepomix');
 
   // Create octicon container
   const octicon = document.createElement('span');
