@@ -1,26 +1,26 @@
 /**
  * Type definition extension for git-url-parse library
- * 
+ *
  * This file exists because the git-url-parse library's built-in type definitions
  * are incomplete. The library supports a second 'refs' parameter for the gitUrlParse
  * function, which is documented in the library's README but not included in its
  * type definitions.
- * 
+ *
  * Without this type definition extension, we would need to use @ts-ignore when
  * calling gitUrlParse with the refs parameter, which reduces type safety and
  * makes the code harder to maintain.
- * 
+ *
  * This file uses TypeScript's module augmentation feature to extend the existing
  * type definitions without modifying the original library code.
- * 
+ *
  * 日本語:
  * このファイルが存在する理由は、git-url-parseライブラリの組み込み型定義が不完全であるためです。
  * ライブラリはgitUrlParse関数の2番目のパラメータ'refs'をサポートしていますが、
  * これはライブラリのREADMEには記載されているものの、型定義には含まれていません。
- * 
+ *
  * この型定義拡張がなければ、refsパラメータを使用する際に@ts-ignoreを使用する必要があり、
  * 型安全性が低下し、コードの保守が難しくなります。
- * 
+ *
  * このファイルはTypeScriptのモジュール拡張機能を使用して、元のライブラリコードを
  * 変更せずに既存の型定義を拡張しています。
  */
