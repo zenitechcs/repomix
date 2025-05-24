@@ -1,6 +1,6 @@
 {
-  "name": "GitHub Repomix Button (Unofficial)",
-  "short_name": "gh-repomix",
+  "name": "Repomix",
+  "short_name": "repomix",
   "version": "1.0.0",
   "manifest_version": 3,
   "description": "__MSG_appDescription__",

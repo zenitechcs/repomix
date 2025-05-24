@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "github-repomix-button",
+  "name": "repomix",
   "version": "1.0.0",
   "description": "A browser extension that adds a Repomix button to GitHub repositories",
   "scripts": {
