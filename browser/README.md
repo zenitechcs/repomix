@@ -1,8 +1,6 @@
-# Repomix
+# Repomix Extension
 
 A browser extension that adds a Repomix button to GitHub repository pages.
-
-![Repomix Button Demo](https://via.placeholder.com/800x400/f0f0f0/333333?text=Repomix+Button+Demo)
 
 ## 🚀 Features
 
@@ -79,12 +77,3 @@ This extension:
 - Does not track user behavior
 - Only accesses github.com
 - Requires minimal permissions
-
-## 📄 License
-
-MIT License
-
-## 🙋‍♂️ Related Projects
-
-- [Repomix](https://github.com/yamadashy/repomix) - AI-friendly repository packing tool
-- [Repomix Website](https://repomix.com) - Online version of Repomix 
