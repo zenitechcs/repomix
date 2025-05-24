@@ -32,43 +32,14 @@ export const execGitLogFilenames = async (
   }
 };
 
-export const getWorkTreeDiff = async (
+export const execGitDiff = async (
   directory: string,
-  deps = {
-    execFileAsync,
-  },
-): Promise<string> => {
-  return getDiff(directory, [], deps);
-};
-
-export const getStagedDiff = async (
-  directory: string,
-  deps = {
-    execFileAsync,
-  },
-): Promise<string> => {
-  return getDiff(directory, ['--cached'], deps);
-};
-
-/**
- * Helper function to get git diff with common repository check and error handling
- */
-const getDiff = async (
-  directory: string,
-  options: string[],
+  options: string[] = [],
   deps = {
     execFileAsync,
   },
 ): Promise<string> => {
   try {
-    // Check if the directory is a git repository
-    const isGitRepo = await isGitRepository(directory, deps);
-    if (!isGitRepo) {
-      logger.trace('Not a git repository, skipping diff generation');
-      return '';
-    }
-
-    // Get the diff with provided options
     const result = await deps.execFileAsync('git', [
       '-C',
       directory,
@@ -79,37 +50,37 @@ const getDiff = async (
 
     return result.stdout || '';
   } catch (error) {
-    logger.trace('Failed to get git diff:', (error as Error).message);
-    return '';
+    logger.trace('Failed to execute git diff:', (error as Error).message);
+    throw error;
   }
 };
 
-export const isGitRepository = async (
+export const execGitVersion = async (
+  deps = {
+    execFileAsync,
+  },
+): Promise<string> => {
+  try {
+    const result = await deps.execFileAsync('git', ['--version']);
+    return result.stdout || '';
+  } catch (error) {
+    logger.trace('Failed to execute git version:', (error as Error).message);
+    throw error;
+  }
+};
+
+export const execGitRevParse = async (
   directory: string,
   deps = {
     execFileAsync,
   },
-): Promise<boolean> => {
+): Promise<string> => {
   try {
-    // Check if the directory is a git repository
-    await deps.execFileAsync('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
-    return true;
+    const result = await deps.execFileAsync('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
+    return result.stdout || '';
   } catch (error) {
-    return false;
-  }
-};
-
-export const isGitInstalled = async (
-  deps = {
-    execFileAsync,
-  },
-) => {
-  try {
-    const result = await deps.execFileAsync('git', ['--version']);
-    return !result.stderr;
-  } catch (error) {
-    logger.trace('Git is not installed:', (error as Error).message);
-    return false;
+    logger.trace('Failed to execute git rev-parse:', (error as Error).message);
+    throw error;
   }
 };
 

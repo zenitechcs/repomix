@@ -1,5 +1,5 @@
 import { logger } from '../../shared/logger.js';
-import { execGitLogFilenames } from './gitCommand.js';
+import { execGitDiff, execGitLogFilenames, execGitRevParse, execGitVersion } from './gitCommand.js';
 
 export const getFileChangeCount = async (
   directory: string,
@@ -21,5 +21,82 @@ export const getFileChangeCount = async (
   } catch (error) {
     logger.trace('Failed to get file change counts:', (error as Error).message);
     return {};
+  }
+};
+
+export const getWorkTreeDiff = async (
+  directory: string,
+  deps = {
+    execGitDiff,
+    isGitRepository,
+  },
+): Promise<string> => {
+  return getDiff(directory, [], deps);
+};
+
+export const getStagedDiff = async (
+  directory: string,
+  deps = {
+    execGitDiff,
+    isGitRepository,
+  },
+): Promise<string> => {
+  return getDiff(directory, ['--cached'], deps);
+};
+
+/**
+ * Helper function to get git diff with common repository check and error handling
+ */
+const getDiff = async (
+  directory: string,
+  options: string[],
+  deps = {
+    execGitDiff,
+    isGitRepository,
+  },
+): Promise<string> => {
+  try {
+    // Check if the directory is a git repository
+    const isGitRepo = await deps.isGitRepository(directory);
+    if (!isGitRepo) {
+      logger.trace('Not a git repository, skipping diff generation');
+      return '';
+    }
+
+    // Get the diff with provided options
+    const result = await deps.execGitDiff(directory, options);
+
+    return result;
+  } catch (error) {
+    logger.trace('Failed to get git diff:', (error as Error).message);
+    return '';
+  }
+};
+
+export const isGitRepository = async (
+  directory: string,
+  deps = {
+    execGitRevParse,
+  },
+): Promise<boolean> => {
+  try {
+    await deps.execGitRevParse(directory);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isGitInstalled = async (
+  deps = {
+    execGitVersion,
+  },
+): Promise<boolean> => {
+  try {
+    const result = await deps.execGitVersion();
+    return !result.includes('error') && result.includes('git version');
+  } catch (error) {
+    logger.trace('Git is not installed:', (error as Error).message);
+    return false;
   }
 };

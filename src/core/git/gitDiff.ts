@@ -1,6 +1,6 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
-import { getStagedDiff, getWorkTreeDiff } from './gitCommand.js';
+import { getStagedDiff, getWorkTreeDiff } from './gitHandle.js';
 
 export interface GitDiffResult {
   workTreeDiffContent: string;

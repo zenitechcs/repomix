@@ -3,8 +3,7 @@ import path from 'node:path';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import { isGitInstalled } from '../git/gitCommand.js';
-import { getFileChangeCount } from '../git/gitHandle.js';
+import { getFileChangeCount, isGitInstalled } from '../git/gitHandle.js';
 
 // Sort files by git change count for output
 export const sortOutputFiles = async (

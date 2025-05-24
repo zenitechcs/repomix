@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  execGitDiff,
   execGitLogFilenames,
+  execGitRevParse,
   execGitShallowClone,
+  execGitVersion,
   getRemoteRefs,
-  getWorkTreeDiff,
-  isGitInstalled,
-  isGitRepository,
 } from '../../../src/core/git/gitCommand.js';
 import { logger } from '../../../src/shared/logger.js';
 
@@ -51,130 +51,64 @@ file2.ts
     });
   });
 
-  describe('isGitInstalled', () => {
-    test('should return true when git is installed', async () => {
-      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: 'git version 2.34.1', stderr: '' });
+  describe('execGitDiff', () => {
+    test('should return git diff output', async () => {
+      const mockDiff = 'diff --git a/file.txt b/file.txt\n+new line';
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockDiff });
 
-      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(true);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
-    });
-
-    test('should return false and log error when git command fails', async () => {
-      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('Command not found: git'));
-
-      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(false);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
-      expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', 'Command not found: git');
-    });
-
-    test('should return false and log error with custom error message', async () => {
-      const customError = new Error('Custom git error message');
-      const mockFileExecAsync = vi.fn().mockRejectedValue(customError);
-
-      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(false);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
-      expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', 'Custom git error message');
-    });
-
-    test('should return false when git command fails with empty error message', async () => {
-      const customError = new Error('');
-      const mockFileExecAsync = vi.fn().mockRejectedValue(customError);
-
-      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(false);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
-      expect(logger.trace).toHaveBeenCalledWith('Git is not installed:', '');
-    });
-
-    test('should return false when git command returns stderr', async () => {
-      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: '', stderr: 'git: command not found' });
-
-      const result = await isGitInstalled({ execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(false);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
-    });
-  });
-
-  describe('isGitRepository', () => {
-    test('should return true when directory is a git repository', async () => {
-      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: 'true', stderr: '' });
-      const directory = '/test/dir';
-
-      const result = await isGitRepository(directory, { execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(true);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
-    });
-
-    test('should return false when directory is not a git repository', async () => {
-      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('Not a git repository'));
-      const directory = '/test/dir';
-
-      const result = await isGitRepository(directory, { execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe(false);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
-    });
-  });
-
-  describe('getWorkTreeDiff', () => {
-    test('should return diffs when directory is a git repository', async () => {
-      const mockDiff =
-        'diff --git a/file.txt b/file.txt\nindex 1234..5678 100644\n--- a/file.txt\n+++ b/file.txt\n@@ -1,5 +1,5 @@\n-old line\n+new line';
-      const mockFileExecAsync = vi
-        .fn()
-        .mockResolvedValueOnce({ stdout: 'true', stderr: '' }) // isGitRepository
-        .mockResolvedValueOnce({ stdout: mockDiff, stderr: '' }); // git diff
-
-      const directory = '/test/dir';
-      const result = await getWorkTreeDiff(directory, { execFileAsync: mockFileExecAsync });
+      const result = await execGitDiff('/test/dir', [], { execFileAsync: mockFileExecAsync });
 
       expect(result).toBe(mockDiff);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', [
-        '-C',
-        directory,
-        'rev-parse',
-        '--is-inside-work-tree',
-      ]);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'diff', '--no-color']);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['-C', '/test/dir', 'diff', '--no-color']);
     });
 
-    test('should return empty string when directory is not a git repository', async () => {
+    test('should throw error when git diff fails', async () => {
+      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('git command failed'));
+
+      await expect(execGitDiff('/test/dir', [], { execFileAsync: mockFileExecAsync })).rejects.toThrow(
+        'git command failed',
+      );
+      expect(logger.trace).toHaveBeenCalledWith('Failed to execute git diff:', 'git command failed');
+    });
+  });
+
+  describe('execGitVersion', () => {
+    test('should return git version output', async () => {
+      const mockVersion = 'git version 2.34.1';
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockVersion });
+
+      const result = await execGitVersion({ execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(mockVersion);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['--version']);
+    });
+
+    test('should throw error when git version fails', async () => {
+      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('Command not found: git'));
+
+      await expect(execGitVersion({ execFileAsync: mockFileExecAsync })).rejects.toThrow('Command not found: git');
+      expect(logger.trace).toHaveBeenCalledWith('Failed to execute git version:', 'Command not found: git');
+    });
+  });
+
+  describe('execGitRevParse', () => {
+    test('should return git rev-parse output', async () => {
+      const mockOutput = 'true';
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await execGitRevParse('/test/dir', { execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(mockOutput);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['-C', '/test/dir', 'rev-parse', '--is-inside-work-tree']);
+    });
+
+    test('should throw error when git rev-parse fails', async () => {
       const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('Not a git repository'));
-      const directory = '/test/dir';
 
-      const result = await getWorkTreeDiff(directory, { execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe('');
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
-    });
-
-    test('should return empty string when git diff command fails', async () => {
-      const mockFileExecAsync = vi
-        .fn()
-        .mockResolvedValueOnce({ stdout: 'true', stderr: '' }) // isGitRepository success
-        .mockRejectedValueOnce(new Error('Failed to get diff')); // git diff failure
-
-      const directory = '/test/dir';
-      const result = await getWorkTreeDiff(directory, { execFileAsync: mockFileExecAsync });
-
-      expect(result).toBe('');
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', [
-        '-C',
-        directory,
-        'rev-parse',
-        '--is-inside-work-tree',
-      ]);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'diff', '--no-color']);
-      expect(logger.trace).toHaveBeenCalledWith('Failed to get git diff:', 'Failed to get diff');
+      await expect(execGitRevParse('/test/dir', { execFileAsync: mockFileExecAsync })).rejects.toThrow(
+        'Not a git repository',
+      );
+      expect(logger.trace).toHaveBeenCalledWith('Failed to execute git rev-parse:', 'Not a git repository');
     });
   });
 
