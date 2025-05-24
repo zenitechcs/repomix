@@ -5,29 +5,6 @@ import { promisify } from 'node:util';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 
-/**
- * Validates a Git URL for security and format
- * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters
- */
-const validateGitUrl = (url: string): void => {
-  if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
-    throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
-  }
-
-  // Check if the URL starts with git@ or https://
-  if (!(url.startsWith('git@') || url.startsWith('https://'))) {
-    throw new RepomixError(`Invalid remote: ${url}`);
-  }
-
-  try {
-    if (url.startsWith('https://')) {
-      new URL(url);
-    }
-  } catch (error) {
-    throw new RepomixError(`Invalid repository URL. Please provide a valid URL: ${url}`);
-  }
-};
-
 const execFileAsync = promisify(execFile);
 
 export const getFileChangeCount = async (
@@ -224,4 +201,27 @@ export const execGitShallowClone = async (
 
   // Clean up .git directory
   await fs.rm(path.join(directory, '.git'), { recursive: true, force: true });
+};
+
+/**
+ * Validates a Git URL for security and format
+ * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters
+ */
+const validateGitUrl = (url: string): void => {
+  if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
+    throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
+  }
+
+  // Check if the URL starts with git@ or https://
+  if (!(url.startsWith('git@') || url.startsWith('https://'))) {
+    throw new RepomixError(`Invalid remote: ${url}`);
+  }
+
+  try {
+    if (url.startsWith('https://')) {
+      new URL(url);
+    }
+  } catch (error) {
+    throw new RepomixError(`Invalid repository URL. Please provide a valid URL: ${url}`);
+  }
 };
