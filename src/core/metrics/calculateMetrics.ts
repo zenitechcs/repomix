@@ -1,7 +1,7 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import type { GitDiffResult } from '../git/gitDiff.js';
+import type { GitDiffResult } from '../git/gitHandle.js';
 import { calculateAllFileMetrics } from './calculateAllFileMetrics.js';
 import { calculateOutputMetrics } from './calculateOutputMetrics.js';
 

@@ -10,6 +10,7 @@ vi.mock('../../../src/core/git/gitHandle.js', () => ({
   getWorkTreeDiff: vi.fn(),
   getStagedDiff: vi.fn(),
   isGitRepository: vi.fn(),
+  getGitDiffs: vi.fn(),
 }));
 
 describe('Git Diffs Functionality', () => {
