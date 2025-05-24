@@ -5,7 +5,7 @@ import { sortPaths } from './file/filePathSort.js';
 import { processFiles } from './file/fileProcess.js';
 import { searchFiles } from './file/fileSearch.js';
 import type { RawFile } from './file/fileTypes.js';
-import { GitDiffResult, getGitDiffs } from './git/gitHandle.js';
+import { GitDiffResult, getGitDiffs } from './git/gitDiffHandle.js';
 import { calculateMetrics } from './metrics/calculateMetrics.js';
 import { generateOutput } from './output/outputGenerate.js';
 import { copyToClipboardIfEnabled } from './packager/copyToClipboardIfEnabled.js';
