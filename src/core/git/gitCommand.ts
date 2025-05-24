@@ -214,7 +214,7 @@ const validateGitUrl = (url: string): void => {
 
   // Check if the URL starts with git@ or https://
   if (!(url.startsWith('git@') || url.startsWith('https://'))) {
-    throw new RepomixError(`Invalid remote: ${url}`);
+    throw new RepomixError(`Invalid URL protocol for '${url}'. URL must start with 'git@' or 'https://'`);
   }
 
   try {
