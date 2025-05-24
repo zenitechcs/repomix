@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   getFileChangeCount,
+  getRemoteRefs,
   getStagedDiff,
   getWorkTreeDiff,
   isGitInstalled,
@@ -176,6 +177,56 @@ describe('gitHandle', () => {
 
       expect(result).toBe(false);
       expect(mockExecGitVersion).toHaveBeenCalled();
+    });
+  });
+
+  describe('getRemoteRefs', () => {
+    test('should return refs when URL is valid', async () => {
+      const mockOutput = `
+a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6\trefs/heads/main
+b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7\trefs/heads/develop
+c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8\trefs/tags/v1.0.0
+`.trim();
+      const mockExecLsRemote = vi.fn().mockResolvedValue(mockOutput);
+
+      const result = await getRemoteRefs('https://github.com/user/repo.git', {
+        execLsRemote: mockExecLsRemote,
+      });
+
+      expect(result).toEqual(['main', 'develop', 'v1.0.0']);
+      expect(mockExecLsRemote).toHaveBeenCalledWith('https://github.com/user/repo.git');
+    });
+
+    test('should throw error when URL does not start with git@ or https://', async () => {
+      const mockExecLsRemote = vi.fn();
+
+      await expect(getRemoteRefs('invalid-url', { execLsRemote: mockExecLsRemote })).rejects.toThrow(
+        "Invalid URL protocol for 'invalid-url'. URL must start with 'git@' or 'https://'",
+      );
+
+      expect(mockExecLsRemote).not.toHaveBeenCalled();
+    });
+
+    test('should throw error when URL contains dangerous parameters', async () => {
+      const mockExecLsRemote = vi.fn();
+
+      await expect(
+        getRemoteRefs('https://github.com/user/repo.git --upload-pack=evil-command', {
+          execLsRemote: mockExecLsRemote,
+        }),
+      ).rejects.toThrow('Invalid repository URL. URL contains potentially dangerous parameters');
+
+      expect(mockExecLsRemote).not.toHaveBeenCalled();
+    });
+
+    test('should throw error when git command fails', async () => {
+      const mockExecLsRemote = vi.fn().mockRejectedValue(new Error('git command failed'));
+
+      await expect(
+        getRemoteRefs('https://github.com/user/repo.git', { execLsRemote: mockExecLsRemote }),
+      ).rejects.toThrow('Failed to get remote refs: git command failed');
+
+      expect(mockExecLsRemote).toHaveBeenCalledWith('https://github.com/user/repo.git');
     });
   });
 });

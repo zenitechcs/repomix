@@ -84,37 +84,18 @@ export const execGitRevParse = async (
   }
 };
 
-export const getRemoteRefs = async (
+export const execLsRemote = async (
   url: string,
   deps = {
     execFileAsync,
   },
-): Promise<string[]> => {
-  validateGitUrl(url);
-
+): Promise<string> => {
   try {
     const result = await deps.execFileAsync('git', ['ls-remote', '--heads', '--tags', url]);
-
-    // Extract ref names from the output
-    // Format is: hash\tref_name
-    const refs = result.stdout
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => {
-        // Skip the hash part and extract only the ref name
-        const parts = line.split('\t');
-        if (parts.length < 2) return '';
-
-        // Remove 'refs/heads/' or 'refs/tags/' prefix
-        return parts[1].replace(/^refs\/(heads|tags)\//, '');
-      })
-      .filter(Boolean);
-
-    logger.trace(`Found ${refs.length} refs in repository: ${url}`);
-    return refs;
+    return result.stdout || '';
   } catch (error) {
-    logger.trace('Failed to get remote refs:', (error as Error).message);
-    throw new RepomixError(`Failed to get remote refs: ${(error as Error).message}`);
+    logger.trace('Failed to execute git ls-remote:', (error as Error).message);
+    throw error;
   }
 };
 
@@ -171,7 +152,7 @@ export const execGitShallowClone = async (
  * Validates a Git URL for security and format
  * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters
  */
-const validateGitUrl = (url: string): void => {
+export const validateGitUrl = (url: string): void => {
   if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
     throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
   }
