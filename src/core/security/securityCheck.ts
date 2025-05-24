@@ -3,7 +3,7 @@ import { logger } from '../../shared/logger.js';
 import { initPiscina } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
-import type { GitDiffResult } from '../git/gitDiff.js';
+import type { GitDiffResult } from '../git/gitDiffHandle.js';
 import type { SecurityCheckTask, SecurityCheckType } from './workers/securityCheckWorker.js';
 
 export interface SuspiciousFileResult {

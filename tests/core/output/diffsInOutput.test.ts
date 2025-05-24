@@ -1,15 +1,19 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import * as gitCommandModule from '../../../src/core/git/gitCommand.js';
-import type { GitDiffResult } from '../../../src/core/git/gitDiff.js';
+import type { GitDiffResult } from '../../../src/core/git/gitDiffHandle.js';
+import * as gitDiffModule from '../../../src/core/git/gitDiffHandle.js';
+import * as gitRepositoryModule from '../../../src/core/git/gitRepositoryHandle.js';
 import { buildOutputGeneratorContext, generateOutput } from '../../../src/core/output/outputGenerate.js';
 import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
-// Mock the gitCommand module
-vi.mock('../../../src/core/git/gitCommand.js', () => ({
+// Mock the git modules
+vi.mock('../../../src/core/git/gitDiffHandle.js', () => ({
   getWorkTreeDiff: vi.fn(),
+}));
+
+vi.mock('../../../src/core/git/gitRepositoryHandle.js', () => ({
   isGitRepository: vi.fn(),
 }));
 
@@ -28,8 +32,8 @@ index 123..456 100644
     vi.resetAllMocks();
 
     // Mock the git command
-    vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
-    vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);
+    vi.mocked(gitDiffModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
+    vi.mocked(gitRepositoryModule.isGitRepository).mockResolvedValue(true);
 
     // Sample minimal config using createMockConfig utility
     mockConfig = createMockConfig({

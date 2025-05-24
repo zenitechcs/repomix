@@ -1,14 +1,19 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import * as gitCommandModule from '../../../src/core/git/gitCommand.js';
+import * as gitDiffModule from '../../../src/core/git/gitDiffHandle.js';
+import * as gitRepositoryModule from '../../../src/core/git/gitRepositoryHandle.js';
 import { pack } from '../../../src/core/packager.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the dependencies
-vi.mock('../../../src/core/git/gitCommand.js', () => ({
+vi.mock('../../../src/core/git/gitDiffHandle.js', () => ({
   getWorkTreeDiff: vi.fn(),
   getStagedDiff: vi.fn(),
+  getGitDiffs: vi.fn(),
+}));
+
+vi.mock('../../../src/core/git/gitRepositoryHandle.js', () => ({
   isGitRepository: vi.fn(),
 }));
 
@@ -40,9 +45,9 @@ index 123..456 100644
     });
 
     // Set up our mocks
-    vi.mocked(gitCommandModule.isGitRepository).mockResolvedValue(true);
-    vi.mocked(gitCommandModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
-    vi.mocked(gitCommandModule.getStagedDiff).mockResolvedValue('');
+    vi.mocked(gitRepositoryModule.isGitRepository).mockResolvedValue(true);
+    vi.mocked(gitDiffModule.getWorkTreeDiff).mockResolvedValue(sampleDiff);
+    vi.mocked(gitDiffModule.getStagedDiff).mockResolvedValue('');
   });
 
   test('should not fetch diffs when includeDiffs is disabled', async () => {
@@ -85,7 +90,7 @@ index 123..456 100644
     });
 
     // Should not call getWorkTreeDiff
-    expect(gitCommandModule.getWorkTreeDiff).not.toHaveBeenCalled();
+    expect(gitDiffModule.getWorkTreeDiff).not.toHaveBeenCalled();
   });
 
   test('should calculate diff token count correctly', async () => {

@@ -7,13 +7,13 @@ import { logger } from '../../shared/logger.js';
 
 const execFileAsync = promisify(execFile);
 
-export const getFileChangeCount = async (
+export const execGitLogFilenames = async (
   directory: string,
   maxCommits = 100,
   deps = {
     execFileAsync,
   },
-): Promise<Record<string, number>> => {
+): Promise<string[]> => {
   try {
     const result = await deps.execFileAsync('git', [
       '-C',
@@ -25,57 +25,21 @@ export const getFileChangeCount = async (
       maxCommits.toString(),
     ]);
 
-    const fileChangeCounts: Record<string, number> = {};
-    const lines = result.stdout.split('\n').filter(Boolean);
-
-    for (const line of lines) {
-      fileChangeCounts[line] = (fileChangeCounts[line] || 0) + 1;
-    }
-
-    return fileChangeCounts;
+    return result.stdout.split('\n').filter(Boolean);
   } catch (error) {
-    logger.trace('Failed to get file change counts:', (error as Error).message);
-    return {};
+    logger.trace('Failed to get git log filenames:', (error as Error).message);
+    return [];
   }
 };
 
-export const getWorkTreeDiff = async (
+export const execGitDiff = async (
   directory: string,
-  deps = {
-    execFileAsync,
-  },
-): Promise<string> => {
-  return getDiff(directory, [], deps);
-};
-
-export const getStagedDiff = async (
-  directory: string,
-  deps = {
-    execFileAsync,
-  },
-): Promise<string> => {
-  return getDiff(directory, ['--cached'], deps);
-};
-
-/**
- * Helper function to get git diff with common repository check and error handling
- */
-const getDiff = async (
-  directory: string,
-  options: string[],
+  options: string[] = [],
   deps = {
     execFileAsync,
   },
 ): Promise<string> => {
   try {
-    // Check if the directory is a git repository
-    const isGitRepo = await isGitRepository(directory, deps);
-    if (!isGitRepo) {
-      logger.trace('Not a git repository, skipping diff generation');
-      return '';
-    }
-
-    // Get the diff with provided options
     const result = await deps.execFileAsync('git', [
       '-C',
       directory,
@@ -86,71 +50,52 @@ const getDiff = async (
 
     return result.stdout || '';
   } catch (error) {
-    logger.trace('Failed to get git diff:', (error as Error).message);
-    return '';
+    logger.trace('Failed to execute git diff:', (error as Error).message);
+    throw error;
   }
 };
 
-export const isGitRepository = async (
+export const execGitVersion = async (
+  deps = {
+    execFileAsync,
+  },
+): Promise<string> => {
+  try {
+    const result = await deps.execFileAsync('git', ['--version']);
+    return result.stdout || '';
+  } catch (error) {
+    logger.trace('Failed to execute git version:', (error as Error).message);
+    throw error;
+  }
+};
+
+export const execGitRevParse = async (
   directory: string,
   deps = {
     execFileAsync,
   },
-): Promise<boolean> => {
+): Promise<string> => {
   try {
-    // Check if the directory is a git repository
-    await deps.execFileAsync('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
-    return true;
+    const result = await deps.execFileAsync('git', ['-C', directory, 'rev-parse', '--is-inside-work-tree']);
+    return result.stdout || '';
   } catch (error) {
-    return false;
+    logger.trace('Failed to execute git rev-parse:', (error as Error).message);
+    throw error;
   }
 };
 
-export const isGitInstalled = async (
-  deps = {
-    execFileAsync,
-  },
-) => {
-  try {
-    const result = await deps.execFileAsync('git', ['--version']);
-    return !result.stderr;
-  } catch (error) {
-    logger.trace('Git is not installed:', (error as Error).message);
-    return false;
-  }
-};
-
-export const getRemoteRefs = async (
+export const execLsRemote = async (
   url: string,
   deps = {
     execFileAsync,
   },
-): Promise<string[]> => {
-  validateGitUrl(url);
-
+): Promise<string> => {
   try {
     const result = await deps.execFileAsync('git', ['ls-remote', '--heads', '--tags', url]);
-
-    // Extract ref names from the output
-    // Format is: hash\tref_name
-    const refs = result.stdout
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => {
-        // Skip the hash part and extract only the ref name
-        const parts = line.split('\t');
-        if (parts.length < 2) return '';
-
-        // Remove 'refs/heads/' or 'refs/tags/' prefix
-        return parts[1].replace(/^refs\/(heads|tags)\//, '');
-      })
-      .filter(Boolean);
-
-    logger.trace(`Found ${refs.length} refs in repository: ${url}`);
-    return refs;
+    return result.stdout || '';
   } catch (error) {
-    logger.trace('Failed to get remote refs:', (error as Error).message);
-    throw new RepomixError(`Failed to get remote refs: ${(error as Error).message}`);
+    logger.trace('Failed to execute git ls-remote:', (error as Error).message);
+    throw error;
   }
 };
 
@@ -207,7 +152,7 @@ export const execGitShallowClone = async (
  * Validates a Git URL for security and format
  * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters
  */
-const validateGitUrl = (url: string): void => {
+export const validateGitUrl = (url: string): void => {
   if (url.includes('--upload-pack') || url.includes('--config') || url.includes('--exec')) {
     throw new RepomixError(`Invalid repository URL. URL contains potentially dangerous parameters: ${url}`);
   }

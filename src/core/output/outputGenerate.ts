@@ -7,7 +7,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
-import type { GitDiffResult } from '../git/gitDiff.js';
+import type { GitDiffResult } from '../git/gitDiffHandle.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import { sortOutputFiles } from './outputSort.js';
 import {

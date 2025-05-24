@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
-import type { GitDiffResult } from '../../../src/core/git/gitDiff.js';
+import type { GitDiffResult } from '../../../src/core/git/gitDiffHandle.js';
 import { generateOutput } from '../../../src/core/output/outputGenerate.js';
 import type { RenderContext } from '../../../src/core/output/outputGeneratorTypes.js';
 import { createMockConfig } from '../../testing/testUtils.js';
