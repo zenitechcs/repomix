@@ -359,7 +359,7 @@ c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8\trefs/tags/v1.0.0
       const mockFileExecAsync = vi.fn();
 
       await expect(getRemoteRefs('invalid-url', { execFileAsync: mockFileExecAsync })).rejects.toThrow(
-        "Invalid URL protocol for 'invalid-url'. URL must start with 'git@' or 'https://'"
+        "Invalid URL protocol for 'invalid-url'. URL must start with 'git@' or 'https://'",
       );
 
       expect(mockFileExecAsync).not.toHaveBeenCalled();
