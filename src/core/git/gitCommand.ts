@@ -7,13 +7,13 @@ import { logger } from '../../shared/logger.js';
 
 const execFileAsync = promisify(execFile);
 
-export const getFileChangeCount = async (
+export const execGitLogFilenames = async (
   directory: string,
   maxCommits = 100,
   deps = {
     execFileAsync,
   },
-): Promise<Record<string, number>> => {
+): Promise<string[]> => {
   try {
     const result = await deps.execFileAsync('git', [
       '-C',
@@ -25,17 +25,10 @@ export const getFileChangeCount = async (
       maxCommits.toString(),
     ]);
 
-    const fileChangeCounts: Record<string, number> = {};
-    const lines = result.stdout.split('\n').filter(Boolean);
-
-    for (const line of lines) {
-      fileChangeCounts[line] = (fileChangeCounts[line] || 0) + 1;
-    }
-
-    return fileChangeCounts;
+    return result.stdout.split('\n').filter(Boolean);
   } catch (error) {
-    logger.trace('Failed to get file change counts:', (error as Error).message);
-    return {};
+    logger.trace('Failed to get git log filenames:', (error as Error).message);
+    return [];
   }
 };
 
