@@ -8,6 +8,7 @@ import { runSecurityCheck } from '../../../src/core/security/securityCheck.js';
 import type { SecurityCheckTask } from '../../../src/core/security/workers/securityCheckWorker.js';
 import securityCheckWorker from '../../../src/core/security/workers/securityCheckWorker.js';
 import { logger } from '../../../src/shared/logger.js';
+import { repomixLogLevels } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');
 vi.mock('../../../src/shared/processConcurrency', () => ({
@@ -122,7 +123,7 @@ describe('runSecurityCheck', () => {
   it('should use default initTaskRunner when no deps provided', async () => {
     // Test the default initTaskRunner function (lines 16-18)
     // Mock logger.getLogLevel to return a valid value
-    vi.mocked(logger.getLogLevel).mockReturnValue('info' as any);
+    vi.mocked(logger.getLogLevel).mockReturnValue(repomixLogLevels.INFO);
 
     const result = await runSecurityCheck(mockFiles, () => {});
 
@@ -146,12 +147,8 @@ describe('runSecurityCheck', () => {
     expect(progressCallback).toHaveBeenCalledTimes(4);
 
     // Check that Git diff tasks were processed
-    expect(progressCallback).toHaveBeenCalledWith(
-      expect.stringContaining('Working tree changes'),
-    );
-    expect(progressCallback).toHaveBeenCalledWith(
-      expect.stringContaining('Staged changes'),
-    );
+    expect(progressCallback).toHaveBeenCalledWith(expect.stringContaining('Working tree changes'));
+    expect(progressCallback).toHaveBeenCalledWith(expect.stringContaining('Staged changes'));
 
     // Should find security issues in files (at least 1 from test1.js)
     expect(result.length).toBeGreaterThanOrEqual(1);
@@ -172,13 +169,9 @@ describe('runSecurityCheck', () => {
     expect(progressCallback).toHaveBeenCalledTimes(3);
 
     // Check that only working tree diff was processed
-    expect(progressCallback).toHaveBeenCalledWith(
-      expect.stringContaining('Working tree changes'),
-    );
+    expect(progressCallback).toHaveBeenCalledWith(expect.stringContaining('Working tree changes'));
     // Staged changes should not be processed because content is empty string (falsy)
-    expect(progressCallback).not.toHaveBeenCalledWith(
-      expect.stringContaining('Staged changes'),
-    );
+    expect(progressCallback).not.toHaveBeenCalledWith(expect.stringContaining('Staged changes'));
   });
 
   it('should process only stagedDiffContent when workTreeDiffContent is not available', async () => {
@@ -196,13 +189,9 @@ describe('runSecurityCheck', () => {
     expect(progressCallback).toHaveBeenCalledTimes(3);
 
     // Check that only staged diff was processed
-    expect(progressCallback).toHaveBeenCalledWith(
-      expect.stringContaining('Staged changes'),
-    );
+    expect(progressCallback).toHaveBeenCalledWith(expect.stringContaining('Staged changes'));
     // Working tree changes should not be processed because content is empty string (falsy)
-    expect(progressCallback).not.toHaveBeenCalledWith(
-      expect.stringContaining('Working tree changes'),
-    );
+    expect(progressCallback).not.toHaveBeenCalledWith(expect.stringContaining('Working tree changes'));
   });
 
   it('should handle gitDiffResult with no diff content', async () => {
@@ -220,11 +209,7 @@ describe('runSecurityCheck', () => {
     expect(progressCallback).toHaveBeenCalledTimes(2);
 
     // Check that no git diff tasks were processed
-    expect(progressCallback).not.toHaveBeenCalledWith(
-      expect.stringContaining('Working tree changes'),
-    );
-    expect(progressCallback).not.toHaveBeenCalledWith(
-      expect.stringContaining('Staged changes'),
-    );
+    expect(progressCallback).not.toHaveBeenCalledWith(expect.stringContaining('Working tree changes'));
+    expect(progressCallback).not.toHaveBeenCalledWith(expect.stringContaining('Staged changes'));
   });
 });
