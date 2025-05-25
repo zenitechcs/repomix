@@ -51,6 +51,20 @@ Fonctionnalités:
 
 Installez-la depuis le [Marketplace VSCode](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner).
 
+## Extension de navigateur
+
+Accédez instantanément à Repomix directement depuis n'importe quel dépôt GitHub ! Notre extension Chrome ajoute un bouton "Repomix" pratique aux pages de dépôt GitHub.
+
+![Repomix Browser Extension](/images/docs/browser-extension.png)
+
+### Installation
+- Extension Chrome : [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Module Firefox : Bientôt disponible
+
+### Fonctionnalités
+- Accès en un clic à Repomix pour n'importe quel dépôt GitHub
+- D'autres fonctionnalités passionnantes arrivent bientôt !
+
 ## Configuration requise
 
 - Node.js: ≥ 18.0.0

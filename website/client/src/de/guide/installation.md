@@ -50,6 +50,20 @@ Funktionen:
 
 Installieren Sie sie vom [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner).
 
+## Browser-Erweiterung
+
+Erhalten Sie direkten Zugang zu Repomix von jedem GitHub-Repository! Unsere Chrome-Erweiterung fügt einen praktischen "Repomix"-Button zu GitHub-Repository-Seiten hinzu.
+
+![Repomix Browser Extension](/images/docs/browser-extension.png)
+
+### Installation
+- Chrome-Erweiterung: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Firefox-Add-on: Demnächst verfügbar
+
+### Funktionen
+- Ein-Klick-Zugang zu Repomix für jedes GitHub-Repository
+- Weitere aufregende Funktionen kommen bald!
+
 ## Systemanforderungen
 
 - Node.js: ≥ 18.0.0

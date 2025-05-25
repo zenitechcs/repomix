@@ -26,7 +26,6 @@ features:
 
 <div class="cli-section">
 
-
 ## Quick Start
 
 Once you've generated a packed file (`repomix-output.xml`) using Repomix, you can send it to an AI assistant (like ChatGPT, Claude) with a prompt like:

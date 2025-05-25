@@ -50,6 +50,20 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 從 [VSCode 應用商店](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)安裝。
 
+## 瀏覽器擴充功能
+
+直接從任何 GitHub 倉庫存取 Repomix！我們的 Chrome 擴充功能在 GitHub 倉庫頁面新增了便捷的「Repomix」按鈕。
+
+![Repomix Browser Extension](/images/docs/browser-extension.png)
+
+### 安裝
+- Chrome 擴充功能: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Firefox 附加元件: 即將推出
+
+### 功能
+- 一鍵從 GitHub 倉庫存取 Repomix
+- 更多精彩功能即將推出！
+
 ## 系統要求
 
 - Node.js: ≥ 18.0.0
