@@ -50,6 +50,20 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 [VSCode 마켓플레이스](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)에서 설치하세요.
 
+## 브라우저 확장 프로그램
+
+GitHub 저장소에서 직접 Repomix에 액세스하세요! Chrome 확장 프로그램이 GitHub 저장소 페이지에 편리한 "Repomix" 버튼을 추가합니다.
+
+![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+
+### 설치
+- Chrome 확장 프로그램: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Firefox 애드온: 곧 출시 예정
+
+### 기능
+- GitHub 저장소에서 원클릭으로 Repomix 액세스
+- 더 많은 흥미로운 기능이 곧 출시됩니다!
+
 ## 시스템 요구 사항
 
 - Node.js: 18.0.0 이상

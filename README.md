@@ -125,6 +125,20 @@ The website offers several convenient features:
 - Instant token count estimation
 - Much more!
 
+### Using The Browser Extension 🧩
+
+Get instant access to Repomix directly from any GitHub repository! Our Chrome extension adds a convenient "Repomix" button to GitHub repository pages.
+
+![Repomix Browser Extension](website/client/src/public/images/docs/browser-extension.png)
+
+#### Install
+- Chrome Extension: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Firefox Add-on: Coming soon
+
+#### Features
+- One-click access to Repomix for any GitHub repository
+- More exciting features coming soon!
+
 ### Using The VSCode Extension ⚡️
 
 A community-maintained VSCode extension called [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) (created by [massdo](https://github.com/massdo)) lets you run Repomix right inside your editor with just a few clicks. Run it on any folder, manage outputs seamlessly, and control everything through VSCode's intuitive interface. 

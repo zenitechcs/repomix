@@ -50,6 +50,20 @@ VSCodeでRepomixを直接実行できるコミュニティメンテナンスの[
 
 [VSCode マーケットプレイス](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)からインストールできます。
 
+## ブラウザ拡張機能
+
+GitHubリポジトリから直接Repomixにアクセスできます！Chrome拡張機能がGitHubリポジトリページに便利な「Repomix」ボタンを追加します。
+
+![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+
+### インストール
+- Chrome拡張: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Firefox アドオン: 近日公開予定
+
+### 機能
+- GitHubリポジトリからワンクリックでRepomixにアクセス
+- さらなる機能を開発中です！
+
 ## システム要件
 
 - Node.js: 18.0.0 以上
