@@ -32,6 +32,8 @@ describe('PackCodebaseTool', () => {
     suspiciousFilesResults: [],
     gitDiffTokenCount: 0,
     suspiciousGitDiffResults: [],
+    processedFiles: [],
+    safeFilePaths: [],
   };
 
   beforeEach(() => {

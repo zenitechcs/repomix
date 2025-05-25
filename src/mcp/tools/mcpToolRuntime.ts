@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { generateFileTree } from '../../core/file/fileTreeGenerate.js';
+import type { ProcessedFile } from '../../core/file/fileTypes.js';
 import { logger } from '../../shared/logger.js';
 
 // Map to store generated output files
@@ -22,9 +24,10 @@ export interface McpToolMetrics {
   totalFiles: number;
   totalCharacters: number;
   totalTokens: number;
-  totalLines: number;
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
+  processedFiles: ProcessedFile[];
+  safeFilePaths: string[];
 }
 
 export interface McpToolContext {
@@ -81,6 +84,9 @@ export const formatToolResponse = async (
     .sort((a, b) => b.charCount - a.charCount)
     .slice(0, topFilesLen);
 
+  // File Tree
+  const fileTree = generateFileTree(metrics.safeFilePaths, []);
+
   // Create JSON string with all the metrics information
   const jsonResult = JSON.stringify(
     {
@@ -95,6 +101,7 @@ export const formatToolResponse = async (
         totalLines,
         topFiles,
       },
+      fileTree,
     },
     null,
     2,

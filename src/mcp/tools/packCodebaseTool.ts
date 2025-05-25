@@ -86,9 +86,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         // Extract metrics information from the pack result
         const { packResult } = result;
 
-        const metricsWithLines = { ...packResult, totalLines: 0 };
-
-        return await formatToolResponse({ directory }, metricsWithLines, outputFilePath, topFilesLength);
+        return await formatToolResponse({ directory }, packResult, outputFilePath, topFilesLength);
       } catch (error) {
         return formatToolError(error);
       }
