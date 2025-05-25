@@ -152,4 +152,15 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Error: Start line 10 exceeds total lines (3)');
   });
+
+  it('should return an error if startLine is greater than endLine', async () => {
+    vi.mocked(mcpToolRuntime.getOutputFilePath).mockReturnValue('/path/to/file.xml');
+    vi.mocked(fs.access).mockResolvedValue(undefined);
+    vi.mocked(fs.readFile).mockResolvedValue('Line 1\nLine 2\nLine 3\nLine 4\nLine 5' as unknown as Buffer);
+
+    const result = await toolHandler({ outputId: 'test-id', startLine: 4, endLine: 2 });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: Start line (4) cannot be greater than end line (2)');
+  });
 });

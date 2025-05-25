@@ -68,6 +68,19 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
 
         let processedContent = content;
         if (startLine !== undefined || endLine !== undefined) {
+          // Validate that startLine is less than or equal to endLine when both are provided
+          if (startLine !== undefined && endLine !== undefined && startLine > endLine) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: 'text',
+                  text: `Error: Start line (${startLine}) cannot be greater than end line (${endLine}).`,
+                },
+              ],
+            };
+          }
+
           const lines = content.split('\n');
           const start = Math.max(0, (startLine || 1) - 1);
           const end = endLine ? Math.min(lines.length, endLine) : lines.length;
