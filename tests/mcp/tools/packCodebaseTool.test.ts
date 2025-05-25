@@ -8,7 +8,15 @@ import { registerPackCodebaseTool } from '../../../src/mcp/tools/packCodebaseToo
 
 vi.mock('node:path');
 vi.mock('../../../src/cli/cliRun.js');
-vi.mock('../../../src/mcp/tools/mcpToolRuntime.js');
+vi.mock('../../../src/mcp/tools/mcpToolRuntime.js', async () => {
+  const actual = await vi.importActual('../../../src/mcp/tools/mcpToolRuntime.js');
+  return {
+    ...actual,
+    createToolWorkspace: vi.fn(),
+    formatToolError: vi.fn(),
+    formatToolResponse: vi.fn(),
+  };
+});
 
 describe('PackCodebaseTool', () => {
   const mockServer = {
@@ -144,14 +152,7 @@ describe('PackCodebaseTool', () => {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(
-            {
-              success: false,
-              error: 'Failed to return a result',
-            },
-            null,
-            2,
-          ),
+          text: 'Failed to return a result',
         },
       ],
     });

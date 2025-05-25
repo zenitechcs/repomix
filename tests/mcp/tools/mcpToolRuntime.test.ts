@@ -4,6 +4,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  buildMcpToolErrorResponse,
+  buildMcpToolSuccessResponse,
   createToolWorkspace,
   formatToolError,
   formatToolResponse,
@@ -186,6 +188,106 @@ describe('mcpToolRuntime', () => {
       expect(jsonContent.metrics.topFiles[1].path).toBe('file2.js');
       expect(jsonContent.metrics.topFiles[2].path).toBe('file3.js');
       expect(jsonContent.metrics.totalLines).toBe(5);
+    });
+  });
+
+  describe('buildMcpToolSuccessResponse', () => {
+    it('should create a successful response with single message', () => {
+      const messages = ['Operation completed successfully'];
+      const response = buildMcpToolSuccessResponse(messages);
+
+      expect(response).toEqual({
+        content: [
+          {
+            type: 'text',
+            text: 'Operation completed successfully',
+          },
+        ],
+      });
+      expect(response.isError).toBeUndefined();
+    });
+
+    it('should create a successful response with multiple messages', () => {
+      const messages = ['First message', 'Second message', 'Third message'];
+      const response = buildMcpToolSuccessResponse(messages);
+
+      expect(response).toEqual({
+        content: [
+          {
+            type: 'text',
+            text: 'First message',
+          },
+          {
+            type: 'text',
+            text: 'Second message',
+          },
+          {
+            type: 'text',
+            text: 'Third message',
+          },
+        ],
+      });
+      expect(response.isError).toBeUndefined();
+    });
+
+    it('should create a successful response with empty messages array', () => {
+      const messages: string[] = [];
+      const response = buildMcpToolSuccessResponse(messages);
+
+      expect(response).toEqual({
+        content: [],
+      });
+      expect(response.isError).toBeUndefined();
+    });
+  });
+
+  describe('buildMcpToolErrorResponse', () => {
+    it('should create an error response with single message', () => {
+      const errorMessages = ['Something went wrong'];
+      const response = buildMcpToolErrorResponse(errorMessages);
+
+      expect(response).toEqual({
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: 'Something went wrong',
+          },
+        ],
+      });
+    });
+
+    it('should create an error response with multiple messages', () => {
+      const errorMessages = ['Error 1', 'Error 2', 'Error 3'];
+      const response = buildMcpToolErrorResponse(errorMessages);
+
+      expect(response).toEqual({
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: 'Error 1',
+          },
+          {
+            type: 'text',
+            text: 'Error 2',
+          },
+          {
+            type: 'text',
+            text: 'Error 3',
+          },
+        ],
+      });
+    });
+
+    it('should create an error response with empty messages array', () => {
+      const errorMessages: string[] = [];
+      const response = buildMcpToolErrorResponse(errorMessages);
+
+      expect(response).toEqual({
+        isError: true,
+        content: [],
+      });
     });
   });
 });

@@ -4,7 +4,12 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { runCli } from '../../cli/cliRun.js';
 import type { CliOptions } from '../../cli/types.js';
-import { createToolWorkspace, formatToolError, formatToolResponse } from './mcpToolRuntime.js';
+import {
+  buildMcpToolErrorResponse,
+  createToolWorkspace,
+  formatToolError,
+  formatToolResponse,
+} from './mcpToolRuntime.js';
 
 export const registerPackCodebaseTool = (mcpServer: McpServer) => {
   mcpServer.tool(
@@ -65,22 +70,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
 
         const result = await runCli(['.'], directory, cliOptions);
         if (!result) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    success: false,
-                    error: 'Failed to return a result',
-                  },
-                  null,
-                  2,
-                ),
-              },
-            ],
-          };
+          return buildMcpToolErrorResponse(['Failed to return a result']);
         }
 
         // Extract metrics information from the pack result

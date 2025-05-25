@@ -4,6 +4,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { logger } from '../../shared/logger.js';
+import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToolRuntime.js';
 
 /**
  * Register file system directory listing tool
@@ -28,41 +29,19 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
 
         // Ensure path is absolute
         if (!path.isAbsolute(directoryPath)) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: 'text',
-                text: `Error: Path must be absolute. Received: ${directoryPath}`,
-              },
-            ],
-          };
+          return buildMcpToolErrorResponse([`Error: Path must be absolute. Received: ${directoryPath}`]);
         }
 
         // Check if directory exists
         try {
           const stats = await fs.stat(directoryPath);
           if (!stats.isDirectory()) {
-            return {
-              isError: true,
-              content: [
-                {
-                  type: 'text',
-                  text: `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
-                },
-              ],
-            };
+            return buildMcpToolErrorResponse([
+              `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
+            ]);
           }
         } catch {
-          return {
-            isError: true,
-            content: [
-              {
-                type: 'text',
-                text: `Error: Directory not found at path: ${directoryPath}`,
-              },
-            ],
-          };
+          return buildMcpToolErrorResponse([`Error: Directory not found at path: ${directoryPath}`]);
         }
 
         // Read directory contents
@@ -71,29 +50,12 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
           .map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`)
           .join('\n');
 
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Contents of ${directoryPath}:`,
-            },
-            {
-              type: 'text',
-              text: formatted || '(empty directory)',
-            },
-          ],
-        };
+        return buildMcpToolSuccessResponse([`Contents of ${directoryPath}:`, formatted || '(empty directory)']);
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
-        return {
-          isError: true,
-          content: [
-            {
-              type: 'text',
-              text: `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
-            },
-          ],
-        };
+        return buildMcpToolErrorResponse([
+          `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
+        ]);
       }
     },
   );

@@ -11,13 +11,14 @@ import {
 import * as mcpToolRuntime from '../../../src/mcp/tools/mcpToolRuntime.js';
 
 vi.mock('node:fs/promises');
-vi.mock('../../../src/mcp/tools/mcpToolRuntime.js');
-vi.mock('../../../src/shared/logger.js', () => ({
-  logger: {
-    trace: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('../../../src/shared/logger.js');
+vi.mock('../../../src/mcp/tools/mcpToolRuntime.js', async () => {
+  const actual = await vi.importActual('../../../src/mcp/tools/mcpToolRuntime.js');
+  return {
+    ...actual,
+    getOutputFilePath: vi.fn(),
+  };
+});
 
 /**
  * Search options for grep functionality
