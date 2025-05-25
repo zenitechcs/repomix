@@ -30,7 +30,7 @@
         alt="Sponsors"
       />
     </a>
-    <a href="https://github.com/yamadashy/repomix/stargazers" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/yamadashy/repomix" target="_blank" rel="noopener noreferrer">
       <img
         src="https://img.shields.io/github/stars/yamadashy/repomix?style=flat&logo=github"
         alt="GitHub stars"
