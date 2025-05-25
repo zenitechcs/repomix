@@ -54,7 +54,7 @@ VSCodeでRepomixを直接実行できるコミュニティメンテナンスの[
 
 GitHubリポジトリから直接Repomixにアクセスできます！Chrome拡張機能がGitHubリポジトリページに便利な「Repomix」ボタンを追加します。
 
-![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+![Repomix Browser Extension](/images/docs/browser-extension.png)
 
 ### インストール
 - Chrome拡張: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)

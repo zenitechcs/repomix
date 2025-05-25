@@ -54,7 +54,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 GitHub 저장소에서 직접 Repomix에 액세스하세요! Chrome 확장 프로그램이 GitHub 저장소 페이지에 편리한 "Repomix" 버튼을 추가합니다.
 
-![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+![Repomix Browser Extension](/images/docs/browser-extension.png)
 
 ### 설치
 - Chrome 확장 프로그램: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)

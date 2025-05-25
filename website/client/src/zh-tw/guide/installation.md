@@ -54,7 +54,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 直接從任何 GitHub 倉庫存取 Repomix！我們的 Chrome 擴充功能在 GitHub 倉庫頁面新增了便捷的「Repomix」按鈕。
 
-![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+![Repomix Browser Extension](/images/docs/browser-extension.png)
 
 ### 安裝
 - Chrome 擴充功能: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)

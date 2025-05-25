@@ -54,7 +54,7 @@ Installieren Sie sie vom [VSCode Marketplace](https://marketplace.visualstudio.c
 
 Erhalten Sie direkten Zugang zu Repomix von jedem GitHub-Repository! Unsere Chrome-Erweiterung fügt einen praktischen "Repomix"-Button zu GitHub-Repository-Seiten hinzu.
 
-![Repomix Browser Extension](../../../public/images/docs/browser-extension.png)
+![Repomix Browser Extension](/images/docs/browser-extension.png)
 
 ### Installation
 - Chrome-Erweiterung: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
