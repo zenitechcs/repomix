@@ -101,7 +101,6 @@ export const formatToolResponse = async (
         totalLines,
         topFiles,
       },
-      directoryStructure: `Directory Structure\n\n${directoryStructure}`,
     },
     null,
     2,
@@ -119,11 +118,50 @@ export const formatToolResponse = async (
       },
       {
         type: 'text',
+        text: `Directory Structure\n\n${directoryStructure}`,
+      },
+      {
+        type: 'text',
         text: `For environments with direct file system access, you can read the file directly using path: ${outputFilePath}`,
       },
       {
         type: 'text',
         text: `For environments without direct file access (e.g., web browsers or sandboxed apps), use the \`read_repomix_output\` tool with this outputId: ${outputId} to access the packed codebase contents.`,
+      },
+      {
+        type: 'text',
+        text: `The output retrieved with \`read_repomix_output\` has the following structure:
+
+\`\`\`xml
+This file is a merged representation of the entire codebase, combining all repository files into a single document.
+
+<file_summary>
+  (Metadata and usage AI instructions)
+</file_summary>
+
+<directory_structure>
+src/
+cli/
+cliOutput.ts
+index.ts
+
+(...remaining directories)
+</directory_structure>
+
+<files>
+<file path="src/index.js">
+  // File contents here
+</file>
+
+(...remaining files)
+</files>
+
+<instruction>
+(Custom instructions from output.instructionFilePath)
+</instruction>
+\`\`\`
+
+You can use grep with \`path="<file-path>"\` to locate specific files within the output.`,
       },
     ],
   };

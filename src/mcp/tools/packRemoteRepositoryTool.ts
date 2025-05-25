@@ -20,7 +20,7 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
         .boolean()
         .default(false)
         .describe(
-          'Enable Tree-sitter compression to extract essential code signatures and structure while removing implementation details. Significantly reduces token usage by ~70% while preserving semantic meaning. For large codebases, it is recommended to either enable this option or use grep_repomix_output to retrieve content incrementally (default: false).',
+          'Enable Tree-sitter compression to extract essential code signatures and structure while removing implementation details. Reduces token usage by ~70% while preserving semantic meaning. Generally not needed since grep_repomix_output allows incremental content retrieval. Use only when you specifically need the entire codebase content for large repositories (default: false).',
         ),
       includePatterns: z
         .string()

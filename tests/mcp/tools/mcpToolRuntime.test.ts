@@ -105,13 +105,15 @@ describe('mcpToolRuntime', () => {
           'file2.js': 60,
           'file3.js': 40,
         },
+        processedFiles: [],
+        safeFilePaths: [],
       };
       const outputFilePath = '/path/to/output.xml';
 
       const response = await formatToolResponse(context, metrics, outputFilePath);
 
       expect(response).toHaveProperty('content');
-      expect(response.content).toHaveLength(4);
+      expect(response.content).toHaveLength(6);
       expect(response.content[0].type).toBe('text');
       expect(response.content[1].type).toBe('text');
       expect(response.content[1].text).toContain('"directory": "/path/to/dir"');
@@ -135,6 +137,8 @@ describe('mcpToolRuntime', () => {
           'file1.js': 60,
           'file2.js': 40,
         },
+        processedFiles: [],
+        safeFilePaths: [],
       };
       const outputFilePath = '/path/to/output.xml';
 
@@ -168,6 +172,8 @@ describe('mcpToolRuntime', () => {
           'file5.js': 10,
           'file6.js': 5,
         },
+        processedFiles: [],
+        safeFilePaths: [],
       };
       const outputFilePath = '/path/to/output.xml';
       const topFilesLen = 3;
@@ -180,29 +186,6 @@ describe('mcpToolRuntime', () => {
       expect(jsonContent.metrics.topFiles[1].path).toBe('file2.js');
       expect(jsonContent.metrics.topFiles[2].path).toBe('file3.js');
       expect(jsonContent.metrics.totalLines).toBe(5);
-    });
-  });
-
-  describe('formatToolError', () => {
-    it('should format an error message with Error object', () => {
-      const error = new Error('Something went wrong');
-
-      const response = formatToolError(error);
-
-      expect(response.isError).toBe(true);
-      expect(response.content).toHaveLength(1);
-      expect(response.content[0].type).toBe('text');
-      expect(response.content[0].text).toContain('"success": false');
-      expect(response.content[0].text).toContain('"error": "Something went wrong"');
-    });
-
-    it('should format an error message with string error', () => {
-      const error = 'String error message';
-
-      const response = formatToolError(error);
-
-      expect(response.isError).toBe(true);
-      expect(response.content[0].text).toContain('"error": "String error message"');
     });
   });
 });

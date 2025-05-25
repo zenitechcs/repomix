@@ -11,6 +11,8 @@ import { getOutputFilePath } from './mcpToolRuntime.js';
 interface SearchOptions {
   pattern: string;
   contextLines: number;
+  beforeLines: number;
+  afterLines: number;
   ignoreCase: boolean;
 }
 
@@ -44,7 +46,21 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
       contextLines: z
         .number()
         .default(0)
-        .describe('Number of context lines to show before and after each match (default: 0)'),
+        .describe(
+          'Number of context lines to show before and after each match (default: 0). Overridden by beforeLines/afterLines if specified.',
+        ),
+      beforeLines: z
+        .number()
+        .optional()
+        .describe(
+          'Number of context lines to show before each match (like grep -B). Takes precedence over contextLines.',
+        ),
+      afterLines: z
+        .number()
+        .optional()
+        .describe(
+          'Number of context lines to show after each match (like grep -A). Takes precedence over contextLines.',
+        ),
       ignoreCase: z.boolean().default(false).describe('Perform case-insensitive matching (default: false)'),
     },
     {
@@ -54,7 +70,14 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
       idempotentHint: true,
       openWorldHint: false,
     },
-    async ({ outputId, pattern, contextLines = 0, ignoreCase = false }): Promise<CallToolResult> => {
+    async ({
+      outputId,
+      pattern,
+      contextLines = 0,
+      beforeLines,
+      afterLines,
+      ignoreCase = false,
+    }): Promise<CallToolResult> => {
       try {
         logger.trace(`Searching Repomix output with ID: ${outputId}, pattern: ${pattern}`);
 
@@ -87,12 +110,18 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
 
         const content = await fs.readFile(filePath, 'utf8');
 
+        // Determine before and after lines
+        const finalBeforeLines = beforeLines !== undefined ? beforeLines : contextLines;
+        const finalAfterLines = afterLines !== undefined ? afterLines : contextLines;
+
         // Perform grep search using separated functions
         let searchResult: SearchResult;
         try {
           searchResult = performGrepSearch(content, {
             pattern,
             contextLines,
+            beforeLines: finalBeforeLines,
+            afterLines: finalAfterLines,
             ignoreCase,
           });
         } catch (error) {
@@ -196,9 +225,14 @@ export const searchInContent = (
 };
 
 /**
- * Format search results with context lines
+ * Format search results with separate before and after context lines
  */
-export const formatSearchResults = (lines: string[], matches: SearchMatch[], contextLines: number): string[] => {
+export const formatSearchResults = (
+  lines: string[],
+  matches: SearchMatch[],
+  beforeLines: number,
+  afterLines: number,
+): string[] => {
   if (matches.length === 0) {
     return [];
   }
@@ -207,8 +241,8 @@ export const formatSearchResults = (lines: string[], matches: SearchMatch[], con
   const addedLines = new Set<number>();
 
   for (const match of matches) {
-    const start = Math.max(0, match.lineNumber - 1 - contextLines);
-    const end = Math.min(lines.length - 1, match.lineNumber - 1 + contextLines);
+    const start = Math.max(0, match.lineNumber - 1 - beforeLines);
+    const end = Math.min(lines.length - 1, match.lineNumber - 1 + afterLines);
 
     // Add separator if there's a gap between previous and current context
     if (resultLines.length > 0 && start > Math.min(...addedLines) + 1) {
@@ -241,7 +275,7 @@ export const performGrepSearch = (
 ): SearchResult => {
   const matches = deps.searchInContent(content, options);
   const lines = content.split('\n');
-  const formattedOutput = deps.formatSearchResults(lines, matches, options.contextLines);
+  const formattedOutput = deps.formatSearchResults(lines, matches, options.beforeLines, options.afterLines);
 
   return {
     matches,

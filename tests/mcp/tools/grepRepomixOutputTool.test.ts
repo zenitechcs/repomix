@@ -19,6 +19,17 @@ vi.mock('../../../src/shared/logger.js', () => ({
   },
 }));
 
+/**
+ * Search options for grep functionality
+ */
+interface SearchOptions {
+  pattern: string;
+  contextLines: number;
+  beforeLines: number;
+  afterLines: number;
+  ignoreCase: boolean;
+}
+
 describe('grepRepomixOutputTool', () => {
   describe('createRegexPattern', () => {
     it('should create a case-sensitive regex by default', () => {
@@ -47,7 +58,7 @@ describe('grepRepomixOutputTool', () => {
   describe('searchInContent', () => {
     it('should find matches in content', () => {
       const content = 'line 1\npattern match\nline 3\nanother pattern\nline 5';
-      const options = { pattern: 'pattern', contextLines: 0, ignoreCase: false };
+      const options = { pattern: 'pattern', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -66,7 +77,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle case-insensitive search', () => {
       const content = 'Line 1\nPATTERN match\nline 3';
-      const options = { pattern: 'pattern', contextLines: 0, ignoreCase: true };
+      const options = { pattern: 'pattern', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: true };
 
       const matches = searchInContent(content, options);
 
@@ -80,7 +91,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should return empty array when no matches found', () => {
       const content = 'line 1\nline 2\nline 3';
-      const options = { pattern: 'notfound', contextLines: 0, ignoreCase: false };
+      const options = { pattern: 'notfound', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -90,7 +101,7 @@ describe('grepRepomixOutputTool', () => {
     it('should use dependency injection for regex creation', () => {
       const mockCreateRegexPattern = vi.fn().mockReturnValue(/test/g);
       const content = 'test content';
-      const options = { pattern: 'test', contextLines: 0, ignoreCase: false };
+      const options = { pattern: 'test', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       searchInContent(content, options, { createRegexPattern: mockCreateRegexPattern });
 
@@ -99,7 +110,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle Japanese text search', () => {
       const content = '最初の行\n日本語のパターン検索\n3行目\n別の日本語パターン\n最後の行';
-      const options = { pattern: '日本語', contextLines: 0, ignoreCase: false };
+      const options = { pattern: '日本語', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -118,7 +129,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle Chinese text search', () => {
       const content = '第一行\n中文搜索模式\n第三行\n另一个中文模式\n最后一行';
-      const options = { pattern: '中文', contextLines: 0, ignoreCase: false };
+      const options = { pattern: '中文', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -137,7 +148,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle Korean text search', () => {
       const content = '첫 번째 줄\n한국어 패턴 검색\n세 번째 줄\n다른 한국어 패턴\n마지막 줄';
-      const options = { pattern: '한국어', contextLines: 0, ignoreCase: false };
+      const options = { pattern: '한국어', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -156,7 +167,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle emoji search', () => {
       const content = 'line 1\n🎉 celebration emoji\nline 3\nanother 🎉 here\nline 5';
-      const options = { pattern: '🎉', contextLines: 0, ignoreCase: false };
+      const options = { pattern: '🎉', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -175,7 +186,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle mixed multilingual content', () => {
       const content = 'English line\n日本語とEnglishの混在\n中文和English混合\n🚀 emoji with text\nNormal line';
-      const options = { pattern: 'English', contextLines: 0, ignoreCase: false };
+      const options = { pattern: 'English', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -199,7 +210,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle special characters and symbols', () => {
       const content = 'line 1\n$special #symbols @test\nline 3\n&more $special chars\nline 5';
-      const options = { pattern: '\\$special', contextLines: 0, ignoreCase: false };
+      const options = { pattern: '\\$special', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const matches = searchInContent(content, options);
 
@@ -218,7 +229,13 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle regex patterns with Unicode', () => {
       const content = 'file1.js\nファイル1.ts\nfile2.py\nファイル2.jsx\ntest.md';
-      const options = { pattern: 'ファイル\\d+\\.(ts|jsx)', contextLines: 0, ignoreCase: false };
+      const options = {
+        pattern: 'ファイル\\d+\\.(ts|jsx)',
+        contextLines: 0,
+        beforeLines: 0,
+        afterLines: 0,
+        ignoreCase: false,
+      };
 
       const matches = searchInContent(content, options);
 
@@ -237,7 +254,7 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle case-insensitive search with multibyte characters', () => {
       const content = '日本語テスト\nNIPPON語test\n中文测试\nTEST中文';
-      const options = { pattern: 'test', contextLines: 0, ignoreCase: true };
+      const options = { pattern: 'test', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: true };
 
       const matches = searchInContent(content, options);
 
@@ -256,7 +273,13 @@ describe('grepRepomixOutputTool', () => {
 
     it('should handle complex Unicode regex patterns', () => {
       const content = 'user@example.com\nユーザー@例.jp\ntest@テスト.org\n管理者@サンプル.co.jp\nnormal text';
-      const options = { pattern: '.+@.+\\.(com|jp|org)', contextLines: 0, ignoreCase: false };
+      const options = {
+        pattern: '.+@.+\\.(com|jp|org)',
+        contextLines: 0,
+        beforeLines: 0,
+        afterLines: 0,
+        ignoreCase: false,
+      };
 
       const matches = searchInContent(content, options);
 
@@ -276,19 +299,51 @@ describe('grepRepomixOutputTool', () => {
     ];
 
     it('should format results without context lines', () => {
-      const result = formatSearchResults(lines, matches, 0);
+      const result = formatSearchResults(lines, matches, 0, 0);
 
       expect(result).toEqual(['2:pattern match', '--', '4:another pattern']);
     });
 
-    it('should format results with context lines', () => {
-      const result = formatSearchResults(lines, matches, 1);
+    it('should format results with equal before and after context lines', () => {
+      const result = formatSearchResults(lines, matches, 1, 1);
 
       expect(result).toEqual(['1-line 1', '2:pattern match', '3-line 3', '--', '4:another pattern', '5-line 5']);
     });
 
+    it('should format results with different before and after context lines', () => {
+      const result = formatSearchResults(lines, matches, 1, 0);
+
+      expect(result).toEqual(['1-line 1', '2:pattern match', '--', '3-line 3', '4:another pattern']);
+    });
+
+    it('should format results with only after context lines', () => {
+      const result = formatSearchResults(lines, matches, 0, 1);
+
+      expect(result).toEqual(['2:pattern match', '3-line 3', '--', '4:another pattern', '5-line 5']);
+    });
+
+    it('should format results with more before than after context lines', () => {
+      const extendedLines = ['line 0', 'line 1', 'pattern match', 'line 3', 'another pattern', 'line 5', 'line 6'];
+      const extendedMatches = [
+        { lineNumber: 3, line: 'pattern match', matchedText: 'pattern' },
+        { lineNumber: 5, line: 'another pattern', matchedText: 'pattern' },
+      ];
+
+      const result = formatSearchResults(extendedLines, extendedMatches, 2, 1);
+
+      expect(result).toEqual([
+        '1-line 0',
+        '2-line 1',
+        '3:pattern match',
+        '4-line 3',
+        '--',
+        '5:another pattern',
+        '6-line 5',
+      ]);
+    });
+
     it('should return empty array for no matches', () => {
-      const result = formatSearchResults(lines, [], 0);
+      const result = formatSearchResults(lines, [], 0, 0);
       expect(result).toEqual([]);
     });
 
@@ -298,7 +353,7 @@ describe('grepRepomixOutputTool', () => {
         { lineNumber: 3, line: 'line 3', matchedText: 'line' },
       ];
 
-      const result = formatSearchResults(lines, closeMatches, 1);
+      const result = formatSearchResults(lines, closeMatches, 1, 1);
 
       // Should not duplicate lines and should merge overlapping contexts
       expect(result).toEqual(['1-line 1', '2:pattern match', '3-line 3', '4-another pattern']);
@@ -308,7 +363,7 @@ describe('grepRepomixOutputTool', () => {
   describe('performGrepSearch', () => {
     it('should perform complete grep search and return formatted results', () => {
       const content = 'line 1\npattern match\nline 3\nanother pattern\nline 5';
-      const options = { pattern: 'pattern', contextLines: 1, ignoreCase: false };
+      const options = { pattern: 'pattern', contextLines: 1, beforeLines: 1, afterLines: 1, ignoreCase: false };
 
       const result = performGrepSearch(content, options);
 
@@ -323,7 +378,7 @@ describe('grepRepomixOutputTool', () => {
       const mockSearchInContent = vi.fn().mockReturnValue([]);
       const mockFormatSearchResults = vi.fn().mockReturnValue(['formatted']);
       const content = 'test content';
-      const options = { pattern: 'test', contextLines: 0, ignoreCase: false };
+      const options = { pattern: 'test', contextLines: 0, beforeLines: 0, afterLines: 0, ignoreCase: false };
 
       const result = performGrepSearch(content, options, {
         searchInContent: mockSearchInContent,
@@ -331,8 +386,22 @@ describe('grepRepomixOutputTool', () => {
       });
 
       expect(mockSearchInContent).toHaveBeenCalledWith(content, options);
-      expect(mockFormatSearchResults).toHaveBeenCalledWith(['test content'], [], 0);
+      expect(mockFormatSearchResults).toHaveBeenCalledWith(['test content'], [], 0, 0);
       expect(result.formattedOutput).toEqual(['formatted']);
+    });
+
+    it('should handle different before and after context lines', () => {
+      const content = 'line 1\nline 2\npattern match\nline 4\nline 5';
+      const options = { pattern: 'pattern', contextLines: 0, beforeLines: 2, afterLines: 1, ignoreCase: false };
+
+      const result = performGrepSearch(content, options);
+
+      expect(result.matches).toHaveLength(1);
+      expect(result.formattedOutput).toContain('1-line 1');
+      expect(result.formattedOutput).toContain('2-line 2');
+      expect(result.formattedOutput).toContain('3:pattern match');
+      expect(result.formattedOutput).toContain('4-line 4');
+      expect(result.formattedOutput).not.toContain('5-line 5');
     });
   });
 
@@ -345,6 +414,8 @@ describe('grepRepomixOutputTool', () => {
       outputId: string;
       pattern: string;
       contextLines?: number;
+      beforeLines?: number;
+      afterLines?: number;
       ignoreCase?: boolean;
     }) => Promise<{
       isError?: boolean;
@@ -369,6 +440,8 @@ describe('grepRepomixOutputTool', () => {
           outputId: expect.any(Object),
           pattern: expect.any(Object),
           contextLines: expect.any(Object),
+          beforeLines: expect.any(Object),
+          afterLines: expect.any(Object),
           ignoreCase: expect.any(Object),
         }),
         expect.objectContaining({
@@ -398,7 +471,47 @@ describe('grepRepomixOutputTool', () => {
       expect(result.content[1].text).toContain('4:another pattern');
     });
 
-    it('should handle context lines correctly', async () => {
+    it('should handle separate before and after context lines', async () => {
+      vi.mocked(mcpToolRuntime.getOutputFilePath).mockReturnValue('/path/to/file.xml');
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(fs.readFile).mockResolvedValue(
+        'line 1\nline 2\npattern match\nline 4\nline 5\nline 6' as unknown as Buffer,
+      );
+
+      const result = await toolHandler({
+        outputId: 'test-id',
+        pattern: 'pattern',
+        beforeLines: 2,
+        afterLines: 1,
+      });
+
+      expect(result.content[1].text).toContain('1-line 1');
+      expect(result.content[1].text).toContain('2-line 2');
+      expect(result.content[1].text).toContain('3:pattern match');
+      expect(result.content[1].text).toContain('4-line 4');
+      expect(result.content[1].text).not.toContain('5-line 5');
+    });
+
+    it('should prioritize beforeLines and afterLines over contextLines', async () => {
+      vi.mocked(mcpToolRuntime.getOutputFilePath).mockReturnValue('/path/to/file.xml');
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+      vi.mocked(fs.readFile).mockResolvedValue('line 1\nline 2\npattern match\nline 4\nline 5' as unknown as Buffer);
+
+      const result = await toolHandler({
+        outputId: 'test-id',
+        pattern: 'pattern',
+        contextLines: 2,
+        beforeLines: 1,
+        afterLines: 0,
+      });
+
+      expect(result.content[1].text).toContain('2-line 2');
+      expect(result.content[1].text).toContain('3:pattern match');
+      expect(result.content[1].text).not.toContain('1-line 1');
+      expect(result.content[1].text).not.toContain('4-line 4');
+    });
+
+    it('should use contextLines when beforeLines and afterLines are not specified', async () => {
       vi.mocked(mcpToolRuntime.getOutputFilePath).mockReturnValue('/path/to/file.xml');
       vi.mocked(fs.access).mockResolvedValue(undefined);
       vi.mocked(fs.readFile).mockResolvedValue('line 1\nline 2\npattern match\nline 4\nline 5' as unknown as Buffer);
