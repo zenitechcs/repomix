@@ -5,7 +5,13 @@ import * as mcpToolRuntime from '../../../src/mcp/tools/mcpToolRuntime.js';
 import { registerReadRepomixOutputTool } from '../../../src/mcp/tools/readRepomixOutputTool.js';
 
 vi.mock('node:fs/promises');
-vi.mock('../../../src/mcp/tools/mcpToolRuntime.js');
+vi.mock('../../../src/mcp/tools/mcpToolRuntime.js', async () => {
+  const actual = await vi.importActual('../../../src/mcp/tools/mcpToolRuntime.js');
+  return {
+    ...actual,
+    getOutputFilePath: vi.fn(),
+  };
+});
 vi.mock('../../../src/shared/logger.js', () => ({
   logger: {
     trace: vi.fn(),

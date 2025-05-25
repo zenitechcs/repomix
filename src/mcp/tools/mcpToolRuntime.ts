@@ -190,3 +190,28 @@ export const formatToolError = (error: unknown): CallToolResult => {
     ],
   };
 };
+
+/**
+ * Creates a successful MCP tool response with type safety
+ */
+export const buildMcpToolSuccessResponse = (messages: string[]): CallToolResult => {
+  return {
+    content: messages.map((message) => ({
+      type: 'text' as const,
+      text: message,
+    })),
+  };
+};
+
+/**
+ * Creates an error MCP tool response with type safety
+ */
+export const buildMcpToolErrorResponse = (errorMessages: string[]): CallToolResult => {
+  return {
+    isError: true,
+    content: errorMessages.map((message) => ({
+      type: 'text' as const,
+      text: message,
+    })),
+  };
+};
