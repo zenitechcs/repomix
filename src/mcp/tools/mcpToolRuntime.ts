@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { generateFileTree } from '../../core/file/fileTreeGenerate.js';
+import { generateFileTree, generateTreeString } from '../../core/file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
 import { logger } from '../../shared/logger.js';
 
@@ -84,8 +84,8 @@ export const formatToolResponse = async (
     .sort((a, b) => b.charCount - a.charCount)
     .slice(0, topFilesLen);
 
-  // File Tree
-  const fileTree = generateFileTree(metrics.safeFilePaths, []);
+  // Directory Structure
+  const directoryStructure = generateTreeString(metrics.safeFilePaths, []);
 
   // Create JSON string with all the metrics information
   const jsonResult = JSON.stringify(
@@ -101,7 +101,7 @@ export const formatToolResponse = async (
         totalLines,
         topFiles,
       },
-      fileTree,
+      directoryStructure: `Directory Structure\n\n${directoryStructure}`,
     },
     null,
     2,
