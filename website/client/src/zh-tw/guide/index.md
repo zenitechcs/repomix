@@ -1,13 +1,12 @@
 # Repomix 入門指南
 
+<script setup>
+import HomeBadges from '../../../components/HomeBadges.vue'
+</script>
+
 Repomix 是一個將程式碼庫打包成單個 AI 友好文件的工具。它專為幫助你將程式碼提供給大型語言模型（如 ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grok 等）而設計。
 
-[![npm](https://img.shields.io/npm/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
-[![npm](https://img.shields.io/npm/d18m/repomix)](https://www.npmjs.com/package/repomix)
-[![Actions Status](https://github.com/yamadashy/repomix/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repomix/actions?query=workflow%3A"ci")
-[![codecov](https://codecov.io/github/yamadashy/repomix/graph/badge.svg)](https://codecov.io/github/yamadashy/repomix)
-[![Sponsors](https://img.shields.io/github/sponsors/yamadashy?logo=github)](https://github.com/sponsors/yamadashy)
-[![Discord](https://badgen.net/discord/online-members/wNYzTwZFku?icon=discord&label=discord)](https://discord.gg/wNYzTwZFku)
+<HomeBadges />
 
 ## 快速開始
 

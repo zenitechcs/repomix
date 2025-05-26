@@ -1,13 +1,12 @@
 # Repomix 시작하기
 
+<script setup>
+import HomeBadges from '../../../components/HomeBadges.vue'
+</script>
+
 Repomix는 전체 저장소를 AI 친화적인 단일 파일로 패키징하는 도구입니다. ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok 등의 대규모 언어 모델(LLM)에 코드베이스를 제공하는 데 도움이 되도록 설계되었습니다.
 
-[![npm](https://img.shields.io/npm/v/repomix.svg?maxAge=1000)](https://www.npmjs.com/package/repomix)
-[![npm](https://img.shields.io/npm/d18m/repomix)](https://www.npmjs.com/package/repomix)
-[![Actions Status](https://github.com/yamadashy/repomix/actions/workflows/ci.yml/badge.svg)](https://github.com/yamadashy/repomix/actions?query=workflow%3A"ci")
-[![codecov](https://codecov.io/github/yamadashy/repomix/graph/badge.svg)](https://codecov.io/github/yamadashy/repomix)
-[![Sponsors](https://img.shields.io/github/sponsors/yamadashy?logo=github)](https://github.com/sponsors/yamadashy)
-[![Discord](https://badgen.net/discord/online-members/wNYzTwZFku?icon=discord&label=discord)](https://discord.gg/wNYzTwZFku)
+<HomeBadges />
 
 ## 빠른 시작
 
