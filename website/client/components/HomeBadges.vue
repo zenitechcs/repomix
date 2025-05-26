@@ -60,4 +60,12 @@
 .home-badges a:hover {
   opacity: 0.8;
 }
+
+@media (max-width: 768px) {
+  .home-badges {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+}
 </style>
