@@ -23,6 +23,6 @@ export default defineConfig({
     ko: { label: '한국어 (대한민국)', ...configKo },
     de: { label: 'Deutsch (Deutschland)', ...configDe },
     fr: { label: 'Français (France)', ...configFr },
-    id: { label: 'Bahasa Indonesia (Indonesia)', ...configId },
+    id: { label: 'Indonesia (Indonesia)', ...configId },
   },
 });
