@@ -1,10 +1,5 @@
 # Pemrosesan Repositori Remote
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix dapat memproses repositori GitHub publik secara langsung tanpa perlu mengkloning mereka secara lokal terlebih dahulu. Ini sangat berguna untuk menganalisis proyek open source atau berbagi basis kode dengan AI tanpa mengunduh seluruh repositori.
 

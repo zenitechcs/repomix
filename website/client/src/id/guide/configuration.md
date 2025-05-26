@@ -1,10 +1,5 @@
 # Konfigurasi
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix dapat dikonfigurasi menggunakan file konfigurasi atau opsi baris perintah. File konfigurasi memberikan cara yang lebih terstruktur untuk menyimpan pengaturan Anda.
 

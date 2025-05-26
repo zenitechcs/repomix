@@ -1,10 +1,5 @@
 # Instruksi Khusus
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix memungkinkan Anda menambahkan instruksi khusus ke output yang dihasilkan. Ini berguna untuk memberikan konteks tambahan atau petunjuk kepada model AI tentang cara memahami atau menggunakan basis kode Anda.
 

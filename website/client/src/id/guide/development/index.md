@@ -1,10 +1,5 @@
 # Berkontribusi ke Repomix
 
-<script setup>
-import HomeBadges from '../../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Kami sangat menghargai kontribusi dari komunitas! Halaman ini memberikan panduan tentang cara berkontribusi ke proyek Repomix.
 

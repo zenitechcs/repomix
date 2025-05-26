@@ -1,10 +1,5 @@
 # Penggunaan Dasar
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix dirancang untuk menjadi alat yang mudah digunakan dengan antarmuka command-line yang sederhana. Berikut adalah panduan penggunaan dasar.
 

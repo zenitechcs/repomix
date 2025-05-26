@@ -1,10 +1,5 @@
 # GitHub Actions
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix menyediakan GitHub Action yang memungkinkan Anda mengintegrasikan pembuatan file Repomix ke dalam alur kerja CI/CD Anda. Ini berguna untuk memastikan bahwa file Repomix selalu diperbarui dengan perubahan terbaru pada basis kode Anda.
 

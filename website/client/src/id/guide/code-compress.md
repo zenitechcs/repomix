@@ -1,10 +1,5 @@
 # Kompresi Kode
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Kompresi kode adalah fitur yang kuat yang secara cerdas mengekstrak struktur kode esensial sambil menghapus detail implementasi. Ini sangat berguna untuk mengurangi jumlah token sambil mempertahankan informasi struktural penting tentang basis kode Anda.
 

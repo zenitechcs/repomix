@@ -1,10 +1,5 @@
 # Keamanan
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix dirancang dengan fokus pada keamanan untuk membantu mencegah kebocoran informasi sensitif saat berbagi basis kode Anda dengan AI.
 

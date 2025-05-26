@@ -1,10 +1,5 @@
 # Penghapusan Komentar
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix menyediakan opsi untuk menghapus komentar dari kode sumber Anda sebelum mengemas. Ini dapat membantu mengurangi ukuran output dan mengurangi jumlah token yang digunakan oleh model AI.
 

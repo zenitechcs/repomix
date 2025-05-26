@@ -1,10 +1,5 @@
 # Praktik Terbaik Pengembangan dengan Bantuan AI
 
-<script setup>
-import HomeBadges from '../../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Menggunakan AI untuk pengembangan perangkat lunak dapat meningkatkan produktivitas Anda secara signifikan. Berikut adalah beberapa praktik terbaik untuk memaksimalkan manfaat dari Repomix dan alat AI lainnya.
 

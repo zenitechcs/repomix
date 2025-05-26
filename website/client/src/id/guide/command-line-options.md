@@ -1,10 +1,5 @@
 # Opsi Baris Perintah
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix menyediakan berbagai opsi baris perintah untuk menyesuaikan perilakunya. Berikut adalah daftar lengkap opsi yang tersedia.
 

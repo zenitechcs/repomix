@@ -1,10 +1,5 @@
 # Menggunakan Repomix sebagai Library
 
-<script setup>
-import HomeBadges from '../../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Selain sebagai alat command-line, Repomix juga dapat digunakan sebagai library dalam proyek JavaScript atau TypeScript Anda. Ini memungkinkan Anda untuk mengintegrasikan fungsionalitas Repomix langsung ke dalam aplikasi Anda.
 

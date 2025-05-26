@@ -1,10 +1,5 @@
 # Instalasi
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix dapat diinstal dengan berbagai cara, tergantung pada kebutuhan dan preferensi Anda.
 

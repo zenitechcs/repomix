@@ -1,10 +1,5 @@
 # Contoh Prompt
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Setelah Anda menghasilkan file Repomix, Anda perlu memberikan prompt yang efektif ke model AI untuk mendapatkan hasil terbaik. Halaman ini menyediakan beberapa contoh prompt yang dapat Anda gunakan atau adaptasi untuk berbagai kasus penggunaan.
 

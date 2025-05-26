@@ -1,10 +1,5 @@
 # Server MCP
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Server MCP (Model Code Provider) adalah fitur Repomix yang menyediakan antarmuka HTTP untuk mengakses dan memproses basis kode Anda. Ini memungkinkan alat dan layanan lain untuk berinteraksi dengan Repomix melalui API.
 

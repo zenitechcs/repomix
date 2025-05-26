@@ -1,10 +1,5 @@
 # Format Output
 
-<script setup>
-import HomeBadges from '../../../components/HomeBadges.vue'
-</script>
-
-<HomeBadges />
 
 Repomix mendukung beberapa format output untuk memenuhi berbagai kebutuhan. Anda dapat memilih format yang paling sesuai dengan kasus penggunaan Anda.
 
