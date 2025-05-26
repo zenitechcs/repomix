@@ -1,6 +1,12 @@
 # Repomixとは
 
+<script setup>
+import HomeBadges from '../../../components/HomeBadges.vue'
+</script>
+
 Repomixは、リポジトリ全体をAIフレンドリーな単一ファイルにパッケージングするツールです。ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grokなどの大規模言語モデル（LLM）にコードベースを提供するために設計されています。
+
+<HomeBadges />
 
 ## クイックスタート
 

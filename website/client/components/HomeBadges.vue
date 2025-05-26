@@ -12,12 +12,7 @@
         alt="npm downloads"
       />
     </a>
-    <a href="https://codecov.io/github/yamadashy/repomix" target="_blank" rel="noopener noreferrer">
-      <img
-        src="https://codecov.io/github/yamadashy/repomix/graph/badge.svg"
-        alt="codecov"
-      />
-    </a>
+
     <a href="https://discord.gg/wNYzTwZFku" target="_blank" rel="noopener noreferrer">
       <img
         src="https://badgen.net/discord/online-members/wNYzTwZFku?icon=discord&label=discord"
