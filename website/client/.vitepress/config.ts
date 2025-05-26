@@ -3,6 +3,7 @@ import { configDe } from './config/configDe';
 import { configEnUs } from './config/configEnUs';
 import { configEs } from './config/configEs';
 import { configFr } from './config/configFr';
+import { configId } from './config/configId';
 import { configJa } from './config/configJa';
 import { configKo } from './config/configKo';
 import { configPtBr } from './config/configPtBr';
@@ -22,5 +23,6 @@ export default defineConfig({
     ko: { label: '한국어 (대한민국)', ...configKo },
     de: { label: 'Deutsch (Deutschland)', ...configDe },
     fr: { label: 'Français (France)', ...configFr },
+    id: { label: 'Bahasa Indonesia (Indonesia)', ...configId },
   },
 });
