@@ -8,6 +8,7 @@ import { configJa } from './config/configJa';
 import { configKo } from './config/configKo';
 import { configPtBr } from './config/configPtBr';
 import { configShard } from './config/configShard';
+import { configVi } from './config/configVi';
 import { configZhCn } from './config/configZhCn';
 import { configZhTw } from './config/configZhTw';
 
@@ -24,5 +25,6 @@ export default defineConfig({
     de: { label: 'Deutsch (Deutschland)', ...configDe },
     fr: { label: 'Français (France)', ...configFr },
     id: { label: 'Indonesia (Indonesia)', ...configId },
+    vi: { label: 'Tiếng Việt (Việt Nam)', ...configVi },
   },
 });

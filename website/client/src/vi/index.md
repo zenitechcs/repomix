@@ -1,0 +1,191 @@
+---
+layout: home
+title: Repomix
+titleTemplate: Đóng gói codebase của bạn thành các định dạng thân thiện với AI
+aside: false
+editLink: false
+
+features:
+  - icon: 🤖
+    title: Tối ưu hóa cho AI
+    details: Định dạng codebase của bạn theo cách dễ dàng cho AI hiểu và xử lý.
+
+  - icon: ⚙️
+    title: Nhận biết Git
+    details: Tự động tôn trọng các tệp .gitignore của bạn.
+
+  - icon: 🛡️
+    title: Tập trung vào bảo mật
+    details: Tích hợp Secretlint để kiểm tra bảo mật mạnh mẽ nhằm phát hiện và ngăn chặn việc đưa thông tin nhạy cảm vào.
+
+  - icon: 📊
+    title: Đếm token
+    details: Cung cấp số lượng token cho mỗi tệp và toàn bộ kho lưu trữ, hữu ích cho giới hạn ngữ cảnh LLM.
+
+---
+
+<div class="cli-section">
+
+## Bắt đầu nhanh
+
+Sau khi bạn đã tạo một tệp đóng gói (`repomix-output.xml`) bằng Repomix, bạn có thể gửi nó đến trợ lý AI (như ChatGPT, Claude) với một prompt như:
+
+```
+Tệp này chứa tất cả các tệp trong kho lưu trữ được kết hợp thành một.
+Tôi muốn tái cấu trúc mã, vì vậy hãy xem xét nó trước.
+```
+
+AI sẽ phân tích toàn bộ codebase của bạn và cung cấp những hiểu biết toàn diện:
+
+![Repomix File Usage 1](/images/docs/repomix-file-usage-1.png)
+
+Khi thảo luận về các thay đổi cụ thể, AI có thể giúp tạo mã. Với các tính năng như Artifacts của Claude, bạn thậm chí có thể nhận được nhiều tệp phụ thuộc lẫn nhau:
+
+![Repomix File Usage 2](/images/docs/repomix-file-usage-2.png)
+
+Chúc bạn code vui vẻ! 🚀
+
+
+## Sử dụng công cụ CLI {#using-the-cli-tool}
+
+Repomix có thể được sử dụng như một công cụ dòng lệnh, cung cấp các tính năng mạnh mẽ và tùy chọn tùy chỉnh.
+
+**Công cụ CLI có thể truy cập các kho lưu trữ riêng tư** vì nó sử dụng git được cài đặt cục bộ của bạn.
+
+### Bắt đầu nhanh
+
+Bạn có thể thử Repomix ngay lập tức trong thư mục dự án của bạn mà không cần cài đặt:
+
+```bash
+npx repomix
+```
+
+Hoặc cài đặt toàn cục để sử dụng nhiều lần:
+
+```bash
+# Cài đặt bằng npm
+npm install -g repomix
+
+# Hoặc sử dụng yarn
+yarn global add repomix
+
+# Hoặc sử dụng Homebrew (macOS/Linux)
+brew install repomix
+
+# Sau đó chạy trong bất kỳ thư mục dự án nào
+repomix
+```
+
+Vậy là xong! Repomix sẽ tạo một tệp `repomix-output.xml` trong thư mục hiện tại của bạn, chứa toàn bộ kho lưu trữ của bạn ở định dạng thân thiện với AI.
+
+
+
+### Cách sử dụng
+
+Để đóng gói toàn bộ kho lưu trữ của bạn:
+
+```bash
+repomix
+```
+
+Để đóng gói một thư mục cụ thể:
+
+```bash
+repomix path/to/directory
+```
+
+Để đóng gói các tệp hoặc thư mục cụ thể bằng cách sử dụng [mẫu glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax):
+
+```bash
+repomix --include "src/**/*.ts,**/*.md"
+```
+
+Để loại trừ các tệp hoặc thư mục cụ thể:
+
+```bash
+repomix --ignore "**/*.log,tmp/"
+```
+
+Để đóng gói một kho lưu trữ từ xa:
+```bash
+# Sử dụng định dạng rút gọn
+npx repomix --remote yamadashy/repomix
+
+# Sử dụng URL đầy đủ (hỗ trợ nhánh và đường dẫn cụ thể)
+npx repomix --remote https://github.com/yamadashy/repomix
+npx repomix --remote https://github.com/yamadashy/repomix/tree/main
+
+# Sử dụng URL của commit
+npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
+```
+
+Để khởi tạo một tệp cấu hình mới (`repomix.config.json`):
+
+```bash
+repomix --init
+```
+
+Sau khi bạn đã tạo tệp đóng gói, bạn có thể sử dụng nó với các công cụ AI Tạo sinh như Claude, ChatGPT và Gemini.
+
+#### Sử dụng Docker
+
+Bạn cũng có thể chạy Repomix bằng Docker 🐳  
+Điều này hữu ích nếu bạn muốn chạy Repomix trong môi trường biệt lập hoặc thích sử dụng container.
+
+Cách sử dụng cơ bản (thư mục hiện tại):
+
+```bash
+docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix
+```
+
+Để đóng gói một thư mục cụ thể:
+```bash
+docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix path/to/directory
+```
+
+Xử lý một kho lưu trữ từ xa và xuất ra thư mục `output`:
+
+```bash
+docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://github.com/yamadashy/repomix
+```
+
+### Định dạng đầu ra
+
+Chọn định dạng đầu ra ưa thích của bạn:
+
+```bash
+# Định dạng XML (mặc định)
+repomix --style xml
+
+# Định dạng Markdown
+repomix --style markdown
+
+# Định dạng văn bản thuần túy
+repomix --style plain
+```
+
+### Tùy chỉnh
+
+Tạo một `repomix.config.json` cho các cài đặt cố định:
+
+```json
+{
+  "output": {
+    "style": "markdown",
+    "filePath": "custom-output.md",
+    "removeComments": true,
+    "showLineNumbers": true,
+    "topFilesLength": 10
+  },
+  "ignore": {
+    "customPatterns": ["*.test.ts", "docs/**"]
+  }
+}
+```
+
+### Thêm ví dụ
+::: tip Cần thêm trợ giúp? 💡
+Hãy xem tài liệu toàn diện của chúng tôi trong [Hướng dẫn](/vi/guide/) hoặc khám phá [Kho lưu trữ GitHub](https://github.com/yamadashy/repomix) để biết thêm ví dụ và mã nguồn.
+:::
+
+</div>
