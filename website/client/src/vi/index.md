@@ -115,8 +115,8 @@ npx repomix --remote yamadashy/repomix
 npx repomix --remote https://github.com/yamadashy/repomix
 npx repomix --remote https://github.com/yamadashy/repomix/tree/main
 
-# Sử dụng URL của commit
-npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
+# Sử dụng commit cụ thể với --remote-branch
+npx repomix --remote yamadashy/repomix --remote-branch 836abcd7335137228ad77feb28655d85712680f1
 ```
 
 Để khởi tạo một tệp cấu hình mới (`repomix.config.json`):
