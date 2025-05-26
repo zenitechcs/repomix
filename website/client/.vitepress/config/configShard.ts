@@ -3,6 +3,7 @@ import { type ManifestOptions, VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vitepress';
 import { configDeSearch } from './configDe';
 import { configEsSearch } from './configEs';
+import { configIdSearch } from './configId';
 import { configJaSearch } from './configJa';
 import { configKoSearch } from './configKo';
 import { configPtBrSearch } from './configPtBr';
@@ -66,6 +67,7 @@ export const configShard = defineConfig({
         locales: {
           ...configDeSearch,
           ...configEsSearch,
+          ...configIdSearch,
           ...configJaSearch,
           ...configKoSearch,
           ...configPtBrSearch,

@@ -15,6 +15,7 @@ The website documentation is available in the following languages:
 - French (Français) (fr)
 - Spanish (Español) (es)
 - Portuguese Brazilian (Português do Brasil) (pt-br)
+- Indonesian (Bahasa Indonesia) (id)
 
 All translations should be accurate and maintain consistent terminology across languages. When adding new features or documentation, please ensure that the English version is updated first, followed by translations in other languages.
 
