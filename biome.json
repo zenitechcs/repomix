@@ -6,6 +6,7 @@
       "./src/**",
       "./tests/**",
       "./website/**",
+      "./browser/**",
       "./.devcontainer/**",
       "./.github/**",
       "package.json",
@@ -20,7 +21,9 @@
       "website/client/.vitepress/.temp",
       "website/client/.vitepress/dist",
       "website/client/.vitepress/cache",
-      "website/server/dist"
+      "website/server/dist",
+      "browser/dist",
+      "browser/packages"
     ]
   },
   "organizeImports": {
