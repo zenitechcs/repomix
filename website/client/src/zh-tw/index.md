@@ -24,6 +24,8 @@ features:
 
 ---
 
+<div class="cli-section">
+
 ## 🏆 開源獎項提名
 
 我們深感榮幸！Repomix 已被提名為 [JSNation Open Source Awards 2025](https://osawards.com/javascript/) 的 **Powered by AI** 類別獎項。
@@ -35,8 +37,6 @@ features:
 您可以在這裡投票：[https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
 
 感謝您的支持！
-
-<div class="cli-section">
 
 ## 快速開始
 

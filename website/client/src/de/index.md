@@ -24,6 +24,8 @@ features:
 
 ---
 
+<div class="cli-section">
+
 ## 🏆 Nominierung für die Open Source Awards
 
 Wir fühlen uns geehrt! Repomix wurde in der Kategorie **Powered by AI** für die [JSNation Open Source Awards 2025](https://osawards.com/javascript/) nominiert.
@@ -35,8 +37,6 @@ Wenn Repomix Ihnen bei der Analyse oder Paketierung von Codebasen für KI-Tools 
 Sie können hier abstimmen: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
 
 Vielen Dank für Ihre Unterstützung!
-
-<div class="cli-section">
 
 ## Schnellstart
 
@@ -197,4 +197,4 @@ Erstellen Sie eine `repomix.config.json` für dauerhafte Einstellungen:
 Schauen Sie sich unseren [Leitfaden](./guide/) für detaillierte Anleitungen an oder besuchen Sie das [GitHub-Repository](https://github.com/yamadashy/repomix) für weitere Beispiele und Quellcode.
 :::
 
-</div>    
+</div>        

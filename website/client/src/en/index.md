@@ -24,6 +24,8 @@ features:
 
 ---
 
+<div class="cli-section">
+
 ## 🏆 Open Source Awards Nomination
 
 We're honored! Repomix has been nominated for the **Powered by AI** category at the [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
@@ -35,8 +37,6 @@ If Repomix has helped you analyze or pack codebases for AI tools, we'd be gratef
 You can vote here: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
 
 Thank you for your support!
-
-<div class="cli-section">
 
 ## Quick Start
 

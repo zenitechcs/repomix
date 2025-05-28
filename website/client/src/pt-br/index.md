@@ -24,6 +24,8 @@ features:
 
 ---
 
+<div class="cli-section">
+
 ## 🏆 Indicação para os Open Source Awards
 
 Estamos honrados! O Repomix foi indicado na categoria **Powered by AI** no [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
@@ -35,8 +37,6 @@ Se o Repomix ajudou você a analisar ou empacotar bases de código para ferramen
 Você pode votar aqui: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
 
 Obrigado pelo seu apoio!
-
-<div class="cli-section">
 
 ## Início Rápido
 

@@ -24,6 +24,8 @@ features:
 
 ---
 
+<div class="cli-section">
+
 ## 🏆 Nominación a los Open Source Awards
 
 ¡Estamos honrados! Repomix ha sido nominado en la categoría **Powered by AI** en los [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
@@ -35,8 +37,6 @@ Si Repomix te ha ayudado a analizar o empaquetar bases de código para herramien
 Puedes votar aquí: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
 
 ¡Gracias por tu apoyo!
-
-<div class="cli-section">
 
 ## Inicio rápido
 
