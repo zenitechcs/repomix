@@ -24,6 +24,18 @@ features:
 
 ---
 
+## 🏆 Đề cử Giải thưởng Mã nguồn Mở
+
+Chúng tôi rất vinh dự! Repomix đã được đề cử cho hạng mục **Powered by AI** tại [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
+
+Điều này không thể thực hiện được nếu không có tất cả các bạn sử dụng và hỗ trợ Repomix. Xin cảm ơn!
+
+Nếu Repomix đã giúp bạn phân tích hoặc đóng gói codebase cho các công cụ AI, chúng tôi sẽ rất biết ơn nếu bạn bỏ phiếu cho chúng tôi trong hạng mục **Powered by AI**.
+
+Bạn có thể bỏ phiếu tại đây: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
+
+Cảm ơn sự hỗ trợ của bạn!
+
 <div class="cli-section">
 
 ## Bắt đầu nhanh

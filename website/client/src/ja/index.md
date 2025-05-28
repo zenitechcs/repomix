@@ -24,6 +24,18 @@ features:
 
 ---
 
+## 🏆 オープンソースアワードノミネート
+
+光栄です！RepomixがJSNation Open Source Awards 2025の**Powered by AI**カテゴリにノミネートされました。
+
+これは皆様がRepomixを使用し、サポートしてくださったおかげです。ありがとうございます！
+
+RepomixがAIツール向けのコードベース分析やパッケージングにお役に立った場合、**Powered by AI**カテゴリでの投票をお願いいたします。
+
+投票はこちら: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
+
+ご支援ありがとうございます！
+
 <div class="cli-section">
 
 ## クイックスタート
