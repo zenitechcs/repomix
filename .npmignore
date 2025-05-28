@@ -68,3 +68,6 @@ website/
 
 # Devcontainer
 .devcontainer/
+
+# Browser
+browser/
