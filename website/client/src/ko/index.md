@@ -26,6 +26,18 @@ features:
 
 <div class="cli-section">
 
+## 🏆 오픈소스 어워드 후보 지명
+
+영광입니다! Repomix가 [JSNation Open Source Awards 2025](https://osawards.com/javascript/)의 **Powered by AI** 카테고리에 후보로 지명되었습니다.
+
+이는 Repomix를 사용하고 지원해 주신 여러분 모두 덕분입니다. 감사합니다!
+
+Repomix가 AI 도구를 위한 코드베이스 분석이나 패키징에 도움이 되었다면, **Powered by AI** 카테고리에서 저희에게 투표해 주시면 감사하겠습니다.
+
+여기서 투표하실 수 있습니다: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
+
+여러분의 지원에 감사드립니다!
+
 ## 빠른 시작
 
 Repomix를 사용하여 패키지 파일(`repomix-output.xml`)을 생성한 후, 다음과 같은 프롬프트와 함께 AI 어시스턴트(예: ChatGPT, Claude)에게 전송할 수 있습니다:

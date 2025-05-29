@@ -26,6 +26,18 @@ features:
 
 <div class="cli-section">
 
+## 🏆 Open Source Awards Nomination
+
+We're honored! Repomix has been nominated for the **Powered by AI** category at the [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
+
+This wouldn't have been possible without all of you using and supporting Repomix. Thank you!
+
+If Repomix has helped you analyze or pack codebases for AI tools, we'd be grateful for your vote in the **Powered by AI** category.
+
+You can vote here: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
+
+Thank you for your support!
+
 ## Quick Start
 
 Once you've generated a packed file (`repomix-output.xml`) using Repomix, you can send it to an AI assistant (like ChatGPT, Claude) with a prompt like:
