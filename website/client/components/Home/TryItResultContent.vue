@@ -8,7 +8,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import {
-  canShareFiles,
+  canShareText,
   copyToClipboard,
   downloadResult,
   formatTimestamp,
@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const copied = ref(false);
 const shared = ref(false);
-const canShare = ref(canShareFiles());
+const canShare = ref(canShareText());
 const { isDark } = useData();
 const editorInstance = ref<Ace.Editor | null>(null);
 
@@ -76,6 +76,8 @@ const handleShare = async (event: Event) => {
     setTimeout(() => {
       shared.value = false;
     }, 2000);
+  } else {
+    console.log('Share was cancelled or failed');
   }
 };
 

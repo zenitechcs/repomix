@@ -83,9 +83,9 @@ export async function shareResult(content: string, format: string, result: PackR
 }
 
 /**
- * Check if Web Share API is supported
+ * Check if Web Share API is supported for text content
  */
-export function canShareFiles(): boolean {
+export function canShareText(): boolean {
   return navigator.share && typeof navigator.share === 'function';
 }
 
