@@ -65,7 +65,7 @@ export async function shareResult(content: string, format: string, result: PackR
     const repoName = formatRepositoryName(result.metadata.repository);
     const extension = format === 'markdown' ? 'md' : format === 'xml' ? 'xml' : 'txt';
     const filename = `repomix-output-${repoName}.${extension}`;
-    
+
     const mimeType = format === 'markdown' ? 'text/markdown' : format === 'xml' ? 'application/xml' : 'text/plain';
     const blob = new Blob([content], { type: mimeType });
     const file = new File([blob], filename, { type: mimeType });
@@ -74,7 +74,7 @@ export async function shareResult(content: string, format: string, result: PackR
       files: [file],
     };
 
-    if (navigator.canShare && navigator.canShare(shareData)) {
+    if (navigator.canShare?.(shareData)) {
       await navigator.share(shareData);
       analyticsUtils.trackShareOutput(format);
       return true;
