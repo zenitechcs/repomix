@@ -29,7 +29,23 @@ app.use('*', cloudLogger());
 app.use(
   '/*',
   cors({
-    origin: ['http://localhost:5173', 'https://repomix.com', 'https://api.repomix.com', 'https://*.repomix.pages.dev'],
+    origin: (origin) => {
+      const allowedOrigins = [
+        'http://localhost:5173',
+        'https://repomix.com',
+        'https://api.repomix.com',
+      ];
+      
+      if (!origin || allowedOrigins.includes(origin)) {
+        return true;
+      }
+      
+      if (origin.endsWith('.repomix.pages.dev')) {
+        return true;
+      }
+      
+      return false;
+    },
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     maxAge: 86400,
