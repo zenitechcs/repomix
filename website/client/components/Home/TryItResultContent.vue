@@ -386,7 +386,6 @@ dd {
   color: var(--vp-c-brand-1);
 }
 
-/* Hide mobile-only elements on desktop */
 .mobile-only {
   display: none;
 }
@@ -401,6 +400,8 @@ dd {
   .metadata-panel {
     border-right: none;
     border-bottom: 1px solid var(--vp-c-border);
+    max-height: 400px;
+    overflow-y: auto;
   }
 
   .output-panel {
@@ -415,14 +416,8 @@ dd {
     max-width: 100%;
   }
 
-  /* Show mobile-only elements on mobile */
   .mobile-only {
     display: inline-flex;
-  }
-
-  .metadata-panel {
-    max-height: 400px;
-    overflow-y: auto;
   }
 }
 </style>
