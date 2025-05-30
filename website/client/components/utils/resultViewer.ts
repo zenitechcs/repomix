@@ -71,7 +71,6 @@ export async function shareResult(content: string, format: string, result: PackR
     const file = new File([blob], filename, { type: mimeType });
 
     const shareData = {
-      title: `Repomix Output - ${repoName}`,
       files: [file],
     };
 
