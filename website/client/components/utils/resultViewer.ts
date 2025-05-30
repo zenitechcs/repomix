@@ -66,8 +66,9 @@ export async function shareResult(content: string, format: string, result: PackR
     const repoName = formatRepositoryName(result.metadata.repository);
     const fileName = `repomix-output-${repoName}.${extension}`;
 
-    const blob = new Blob([content], { type: 'text/plain' });
-    const file = new File([blob], fileName, { type: 'text/plain' });
+    const mimeType = format === 'markdown' ? 'text/markdown' : format === 'xml' ? 'application/xml' : 'text/plain';
+    const blob = new Blob([content], { type: mimeType });
+    const file = new File([blob], fileName, { type: mimeType });
 
     const shareData = {
       title: `Repomix Output - ${repoName}`,
@@ -80,6 +81,17 @@ export async function shareResult(content: string, format: string, result: PackR
       analyticsUtils.trackShareOutput(format);
       return true;
     }
+    
+    // Fallback to text-only sharing if file sharing is not supported
+    if (navigator.share) {
+      await navigator.share({
+        title: shareData.title,
+        text: shareData.text,
+      });
+      analyticsUtils.trackShareOutput(format);
+      return true;
+    }
+    
     return false;
   } catch (err) {
     console.error('Failed to share:', err);
@@ -91,7 +103,15 @@ export async function shareResult(content: string, format: string, result: PackR
  * Check if Web Share API is supported and can share files
  */
 export function canShareFiles(): boolean {
-  return navigator.canShare && typeof navigator.canShare === 'function';
+  if (navigator.canShare && typeof navigator.canShare === 'function') {
+    try {
+      const dummyFile = new File(['dummy content'], 'dummy.txt', { type: 'text/plain' });
+      return navigator.canShare({ files: [dummyFile] });
+    } catch {
+      return false;
+    }
+  }
+  return false;
 }
 
 /**
