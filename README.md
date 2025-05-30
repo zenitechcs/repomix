@@ -97,6 +97,9 @@ npm install -g repomix
 # Alternatively using yarn
 yarn global add repomix
 
+# Alternatively using bun
+bun add -g repomix
+
 # Alternatively using Homebrew (macOS/Linux)
 brew install repomix
 
@@ -550,6 +553,9 @@ npm update -g repomix
 
 # Using yarn
 yarn global upgrade repomix
+
+# Using bun
+bun update -g repomix
 ```
 
 Using `npx repomix` is generally more convenient as it always uses the latest version.
