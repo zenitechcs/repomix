@@ -167,6 +167,7 @@ const supportMessage = computed(() => ({
           <Download :size="16" />
           Download
         </button>
+        <br v-if="canShare" class="mobile-only">
         <button
           v-if="canShare"
           class="action-button mobile-only"
