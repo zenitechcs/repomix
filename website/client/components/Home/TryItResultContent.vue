@@ -8,7 +8,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import {
-  canShareText,
+  canShareFiles,
   copyToClipboard,
   downloadResult,
   formatTimestamp,
@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const copied = ref(false);
 const shared = ref(false);
-const canShare = ref(canShareText());
+const canShare = ref(canShareFiles());
 const { isDark } = useData();
 const editorInstance = ref<Ace.Editor | null>(null);
 

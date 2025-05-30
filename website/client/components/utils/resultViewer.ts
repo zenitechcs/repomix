@@ -58,18 +58,24 @@ export function downloadResult(content: string, format: string, result: PackResu
 }
 
 /**
- * Handle sharing with Web Share API as text content
+ * Handle sharing with Web Share API as file
  */
 export async function shareResult(content: string, format: string, result: PackResult): Promise<boolean> {
   try {
     const repoName = formatRepositoryName(result.metadata.repository);
+    const extension = format === 'markdown' ? 'md' : format === 'xml' ? 'xml' : 'txt';
+    const filename = `repomix-output-${repoName}.${extension}`;
+    
+    const mimeType = format === 'markdown' ? 'text/markdown' : format === 'xml' ? 'application/xml' : 'text/plain';
+    const blob = new Blob([content], { type: mimeType });
+    const file = new File([blob], filename, { type: mimeType });
 
     const shareData = {
       title: `Repomix Output - ${repoName}`,
-      text: content,
+      files: [file],
     };
 
-    if (navigator.share) {
+    if (navigator.canShare && navigator.canShare(shareData)) {
       await navigator.share(shareData);
       analyticsUtils.trackShareOutput(format);
       return true;
@@ -83,10 +89,18 @@ export async function shareResult(content: string, format: string, result: PackR
 }
 
 /**
- * Check if Web Share API is supported for text content
+ * Check if Web Share API is supported for file sharing
  */
-export function canShareText(): boolean {
-  return navigator.share && typeof navigator.share === 'function';
+export function canShareFiles(): boolean {
+  if (navigator.canShare && typeof navigator.canShare === 'function') {
+    try {
+      const dummyFile = new File([''], 'dummy.txt', { type: 'text/plain' });
+      return navigator.canShare({ files: [dummyFile] });
+    } catch {
+      return false;
+    }
+  }
+  return false;
 }
 
 /**
