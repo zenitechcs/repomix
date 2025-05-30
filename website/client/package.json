@@ -4,7 +4,8 @@
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "jszip": "^3.10.1",

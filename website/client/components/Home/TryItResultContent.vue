@@ -2,12 +2,19 @@
 import ace, { type Ace } from 'ace-builds';
 import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
-import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch, Star } from 'lucide-vue-next';
+import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch, Share, Star } from 'lucide-vue-next';
 import { useData } from 'vitepress';
 import { computed, onMounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
-import { copyToClipboard, downloadResult, formatTimestamp, getEditorOptions } from '../utils/resultViewer';
+import {
+  canShareFiles,
+  copyToClipboard,
+  downloadResult,
+  formatTimestamp,
+  getEditorOptions,
+  shareResult,
+} from '../utils/resultViewer';
 
 ace.config.setModuleUrl('ace/theme/tomorrow', themeTomorrowUrl);
 ace.config.setModuleUrl('ace/theme/tomorrow_night', themeTomorrowNightUrl);
@@ -20,6 +27,8 @@ const props = defineProps<{
 }>();
 
 const copied = ref(false);
+const shared = ref(false);
+const canShare = ref(canShareFiles());
 const { isDark } = useData();
 const editorInstance = ref<Ace.Editor | null>(null);
 
@@ -55,6 +64,21 @@ const handleDownload = (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
   downloadResult(props.result.content, props.result.format, props.result);
+};
+
+const handleShare = async (event: Event) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const success = await shareResult(props.result.content, props.result.format, props.result);
+  if (success) {
+    shared.value = true;
+    setTimeout(() => {
+      shared.value = false;
+    }, 2000);
+  } else {
+    console.log('Share was cancelled or failed');
+  }
 };
 
 const handleEditorMount = (editor: Ace.Editor) => {
@@ -144,6 +168,17 @@ const supportMessage = computed(() => ({
         >
           <Download :size="16" />
           Download
+        </button>
+        <div v-if="canShare" class="mobile-only" style="flex-basis: 100%"></div>
+        <button
+          v-if="canShare"
+          class="action-button mobile-only"
+          @click="handleShare"
+          :class="{ shared }"
+          aria-label="Share output via mobile apps"
+        >
+          <Share :size="16" />
+          {{ shared ? 'Shared!' : 'Open with your app' }}
         </button>
       </div>
       <div class="editor-container">
@@ -268,6 +303,7 @@ dd {
 
 .output-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 12px;
   background: var(--vp-c-bg);
@@ -293,6 +329,12 @@ dd {
 }
 
 .action-button.copied {
+  background: var(--vp-c-brand-1);
+  color: white;
+  border-color: var(--vp-c-brand-1);
+}
+
+.action-button.shared {
   background: var(--vp-c-brand-1);
   color: white;
   border-color: var(--vp-c-brand-1);
@@ -344,6 +386,10 @@ dd {
   color: var(--vp-c-brand-1);
 }
 
+.mobile-only {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .content-wrapper {
     grid-template-columns: 1fr;
@@ -354,6 +400,8 @@ dd {
   .metadata-panel {
     border-right: none;
     border-bottom: 1px solid var(--vp-c-border);
+    max-height: 400px;
+    overflow-y: auto;
   }
 
   .output-panel {
@@ -366,6 +414,10 @@ dd {
 
   .support-message {
     max-width: 100%;
+  }
+
+  .mobile-only {
+    display: inline-flex;
   }
 }
 </style>
