@@ -167,7 +167,7 @@ const supportMessage = computed(() => ({
           <Download :size="16" />
           Download
         </button>
-        <br v-if="canShare" class="mobile-only">
+        <div v-if="canShare" class="mobile-only" style="flex-basis: 100%"></div>
         <button
           v-if="canShare"
           class="action-button mobile-only"
@@ -300,6 +300,7 @@ dd {
 
 .output-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 12px;
   background: var(--vp-c-bg);

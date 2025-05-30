@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "PORT=8080 tsx watch src/index.ts",
     "build": "tsc",
+    "lint": "tsc --noEmit",
     "start": "node dist/index.js",
     "clean": "rimraf dist",
     "cloud-deploy": "gcloud builds submit --config=cloudbuild.yaml ."
