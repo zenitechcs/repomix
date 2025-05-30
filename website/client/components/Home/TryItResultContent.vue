@@ -416,5 +416,10 @@ dd {
   .mobile-only {
     display: inline-flex;
   }
+
+  .metadata-panel {
+    max-height: 400px;
+    overflow-y: auto;
+  }
 }
 </style>
