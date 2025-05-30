@@ -175,6 +175,7 @@ const supportMessage = computed(() => ({
           class="action-button mobile-only"
           @click="handleShare"
           :class="{ shared }"
+          aria-label="Share output via mobile apps"
         >
           <Share :size="16" />
           {{ shared ? 'Shared!' : 'Open with your app' }}
