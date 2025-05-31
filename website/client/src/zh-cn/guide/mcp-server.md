@@ -68,7 +68,7 @@ repomix --mcp
 
 ### 对于 Claude Code
 
-要在 Claude Code 中配置 Repomix 作为 MCP 服务器，请使用以下命令：
+要在 [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) 中配置 Repomix 作为 MCP 服务器，请使用以下命令：
 
 ```bash
 claude mcp add repomix -- npx -y repomix --mcp

@@ -68,7 +68,7 @@ Chỉnh sửa file `claude_desktop_config.json` với cấu hình tương tự n
 
 ### Cho Claude Code
 
-Để cấu hình Repomix như máy chủ MCP trong Claude Code, sử dụng lệnh sau:
+Để cấu hình Repomix như máy chủ MCP trong [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview), sử dụng lệnh sau:
 
 ```bash
 claude mcp add repomix -- npx -y repomix --mcp

@@ -68,7 +68,7 @@ Edit file `claude_desktop_config.json` dengan konfigurasi serupa dengan Cline.
 
 ### Untuk Claude Code
 
-Untuk mengkonfigurasi Repomix sebagai server MCP di Claude Code, gunakan perintah berikut:
+Untuk mengkonfigurasi Repomix sebagai server MCP di [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview), gunakan perintah berikut:
 
 ```bash
 claude mcp add repomix -- npx -y repomix --mcp

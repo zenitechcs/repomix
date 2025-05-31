@@ -68,7 +68,7 @@ Cursorでは、`Cursor Settings` > `MCP` > `+ Add new global MCP server`からCl
 
 ### Claude Codeの場合
 
-Claude CodeでRepomixをMCPサーバーとして設定するには、以下のコマンドを使用します：
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview)でRepomixをMCPサーバーとして設定するには、以下のコマンドを使用します：
 
 ```bash
 claude mcp add repomix -- npx -y repomix --mcp
