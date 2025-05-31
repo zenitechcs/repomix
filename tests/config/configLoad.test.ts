@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
 import type { RepomixConfigCli, RepomixConfigFile } from '../../src/config/configSchema.js';
 import { getGlobalDirectory } from '../../src/config/globalDirectory.js';
-import { RepomixConfigValidationError } from '../../src/shared/errorHandle.js';
+import { RepomixConfigValidationError, RepomixError } from '../../src/shared/errorHandle.js';
 import { logger } from '../../src/shared/logger.js';
 
 vi.mock('node:fs/promises');
@@ -164,8 +164,7 @@ describe('configLoad', () => {
         output: { filePath: 'json5-output.txt' },
         ignore: { useDefaultPatterns: true },
       };
-      vi.mocked(fs.stat)
-        .mockResolvedValueOnce({ isFile: () => true } as Stats); // repomix.config.json5 exists
+      vi.mocked(fs.stat).mockResolvedValueOnce({ isFile: () => true } as Stats); // repomix.config.json5 exists
       vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(mockConfig));
 
       const result = await loadFileConfig(process.cwd(), null);
@@ -173,6 +172,15 @@ describe('configLoad', () => {
       expect(fs.readFile).toHaveBeenCalledWith(path.resolve(process.cwd(), 'repomix.config.json5'), 'utf-8');
       // Should not check for .jsonc or .json since .json5 was found
       expect(fs.stat).toHaveBeenCalledTimes(1);
+    });
+
+    test('should throw RepomixError when specific config file does not exist', async () => {
+      const nonExistentConfigPath = 'non-existent-config.json';
+      vi.mocked(fs.stat).mockRejectedValue(new Error('File not found'));
+
+      await expect(loadFileConfig(process.cwd(), nonExistentConfigPath)).rejects.toThrow(
+        `Config file not found at ${nonExistentConfigPath}`,
+      );
     });
   });
 
