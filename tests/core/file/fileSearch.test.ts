@@ -231,6 +231,15 @@ node_modules
   describe('filterFiles', () => {
     beforeEach(() => {
       vi.resetAllMocks();
+      // Re-establish default mocks after reset
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => true,
+        isFile: () => false,
+      } as Stats);
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
+      });
     });
 
     test('should call globby with correct parameters', async () => {
@@ -241,18 +250,6 @@ node_modules
           useDefaultPatterns: false,
           customPatterns: ['*.custom'],
         },
-      });
-
-      // Ensure fs.stat returns proper mock for directory
-      vi.mocked(fs.stat).mockResolvedValue({
-        isDirectory: () => true,
-        isFile: () => false,
-      } as Stats);
-
-      // Ensure checkDirectoryPermissions returns proper mock
-      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
-        hasAllPermission: true,
-        details: { read: true, write: true, execute: true },
       });
 
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
@@ -282,18 +279,6 @@ node_modules
           useDefaultPatterns: false,
           customPatterns: [],
         },
-      });
-
-      // Mock fs.stat to return directory stats
-      vi.mocked(fs.stat).mockResolvedValue({
-        isDirectory: () => true,
-        isFile: () => false,
-      } as Stats);
-
-      // Mock checkDirectoryPermissions
-      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
-        hasAllPermission: true,
-        details: { read: true, write: true, execute: true },
       });
 
       const mockFileStructure = [
@@ -340,18 +325,6 @@ node_modules
           useDefaultPatterns: false,
           customPatterns: [],
         },
-      });
-
-      // Mock fs.stat to return directory stats
-      vi.mocked(fs.stat).mockResolvedValue({
-        isDirectory: () => true,
-        isFile: () => false,
-      } as Stats);
-
-      // Mock checkDirectoryPermissions
-      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
-        hasAllPermission: true,
-        details: { read: true, write: true, execute: true },
       });
 
       const mockFileStructure = [
@@ -580,11 +553,6 @@ node_modules
     });
 
     test('should succeed when target path is a valid directory', async () => {
-      vi.mocked(fs.stat).mockResolvedValue({
-        isDirectory: () => true,
-        isFile: () => false,
-      } as Stats);
-
       vi.mocked(globby).mockResolvedValue(['test.js']);
 
       const mockConfig = createMockConfig();

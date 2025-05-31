@@ -110,10 +110,15 @@ export const searchFiles = async (rootDir: string, config: RepomixConfigMerged):
           errorCode,
         );
       }
+      // Handle other specific error codes with more context
+      throw new RepomixError(`Failed to access path: ${rootDir}. Error code: ${errorCode}. ${error.message}`);
     }
-    throw new RepomixError(
+    // Preserve original error stack trace for debugging
+    const repomixError = new RepomixError(
       `Failed to access path: ${rootDir}. Reason: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
     );
+    repomixError.cause = error;
+    throw repomixError;
   }
 
   // Check if the path is a directory
