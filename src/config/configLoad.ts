@@ -22,16 +22,22 @@ const getGlobalConfigPaths = () => {
   return defaultConfigPaths.map((configPath) => path.join(globalDir, configPath));
 };
 
+const checkFileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    const stats = await fs.stat(filePath);
+    return stats.isFile();
+  } catch {
+    return false;
+  }
+};
+
 export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepomixConfigFile> => {
   if (argConfigPath) {
     // If a specific config path is provided, use it directly
     const fullPath = path.resolve(rootDir, argConfigPath);
     logger.trace('Loading local config from:', fullPath);
 
-    const isLocalFileExists = await fs
-      .stat(fullPath)
-      .then((stats) => stats.isFile())
-      .catch(() => false);
+    const isLocalFileExists = await checkFileExists(fullPath);
 
     if (isLocalFileExists) {
       return await loadAndValidateConfig(fullPath);
@@ -44,10 +50,7 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
     const fullPath = path.resolve(rootDir, configPath);
     logger.trace('Checking for local config at:', fullPath);
 
-    const isLocalFileExists = await fs
-      .stat(fullPath)
-      .then((stats) => stats.isFile())
-      .catch(() => false);
+    const isLocalFileExists = await checkFileExists(fullPath);
 
     if (isLocalFileExists) {
       logger.trace('Found local config at:', fullPath);
@@ -60,10 +63,7 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
   for (const globalConfigPath of globalConfigPaths) {
     logger.trace('Checking for global config at:', globalConfigPath);
 
-    const isGlobalFileExists = await fs
-      .stat(globalConfigPath)
-      .then((stats) => stats.isFile())
-      .catch(() => false);
+    const isGlobalFileExists = await checkFileExists(globalConfigPath);
 
     if (isGlobalFileExists) {
       logger.trace('Found global config at:', globalConfigPath);
