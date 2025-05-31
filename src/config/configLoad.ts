@@ -31,6 +31,20 @@ const checkFileExists = async (filePath: string): Promise<boolean> => {
   }
 };
 
+const findConfigFile = async (configPaths: string[], logPrefix: string): Promise<string | null> => {
+  for (const configPath of configPaths) {
+    logger.trace(`Checking for ${logPrefix} config at:`, configPath);
+
+    const fileExists = await checkFileExists(configPath);
+
+    if (fileExists) {
+      logger.trace(`Found ${logPrefix} config at:`, configPath);
+      return configPath;
+    }
+  }
+  return null;
+};
+
 export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepomixConfigFile> => {
   if (argConfigPath) {
     // If a specific config path is provided, use it directly
@@ -45,30 +59,20 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
     throw new RepomixError(`Config file not found at ${argConfigPath}`);
   }
 
-  // Try to find a config file using the priority order
-  for (const configPath of defaultConfigPaths) {
-    const fullPath = path.resolve(rootDir, configPath);
-    logger.trace('Checking for local config at:', fullPath);
+  // Try to find a local config file using the priority order
+  const localConfigPaths = defaultConfigPaths.map((configPath) => path.resolve(rootDir, configPath));
+  const localConfigPath = await findConfigFile(localConfigPaths, 'local');
 
-    const isLocalFileExists = await checkFileExists(fullPath);
-
-    if (isLocalFileExists) {
-      logger.trace('Found local config at:', fullPath);
-      return await loadAndValidateConfig(fullPath);
-    }
+  if (localConfigPath) {
+    return await loadAndValidateConfig(localConfigPath);
   }
 
-  // Try to load global config files with priority order
+  // Try to find a global config file using the priority order
   const globalConfigPaths = getGlobalConfigPaths();
-  for (const globalConfigPath of globalConfigPaths) {
-    logger.trace('Checking for global config at:', globalConfigPath);
+  const globalConfigPath = await findConfigFile(globalConfigPaths, 'global');
 
-    const isGlobalFileExists = await checkFileExists(globalConfigPath);
-
-    if (isGlobalFileExists) {
-      logger.trace('Found global config at:', globalConfigPath);
-      return await loadAndValidateConfig(globalConfigPath);
-    }
+  if (globalConfigPath) {
+    return await loadAndValidateConfig(globalConfigPath);
   }
 
   logger.log(
