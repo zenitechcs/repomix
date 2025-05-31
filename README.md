@@ -712,6 +712,14 @@ In Cursor, add a new MCP server from `Cursor Settings` > `MCP` > `+ Add new glob
 
 Edit the `claude_desktop_config.json` file with similar configuration to Cline's config.
 
+**For Claude Code:**
+
+To configure Repomix as an MCP server in [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview), use the following command:
+
+```bash
+claude mcp add repomix -- npx -y repomix --mcp
+```
+
 **Using Docker instead of npx:**
 
 You can use Docker as an alternative to npx for running Repomix as an MCP server:
