@@ -13,14 +13,41 @@ import {
   parseIgnoreContent,
   searchFiles,
 } from '../../../src/core/file/fileSearch.js';
+import { PermissionError } from '../../../src/core/file/permissionCheck.js';
+import { RepomixError } from '../../../src/shared/errorHandle.js';
 import { createMockConfig, isWindows } from '../../testing/testUtils.js';
+
+import { checkDirectoryPermissions } from '../../../src/core/file/permissionCheck.js';
 
 vi.mock('fs/promises');
 vi.mock('globby');
+vi.mock('../../../src/core/file/permissionCheck.js', () => ({
+  checkDirectoryPermissions: vi.fn(),
+  PermissionError: class extends Error {
+    constructor(
+      message: string,
+      public readonly path: string,
+      public readonly code?: string,
+    ) {
+      super(message);
+      this.name = 'PermissionError';
+    }
+  },
+}));
 
 describe('fileSearch', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    // Default mock for fs.stat to assume directory exists and is a directory
+    vi.mocked(fs.stat).mockResolvedValue({
+      isDirectory: () => true,
+      isFile: () => false,
+    } as Stats);
+    // Default mock for checkDirectoryPermissions
+    vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+      hasAllPermission: true,
+      details: { read: true, write: true, execute: true },
+    });
   });
 
   describe('getIgnoreFilePaths', () => {
@@ -216,6 +243,18 @@ node_modules
         },
       });
 
+      // Ensure fs.stat returns proper mock for directory
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => true,
+        isFile: () => false,
+      } as Stats);
+
+      // Ensure checkDirectoryPermissions returns proper mock
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
+      });
+
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
       vi.mocked(fs.access).mockResolvedValue(undefined);
 
@@ -243,6 +282,18 @@ node_modules
           useDefaultPatterns: false,
           customPatterns: [],
         },
+      });
+
+      // Mock fs.stat to return directory stats
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => true,
+        isFile: () => false,
+      } as Stats);
+
+      // Mock checkDirectoryPermissions
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
       });
 
       const mockFileStructure = [
@@ -291,6 +342,18 @@ node_modules
         },
       });
 
+      // Mock fs.stat to return directory stats
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => true,
+        isFile: () => false,
+      } as Stats);
+
+      // Mock checkDirectoryPermissions
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
+      });
+
       const mockFileStructure = [
         'root/file1.js',
         'root/another/file3.js',
@@ -311,11 +374,23 @@ node_modules
       // Mock .git file content for worktree
       const gitWorktreeContent = 'gitdir: /path/to/main/repo/.git/worktrees/feature-branch';
 
-      // Mock fs.stat and fs.readFile for .git file
-      vi.mocked(fs.stat).mockResolvedValue({
-        isFile: () => true,
-      } as Stats);
+      // Mock fs.stat - first call for rootDir, subsequent calls for .git file
+      vi.mocked(fs.stat)
+        .mockResolvedValueOnce({
+          isDirectory: () => true,
+          isFile: () => false,
+        } as Stats)
+        .mockResolvedValue({
+          isFile: () => true,
+          isDirectory: () => false,
+        } as Stats);
       vi.mocked(fs.readFile).mockResolvedValue(gitWorktreeContent);
+
+      // Override checkDirectoryPermissions mock for this test
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
+      });
 
       // Mock globby to return some test files
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
@@ -345,9 +420,21 @@ node_modules
 
     test('should handle regular git repository correctly', async () => {
       // Mock .git as a directory
-      vi.mocked(fs.stat).mockResolvedValue({
-        isFile: () => false,
-      } as Stats);
+      vi.mocked(fs.stat)
+        .mockResolvedValueOnce({
+          isDirectory: () => true,
+          isFile: () => false,
+        } as Stats)
+        .mockResolvedValue({
+          isFile: () => false,
+          isDirectory: () => true,
+        } as Stats);
+
+      // Override checkDirectoryPermissions mock for this test
+      vi.mocked(checkDirectoryPermissions).mockResolvedValue({
+        hasAllPermission: true,
+        details: { read: true, write: true, execute: true },
+      });
 
       // Mock globby to return some test files
       vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
@@ -451,6 +538,61 @@ node_modules
 
     test('should not convert patterns that already have /**/*', () => {
       expect(normalizeGlobPattern('**/folder/**/*')).toBe('**/folder/**/*');
+    });
+  });
+
+  describe('searchFiles path validation', () => {
+    test('should throw error when target path does not exist', async () => {
+      const error = new Error('ENOENT') as Error & { code: string };
+      error.code = 'ENOENT';
+      vi.mocked(fs.stat).mockRejectedValue(error);
+
+      const mockConfig = createMockConfig();
+
+      await expect(searchFiles('/nonexistent/path', mockConfig)).rejects.toThrow(RepomixError);
+      await expect(searchFiles('/nonexistent/path', mockConfig)).rejects.toThrow(
+        'Target path does not exist: /nonexistent/path',
+      );
+    });
+
+    test('should throw PermissionError when access is denied', async () => {
+      const error = new Error('EPERM') as Error & { code: string };
+      error.code = 'EPERM';
+      vi.mocked(fs.stat).mockRejectedValue(error);
+
+      const mockConfig = createMockConfig();
+
+      await expect(searchFiles('/forbidden/path', mockConfig)).rejects.toThrow(PermissionError);
+    });
+
+    test('should throw error when target path is a file, not a directory', async () => {
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => false,
+        isFile: () => true,
+      } as Stats);
+
+      const mockConfig = createMockConfig();
+
+      await expect(searchFiles('/path/to/file.txt', mockConfig)).rejects.toThrow(RepomixError);
+      await expect(searchFiles('/path/to/file.txt', mockConfig)).rejects.toThrow(
+        'Target path is not a directory: /path/to/file.txt. Please specify a directory path, not a file path.',
+      );
+    });
+
+    test('should succeed when target path is a valid directory', async () => {
+      vi.mocked(fs.stat).mockResolvedValue({
+        isDirectory: () => true,
+        isFile: () => false,
+      } as Stats);
+
+      vi.mocked(globby).mockResolvedValue(['test.js']);
+
+      const mockConfig = createMockConfig();
+
+      const result = await searchFiles('/valid/directory', mockConfig);
+
+      expect(result.filePaths).toEqual(['test.js']);
+      expect(result.emptyDirPaths).toEqual([]);
     });
   });
 });
