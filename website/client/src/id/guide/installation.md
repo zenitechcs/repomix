@@ -55,13 +55,19 @@ Anda juga dapat menjalankan Repomix menggunakan Docker:
 docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix
 ```
 
-## Ekstensi Chrome
+## Ekstensi Browser
 
-Dapatkan akses instan ke Repomix langsung dari repositori GitHub mana pun! Ekstensi Chrome kami menambahkan tombol "Repomix" yang nyaman ke halaman repositori GitHub.
+Dapatkan akses instan ke Repomix langsung dari repositori GitHub mana pun! Ekstensi browser kami menambahkan tombol "Repomix" yang nyaman ke halaman repositori GitHub.
 
 ![Repomix Browser Extension](/images/docs/browser-extension.png)
 
-Anda dapat menginstal ekstensi dari [Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa).
+### Instalasi
+- Ekstensi Chrome: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Add-on Firefox: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
+
+### Fitur
+- Akses satu klik ke Repomix untuk repositori GitHub mana pun
+- Fitur menarik lainnya akan segera hadir!
 
 ## Verifikasi Instalasi
 

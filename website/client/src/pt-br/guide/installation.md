@@ -63,7 +63,7 @@ Obtenha acesso instantâneo ao Repomix diretamente de qualquer repositório GitH
 
 ### Instalação
 - Extensão do Chrome: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Add-on do Firefox: Em breve
+- Add-on do Firefox: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### Recursos
 - Acesso com um clique ao Repomix para qualquer repositório GitHub

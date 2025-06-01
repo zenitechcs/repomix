@@ -63,7 +63,7 @@ GitHubリポジトリから直接Repomixにアクセスできます！Chrome拡�
 
 ### インストール
 - Chrome拡張: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Firefox アドオン: 近日公開予定
+- Firefox アドオン: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### 機能
 - GitHubリポジトリからワンクリックでRepomixにアクセス

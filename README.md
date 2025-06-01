@@ -148,7 +148,7 @@ Get instant access to Repomix directly from any GitHub repository! Our Chrome ex
 
 #### Install
 - Chrome Extension: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Firefox Add-on: Coming soon
+- Firefox Add-on: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 #### Features
 - One-click access to Repomix for any GitHub repository
