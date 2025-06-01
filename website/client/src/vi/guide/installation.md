@@ -100,6 +100,20 @@ docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix
 
 Lệnh này gắn kết thư mục hiện tại của bạn vào container và chạy Repomix trên nó.
 
+## Phần mở rộng trình duyệt
+
+Truy cập Repomix ngay lập tức từ bất kỳ repository GitHub nào! Phần mở rộng trình duyệt của chúng tôi thêm nút "Repomix" tiện lợi vào các trang repository GitHub.
+
+![Repomix Browser Extension](/images/docs/browser-extension.png)
+
+### Cài đặt
+- Phần mở rộng Chrome: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
+- Add-on Firefox: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
+
+### Tính năng
+- Truy cập Repomix chỉ với một cú nhấp chuột từ bất kỳ repository GitHub nào
+- Thêm nhiều tính năng thú vị sắp ra mắt!
+
 ## Sử dụng GitHub Actions
 
 Repomix có thể được tích hợp vào quy trình CI/CD của bạn bằng cách sử dụng GitHub Actions. Xem [Hướng dẫn GitHub Actions](github-actions.md) để biết thêm chi tiết.

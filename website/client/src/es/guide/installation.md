@@ -63,7 +63,7 @@ Instálala desde el [VSCode Marketplace](https://marketplace.visualstudio.com/it
 
 ### Instalación
 - Extensión de Chrome: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Complemento de Firefox: Próximamente
+- Complemento de Firefox: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### Características
 - Acceso con un clic a Repomix para cualquier repositorio de GitHub

@@ -63,6 +63,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "lib/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "dependencies": {
     "@clack/prompts": "^0.10.1",

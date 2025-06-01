@@ -65,7 +65,7 @@ Accédez instantanément à Repomix directement depuis n'importe quel dépôt Gi
 
 ### Installation
 - Extension Chrome : [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Module Firefox : Bientôt disponible
+- Module Firefox : [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### Fonctionnalités
 - Accès en un clic à Repomix pour n'importe quel dépôt GitHub

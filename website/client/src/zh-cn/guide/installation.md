@@ -63,7 +63,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 ### 安装
 - Chrome 扩展: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Firefox 插件: 即将推出
+- Firefox 插件: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### 功能
 - 一键从 GitHub 仓库访问 Repomix

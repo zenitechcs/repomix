@@ -63,7 +63,7 @@ GitHub 저장소에서 직접 Repomix에 액세스하세요! Chrome 확장 프�
 
 ### 설치
 - Chrome 확장 프로그램: [Repomix - Chrome Web Store](https://chromewebstore.google.com/detail/repomix/fimfamikepjgchehkohedilpdigcpkoa)
-- Firefox 애드온: 곧 출시 예정
+- Firefox 애드온: [Repomix - Firefox Add-ons](https://addons.mozilla.org/firefox/addon/repomix/)
 
 ### 기능
 - GitHub 저장소에서 원클릭으로 Repomix 액세스
