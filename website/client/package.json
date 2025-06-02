@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/gtag.js": "^0.0.20",
-    "rollup-plugin-visualizer": "^5.14.0",
+    "rollup-plugin-visualizer": "^6.0.1",
     "vitepress": "^1.6.3"
   }
 }
