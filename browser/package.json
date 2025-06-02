@@ -30,6 +30,7 @@
     "@types/node": "^22.10.2",
     "@types/webextension-polyfill": "^0.10.7",
     "@webextension-toolbox/webextension-toolbox": "^7.1.1",
+    "jsdom": "^26.1.0",
     "secretlint": "^9.3.1",
     "sharp": "^0.34.1",
     "tsx": "^4.19.2",
