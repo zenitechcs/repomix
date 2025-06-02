@@ -1257,9 +1257,14 @@ We welcome contributions from the community! To get started, please refer to our
 
 - **Data Collection**: The Repomix website uses **Google Analytics** to collect usage data, such as page views and user interactions. This helps us understand how the website is used and improve the user experience.
 
+### Repomix Browser Extension
+
+- **Data Collection**: The Repomix browser extension does **not** collect, transmit, or store any user data, telemetry, or repository information.
+- **Permissions**: The extension only requires minimal permissions necessary to add the Repomix button to GitHub repository pages. It does not access or modify repository data.
+
 ### Liability Disclaimer
 
-Repomix (both the CLI tool and the website) is provided "as is" without any warranties or guarantees.  
+Repomix (the CLI tool, website, and browser extension) is provided "as is" without any warranties or guarantees.  
 We do not take responsibility for how the generated output is used, including but not limited to its accuracy, legality, or any potential consequences arising from its use.
 
 ## 📜 License
