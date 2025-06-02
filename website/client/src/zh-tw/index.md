@@ -34,10 +34,6 @@ features:
 
 如果 Repomix 幫助您分析或打包程式碼庫用於 AI 工具，我們將非常感謝您在 **Powered by AI** 類別中為我們投票。
 
-您可以在這裡投票：[https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
-
-感謝您的支持！
-
 ## 快速開始
 
 使用 Repomix 生成打包文件（`repomix-output.xml`）後，您可以將其發送給 AI 助手（如 ChatGPT、Claude），並附上這樣的提示：
