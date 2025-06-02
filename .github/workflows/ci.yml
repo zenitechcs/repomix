@@ -162,6 +162,25 @@ jobs:
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  test-browser:
+    name: Test Browser Extension
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+        cache: npm
+    - name: Install browser extension dependencies
+      run: |
+        cd browser
+        npm ci
+    - name: Test browser extension
+      run: |
+        cd browser
+        npm run test
+
   build-and-run:
     name: Build and run
     strategy:
