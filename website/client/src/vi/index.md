@@ -34,10 +34,6 @@ Chúng tôi rất vinh dự! Repomix đã được đề cử cho hạng mục *
 
 Nếu Repomix đã giúp bạn phân tích hoặc đóng gói codebase cho các công cụ AI, chúng tôi sẽ rất biết ơn nếu bạn bỏ phiếu cho chúng tôi trong hạng mục **Powered by AI**.
 
-Bạn có thể bỏ phiếu tại đây: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
-
-Cảm ơn sự hỗ trợ của bạn!
-
 ## Bắt đầu nhanh
 
 Sau khi bạn đã tạo một tệp đóng gói (`repomix-output.xml`) bằng Repomix, bạn có thể gửi nó đến trợ lý AI (như ChatGPT, Claude) với một prompt như:

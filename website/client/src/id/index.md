@@ -34,10 +34,6 @@ Ini tidak mungkin terjadi tanpa semua pengguna yang menggunakan dan mendukung Re
 
 Jika Repomix telah membantu Anda menganalisis atau mengemas basis kode untuk alat AI, kami akan sangat berterima kasih atas suara Anda dalam kategori **Powered by AI**.
 
-Anda dapat memberikan suara di sini: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
-
-Terima kasih atas dukungan Anda!
-
 ## Mulai Cepat
 
 Setelah Anda menghasilkan file yang dikemas (`repomix-output.xml`) menggunakan Repomix, Anda dapat mengirimkannya ke asisten AI (seperti ChatGPT, Claude) dengan prompt seperti:

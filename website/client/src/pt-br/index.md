@@ -34,10 +34,6 @@ Isso não teria sido possível sem todos vocês que usam e apoiam o Repomix. Obr
 
 Se o Repomix ajudou você a analisar ou empacotar bases de código para ferramentas de IA, ficaríamos gratos pelo seu voto na categoria **Powered by AI**.
 
-Você pode votar aqui: [https://forms.gle/5QaYBM6pNoyWLfL2A](https://forms.gle/5QaYBM6pNoyWLfL2A)
-
-Obrigado pelo seu apoio!
-
 ## Início Rápido
 
 Depois de gerar um arquivo compactado (`repomix-output.xml`) usando o Repomix, você pode enviá-lo para um assistente de IA (como ChatGPT, Claude) com um prompt como:
