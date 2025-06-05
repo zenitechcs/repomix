@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { program } from 'commander';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as defaultAction from '../../src/cli/actions/defaultAction.js';
 import * as initAction from '../../src/cli/actions/initAction.js';
 import * as remoteAction from '../../src/cli/actions/remoteAction.js';
@@ -156,11 +156,16 @@ describe('cliRun', () => {
 
   test('should call process.exit(1) on error', async () => {
     const exitSpy = vi.spyOn(process, 'exit').mockImplementationOnce(() => undefined as never);
-    const parseSpy = vi.spyOn(program, 'description').mockImplementationOnce(() => { throw Error() });
+    const parseSpy = vi.spyOn(program, 'description').mockImplementationOnce(() => {
+      throw Error();
+    });
+    const handleErrorSpy = vi.spyOn(logger, 'error');
     await expect(run()).resolves.not.toThrow();
-    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(handleErrorSpy).toHaveBeenCalled();
     exitSpy.mockReset();
     parseSpy.mockReset();
+    handleErrorSpy.mockReset();
   });
 
   describe('executeAction', () => {
