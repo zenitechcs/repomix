@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { program } from 'commander';
 import * as defaultAction from '../../src/cli/actions/defaultAction.js';
 import * as initAction from '../../src/cli/actions/initAction.js';
 import * as remoteAction from '../../src/cli/actions/remoteAction.js';
@@ -34,16 +35,6 @@ vi.mock('../../src/shared/logger', () => ({
     getLogLevel: vi.fn(() => logLevel),
   },
   setLogLevelByEnv: vi.fn(),
-}));
-
-vi.mock('commander', () => ({
-  program: {
-    description: vi.fn().mockReturnThis(),
-    arguments: vi.fn().mockReturnThis(),
-    option: vi.fn().mockReturnThis(),
-    action: vi.fn().mockReturnThis(),
-    parseAsync: vi.fn().mockResolvedValue(undefined),
-  },
 }));
 
 vi.mock('../../src/cli/actions/defaultAction');
@@ -163,8 +154,13 @@ describe('cliRun', () => {
     vi.mocked(versionAction.runVersionAction).mockResolvedValue();
   });
 
-  test('should run without arguments', async () => {
+  test('should call process.exit(1) on error', async () => {
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementationOnce(() => undefined as never);
+    const parseSpy = vi.spyOn(program, 'description').mockImplementationOnce(() => { throw Error() });
     await expect(run()).resolves.not.toThrow();
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    exitSpy.mockReset();
+    parseSpy.mockReset();
   });
 
   describe('executeAction', () => {
