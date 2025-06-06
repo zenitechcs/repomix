@@ -13,9 +13,9 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
-  
-  # Disable incremental reviews after PR creation
-  incremental_review: false
+
+    # Disable incremental reviews after PR creation
+    auto_incremental_review: false
 
   # Request changes for critical issues
   request_changes_workflow: true
