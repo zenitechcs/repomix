@@ -1,0 +1,42 @@
+# CodeRabbit configuration file for Repomix project
+# See: https://docs.coderabbit.ai/getting-started/configure-coderabbit/
+
+# Language configuration
+language: en-US
+
+# Review configuration
+reviews:
+  # Review levels for different types of changes
+  profile: chill # Options: chill, assertive
+
+  # Auto review only on PR creation, not on subsequent changes
+  auto_review:
+    enabled: true
+    drafts: false
+    # Only auto-review when PR is first opened
+    trigger_on:
+      - opened
+
+  # Request changes for critical issues
+  request_changes: ask
+
+  # High-level summary for complex PRs
+  high_level_summary: false
+
+  # Poem style for fun summary (optional)
+  poem: false
+
+  # Review the entire PR, not just changed lines
+  review_full_file: false
+
+# Chat configuration
+chat:
+  auto_reply: false
+
+# Knowledge base configuration
+knowledge_base:
+  # Opt out of sensitive file content analysis
+  opt_out: false
+
+# Early access features
+early_access: true
