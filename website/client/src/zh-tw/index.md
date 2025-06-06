@@ -199,13 +199,13 @@ repomix --style plain
 
 Repomix 為進階使用案例提供強大的功能。以下是進階使用者的一些重要指南：
 
-- **[MCP 伺服器](/guide/mcp-server)** - AI 助理的 Model Context Protocol 整合
-- **[GitHub Actions](/guide/github-actions)** - 在 CI/CD 工作流程中自動化程式碼庫封裝
-- **[程式碼壓縮](/guide/code-compress)** - 基於 Tree-sitter 的智慧壓縮（約 70% 令牌減少）
-- **[作為函式庫使用](/guide/development/using-repomix-as-a-library)** - 將 Repomix 整合到您的 Node.js 應用程式中
-- **[自訂指令](/guide/custom-instructions)** - 為輸出新增自訂提示和指令
-- **[安全功能](/guide/security)** - 內建 Secretlint 整合和安全檢查
-- **[最佳實務](/guide/tips/best-practices)** - 使用經過驗證的策略最佳化您的 AI 工作流程
+- **[MCP 伺服器](./guide/mcp-server)** - AI 助理的 Model Context Protocol 整合
+- **[GitHub Actions](./guide/github-actions)** - 在 CI/CD 工作流程中自動化程式碼庫封裝
+- **[程式碼壓縮](./guide/code-compress)** - 基於 Tree-sitter 的智慧壓縮（約 70% 令牌減少）
+- **[作為函式庫使用](./guide/development/using-repomix-as-a-library)** - 將 Repomix 整合到您的 Node.js 應用程式中
+- **[自訂指令](./guide/custom-instructions)** - 為輸出新增自訂提示和指令
+- **[安全功能](./guide/security)** - 內建 Secretlint 整合和安全檢查
+- **[最佳實務](./guide/tips/best-practices)** - 使用經過驗證的策略最佳化您的 AI 工作流程
 
 ### 更多示例
 ::: tip 需要更多幫助？ 💡
