@@ -197,13 +197,13 @@ repomix --style plain
 
 Repomixは高度な用途向けの強力な機能を提供します。パワーユーザー向けの重要なガイドをご紹介します：
 
-- **[MCPサーバー](/guide/mcp-server)** - AIアシスタント向けModel Context Protocol統合
-- **[GitHub Actions](/guide/github-actions)** - CI/CDワークフローでのコードベース自動パッケージング
-- **[コード圧縮](/guide/code-compress)** - Tree-sitterベースのインテリジェント圧縮（約70%のトークン削減）
-- **[ライブラリとして使用](/guide/development/using-repomix-as-a-library)** - Node.jsアプリケーションへのRepomix統合
-- **[カスタム指示](/guide/custom-instructions)** - 出力にカスタムプロンプトと指示を追加
-- **[セキュリティ機能](/guide/security)** - 組み込みSecretlint統合と安全性チェック
-- **[ベストプラクティス](/guide/tips/best-practices)** - 実証済みの戦略でAIワークフローを最適化
+- **[MCPサーバー](./guide/mcp-server)** - AIアシスタント向けModel Context Protocol統合
+- **[GitHub Actions](./guide/github-actions)** - CI/CDワークフローでのコードベース自動パッケージング
+- **[コード圧縮](./guide/code-compress)** - Tree-sitterベースのインテリジェント圧縮（約70%のトークン削減）
+- **[ライブラリとして使用](./guide/development/using-repomix-as-a-library)** - Node.jsアプリケーションへのRepomix統合
+- **[カスタム指示](./guide/custom-instructions)** - 出力にカスタムプロンプトと指示を追加
+- **[セキュリティ機能](./guide/security)** - 組み込みSecretlint統合と安全性チェック
+- **[ベストプラクティス](./guide/tips/best-practices)** - 実証済みの戦略でAIワークフローを最適化
 
 ### その他の例
 ::: tip もっと詳しく知りたい場合は？ 💡
