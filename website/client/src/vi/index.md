@@ -194,6 +194,18 @@ Tạo một `repomix.config.json` cho các cài đặt cố định:
 }
 ```
 
+## Hướng Dẫn Người Dùng Chuyên Nghiệp
+
+Repomix cung cấp các tính năng mạnh mẽ cho các trường hợp sử dụng nâng cao. Dưới đây là một số hướng dẫn thiết yếu cho người dùng chuyên nghiệp:
+
+- **[Máy chủ MCP](/guide/mcp-server)** - Tích hợp Model Context Protocol cho trợ lý AI
+- **[GitHub Actions](/guide/github-actions)** - Tự động hóa đóng gói codebase trong quy trình CI/CD
+- **[Nén Mã](/guide/code-compress)** - Nén thông minh dựa trên Tree-sitter (~70% giảm token)
+- **[Sử dụng như Thư viện](/guide/development/using-repomix-as-a-library)** - Tích hợp Repomix vào ứng dụng Node.js của bạn
+- **[Hướng dẫn Tùy chỉnh](/guide/custom-instructions)** - Thêm prompt và hướng dẫn tùy chỉnh vào đầu ra
+- **[Tính năng Bảo mật](/guide/security)** - Tích hợp Secretlint tích hợp sẵn và kiểm tra an toàn
+- **[Thực hành Tốt nhất](/guide/tips/best-practices)** - Tối ưu hóa quy trình AI của bạn với các chiến lược đã được chứng minh
+
 ### Thêm ví dụ
 ::: tip Cần thêm trợ giúp? 💡
 Hãy xem tài liệu toàn diện của chúng tôi trong [Hướng dẫn](/vi/guide/) hoặc khám phá [Kho lưu trữ GitHub](https://github.com/yamadashy/repomix) để biết thêm ví dụ và mã nguồn.

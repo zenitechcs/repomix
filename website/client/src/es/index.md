@@ -195,6 +195,18 @@ Crea un archivo `repomix.config.json` para configuraciones persistentes:
 }
 ```
 
+## Guía para Usuarios Avanzados
+
+Repomix ofrece características poderosas para casos de uso avanzados. Aquí tienes algunas guías esenciales para usuarios avanzados:
+
+- **[Servidor MCP](/guide/mcp-server)** - Integración del Protocolo de Contexto de Modelo para asistentes de IA
+- **[GitHub Actions](/guide/github-actions)** - Automatiza el empaquetado de código base en flujos de trabajo CI/CD
+- **[Compresión de Código](/guide/code-compress)** - Compresión inteligente basada en Tree-sitter (~70% de reducción de tokens)
+- **[Usar como Biblioteca](/guide/development/using-repomix-as-a-library)** - Integra Repomix en tus aplicaciones Node.js
+- **[Instrucciones Personalizadas](/guide/custom-instructions)** - Añade prompts e instrucciones personalizadas a las salidas
+- **[Características de Seguridad](/guide/security)** - Integración incorporada de Secretlint y verificaciones de seguridad
+- **[Mejores Prácticas](/guide/tips/best-practices)** - Optimiza tus flujos de trabajo de IA con estrategias probadas
+
 ### Más ejemplos
 ::: tip ¿Necesitas más ayuda? 💡
 Consulta nuestra [guía](./guide/) para instrucciones detalladas, o visita nuestro [repositorio de GitHub](https://github.com/yamadashy/repomix) para más ejemplos y código fuente.
