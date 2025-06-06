@@ -13,21 +13,18 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
-    # Only auto-review when PR is first opened
-    trigger_on:
-      - opened
+  
+  # Disable incremental reviews after PR creation
+  incremental_review: false
 
   # Request changes for critical issues
-  request_changes: ask
+  request_changes_workflow: true
 
   # High-level summary for complex PRs
   high_level_summary: false
 
   # Poem style for fun summary (optional)
   poem: false
-
-  # Review the entire PR, not just changed lines
-  review_full_file: false
 
 # Chat configuration
 chat:
