@@ -32,8 +32,8 @@ RUN npm ci --only=production --ignore-scripts && \
 # ==============================================================================
 FROM node:24-alpine
 
-# Install git (required by repomix for remote repository processing)
-RUN apk add --no-cache git
+# Install git and ca-certificates (required by repomix for remote repository processing)
+RUN apk add --no-cache git ca-certificates
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
