@@ -1,5 +1,9 @@
 import * as zlib from 'node:zlib';
+import { promisify } from 'node:util';
 import type { PackOptions } from '../types.js';
+
+const inflateAsync = promisify(zlib.inflate);
+const deflateAsync = promisify(zlib.deflate);
 
 interface CacheEntry<T> {
   value: Uint8Array; // Compressed data
@@ -17,7 +21,7 @@ export class RequestCache<T> {
     setInterval(() => this.cleanup(), ttlInSeconds * 1000);
   }
 
-  get(key: string): T | undefined {
+  async get(key: string): Promise<T | undefined> {
     const entry = this.cache.get(key);
     if (!entry) {
       return undefined;
@@ -31,8 +35,8 @@ export class RequestCache<T> {
 
     try {
       // Decompress and return the data
-      const decompressedData = zlib.inflateSync(entry.value).toString('utf8');
-      return JSON.parse(decompressedData);
+      const decompressedData = await inflateAsync(entry.value);
+      return JSON.parse(decompressedData.toString('utf8'));
     } catch (error) {
       console.error('Error decompressing cache entry:', error);
       this.cache.delete(key);
@@ -40,11 +44,11 @@ export class RequestCache<T> {
     }
   }
 
-  set(key: string, value: T): void {
+  async set(key: string, value: T): Promise<void> {
     try {
       // Convert data to JSON string and compress
       const jsonString = JSON.stringify(value);
-      const compressedData = zlib.deflateSync(Buffer.from(jsonString, 'utf8'));
+      const compressedData = await deflateAsync(Buffer.from(jsonString, 'utf8'));
 
       this.cache.set(key, {
         value: compressedData,
