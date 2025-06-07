@@ -1254,6 +1254,7 @@ We welcome contributions from the community! To get started, please refer to our
 ### Repomix Website ([repomix.com](https://repomix.com/))
 
 - **Data Collection**: The Repomix website uses **Google Analytics** to collect usage data, such as page views and user interactions. This helps us understand how the website is used and improve the user experience.
+- **File Processing**: When uploading ZIP files or folders, your files are temporarily stored on our servers for processing. All uploaded files and processed data are automatically deleted immediately after processing is complete.
 
 ### Repomix Browser Extension
 
