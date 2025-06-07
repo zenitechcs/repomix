@@ -8,6 +8,8 @@ Repomix ist ein Tool, das Ihr gesamtes Repository in eine einzige, KI-freundlich
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## Schnellstart
 
 Führen Sie diesen Befehl in Ihrem Projektverzeichnis aus:

@@ -8,6 +8,8 @@ Repomix एक ऐसा टूल है जो आपके पूरे र�
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## त्वरित शुरुआत
 
 अपने प्रोजेक्ट डायरेक्टरी में यह कमांड चलाएं:

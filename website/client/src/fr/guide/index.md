@@ -8,6 +8,8 @@ Repomix est un outil qui regroupe l'ensemble de votre dépôt de code en un seul
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## Démarrage rapide
 
 Exécutez cette commande dans le répertoire de votre projet:
