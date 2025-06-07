@@ -26,6 +26,8 @@ features:
 
 <div class="cli-section">
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.svg)](https://github.com/sponsors/yamadashy)
+
 ## 🏆 Open Source Awards Nomination
 
 We're honored! Repomix has been nominated for the **Powered by AI** category at the [JSNation Open Source Awards 2025](https://osawards.com/javascript/).

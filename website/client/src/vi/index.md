@@ -26,6 +26,8 @@ features:
 
 <div class="cli-section">
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.svg)](https://github.com/sponsors/yamadashy)
+
 ## 🏆 Đề cử Giải thưởng Mã nguồn Mở
 
 Chúng tôi rất vinh dự! Repomix đã được đề cử cho hạng mục **Powered by AI** tại [JSNation Open Source Awards 2025](https://osawards.com/javascript/).
