@@ -1,4 +1,4 @@
-import pako from 'pako';
+import * as zlib from 'node:zlib';
 import type { PackOptions } from '../types.js';
 
 interface CacheEntry<T> {
@@ -31,7 +31,7 @@ export class RequestCache<T> {
 
     try {
       // Decompress and return the data
-      const decompressedData = pako.inflate(entry.value, { to: 'string' });
+      const decompressedData = zlib.inflateSync(entry.value).toString('utf8');
       return JSON.parse(decompressedData);
     } catch (error) {
       console.error('Error decompressing cache entry:', error);
@@ -44,7 +44,7 @@ export class RequestCache<T> {
     try {
       // Convert data to JSON string and compress
       const jsonString = JSON.stringify(value);
-      const compressedData = pako.deflate(jsonString);
+      const compressedData = zlib.deflateSync(Buffer.from(jsonString, 'utf8'));
 
       this.cache.set(key, {
         value: compressedData,
