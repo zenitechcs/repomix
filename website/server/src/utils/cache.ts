@@ -1,17 +1,17 @@
-import * as zlib from 'node:zlib';
 import { promisify } from 'node:util';
+import * as zlib from 'node:zlib';
 import type { PackOptions } from '../types.js';
 
 const inflateAsync = promisify(zlib.inflate);
 const deflateAsync = promisify(zlib.deflate);
 
-interface CacheEntry<T> {
+interface CacheEntry {
   value: Uint8Array; // Compressed data
   timestamp: number;
 }
 
 export class RequestCache<T> {
-  private cache: Map<string, CacheEntry<T>> = new Map();
+  private cache: Map<string, CacheEntry> = new Map();
   private readonly ttl: number;
 
   constructor(ttlInSeconds = 60) {
