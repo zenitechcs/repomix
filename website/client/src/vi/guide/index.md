@@ -8,6 +8,8 @@ Repomix là một công cụ đóng gói toàn bộ kho lưu trữ của bạn t
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## Bắt đầu nhanh
 
 Chạy lệnh này trong thư mục dự án của bạn:

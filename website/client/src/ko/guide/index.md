@@ -8,6 +8,8 @@ Repomix는 전체 저장소를 AI 친화적인 단일 파일로 패키징하는 
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## 빠른 시작
 
 프로젝트 디렉토리에서 다음 명령을 실행하세요.

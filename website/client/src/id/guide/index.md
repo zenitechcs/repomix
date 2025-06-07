@@ -8,6 +8,8 @@ Repomix adalah alat yang mengemas seluruh repositori Anda menjadi satu file yang
 
 <HomeBadges />
 
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
+
 ## Mulai Cepat
 
 Jalankan perintah ini di direktori proyek Anda:
