@@ -1,4 +1,5 @@
 {
+  "name": "repomix-website-server",
   "private": true,
   "type": "module",
   "scripts": {

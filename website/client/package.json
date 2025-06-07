@@ -1,4 +1,5 @@
 {
+  "name": "repomix-website-client",
   "private": true,
   "type": "module",
   "scripts": {
