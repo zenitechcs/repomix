@@ -84,6 +84,7 @@ export const printTopFiles = (
   fileCharCounts: Record<string, number>,
   fileTokenCounts: Record<string, number>,
   topFilesLength: number,
+  totalTokens: number,
 ) => {
   const topFilesLengthStrLen = topFilesLength.toString().length;
   logger.log(pc.white(`📈 Top ${topFilesLength} Files by Token Count:`));
@@ -95,8 +96,7 @@ export const printTopFiles = (
     .sort((a, b) => b[1] - a[1])
     .slice(0, topFilesLength);
 
-  // Calculate total token count only from files with token counts
-  const totalTokens = Object.values(fileTokenCounts).reduce((sum, count) => sum + count, 0);
+  // Use the actual total tokens from the entire output
 
   filesWithTokenCounts.forEach(([filePath, tokenCount], index) => {
     const charCount = fileCharCounts[filePath];
