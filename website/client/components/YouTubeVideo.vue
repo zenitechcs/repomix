@@ -1,10 +1,9 @@
 <script setup lang="ts">
-defineProps({
-  videoId: {
-    type: String,
-    required: true,
-  },
-});
+import type { VideoId } from '../constants/videos';
+
+defineProps<{
+  videoId: VideoId | string;
+}>();
 </script>
 
 <template>

@@ -36,11 +36,15 @@ This wouldn't have been possible without all of you using and supporting Repomix
 
 If Repomix has helped you analyze or pack codebases for AI tools, we'd be grateful for your vote in the **Powered by AI** category.
 
+<script setup>
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 ## What is Repomix?
 
 Repomix is a powerful tool that packages your entire codebase into a single AI-friendly file. Whether you're working on code reviews, refactoring, or getting AI assistance with your project, Repomix makes it easy to share your entire repository context with AI tools.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## Quick Start
 
