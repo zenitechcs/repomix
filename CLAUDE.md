@@ -119,10 +119,12 @@ npm run test
 
 ### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
+- **Write all commit messages in English** - both title and body must be in English for consistency
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
 - Format: Use title for technical change, body with clear dialogue section marker and summary
 - Start with dialogue type summary, then provide bullet points of the conversation flow
+- If user spoke in another language, translate their quotes to English in the commit message
 - Examples: 
   ```
   feat(cli): Add new --no-progress flag
@@ -131,20 +133,6 @@ npm run test
   - User asked: "Can we disable progress output for CI environments?"
   - User explained: "Progress output creates noise in build logs"
   - Assistant implemented --no-progress flag for automation compatibility
-  
-  🤖 Generated with [Claude Code](https://claude.ai/code)
-  
-  Co-Authored-By: Claude <noreply@anthropic.com>
-  ```
-  ```
-  docs(claude): Add dialogue type summaries to commit message format
-  
-  User requested clarification on commit message dialogue format:
-  - User asked: "どういう対話かどうかはようやくしたものを書くようにしてください"
-  - User wanted dialogue type/nature to be summarized upfront
-  - User preferred descriptive headers like 'User requested feature enhancement'
-  - Assistant added dialogue type summaries before bullet points
-  - Examples now show clear dialogue nature identification
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
