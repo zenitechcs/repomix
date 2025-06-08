@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important: Continuous Knowledge Updates
+
+**ALWAYS update this CLAUDE.md file during development tasks when you learn:**
+- New project-specific patterns or conventions
+- Solutions to common problems or edge cases
+- Debugging techniques specific to this codebase
+- Tool usage patterns that improve efficiency
+- Review feedback patterns that could help future development
+- Architecture decisions and their rationale
+
+**When to update:** Don't wait until task completion - update immediately when you discover useful knowledge that would benefit future development sessions. This ensures knowledge continuity across different coding sessions.
+
 # Repomix Development Guide
 
 Repomix is a tool that packs repository contents into single files optimized for AI consumption. It converts codebases into structured formats (XML, Markdown, Plain Text) with intelligent compression, security scanning, and token counting for LLM integration.
@@ -189,3 +201,26 @@ Before marking PR as ready for merge:
 6. ✅ **Update documentation** - If architectural changes were made
 
 **Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. This is essential for efficient PR management.
+
+## Knowledge Management & Continuous Improvement
+
+### Document Learning During Development
+
+**Key principle:** Update CLAUDE.md immediately when discovering useful patterns, not at the end of tasks.
+
+**Examples of knowledge worth documenting:**
+- **Project quirks**: "Website uses `position: fixed` for tooltips due to parent `overflow: hidden`"
+- **Tool discoveries**: "Use `gh api` for line-specific PR comments, `gh pr view --comments` for general ones"
+- **Debug techniques**: "Check `canShareFiles()` implementation when Web Share API behaves unexpectedly"
+- **Performance patterns**: "Always use `{ passive: true }` for scroll listeners in Vue components"
+- **Architecture insights**: "tooltip-container pattern prevents disabled button event issues"
+
+### Maintaining This File
+
+- **Be specific**: Instead of "fix tooltip issues", write "move mouseenter to container for disabled buttons"
+- **Include context**: Explain *why* a solution works, not just *what* to do
+- **Reference locations**: Include file paths and line numbers when relevant
+- **Update immediately**: Don't batch updates - add knowledge as you learn it
+- **Cross-reference**: Link related sections (e.g., PR review patterns ↔ Vue.js best practices)
+
+This file is a living document that should grow with every development session, ensuring no valuable knowledge is lost between tasks.
