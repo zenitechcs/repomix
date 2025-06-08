@@ -49,7 +49,7 @@ export const calculateMetrics = async (
 
   // For top files display optimization: calculate token counts only for top files by character count
   const topFilesLength = config.output.topFilesLength;
-  const candidateFilesCount = Math.min(processedFiles.length, Math.max(topFilesLength * 5, topFilesLength));
+  const candidateFilesCount = Math.min(processedFiles.length, Math.max(topFilesLength * 10, topFilesLength));
 
   // Get top files by character count first
   const topFilesByChar = processedFiles
