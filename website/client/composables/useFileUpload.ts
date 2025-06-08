@@ -137,6 +137,9 @@ export function useFileUpload(config: FileUploadConfig) {
       if (preprocessFiles) {
         resultFile = await preprocessFiles(files, folderName);
       } else {
+        if ((config.mode === 'folder' || multiple) && files.length > 1) {
+          throw new Error('Multiple files require a preprocessor function');
+        }
         resultFile = files[0];
       }
 
