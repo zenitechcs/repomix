@@ -90,10 +90,10 @@ const handleEditorMount = (editor: Ace.Editor) => {
 
 const updateTooltipPosition = () => {
   if (!tooltipContainer.value || !tooltipContent.value || isMobile.value) return;
-  
+
   const containerRect = tooltipContainer.value.getBoundingClientRect();
   const tooltipEl = tooltipContent.value;
-  
+
   // Position above the button with proper spacing for the arrow (like existing tooltips)
   tooltipEl.style.top = `${containerRect.top - 46}px`;
   tooltipEl.style.left = `${containerRect.left + containerRect.width / 2}px`;
@@ -127,13 +127,13 @@ const supportMessage = computed(() => ({
 
 onMounted(() => {
   isMobile.value = window.innerWidth <= 768;
-  
+
   const handleResize = () => {
     isMobile.value = window.innerWidth <= 768;
   };
-  
+
   window.addEventListener('resize', handleResize);
-  
+
   return () => {
     window.removeEventListener('resize', handleResize);
   };
