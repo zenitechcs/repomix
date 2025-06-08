@@ -103,7 +103,7 @@ const updateTooltipPosition = () => {
   // Position above the button with proper spacing for the arrow (like existing tooltips)
   tooltipEl.style.top = `${containerRect.top - 46}px`;
   tooltipEl.style.left = `${containerRect.left + containerRect.width / 2}px`;
-  
+
   // Show tooltip (override CSS hover states)
   tooltipEl.style.opacity = '1';
   tooltipEl.style.visibility = 'visible';

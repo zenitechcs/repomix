@@ -104,9 +104,22 @@ Repomix is a tool that packs repository contents into single files optimized for
 - Proper error propagation through async/worker boundaries
 
 ## Git Workflow
+
+### Pre-Commit Requirements (MANDATORY)
+**ALWAYS run these commands before every commit:**
+```bash
+npm run lint
+npm run test
+```
+
+- **npm run lint**: Runs Biome formatter, TypeScript type checking, and Secretlint security scan
+- **npm run test**: Executes full test suite to ensure no regressions
+- **Never commit failing code**: Fix all lint errors and test failures before committing
+- **Use `--write` flag**: Biome will auto-fix formatting issues when possible
+
+### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
-- Run `npm run lint && npm test` before committing changes
 - Examples: `feat(cli): Add new --no-progress flag`, `fix(security): Handle special characters in file paths`
 
 ## Pull Request Review Process
@@ -194,7 +207,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 Before marking PR as ready for merge:
 
 1. ✅ **Address all feedback** - Fix high/medium priority issues
-2. ✅ **Run linting and tests** - `npm run lint && npm test`
+2. ✅ **Run linting and tests (MANDATORY)** - `npm run lint && npm test` - Must pass before committing
 3. ✅ **Commit with clear messages** - Reference what was fixed
 4. ✅ **Respond to reviewers** - Explain changes and decisions
 5. ✅ **Resolve conversations** - Mark addressed feedback as resolved
