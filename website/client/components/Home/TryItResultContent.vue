@@ -186,10 +186,10 @@ onUnmounted(() => {
         <dl v-if="result.metadata.summary">
           <dt>Total Files</dt>
           <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
-          <dt>Total Size</dt>
-          <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
           <dt>Total Tokens</dt>
           <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} <span class="unit">tokens</span></dd>
+          <dt>Total Size</dt>
+          <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
         </dl>
       </div>
 
@@ -199,7 +199,7 @@ onUnmounted(() => {
           <li v-for="file in result.metadata.topFiles" :key="file.path">
             <div class="file-path">{{ file.path }}</div>
             <div class="file-stats">
-              {{ file.charCount.toLocaleString() }} <span class="unit">chars</span> <span class="separator-unit">|</span> {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span> <span class="separator-unit">|</span> {{ ((file.tokenCount / result.metadata.summary.totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
+              {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span> <span class="separator-unit">|</span> {{ file.charCount.toLocaleString() }} <span class="unit">chars</span> <span class="separator-unit">|</span> {{ ((file.tokenCount / result.metadata.summary.totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
             </div>
           </li>
         </ol>

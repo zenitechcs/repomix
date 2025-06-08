@@ -119,8 +119,25 @@ npm run test
 
 ### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
+- **Write all commit messages in English** - both title and body must be in English for consistency
 - Write detailed commit messages focusing on the "why" rather than the "what"
-- Examples: `feat(cli): Add new --no-progress flag`, `fix(security): Handle special characters in file paths`
+- **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
+- Format: Use title for technical change, body with clear dialogue section marker and summary
+- Start with dialogue type summary, then provide bullet points of the conversation flow
+- If user spoke in another language, translate their quotes to English in the commit message
+- Examples: 
+  ```
+  feat(cli): Add new --no-progress flag
+  
+  User requested a feature enhancement for CI automation:
+  - User asked: "Can we disable progress output for CI environments?"
+  - User explained: "Progress output creates noise in build logs"
+  - Assistant implemented --no-progress flag for automation compatibility
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
 
 ## Pull Request Review Process
 
