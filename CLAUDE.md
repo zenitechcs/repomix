@@ -121,13 +121,15 @@ npm run test
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
-- Format: Use title for technical change, body for user context and reasoning
+- Format: Use title for technical change, body for user context and reasoning with clear dialogue markers
+- Use dialogue format with "User:" and "Assistant:" or narrative descriptions of the conversation flow
 - Examples: 
   ```
   feat(cli): Add new --no-progress flag
   
-  User requested this for CI environments where progress output
-  creates noise in build logs. Improves automation compatibility.
+  User: "Can we disable progress output for CI environments?"
+  Assistant: Added --no-progress flag to reduce noise in build logs
+  and improve automation compatibility.
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
@@ -136,9 +138,14 @@ npm run test
   ```
   perf(metrics): Optimize token counting for top files
   
-  User suggested using character-based pre-filtering with 10x multiplier
-  instead of calculating tokens for all files. Reduces computation 
-  by ~90% while maintaining ranking accuracy for large codebases.
+  User: "Is token counting only used for top files display?"
+  Assistant: Explained it's used for multiple purposes including total output size
+  User: "Since chars and tokens correlate, why not pre-filter by chars first?"
+  Assistant: Implemented character-based pre-filtering with 10x multiplier
+  User: "Can we increase to 10x?" → Changed from 5x to 10x for better accuracy
+  User: "Change display order to tokens first" → Updated CLI and website
+  
+  Reduces computation by ~90% while maintaining ranking accuracy.
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
