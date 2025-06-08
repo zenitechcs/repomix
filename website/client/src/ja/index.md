@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -35,6 +40,12 @@ features:
 これは皆様がRepomixを使用し、サポートしてくださったおかげです。ありがとうございます！
 
 RepomixがAIツール向けのコードベース分析やパッケージングにお役に立った場合、**Powered by AI**カテゴリでの投票をお願いいたします。
+
+## Repomixとは？
+
+Repomixは、コードベース全体を単一のAIフレンドリーなファイルにパッケージ化する強力なツールです。コードレビュー、リファクタリング、プロジェクトに関するAIアシスタンスが必要な場合に、リポジトリ全体のコンテキストをAIツールと簡単に共有できます。
+
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## クイックスタート
 

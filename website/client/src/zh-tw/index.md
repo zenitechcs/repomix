@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -35,6 +40,12 @@ features:
 這一切都離不開所有使用和支持 Repomix 的用戶。謝謝大家！
 
 如果 Repomix 幫助您分析或打包程式碼庫用於 AI 工具，我們將非常感謝您在 **Powered by AI** 類別中為我們投票。
+
+## 什麼是 Repomix？
+
+Repomix 是一個強大的工具，可以將您的整個程式碼庫打包到一個 AI 友好的檔案中。無論您是在進行程式碼審查、重構，還是需要 AI 協助您的專案，Repomix 都可以輕鬆地與 AI 工具共享您的整個儲存庫上下文。
+
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## 快速開始
 
