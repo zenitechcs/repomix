@@ -4,7 +4,7 @@ import themeTomorrowUrl from 'ace-builds/src-noconflict/theme-tomorrow?url';
 import themeTomorrowNightUrl from 'ace-builds/src-noconflict/theme-tomorrow_night?url';
 import { BarChart2, Copy, Download, GitFork, HeartHandshake, PackageSearch, Share, Star } from 'lucide-vue-next';
 import { useData } from 'vitepress';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { VAceEditor } from 'vue3-ace-editor';
 import type { PackResult } from '../api/client';
 import {
@@ -73,6 +73,12 @@ const handleShare = async (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
 
+  // Only allow sharing on mobile devices with Web Share API support
+  if (!isMobile.value || !canShare.value) {
+    console.log('Share is only available on mobile devices');
+    return;
+  }
+
   const success = await shareResult(props.result.content, props.result.format, props.result);
   if (success) {
     shared.value = true;
@@ -125,18 +131,17 @@ const supportMessage = computed(() => ({
   color: messages[currentMessageIndex.value].color,
 }));
 
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 768;
+};
+
 onMounted(() => {
   isMobile.value = window.innerWidth <= 768;
-
-  const handleResize = () => {
-    isMobile.value = window.innerWidth <= 768;
-  };
-
   window.addEventListener('resize', handleResize);
+});
 
-  return () => {
-    window.removeEventListener('resize', handleResize);
-  };
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
@@ -198,14 +203,13 @@ onMounted(() => {
           Download
         </button>
         <div v-if="canShare" class="mobile-only" style="flex-basis: 100%"></div>
-        <div v-if="canShare" class="tooltip-container" ref="tooltipContainer">
+        <div v-if="canShare" class="tooltip-container" ref="tooltipContainer" @mouseenter="updateTooltipPosition">
           <button
             class="action-button"
             @click="handleShare"
             :class="{ shared }"
             :disabled="!isMobile"
             aria-label="Share output via mobile apps"
-            @mouseenter="updateTooltipPosition"
           >
             <Share :size="16" />
             {{ shared ? 'Shared!' : 'Open with your app' }}
@@ -453,10 +457,6 @@ dd {
 
   .mobile-only {
     display: inline-flex;
-  }
-  
-  .desktop-only {
-    display: none;
   }
 }
 
