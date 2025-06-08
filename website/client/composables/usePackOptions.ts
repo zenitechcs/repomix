@@ -13,19 +13,21 @@ export interface PackOptions {
   compress: boolean;
 }
 
+const DEFAULT_PACK_OPTIONS: PackOptions = {
+  format: 'xml',
+  removeComments: false,
+  removeEmptyLines: false,
+  showLineNumbers: false,
+  fileSummary: true,
+  directoryStructure: true,
+  includePatterns: '',
+  ignorePatterns: '',
+  outputParsable: false,
+  compress: false,
+};
+
 export function usePackOptions() {
-  const packOptions = reactive<PackOptions>({
-    format: 'xml',
-    removeComments: false,
-    removeEmptyLines: false,
-    showLineNumbers: false,
-    fileSummary: true,
-    directoryStructure: true,
-    includePatterns: '',
-    ignorePatterns: '',
-    outputParsable: false,
-    compress: false,
-  });
+  const packOptions = reactive<PackOptions>({ ...DEFAULT_PACK_OPTIONS });
 
   const getPackRequestOptions = computed(() => ({
     removeComments: packOptions.removeComments,
@@ -44,16 +46,7 @@ export function usePackOptions() {
   }
 
   function resetOptions() {
-    packOptions.format = 'xml';
-    packOptions.removeComments = false;
-    packOptions.removeEmptyLines = false;
-    packOptions.showLineNumbers = false;
-    packOptions.fileSummary = true;
-    packOptions.directoryStructure = true;
-    packOptions.includePatterns = '';
-    packOptions.ignorePatterns = '';
-    packOptions.outputParsable = false;
-    packOptions.compress = false;
+    Object.assign(packOptions, DEFAULT_PACK_OPTIONS);
   }
 
   return {
