@@ -52,7 +52,7 @@ export const calculateMetrics = async (
   const candidateFilesCount = Math.min(processedFiles.length, Math.max(topFilesLength * 10, topFilesLength));
 
   // Get top files by character count first
-  const topFilesByChar = processedFiles
+  const topFilesByChar = [...processedFiles]
     .sort((a, b) => b.content.length - a.content.length)
     .slice(0, candidateFilesCount);
 
