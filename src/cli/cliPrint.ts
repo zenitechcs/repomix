@@ -86,18 +86,20 @@ export const printTopFiles = (
   topFilesLength: number,
 ) => {
   const topFilesLengthStrLen = topFilesLength.toString().length;
-  logger.log(pc.white(`📈 Top ${topFilesLength} Files by Character Count and Token Count:`));
+  logger.log(pc.white(`📈 Top ${topFilesLength} Files by Token Count:`));
   logger.log(pc.dim(`─────────────────────────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
 
-  const topFiles = Object.entries(fileCharCounts)
+  // Filter files that have token counts (top candidates by char count)
+  const filesWithTokenCounts = Object.entries(fileTokenCounts)
+    .filter(([, tokenCount]) => tokenCount > 0)
     .sort((a, b) => b[1] - a[1])
     .slice(0, topFilesLength);
 
-  // Calculate total token count
+  // Calculate total token count only from files with token counts
   const totalTokens = Object.values(fileTokenCounts).reduce((sum, count) => sum + count, 0);
 
-  topFiles.forEach(([filePath, charCount], index) => {
-    const tokenCount = fileTokenCounts[filePath];
+  filesWithTokenCounts.forEach(([filePath, tokenCount], index) => {
+    const charCount = fileCharCounts[filePath];
     const percentageOfTotal = totalTokens > 0 ? Number(((tokenCount / totalTokens) * 100).toFixed(1)) : 0;
     const indexString = `${index + 1}.`.padEnd(3, ' ');
     logger.log(
