@@ -71,7 +71,6 @@ export function usePackRequest() {
     const timeoutId = setTimeout(() => {
       if (requestController) {
         requestController.abort('Request timed out');
-        throw new Error('Request timed out');
       }
     }, TIMEOUT_MS);
 
@@ -108,7 +107,6 @@ export function usePackRequest() {
 
   return {
     // Pack options (re-exported for convenience)
-    packOptions,
     ...packOptionsComposable,
 
     // Input states
