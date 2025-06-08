@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -40,7 +45,7 @@ Nếu Repomix đã giúp bạn phân tích hoặc đóng gói codebase cho các 
 
 Repomix là một công cụ mạnh mẽ giúp đóng gói toàn bộ codebase của bạn thành một file thân thiện với AI. Dù bạn đang làm việc với code review, refactoring hay cần hỗ trợ AI cho dự án của mình, Repomix giúp bạn dễ dàng chia sẻ toàn bộ ngữ cảnh repository với các công cụ AI.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## Bắt đầu nhanh
 

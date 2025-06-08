@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -40,7 +45,7 @@ Repomix가 AI 도구를 위한 코드베이스 분석이나 패키징에 도움�
 
 Repomix는 전체 코드베이스를 하나의 AI 친화적 파일로 패키징하는 강력한 도구입니다. 코드 리뷰, 리팩터링 또는 프로젝트에 대한 AI 지원이 필요할 때, 전체 리포지토리 컨텍스트를 AI 도구와 쉽게 공유할 수 있습니다.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## 빠른 시작
 

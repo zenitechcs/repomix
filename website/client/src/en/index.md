@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -35,10 +40,6 @@ We're honored! Repomix has been nominated for the **Powered by AI** category at 
 This wouldn't have been possible without all of you using and supporting Repomix. Thank you!
 
 If Repomix has helped you analyze or pack codebases for AI tools, we'd be grateful for your vote in the **Powered by AI** category.
-
-<script setup>
-import { VIDEO_IDS } from '../../utils/videos'
-</script>
 
 ## What is Repomix?
 

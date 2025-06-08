@@ -2,11 +2,13 @@
 
 <script setup>
 import HomeBadges from '../../../components/HomeBadges.vue'
+import YouTubeVideo from '../../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../../utils/videos'
 </script>
 
 Repomix 是一个将代码库打包成单个 AI 友好文件的工具。它专为帮助你将代码提供给大型语言模型（如 ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grok 等）而设计。
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 <HomeBadges />
 

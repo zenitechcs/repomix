@@ -2,11 +2,13 @@
 
 <script setup>
 import HomeBadges from '../../../components/HomeBadges.vue'
+import YouTubeVideo from '../../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../../utils/videos'
 </script>
 
 O Repomix é uma ferramenta que compacta todo o seu repositório em um único arquivo amigável para IA. Ele foi projetado para ajudá-lo a alimentar seu código-fonte para Modelos de Linguagem Grandes (LLMs) como ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok e mais.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 <HomeBadges />
 

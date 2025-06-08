@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -40,7 +45,7 @@ Se o Repomix ajudou você a analisar ou empacotar bases de código para ferramen
 
 O Repomix é uma ferramenta poderosa que empacota toda a sua base de código em um único arquivo compatível com IA. Seja trabalhando em revisões de código, refatoração ou precisando de assistência de IA para seu projeto, o Repomix facilita o compartilhamento de todo o contexto do seu repositório com ferramentas de IA.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## Início Rápido
 

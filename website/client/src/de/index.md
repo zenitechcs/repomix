@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -40,7 +45,7 @@ Wenn Repomix Ihnen bei der Analyse oder Paketierung von Codebasen für KI-Tools 
 
 Repomix ist ein leistungsstarkes Tool, das Ihre gesamte Codebasis in eine einzige KI-freundliche Datei paketiert. Ob Sie an Code-Reviews, Refactoring arbeiten oder KI-Unterstützung für Ihr Projekt benötigen, Repomix macht es einfach, den gesamten Repository-Kontext mit KI-Tools zu teilen.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## Schnellstart
 

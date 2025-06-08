@@ -2,11 +2,13 @@
 
 <script setup>
 import HomeBadges from '../../../components/HomeBadges.vue'
+import YouTubeVideo from '../../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../../utils/videos'
 </script>
 
 Repomix एक ऐसा टूल है जो आपके पूरे रिपॉजिटरी को एक एकल, AI-फ्रेंडली फाइल में पैक करता है। यह आपके कोडबेस को ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok और अन्य जैसे लार्ज लैंग्वेज मॉडल (LLMs) को फीड करने में मदद करने के लिए डिज़ाइन किया गया है।
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 <HomeBadges />
 

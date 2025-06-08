@@ -24,6 +24,11 @@ features:
 
 ---
 
+<script setup>
+import YouTubeVideo from '../../components/YouTubeVideo.vue'
+import { VIDEO_IDS } from '../../utils/videos'
+</script>
+
 <div class="cli-section">
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
@@ -40,7 +45,7 @@ Jika Repomix telah membantu Anda menganalisis atau mengemas basis kode untuk ala
 
 Repomix adalah alat yang powerful yang mengemas seluruh codebase Anda ke dalam satu file yang ramah AI. Baik Anda sedang bekerja pada code review, refactoring, atau membutuhkan bantuan AI untuk proyek Anda, Repomix memudahkan berbagi seluruh konteks repository dengan alat AI.
 
-<YouTubeVideo videoId="0a3eKNTBtxg" />
+<YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
 ## Mulai Cepat
 
