@@ -229,11 +229,38 @@ export function useFileUpload(config: FileUploadConfig) {
     }
   }
 
+  // Constants for safety limits
+  const MAX_DEPTH = 20;
+  const MAX_FILES = 10000;
+
   // Helper functions for folder processing
-  async function collectFilesFromEntry(entry: FileSystemEntry, path = ''): Promise<File[]> {
+  async function collectFilesFromEntry(
+    entry: FileSystemEntry,
+    path = '',
+    depth = 0,
+    fileCount = { current: 0 },
+  ): Promise<File[]> {
+    // Check depth limit
+    if (depth > MAX_DEPTH) {
+      throw new Error(`Directory structure too deep (max depth: ${MAX_DEPTH})`);
+    }
+
+    // Check file count limit
+    if (fileCount.current > MAX_FILES) {
+      throw new Error(`Too many files in directory structure (max files: ${MAX_FILES})`);
+    }
+
     if (entry.isFile) {
       return new Promise((resolve, reject) => {
         (entry as FileSystemFileEntry).file((file: File) => {
+          // Check file count before adding
+          if (fileCount.current >= MAX_FILES) {
+            reject(new Error(`Too many files in directory structure (max files: ${MAX_FILES})`));
+            return;
+          }
+
+          fileCount.current++;
+
           const customFile = new File([file], file.name, {
             type: file.type,
             lastModified: file.lastModified,
@@ -260,8 +287,16 @@ export function useFileUpload(config: FileUploadConfig) {
             } else {
               try {
                 for (const childEntry of entries) {
+                  // Check limits before processing each entry
+                  if (depth + 1 > MAX_DEPTH) {
+                    throw new Error(`Directory structure too deep (max depth: ${MAX_DEPTH})`);
+                  }
+                  if (fileCount.current > MAX_FILES) {
+                    throw new Error(`Too many files in directory structure (max files: ${MAX_FILES})`);
+                  }
+
                   const newPath = path ? `${path}/${childEntry.name}` : childEntry.name;
-                  const files = await collectFilesFromEntry(childEntry, newPath);
+                  const files = await collectFilesFromEntry(childEntry, newPath, depth + 1, fileCount);
                   allFiles.push(...files);
                 }
                 readEntries();
