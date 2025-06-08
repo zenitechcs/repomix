@@ -128,8 +128,8 @@ npm run test
   feat(cli): Add new --no-progress flag
   
   User requested a feature enhancement for CI automation:
-  - User requested disabling progress output for CI environments
-  - Progress output creates noise in build logs
+  - User asked: "Can we disable progress output for CI environments?"
+  - User explained: "Progress output creates noise in build logs"
   - Assistant implemented --no-progress flag for automation compatibility
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
@@ -137,15 +137,14 @@ npm run test
   Co-Authored-By: Claude <noreply@anthropic.com>
   ```
   ```
-  perf(metrics): Optimize token counting for top files
+  docs(claude): Add dialogue type summaries to commit message format
   
-  User questioned current token counting approach and suggested improvements:
-  - User asked: "Is token counting only used for top files display?"
-  - Assistant explained multiple use cases including total output size
-  - User suggested: "Since chars and tokens correlate, pre-filter by chars first"
-  - User requested increasing multiplier from 5x to 10x for better accuracy
-  - User requested changing display order to show tokens before characters
-  - Assistant implemented optimization reducing computation by ~90%
+  User requested clarification on commit message dialogue format:
+  - User asked: "どういう対話かどうかはようやくしたものを書くようにしてください"
+  - User wanted dialogue type/nature to be summarized upfront
+  - User preferred descriptive headers like 'User requested feature enhancement'
+  - Assistant added dialogue type summaries before bullet points
+  - Examples now show clear dialogue nature identification
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
