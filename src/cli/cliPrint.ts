@@ -103,7 +103,7 @@ export const printTopFiles = (
     const percentageOfTotal = totalTokens > 0 ? Number(((tokenCount / totalTokens) * 100).toFixed(1)) : 0;
     const indexString = `${index + 1}.`.padEnd(3, ' ');
     logger.log(
-      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${charCount.toLocaleString()} chars, ${tokenCount.toLocaleString()} tokens, ${percentageOfTotal}%)`)}`,
+      `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${tokenCount.toLocaleString()} tokens, ${charCount.toLocaleString()} chars, ${percentageOfTotal}%)`)}`,
     );
   });
 };
