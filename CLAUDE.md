@@ -120,11 +120,30 @@ npm run test
 ### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
-- **Include user dialogue context**: Reference the specific conversation or request that led to the change
+- **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
+- Format: Use title for technical change, body for user context and reasoning
 - Examples: 
-  - `feat(cli): Add new --no-progress flag (requested for CI environments)`
-  - `fix(security): Handle special characters in file paths (user reported escaping issues)`
-  - `perf(metrics): Optimize token counting for top files (user suggested 10x multiplier for better accuracy)`
+  ```
+  feat(cli): Add new --no-progress flag
+  
+  User requested this for CI environments where progress output
+  creates noise in build logs. Improves automation compatibility.
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
+  ```
+  perf(metrics): Optimize token counting for top files
+  
+  User suggested using character-based pre-filtering with 10x multiplier
+  instead of calculating tokens for all files. Reduces computation 
+  by ~90% while maintaining ranking accuracy for large codebases.
+  
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+  
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
 
 ## Pull Request Review Process
 
