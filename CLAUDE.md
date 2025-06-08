@@ -137,7 +137,7 @@ npm run test
   Co-Authored-By: Claude <noreply@anthropic.com>
   ```
   ```
-  perf(metrics): Optimize token counting performance optimization discussion:
+  perf(metrics): Optimize token counting for top files
   
   User questioned current token counting approach and suggested improvements:
   - User asked: "Is token counting only used for top files display?"
