@@ -31,6 +31,9 @@ const shared = ref(false);
 const canShare = ref(canShareFiles());
 const { isDark } = useData();
 const editorInstance = ref<Ace.Editor | null>(null);
+const isMobile = ref(false);
+const tooltipContainer = ref<HTMLElement | null>(null);
+const tooltipContent = ref<HTMLElement | null>(null);
 
 const editorOptions = computed(() => ({
   ...getEditorOptions(),
@@ -85,6 +88,17 @@ const handleEditorMount = (editor: Ace.Editor) => {
   editorInstance.value = editor;
 };
 
+const updateTooltipPosition = () => {
+  if (!tooltipContainer.value || !tooltipContent.value || isMobile.value) return;
+  
+  const containerRect = tooltipContainer.value.getBoundingClientRect();
+  const tooltipEl = tooltipContent.value;
+  
+  // Position above the button with proper spacing for the arrow (like existing tooltips)
+  tooltipEl.style.top = `${containerRect.top - 46}px`;
+  tooltipEl.style.left = `${containerRect.left + containerRect.width / 2}px`;
+};
+
 const messages = [
   {
     type: 'sponsor',
@@ -110,6 +124,20 @@ const supportMessage = computed(() => ({
   text: messages[currentMessageIndex.value].text,
   color: messages[currentMessageIndex.value].color,
 }));
+
+onMounted(() => {
+  isMobile.value = window.innerWidth <= 768;
+  
+  const handleResize = () => {
+    isMobile.value = window.innerWidth <= 768;
+  };
+  
+  window.addEventListener('resize', handleResize);
+  
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+});
 </script>
 
 <template>
@@ -170,16 +198,23 @@ const supportMessage = computed(() => ({
           Download
         </button>
         <div v-if="canShare" class="mobile-only" style="flex-basis: 100%"></div>
-        <button
-          v-if="canShare"
-          class="action-button mobile-only"
-          @click="handleShare"
-          :class="{ shared }"
-          aria-label="Share output via mobile apps"
-        >
-          <Share :size="16" />
-          {{ shared ? 'Shared!' : 'Open with your app' }}
-        </button>
+        <div v-if="canShare" class="tooltip-container" ref="tooltipContainer">
+          <button
+            class="action-button"
+            @click="handleShare"
+            :class="{ shared }"
+            :disabled="!isMobile"
+            aria-label="Share output via mobile apps"
+            @mouseenter="updateTooltipPosition"
+          >
+            <Share :size="16" />
+            {{ shared ? 'Shared!' : 'Open with your app' }}
+          </button>
+          <div class="tooltip-content desktop-only" ref="tooltipContent">
+            Only available on mobile devices
+            <div class="tooltip-arrow"></div>
+          </div>
+        </div>
       </div>
       <div class="editor-container">
         <VAceEditor
@@ -419,5 +454,76 @@ dd {
   .mobile-only {
     display: inline-flex;
   }
+  
+  .desktop-only {
+    display: none;
+  }
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-content {
+  position: fixed;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #333;
+  color: white;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 9999;
+  pointer-events: none;
+  text-align: left;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-button:disabled:hover {
+  opacity: 0.5;
+}
+
+/* Dark mode support for tooltip */
+html.dark .tooltip-content {
+  background: #333;
+  color: #ffffff;
+}
+
+html.dark .tooltip-arrow {
+  border-color: #333 transparent transparent transparent;
 }
 </style>
