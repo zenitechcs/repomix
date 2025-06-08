@@ -151,10 +151,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - Explain rationale for decisions when not implementing suggestions
 - Thank reviewers for their feedback
 
-**4. Resolve Conversations:**
-- CodeRabbit: Use `@coderabbitai resolve` command
-- Others: Respond with explanation, let reviewers mark as resolved
+**4. Resolve Conversations (IMPORTANT!):**
+- **Always resolve addressed feedback** - this helps track progress and shows respect for reviewers
+- CodeRabbit: Use `@coderabbitai resolve` command in PR comments
+- Others: Respond with explanation, then let reviewers mark as resolved
 - GitHub Web UI: Use "Resolve conversation" button on Files changed tab
+- **Don't forget this step** - unresolved conversations can delay PR approval
 
 ### Common Review Issues and Solutions
 
@@ -174,3 +176,16 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - Use existing color schemes for consistency
 - Follow established patterns in the codebase
 - Maintain proper TypeScript typing
+
+### Review Process Checklist
+
+Before marking PR as ready for merge:
+
+1. ✅ **Address all feedback** - Fix high/medium priority issues
+2. ✅ **Run linting and tests** - `npm run lint && npm test`
+3. ✅ **Commit with clear messages** - Reference what was fixed
+4. ✅ **Respond to reviewers** - Explain changes and decisions
+5. ✅ **Resolve conversations** - Mark addressed feedback as resolved
+6. ✅ **Update documentation** - If architectural changes were made
+
+**Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. This is essential for efficient PR management.
