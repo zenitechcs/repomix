@@ -121,13 +121,13 @@ npm run test
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
-- Format: Use title for technical change, body with clear dialogue section marker
-- Start dialogue section with header like "Generated from the following user dialogue:" or "Based on user conversation:"
+- Format: Use title for technical change, body with clear dialogue section marker and summary
+- Start with dialogue type summary, then provide bullet points of the conversation flow
 - Examples: 
   ```
   feat(cli): Add new --no-progress flag
   
-  Generated from the following user dialogue:
+  User requested a feature enhancement for CI automation:
   - User requested disabling progress output for CI environments
   - Progress output creates noise in build logs
   - Assistant implemented --no-progress flag for automation compatibility
@@ -137,9 +137,9 @@ npm run test
   Co-Authored-By: Claude <noreply@anthropic.com>
   ```
   ```
-  perf(metrics): Optimize token counting for top files
+  perf(metrics): Optimize token counting performance optimization discussion:
   
-  Based on user conversation:
+  User questioned current token counting approach and suggested improvements:
   - User asked: "Is token counting only used for top files display?"
   - Assistant explained multiple use cases including total output size
   - User suggested: "Since chars and tokens correlate, pre-filter by chars first"
