@@ -186,10 +186,10 @@ onUnmounted(() => {
         <dl v-if="result.metadata.summary">
           <dt>Total Files</dt>
           <dd>{{ result.metadata.summary.totalFiles.toLocaleString() }} <span class="unit">files</span></dd>
-          <dt>Total Size</dt>
-          <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
           <dt>Total Tokens</dt>
           <dd>{{ result.metadata.summary.totalTokens.toLocaleString() }} <span class="unit">tokens</span></dd>
+          <dt>Total Size</dt>
+          <dd>{{ result.metadata.summary.totalCharacters.toLocaleString() }} <span class="unit">chars</span></dd>
         </dl>
       </div>
 
