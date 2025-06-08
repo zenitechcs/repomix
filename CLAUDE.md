@@ -120,7 +120,11 @@ npm run test
 ### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
-- Examples: `feat(cli): Add new --no-progress flag`, `fix(security): Handle special characters in file paths`
+- **Include user dialogue context**: Reference the specific conversation or request that led to the change
+- Examples: 
+  - `feat(cli): Add new --no-progress flag (requested for CI environments)`
+  - `fix(security): Handle special characters in file paths (user reported escaping issues)`
+  - `perf(metrics): Optimize token counting for top files (user suggested 10x multiplier for better accuracy)`
 
 ## Pull Request Review Process
 
