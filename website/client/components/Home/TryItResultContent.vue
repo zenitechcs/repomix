@@ -103,6 +103,17 @@ const updateTooltipPosition = () => {
   // Position above the button with proper spacing for the arrow (like existing tooltips)
   tooltipEl.style.top = `${containerRect.top - 46}px`;
   tooltipEl.style.left = `${containerRect.left + containerRect.width / 2}px`;
+  
+  // Show tooltip (override CSS hover states)
+  tooltipEl.style.opacity = '1';
+  tooltipEl.style.visibility = 'visible';
+};
+
+const hideTooltip = () => {
+  if (tooltipContent.value) {
+    tooltipContent.value.style.opacity = '0';
+    tooltipContent.value.style.visibility = 'hidden';
+  }
 };
 
 const messages = [
@@ -135,13 +146,23 @@ const handleResize = () => {
   isMobile.value = window.innerWidth <= 768;
 };
 
+const handleScroll = () => {
+  // Hide tooltip on scroll to prevent detachment from button
+  if (tooltipContent.value) {
+    tooltipContent.value.style.opacity = '0';
+    tooltipContent.value.style.visibility = 'hidden';
+  }
+};
+
 onMounted(() => {
   isMobile.value = window.innerWidth <= 768;
   window.addEventListener('resize', handleResize);
+  window.addEventListener('scroll', handleScroll, { passive: true });
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -203,7 +224,7 @@ onUnmounted(() => {
           Download
         </button>
         <div v-if="canShare" class="mobile-only" style="flex-basis: 100%"></div>
-        <div v-if="canShare" class="tooltip-container" ref="tooltipContainer" @mouseenter="updateTooltipPosition">
+        <div v-if="canShare" class="tooltip-container" ref="tooltipContainer" @mouseenter="updateTooltipPosition" @mouseleave="hideTooltip">
           <button
             class="action-button"
             @click="handleShare"
