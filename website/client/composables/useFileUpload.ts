@@ -99,6 +99,10 @@ export function useFileUpload(config: FileUploadConfig) {
   function clearSelection() {
     selectedItem.value = null;
     errorMessage.value = null;
+    // Clear file input to prevent re-selection issues
+    if (fileInput.value) {
+      fileInput.value.value = '';
+    }
   }
 
   // Validate and process files
@@ -138,6 +142,11 @@ export function useFileUpload(config: FileUploadConfig) {
 
       // Update selection
       selectedItem.value = folderName || resultFile.name;
+
+      // Clear file input to prevent re-selection issues
+      if (fileInput.value) {
+        fileInput.value.value = '';
+      }
 
       return { success: true, result: resultFile };
     } catch (error) {
