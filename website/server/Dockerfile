@@ -35,24 +35,17 @@ FROM node:24-alpine
 # Install git and ca-certificates (required by repomix for remote repository processing)
 RUN apk add --no-cache git ca-certificates
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
 WORKDIR /app
 
 # Copy built application
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder /app/dist ./dist
 
 # Copy production dependencies
-COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 
 # Set environment variables
 ENV NODE_ENV=production \
     PORT=8080
-
-# Switch to non-root user
-USER nodejs
 
 # Expose port
 EXPOSE 8080
