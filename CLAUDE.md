@@ -121,15 +121,16 @@ npm run test
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
-- Format: Use title for technical change, body for user context and reasoning with clear dialogue markers
-- Use dialogue format with "User:" and "Assistant:" or narrative descriptions of the conversation flow
+- Format: Use title for technical change, body with clear dialogue section marker
+- Start dialogue section with header like "Generated from the following user dialogue:" or "Based on user conversation:"
 - Examples: 
   ```
   feat(cli): Add new --no-progress flag
   
-  User: "Can we disable progress output for CI environments?"
-  Assistant: Added --no-progress flag to reduce noise in build logs
-  and improve automation compatibility.
+  Generated from the following user dialogue:
+  - User requested disabling progress output for CI environments
+  - Progress output creates noise in build logs
+  - Assistant implemented --no-progress flag for automation compatibility
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
@@ -138,14 +139,13 @@ npm run test
   ```
   perf(metrics): Optimize token counting for top files
   
-  User: "Is token counting only used for top files display?"
-  Assistant: Explained it's used for multiple purposes including total output size
-  User: "Since chars and tokens correlate, why not pre-filter by chars first?"
-  Assistant: Implemented character-based pre-filtering with 10x multiplier
-  User: "Can we increase to 10x?" → Changed from 5x to 10x for better accuracy
-  User: "Change display order to tokens first" → Updated CLI and website
-  
-  Reduces computation by ~90% while maintaining ranking accuracy.
+  Based on user conversation:
+  - User asked: "Is token counting only used for top files display?"
+  - Assistant explained multiple use cases including total output size
+  - User suggested: "Since chars and tokens correlate, pre-filter by chars first"
+  - User requested increasing multiplier from 5x to 10x for better accuracy
+  - User requested changing display order to show tokens before characters
+  - Assistant implemented optimization reducing computation by ~90%
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
