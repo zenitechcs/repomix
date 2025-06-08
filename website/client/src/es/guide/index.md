@@ -6,6 +6,8 @@ import HomeBadges from '../../../components/HomeBadges.vue'
 
 Repomix es una herramienta que empaqueta todo tu repositorio en un solo archivo amigable para la IA. Está diseñado para ayudarte a alimentar tu código a modelos de lenguaje grandes (LLMs) como ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok y más.
 
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 <HomeBadges />
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)

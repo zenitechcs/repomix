@@ -33,6 +33,12 @@ Cela n'aurait pas été possible sans vous tous qui utilisez et soutenez Repomix
 
 Si Repomix vous a aidé à analyser ou empaqueter des bases de code pour les outils d'IA, nous vous serions reconnaissants de voter pour nous dans la catégorie **Powered by AI**.
 
+## Qu'est-ce que Repomix ?
+
+Repomix est un outil puissant qui package votre base de code entière en un seul fichier compatible avec l'IA. Que vous travailliez sur des revues de code, du refactoring ou que vous ayez besoin d'assistance IA pour votre projet, Repomix facilite le partage de tout le contexte de votre dépôt avec les outils d'IA.
+
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 ## Démarrage rapide
 
 Une fois que vous avez généré un fichier compressé (`repomix-output.xml`) avec Repomix, vous pouvez l'envoyer à un assistant IA (comme ChatGPT, Claude) avec une instruction comme :

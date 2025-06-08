@@ -36,6 +36,12 @@ This wouldn't have been possible without all of you using and supporting Repomix
 
 If Repomix has helped you analyze or pack codebases for AI tools, we'd be grateful for your vote in the **Powered by AI** category.
 
+## What is Repomix?
+
+Repomix is a powerful tool that packages your entire codebase into a single AI-friendly file. Whether you're working on code reviews, refactoring, or getting AI assistance with your project, Repomix makes it easy to share your entire repository context with AI tools.
+
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 ## Quick Start
 
 Once you've generated a packed file (`repomix-output.xml`) using Repomix, you can send it to an AI assistant (like ChatGPT, Claude) with a prompt like:
@@ -54,7 +60,6 @@ When discussing specific changes, the AI can help generate code. With features l
 ![Repomix File Usage 2](/images/docs/repomix-file-usage-2.png)
 
 Happy coding! 🚀
-
 
 ## Using the CLI Tool {#using-the-cli-tool}
 

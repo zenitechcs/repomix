@@ -36,6 +36,12 @@ Chúng tôi rất vinh dự! Repomix đã được đề cử cho hạng mục *
 
 Nếu Repomix đã giúp bạn phân tích hoặc đóng gói codebase cho các công cụ AI, chúng tôi sẽ rất biết ơn nếu bạn bỏ phiếu cho chúng tôi trong hạng mục **Powered by AI**.
 
+## Repomix là gì?
+
+Repomix là một công cụ mạnh mẽ giúp đóng gói toàn bộ codebase của bạn thành một file thân thiện với AI. Dù bạn đang làm việc với code review, refactoring hay cần hỗ trợ AI cho dự án của mình, Repomix giúp bạn dễ dàng chia sẻ toàn bộ ngữ cảnh repository với các công cụ AI.
+
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 ## Bắt đầu nhanh
 
 Sau khi bạn đã tạo một tệp đóng gói (`repomix-output.xml`) bằng Repomix, bạn có thể gửi nó đến trợ lý AI (như ChatGPT, Claude) với một prompt như:

@@ -6,6 +6,8 @@ import HomeBadges from '../../../components/HomeBadges.vue'
 
 Repomix adalah alat yang mengemas seluruh repositori Anda menjadi satu file yang ramah AI. Ini dirancang untuk membantu Anda menyediakan basis kode Anda ke Model Bahasa Besar (LLM) seperti ChatGPT, DeepSeek, Perplexity, Gemini, Gemma, Llama, Grok, dan lainnya.
 
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 <HomeBadges />
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)

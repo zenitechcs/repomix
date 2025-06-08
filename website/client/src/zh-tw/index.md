@@ -36,6 +36,12 @@ features:
 
 如果 Repomix 幫助您分析或打包程式碼庫用於 AI 工具，我們將非常感謝您在 **Powered by AI** 類別中為我們投票。
 
+## 什麼是 Repomix？
+
+Repomix 是一個強大的工具，可以將您的整個程式碼庫打包到一個 AI 友好的檔案中。無論您是在進行程式碼審查、重構，還是需要 AI 協助您的專案，Repomix 都可以輕鬆地與 AI 工具共享您的整個儲存庫上下文。
+
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 ## 快速開始
 
 使用 Repomix 生成打包文件（`repomix-output.xml`）後，您可以將其發送給 AI 助手（如 ChatGPT、Claude），並附上這樣的提示：

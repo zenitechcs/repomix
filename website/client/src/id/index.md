@@ -36,6 +36,12 @@ Ini tidak mungkin terjadi tanpa semua pengguna yang menggunakan dan mendukung Re
 
 Jika Repomix telah membantu Anda menganalisis atau mengemas basis kode untuk alat AI, kami akan sangat berterima kasih atas suara Anda dalam kategori **Powered by AI**.
 
+## Apa itu Repomix?
+
+Repomix adalah alat yang powerful yang mengemas seluruh codebase Anda ke dalam satu file yang ramah AI. Baik Anda sedang bekerja pada code review, refactoring, atau membutuhkan bantuan AI untuk proyek Anda, Repomix memudahkan berbagi seluruh konteks repository dengan alat AI.
+
+<YouTubeVideo videoId="0a3eKNTBtxg" />
+
 ## Mulai Cepat
 
 Setelah Anda menghasilkan file yang dikemas (`repomix-output.xml`) menggunakan Repomix, Anda dapat mengirimkannya ke asisten AI (seperti ChatGPT, Claude) dengan prompt seperti:
