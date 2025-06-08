@@ -96,3 +96,81 @@ Repomix is a tool that packs repository contents into single files optimized for
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - Run `npm run lint && npm test` before committing changes
 - Examples: `feat(cli): Add new --no-progress flag`, `fix(security): Handle special characters in file paths`
+
+## Pull Request Review Process
+
+### Viewing PR Comments
+There are different types of comments in GitHub PRs that require different approaches to view:
+
+**1. General PR Comments (in main conversation):**
+```bash
+gh pr view {PR_NUMBER} --comments
+```
+
+**2. Specific Code Line Comments (Files changed tab):**
+```bash
+gh api repos/yamadashy/repomix/pulls/{PR_NUMBER}/comments --jq '.[] | {path: .path, line: .line, body: .body}'
+```
+
+**3. Review Comments with Status:**
+```bash
+gh api repos/yamadashy/repomix/pulls/{PR_NUMBER}/reviews --jq '.[] | select(.state == "COMMENTED" or .state == "CHANGES_REQUESTED") | .body'
+```
+
+### Automated Review Bots
+This repository uses several automated review tools:
+
+- **CodeRabbit**: AI-powered code review with actionable suggestions
+- **Gemini Code Assist**: Google's AI code reviewer with severity ratings (High/Medium/Low)
+- **Copilot Pull Request Reviewer**: GitHub's automated review suggestions
+- **Codecov**: Test coverage analysis and reporting
+
+### Responding to Review Feedback
+
+**1. Address Technical Issues First:**
+- Fix high-priority issues (security, functionality, memory leaks)
+- Address medium-priority issues (UX, maintainability)
+- Consider low-priority suggestions for future improvements
+
+**2. Commit Changes with Clear Messages:**
+```bash
+git commit -m "fix(scope): Address PR review feedback
+
+- Fix specific issue 1 (reference commit/line if applicable)
+- Improve specific aspect 2
+- Address reviewer concern about X
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+**3. Respond to Reviewers:**
+- Use `gh pr comment {PR_NUMBER} --body "message"` for general responses
+- Reference specific commits that address issues: `Fixed in commit \`abc1234\``
+- Explain rationale for decisions when not implementing suggestions
+- Thank reviewers for their feedback
+
+**4. Resolve Conversations:**
+- CodeRabbit: Use `@coderabbitai resolve` command
+- Others: Respond with explanation, let reviewers mark as resolved
+- GitHub Web UI: Use "Resolve conversation" button on Files changed tab
+
+### Common Review Issues and Solutions
+
+**Vue.js/Frontend:**
+- Event listener cleanup: Use `onUnmounted()` instead of return functions in `onMounted()`
+- Disabled element events: Move event handlers to parent containers
+- CSS positioning: Consider `position: fixed` for tooltips to avoid parent overflow issues
+- Accessibility: Maintain ARIA labels and proper focus management
+
+**Performance:**
+- Use `{ passive: true }` for scroll listeners
+- Implement proper cleanup for all event listeners
+- Consider debouncing/throttling for frequent events
+
+**Code Quality:**
+- Remove duplicate CSS definitions
+- Use existing color schemes for consistency
+- Follow established patterns in the codebase
+- Maintain proper TypeScript typing
