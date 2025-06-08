@@ -22,8 +22,8 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
   logger.log(pc.white('📊 Pack Summary:'));
   logger.log(pc.dim('────────────────'));
   logger.log(`${pc.white('  Total Files:')} ${pc.white(packResult.totalFiles.toLocaleString())} files`);
-  logger.log(`${pc.white('  Total Chars:')} ${pc.white(packResult.totalCharacters.toLocaleString())} chars`);
   logger.log(`${pc.white(' Total Tokens:')} ${pc.white(packResult.totalTokens.toLocaleString())} tokens`);
+  logger.log(`${pc.white('  Total Chars:')} ${pc.white(packResult.totalCharacters.toLocaleString())} chars`);
   logger.log(`${pc.white('       Output:')} ${pc.white(config.output.filePath)}`);
   logger.log(`${pc.white('     Security:')} ${pc.white(securityCheckMessage)}`);
 
