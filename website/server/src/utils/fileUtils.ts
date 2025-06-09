@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import AdmZip from 'adm-zip';
+import { unzip } from 'fflate';
 import { FILE_SIZE_LIMITS, formatFileSize } from '../constants.js';
 import { AppError } from './errorHandler.js';
 
@@ -13,21 +13,27 @@ export async function extractZip(file: File, destPath: string): Promise<void> {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const zip = new AdmZip(buffer);
+    const buffer = new Uint8Array(arrayBuffer);
 
-    // Get zip entries for validation
-    const entries = zip.getEntries();
+    // Unzip using fflate with promise wrapper
+    const files = await new Promise<Record<string, Uint8Array>>((resolve, reject) => {
+      unzip(buffer, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+
+    const filePaths = Object.keys(files);
 
     // Validate number of files
-    if (entries.length > FILE_SIZE_LIMITS.MAX_FILES) {
+    if (filePaths.length > FILE_SIZE_LIMITS.MAX_FILES) {
       throw new AppError(
-        `ZIP contains too many files (${entries.length}). Maximum allowed: ${FILE_SIZE_LIMITS.MAX_FILES}`,
+        `ZIP contains too many files (${filePaths.length}). Maximum allowed: ${FILE_SIZE_LIMITS.MAX_FILES}`,
       );
     }
 
     // Validate total uncompressed size
-    const totalUncompressedSize = entries.reduce((sum, entry) => sum + entry.header.size, 0);
+    const totalUncompressedSize = Object.values(files).reduce((sum, data) => sum + data.length, 0);
     if (totalUncompressedSize > FILE_SIZE_LIMITS.MAX_UNCOMPRESSED_SIZE) {
       throw new AppError(
         `Uncompressed size exceeds maximum limit of ${formatFileSize(FILE_SIZE_LIMITS.MAX_UNCOMPRESSED_SIZE)}`,
@@ -35,15 +41,28 @@ export async function extractZip(file: File, destPath: string): Promise<void> {
     }
 
     // Check for unsafe paths (directory traversal prevention)
-    for (const entry of entries) {
-      const entryPath = path.join(destPath, entry.entryName);
-      if (!entryPath.startsWith(destPath)) {
+    for (const entryPath of filePaths) {
+      const fullPath = path.join(destPath, entryPath);
+      if (!fullPath.startsWith(destPath)) {
         throw new AppError('ZIP contains unsafe file paths');
       }
     }
 
     await fs.mkdir(destPath, { recursive: true });
-    zip.extractAllTo(destPath, true);
+
+    // Extract files using fflate
+    for (const [filePath, data] of Object.entries(files)) {
+      if (filePath.endsWith('/')) continue; // Skip directories
+
+      const fullPath = path.join(destPath, filePath);
+      const dirPath = path.dirname(fullPath);
+
+      // Create directory if it doesn't exist
+      await fs.mkdir(dirPath, { recursive: true });
+
+      // Write the file
+      await fs.writeFile(fullPath, data);
+    }
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
