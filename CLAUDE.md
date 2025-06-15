@@ -193,7 +193,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - Explain rationale for decisions when not implementing suggestions
 - Thank reviewers for their feedback
 
-**4. Resolve Conversations (IMPORTANT!):**
+**4. Self-Review (When Requested):**
+- Perform self-review only when explicitly requested by the user
+- Add comprehensive review comments covering: directory structure, content quality, impact assessment
+- Use `gh pr comment {PR_NUMBER} --body "..."` to add detailed self-review comments
+- Structure self-review with clear sections: code quality, testing, documentation, risk assessment
+- **Be thorough**: Cover all significant changes and their rationale
+
+**5. Resolve Conversations (IMPORTANT!):**
 - **Always resolve addressed feedback** - this helps track progress and shows respect for reviewers
 - CodeRabbit: Use `@coderabbitai resolve` command in PR comments
 - Others: Respond with explanation, then let reviewers mark as resolved
@@ -229,8 +236,9 @@ Before marking PR as ready for merge:
 4. ✅ **Respond to reviewers** - Explain changes and decisions
 5. ✅ **Resolve conversations** - Mark addressed feedback as resolved
 6. ✅ **Update documentation** - If architectural changes were made
+7. ✅ **Perform self-review if requested** - Add comprehensive comments using `gh pr comment`
 
-**Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. This is essential for efficient PR management.
+**Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. Self-review should only be performed when explicitly requested by the user.
 
 ## Knowledge Management & Continuous Improvement
 
@@ -244,6 +252,8 @@ Before marking PR as ready for merge:
 - **Debug techniques**: "Check `canShareFiles()` implementation when Web Share API behaves unexpectedly"
 - **Performance patterns**: "Always use `{ passive: true }` for scroll listeners in Vue components"
 - **Architecture insights**: "tooltip-container pattern prevents disabled button event issues"
+- **Documentation workflows**: "Historical release notes archived in `.github/releases/` by semantic versioning structure"
+- **PR management**: "Self-review PRs only when explicitly requested using `gh pr comment` for comprehensive analysis"
 
 ### Maintaining This File
 
