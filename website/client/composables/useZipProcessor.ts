@@ -1,17 +1,26 @@
-import JSZip from 'jszip';
+import { zip } from 'fflate';
 
 export function useZipProcessor() {
   async function createZipFromFiles(files: File[], folderName: string): Promise<File> {
     try {
-      const zip = new JSZip();
+      const fileMap: { [key: string]: Uint8Array } = {};
 
       for (const file of files) {
         const path = file.webkitRelativePath || file.name;
-        zip.file(path, file);
+        const arrayBuffer = await file.arrayBuffer();
+        fileMap[path] = new Uint8Array(arrayBuffer);
       }
 
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      return new File([zipBlob], `${folderName}.zip`, { type: 'application/zip' });
+      return new Promise((resolve, reject) => {
+        zip(fileMap, (err, data) => {
+          if (err) {
+            reject(new Error(`Failed to create ZIP file: ${err.message}`));
+          } else {
+            const zipBlob = new Blob([data], { type: 'application/zip' });
+            resolve(new File([zipBlob], `${folderName}.zip`, { type: 'application/zip' }));
+          }
+        });
+      });
     } catch (error) {
       throw new Error(`Failed to create ZIP file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
