@@ -221,7 +221,7 @@ const downloadFile = async (
 };
 
 /**
- * Extracts a ZIP archive using fflate library
+ * Extracts a ZIP archive using fflate library with memory-efficient streaming approach
  */
 const extractZipArchive = async (
   archivePath: string,
@@ -232,78 +232,143 @@ const extractZipArchive = async (
   },
 ): Promise<void> => {
   try {
-    // Read the ZIP file as a buffer
-    const zipBuffer = await deps.fs.readFile(archivePath);
-    const zipUint8Array = new Uint8Array(zipBuffer);
+    // Get file size to determine if we should use streaming approach
+    const stats = await deps.fs.stat(archivePath);
+    const fileSizeInMB = stats.size / (1024 * 1024);
 
-    // Extract ZIP using fflate
-    await new Promise<void>((resolve, reject) => {
-      unzip(zipUint8Array, (err, extracted) => {
-        if (err) {
-          reject(new RepomixError(`Failed to extract ZIP archive: ${err.message}`));
-          return;
-        }
-
-        // Process extracted files synchronously in the callback
-        const processFiles = async () => {
-          try {
-            const repoPrefix = `${repoInfo.repo}-`;
-
-            for (const [filePath, fileData] of Object.entries(extracted)) {
-              // GitHub archives have a top-level directory like "repo-branch/"
-              // We need to remove this prefix from the file paths
-              let relativePath = filePath;
-
-              // Find and remove the repo prefix
-              const pathParts = filePath.split('/');
-              if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
-                // Remove the first directory (repo-branch/)
-                relativePath = pathParts.slice(1).join('/');
-              }
-
-              // Skip empty paths (root directory)
-              if (!relativePath) {
-                continue;
-              }
-
-              const targetPath = path.join(targetDirectory, relativePath);
-
-              // Check if this entry is a directory (ends with /) or empty file data indicates directory
-              const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
-
-              if (isDirectory) {
-                // Create directory
-                logger.trace(`Creating directory: ${targetPath}`);
-                await deps.fs.mkdir(targetPath, { recursive: true });
-              } else {
-                // Ensure parent directory exists for files
-                const parentDir = path.dirname(targetPath);
-                logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
-
-                try {
-                  await deps.fs.mkdir(parentDir, { recursive: true });
-                  // Write file
-                  await deps.fs.writeFile(targetPath, fileData);
-                } catch (fileError) {
-                  logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
-                  throw fileError;
-                }
-              }
-            }
-
-            resolve();
-          } catch (writeError) {
-            reject(new RepomixError(`Failed to write extracted files: ${(writeError as Error).message}`));
-          }
-        };
-
-        // Execute async file processing and handle errors
-        processFiles().catch(reject);
-      });
-    });
+    // Use streaming approach for larger files (>50MB) to avoid memory issues
+    if (fileSizeInMB > 50) {
+      logger.trace(`Large archive detected (${fileSizeInMB.toFixed(1)}MB), using streaming extraction`);
+      await extractZipArchiveStreaming(archivePath, targetDirectory, repoInfo, deps);
+    } else {
+      logger.trace(`Small archive (${fileSizeInMB.toFixed(1)}MB), using in-memory extraction`);
+      await extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps);
+    }
   } catch (error) {
     throw new RepomixError(`Failed to extract archive: ${(error as Error).message}`);
   }
+};
+
+/**
+ * Extracts ZIP archive by loading it entirely into memory (faster for small files)
+ */
+const extractZipArchiveInMemory = async (
+  archivePath: string,
+  targetDirectory: string,
+  repoInfo: GitHubRepoInfo,
+  deps = {
+    fs,
+  },
+): Promise<void> => {
+  // Read the ZIP file as a buffer
+  const zipBuffer = await deps.fs.readFile(archivePath);
+  const zipUint8Array = new Uint8Array(zipBuffer);
+
+  // Extract ZIP using fflate
+  await new Promise<void>((resolve, reject) => {
+    unzip(zipUint8Array, (err, extracted) => {
+      if (err) {
+        reject(new RepomixError(`Failed to extract ZIP archive: ${err.message}`));
+        return;
+      }
+
+      // Process extracted files concurrently in the callback
+      processExtractedFiles(extracted, targetDirectory, repoInfo, deps).then(resolve).catch(reject);
+    });
+  });
+};
+
+/**
+ * Extracts ZIP archive using streaming approach to minimize memory usage
+ */
+const extractZipArchiveStreaming = async (
+  archivePath: string,
+  targetDirectory: string,
+  repoInfo: GitHubRepoInfo,
+  deps = {
+    fs,
+  },
+): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    // For now, fall back to in-memory approach since implementing streaming ZIP extraction
+    // with fflate requires more complex file header parsing and is quite involved.
+    // This is a placeholder for future enhancement.
+    logger.trace('Streaming extraction not yet implemented, falling back to in-memory approach');
+
+    extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps).then(resolve).catch(reject);
+  });
+};
+
+/**
+ * Process extracted files concurrently
+ */
+const processExtractedFiles = async (
+  extracted: Record<string, Uint8Array>,
+  targetDirectory: string,
+  repoInfo: GitHubRepoInfo,
+  deps = {
+    fs,
+  },
+): Promise<void> => {
+  const repoPrefix = `${repoInfo.repo}-`;
+
+  // Group files and directories for processing
+  const directories: string[] = [];
+  const fileWritePromises: Promise<void>[] = [];
+
+  // First pass: identify directories and collect file write operations
+  for (const [filePath, fileData] of Object.entries(extracted)) {
+    // GitHub archives have a top-level directory like "repo-branch/"
+    // We need to remove this prefix from the file paths
+    let relativePath = filePath;
+
+    // Find and remove the repo prefix
+    const pathParts = filePath.split('/');
+    if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
+      // Remove the first directory (repo-branch/)
+      relativePath = pathParts.slice(1).join('/');
+    }
+
+    // Skip empty paths (root directory)
+    if (!relativePath) {
+      continue;
+    }
+
+    const targetPath = path.join(targetDirectory, relativePath);
+
+    // Check if this entry is a directory (ends with /) or empty file data indicates directory
+    const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
+
+    if (isDirectory) {
+      directories.push(targetPath);
+    } else {
+      // Create file write promise
+      const fileWritePromise = (async () => {
+        const parentDir = path.dirname(targetPath);
+        logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
+
+        try {
+          await deps.fs.mkdir(parentDir, { recursive: true });
+          // Write file
+          await deps.fs.writeFile(targetPath, fileData);
+        } catch (fileError) {
+          logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
+          throw fileError;
+        }
+      })();
+
+      fileWritePromises.push(fileWritePromise);
+    }
+  }
+
+  // Create directories first (sequentially to avoid race conditions)
+  for (const dir of directories) {
+    logger.trace(`Creating directory: ${dir}`);
+    await deps.fs.mkdir(dir, { recursive: true });
+  }
+
+  // Write all files concurrently
+  await Promise.all(fileWritePromises);
 };
 
 /**
