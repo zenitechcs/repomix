@@ -5,6 +5,15 @@ import { unzip } from 'fflate';
 import { FILE_SIZE_LIMITS, formatFileSize } from '../constants.js';
 import { AppError } from './errorHandler.js';
 
+// Enhanced ZIP extraction limits (aligned with processZipFile.ts)
+const ZIP_SECURITY_LIMITS = {
+  MAX_FILES: 10000, // Maximum number of files in the archive
+  MAX_UNCOMPRESSED_SIZE: 100_000_000, // Maximum total uncompressed size (100MB)
+  MAX_COMPRESSION_RATIO: 100, // Maximum compression ratio to prevent ZIP bombs
+  MAX_PATH_LENGTH: 200, // Maximum file path length
+  MAX_NESTING_LEVEL: 50, // Maximum directory nesting level
+};
+
 export async function extractZip(file: File, destPath: string): Promise<void> {
   try {
     // Validate file size before processing
@@ -25,44 +34,87 @@ export async function extractZip(file: File, destPath: string): Promise<void> {
 
     const filePaths = Object.keys(files);
 
-    // Validate number of files
-    if (filePaths.length > FILE_SIZE_LIMITS.MAX_FILES) {
+    // 1. Check number of files
+    if (filePaths.length > ZIP_SECURITY_LIMITS.MAX_FILES) {
       throw new AppError(
-        `ZIP contains too many files (${filePaths.length}). Maximum allowed: ${FILE_SIZE_LIMITS.MAX_FILES}`,
+        `ZIP contains too many files (${filePaths.length}). Maximum allowed: ${ZIP_SECURITY_LIMITS.MAX_FILES}`,
       );
     }
 
-    // Validate total uncompressed size
+    // 2. Calculate total uncompressed size
     const totalUncompressedSize = Object.values(files).reduce((sum, data) => sum + data.length, 0);
-    if (totalUncompressedSize > FILE_SIZE_LIMITS.MAX_UNCOMPRESSED_SIZE) {
+    if (totalUncompressedSize > ZIP_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE) {
       throw new AppError(
-        `Uncompressed size exceeds maximum limit of ${formatFileSize(FILE_SIZE_LIMITS.MAX_UNCOMPRESSED_SIZE)}`,
+        `Uncompressed size (${(totalUncompressedSize / 1_000_000).toFixed(2)}MB) exceeds maximum limit of ${
+          ZIP_SECURITY_LIMITS.MAX_UNCOMPRESSED_SIZE / 1_000_000
+        }MB`,
       );
     }
 
-    // Check for unsafe paths (directory traversal prevention)
-    for (const entryPath of filePaths) {
-      const fullPath = path.join(destPath, entryPath);
-      if (!fullPath.startsWith(destPath)) {
-        throw new AppError('ZIP contains unsafe file paths');
+    // 3. Check compression ratio (ZIP bomb detection)
+    if (file.size > 0) {
+      const compressionRatio = totalUncompressedSize / file.size;
+      if (compressionRatio > ZIP_SECURITY_LIMITS.MAX_COMPRESSION_RATIO) {
+        throw new AppError(
+          `Suspicious compression ratio (${compressionRatio.toFixed(2)}:1). Maximum allowed: ${ZIP_SECURITY_LIMITS.MAX_COMPRESSION_RATIO}:1`,
+        );
       }
+    }
+
+    // 4. Validate all entries for path traversal, file extensions, and nesting level
+    const processedPaths = new Set<string>();
+
+    for (const entryPath of filePaths) {
+      // Skip directories (fflate doesn't include directory entries, only files)
+      if (entryPath.endsWith('/')) continue;
+
+      // 4.1 Check for unsafe paths (directory traversal prevention)
+      const fullPath = path.resolve(destPath, entryPath);
+      const relativePath = path.relative(destPath, fullPath);
+      if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+        throw new AppError(`Security violation: Potential directory traversal attack detected in path: ${entryPath}`);
+      }
+
+      // 4.2 Check path length
+      if (entryPath.length > ZIP_SECURITY_LIMITS.MAX_PATH_LENGTH) {
+        throw new AppError(
+          `File path exceeds maximum length: ${entryPath.length} > ${ZIP_SECURITY_LIMITS.MAX_PATH_LENGTH}`,
+        );
+      }
+
+      // 4.3 Check nesting level
+      const nestingLevel = entryPath.split('/').length - 1;
+      if (nestingLevel > ZIP_SECURITY_LIMITS.MAX_NESTING_LEVEL) {
+        throw new AppError(
+          `Directory nesting level exceeds maximum: ${nestingLevel} > ${ZIP_SECURITY_LIMITS.MAX_NESTING_LEVEL}`,
+        );
+      }
+
+      // 4.4 Check for duplicate paths (could indicate ZipSlip vulnerability attempts)
+      const normalizedPath = path.normalize(fullPath);
+      if (processedPaths.has(normalizedPath)) {
+        throw new AppError(`Duplicate file path detected: ${entryPath}. This could indicate a malicious archive.`);
+      }
+      processedPaths.add(normalizedPath);
     }
 
     await fs.mkdir(destPath, { recursive: true });
 
-    // Extract files using fflate
-    for (const [filePath, data] of Object.entries(files)) {
-      if (filePath.endsWith('/')) continue; // Skip directories
+    // Extract files using fflate with parallel writes
+    const writePromises = Object.entries(files)
+      .filter(([filePath]) => !filePath.endsWith('/')) // Skip directories
+      .map(async ([filePath, data]) => {
+        const fullPath = path.join(destPath, filePath);
+        const dirPath = path.dirname(fullPath);
 
-      const fullPath = path.join(destPath, filePath);
-      const dirPath = path.dirname(fullPath);
+        // Create directory if it doesn't exist
+        await fs.mkdir(dirPath, { recursive: true });
 
-      // Create directory if it doesn't exist
-      await fs.mkdir(dirPath, { recursive: true });
+        // Write the file
+        await fs.writeFile(fullPath, data);
+      });
 
-      // Write the file
-      await fs.writeFile(fullPath, data);
-    }
+    await Promise.all(writePromises);
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
