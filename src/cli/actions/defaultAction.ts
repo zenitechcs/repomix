@@ -48,7 +48,9 @@ export const runDefaultAction = async (
 
   // Handle stdin input
   if (cliOptions.stdin) {
-    if (directories.length > 1 || directories[0] !== '.') {
+    // Guard against empty directories so directories[0] isn't undefined
+    const firstDir = directories[0] ?? '.';
+    if (directories.length > 1 || firstDir !== '.') {
       throw new RepomixError(
         'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
       );
@@ -79,30 +81,13 @@ export const runDefaultAction = async (
         },
       );
     } catch (error) {
-      spinner.fail('Error during packing');
+      spinner.fail('Error reading from stdin or during packing');
       throw error;
     }
 
     spinner.succeed('Packing completed successfully!');
-    logger.log('');
 
-    if (config.output.topFilesLength > 0) {
-      printTopFiles(
-        packResult.fileCharCounts,
-        packResult.fileTokenCounts,
-        config.output.topFilesLength,
-        packResult.totalTokens,
-      );
-      logger.log('');
-    }
-
-    printSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
-    logger.log('');
-
-    printSummary(packResult, config);
-    logger.log('');
-
-    printCompletion();
+    printResults(cwd, packResult, config);
 
     return {
       packResult,
@@ -128,6 +113,19 @@ export const runDefaultAction = async (
   }
 
   spinner.succeed('Packing completed successfully!');
+
+  printResults(cwd, packResult, config);
+
+  return {
+    packResult,
+    config,
+  };
+};
+
+/**
+ * Prints the results of packing operation including top files, security check, summary, and completion.
+ */
+const printResults = (cwd: string, packResult: PackResult, config: RepomixConfigMerged): void => {
   logger.log('');
 
   if (config.output.topFilesLength > 0) {
@@ -147,11 +145,6 @@ export const runDefaultAction = async (
   logger.log('');
 
   printCompletion();
-
-  return {
-    packResult,
-    config,
-  };
 };
 
 /**
