@@ -216,6 +216,30 @@ repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad
 
 ```
 
+To pack files from a file list (via stdin):
+
+```bash
+# Using find command
+find src -name "*.ts" -type f | repomix --stdin
+
+# Using git to get tracked files
+git ls-files "*.ts" | repomix --stdin
+
+# Using ls with glob patterns
+ls src/**/*.ts | repomix --stdin
+
+# From a file containing file paths
+cat file-list.txt | repomix --stdin
+
+# Direct input with echo
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+```
+
+The `--stdin` option allows you to pipe a list of file paths to Repomix, giving you ultimate flexibility in selecting which files to pack.
+
+> [!NOTE]
+> When using `--stdin`, file paths can be relative or absolute, and Repomix will automatically handle path resolution and deduplication.
+
 To compress the output:
 
 ```bash
@@ -484,6 +508,7 @@ Instruction
 #### Filter Options
 - `--include <patterns>`: List of include patterns (comma-separated)
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
+- `--stdin`: Read file paths from stdin instead of discovering files automatically
 - `--no-gitignore`: Disable .gitignore file usage
 - `--no-default-patterns`: Disable default patterns
 
