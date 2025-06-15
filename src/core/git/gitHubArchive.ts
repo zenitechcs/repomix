@@ -1,7 +1,7 @@
 import { createWriteStream } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { Readable } from 'node:stream';
+import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { unzip } from 'fflate';
 import { RepomixError } from '../../shared/errorHandle.js';
@@ -41,6 +41,7 @@ export const downloadGitHubArchive = async (
     fs,
     pipeline,
     createWriteStream,
+    Transform,
   },
 ): Promise<void> => {
   const { timeout = 30000, retries = 3 } = options;
@@ -70,8 +71,11 @@ export const downloadGitHubArchive = async (
         lastError = error as Error;
         logger.trace(`Archive download attempt ${attempt} failed:`, lastError.message);
 
-        // If it's a 404 and we have more URLs to try, don't retry this URL
-        if (lastError.message.includes('not found') && archiveUrls.length > 1) {
+        // If it's a 404-like error and we have more URLs to try, don't retry this URL
+        const isNotFoundError =
+          lastError instanceof RepomixError &&
+          (lastError.message.includes('not found') || lastError.message.includes('404'));
+        if (isNotFoundError && archiveUrls.length > 1) {
           break;
         }
 
@@ -105,6 +109,7 @@ const downloadAndExtractArchive = async (
     fs,
     pipeline,
     createWriteStream,
+    Transform,
   },
 ): Promise<void> => {
   // Download the archive
@@ -138,6 +143,7 @@ const downloadFile = async (
     fs,
     pipeline,
     createWriteStream,
+    Transform,
   },
 ): Promise<void> => {
   const controller = new AbortController();
@@ -159,62 +165,43 @@ const downloadFile = async (
     let downloaded = 0;
     let lastProgressUpdate = 0;
 
-    // Create progress tracking readable stream
-    const progressStream = new Readable({
-      read() {},
-    });
+    // Use Readable.fromWeb for better stream handling
+    const nodeStream = Readable.fromWeb(response.body);
 
-    // Convert web ReadableStream to Node.js Readable stream with progress tracking
-    const reader = response.body.getReader();
-    const pump = async () => {
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            // Send final progress update
-            if (onProgress) {
-              onProgress({
-                downloaded,
-                total,
-                percentage: total ? 100 : null,
-              });
-            }
-            progressStream.push(null); // End stream
-            break;
-          }
+    // Transform stream for progress tracking
+    const progressStream = new deps.Transform({
+      transform(chunk, _encoding, callback) {
+        downloaded += chunk.length;
 
-          downloaded += value.length;
-
-          // Update progress at most every 100ms to avoid too frequent updates
-          const now = Date.now();
-          if (onProgress && now - lastProgressUpdate > 100) {
-            lastProgressUpdate = now;
-            onProgress({
-              downloaded,
-              total,
-              percentage: total ? Math.round((downloaded / total) * 100) : null,
-            });
-          }
-
-          progressStream.push(Buffer.from(value));
+        // Update progress at most every 100ms to avoid too frequent updates
+        const now = Date.now();
+        if (onProgress && now - lastProgressUpdate > 100) {
+          lastProgressUpdate = now;
+          onProgress({
+            downloaded,
+            total,
+            percentage: total ? Math.round((downloaded / total) * 100) : null,
+          });
         }
-      } catch (error) {
-        progressStream.destroy(error as Error);
-      }
-    };
 
-    // Start pumping data and handle errors
-    const pumpPromise = pump().catch((error) => {
-      progressStream.destroy(error);
-      throw new RepomixError(`Error during stream pumping: ${(error as Error).message}`);
+        callback(null, chunk);
+      },
+      flush(callback) {
+        // Send final progress update
+        if (onProgress) {
+          onProgress({
+            downloaded,
+            total,
+            percentage: total ? 100 : null,
+          });
+        }
+        callback();
+      },
     });
 
     // Write to file
     const writeStream = deps.createWriteStream(filePath);
-    const pipelinePromise = deps.pipeline(progressStream, writeStream);
-
-    // Wait for both pump and pipeline to complete
-    await Promise.all([pumpPromise, pipelinePromise]);
+    await deps.pipeline(nodeStream, progressStream, writeStream);
   } finally {
     clearTimeout(timeoutId);
   }
@@ -339,11 +326,15 @@ const processExtractedFiles = async (
     }
 
     // Sanitize relativePath to prevent path traversal attacks
-    const sanitized = path.normalize(relativePath).replace(/^(\.\.([\/\\]|$))+/, ''); // strip leading traversal sequences
+    const sanitized = path.normalize(relativePath).replace(/^(\.\.([\/\\]|$))+/, '');
 
-    const targetPath = path.join(targetDirectory, sanitized);
+    // Reject absolute paths outright
+    if (path.isAbsolute(sanitized)) {
+      logger.trace(`Absolute path detected in archive, skipping: ${relativePath}`);
+      continue;
+    }
 
-    // Abort if normalisation still escapes the target directory
+    const targetPath = path.resolve(targetDirectory, sanitized);
     if (!targetPath.startsWith(path.resolve(targetDirectory))) {
       logger.trace(`Unsafe path detected in archive, skipping: ${relativePath}`);
       continue;
