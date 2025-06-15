@@ -1,75 +1,5 @@
 import { RepomixError } from '../../shared/errorHandle.js';
-import { logger } from '../../shared/logger.js';
-
-export interface GitHubRepoInfo {
-  owner: string;
-  repo: string;
-  ref?: string; // branch, tag, or commit SHA
-}
-
-/**
- * Extracts GitHub repository information from various URL formats
- * Supports:
- * - https://github.com/owner/repo
- * - https://github.com/owner/repo/tree/branch
- * - https://github.com/owner/repo/commit/sha
- * - https://github.com/owner/repo/tree/tag
- * - owner/repo (shorthand)
- */
-export const parseGitHubUrl = (url: string): GitHubRepoInfo | null => {
-  // Handle shorthand format: owner/repo
-  const shorthandRegex = /^([a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?)\/([a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?)$/;
-  const shorthandMatch = url.match(shorthandRegex);
-  if (shorthandMatch) {
-    return {
-      owner: shorthandMatch[1],
-      repo: shorthandMatch[2],
-    };
-  }
-
-  // Handle git@ SSH URLs: git@github.com:owner/repo.git
-  const sshRegex = /^git@github\.com:([^/]+)\/(.+?)(?:\.git)?$/;
-  const sshMatch = url.match(sshRegex);
-  if (sshMatch) {
-    return {
-      owner: sshMatch[1],
-      repo: sshMatch[2],
-    };
-  }
-
-  // Handle full GitHub URLs
-  try {
-    const urlObj = new URL(url);
-    if (urlObj.hostname !== 'github.com') {
-      return null;
-    }
-
-    const pathParts = urlObj.pathname.split('/').filter(Boolean);
-    if (pathParts.length < 2) {
-      return null;
-    }
-
-    const owner = pathParts[0];
-    const repo = pathParts[1];
-
-    // Remove .git suffix if present
-    const cleanRepo = repo.replace(/\.git$/, '');
-
-    const result: GitHubRepoInfo = { owner, repo: cleanRepo };
-
-    // Extract ref from various URL patterns
-    if (pathParts.length >= 4) {
-      if (pathParts[2] === 'tree' || pathParts[2] === 'commit') {
-        result.ref = pathParts.slice(3).join('/');
-      }
-    }
-
-    return result;
-  } catch (error) {
-    logger.trace('Failed to parse GitHub URL:', (error as Error).message);
-    return null;
-  }
-};
+import type { GitHubRepoInfo } from './gitRemoteParse.js';
 
 /**
  * Constructs GitHub archive download URL
@@ -107,13 +37,6 @@ export const buildGitHubTagArchiveUrl = (repoInfo: GitHubRepoInfo): string | nul
   }
 
   return `https://github.com/${owner}/${repo}/archive/refs/tags/${ref}.zip`;
-};
-
-/**
- * Validates if a URL is a GitHub repository URL
- */
-export const isGitHubUrl = (url: string): boolean => {
-  return parseGitHubUrl(url) !== null;
 };
 
 /**

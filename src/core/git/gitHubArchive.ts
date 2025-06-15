@@ -1,18 +1,18 @@
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createWriteStream } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import * as zlib from 'node:zlib';
+import { unzip } from 'fflate';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import {
-  type GitHubRepoInfo,
   buildGitHubArchiveUrl,
   buildGitHubTagArchiveUrl,
   checkGitHubResponse,
   getArchiveFilename,
-} from './githubApi.js';
+} from './gitHubArchiveApi.js';
+import type { GitHubRepoInfo } from './gitRemoteParse.js';
 
 export interface ArchiveDownloadOptions {
   timeout?: number; // Download timeout in milliseconds (default: 30000)
@@ -38,9 +38,7 @@ export const downloadGitHubArchive = async (
   deps = {
     fetch: globalThis.fetch,
     fs,
-    zlib,
     pipeline,
-    createReadStream,
     createWriteStream,
   },
 ): Promise<void> => {
@@ -100,9 +98,7 @@ const downloadAndExtractArchive = async (
   deps = {
     fetch: globalThis.fetch,
     fs,
-    zlib,
     pipeline,
-    createReadStream,
     createWriteStream,
   },
 ): Promise<void> => {
@@ -202,9 +198,7 @@ const downloadFile = async (
 };
 
 /**
- * Extracts a ZIP archive using Node.js built-in zlib (for deflate compression)
- * Note: This is a simplified implementation. For production use, consider using
- * a full-featured ZIP library like 'yauzl' or 'node-stream-zip'
+ * Extracts a ZIP archive using fflate library
  */
 const extractZipArchive = async (
   archivePath: string,
@@ -212,51 +206,58 @@ const extractZipArchive = async (
   repoInfo: GitHubRepoInfo,
   deps = {
     fs,
-    createReadStream,
   },
 ): Promise<void> => {
   try {
-    // For now, we'll use a simple approach and rely on the system's unzip command
-    // This is not ideal but works for the MVP. In the future, we should use a proper ZIP library
-    const { execFile } = await import('node:child_process');
-    const { promisify } = await import('node:util');
-    const execFileAsync = promisify(execFile);
+    // Read the ZIP file as a buffer
+    const zipBuffer = await deps.fs.readFile(archivePath);
+    const zipUint8Array = new Uint8Array(zipBuffer);
 
-    // Check if unzip command is available
-    try {
-      await execFileAsync('which', ['unzip']);
-    } catch (error) {
-      throw new RepomixError('Archive extraction requires the "unzip" command to be installed on your system.');
-    }
-
-    // Extract archive
-    await execFileAsync('unzip', ['-q', '-o', archivePath, '-d', targetDirectory]);
-
-    // GitHub archives create a subdirectory with format: repo-ref/
-    // We need to move contents up one level
-    const entries = await deps.fs.readdir(targetDirectory);
-    const archiveSubdir = entries.find(
-      (entry) => entry.startsWith(`${repoInfo.repo}-`) && entry !== path.basename(archivePath),
-    );
-
-    if (archiveSubdir) {
-      const subdirPath = path.join(targetDirectory, archiveSubdir);
-      const subdirStat = await deps.fs.stat(subdirPath);
-
-      if (subdirStat.isDirectory()) {
-        // Move all contents from subdirectory to target directory
-        const subdirContents = await deps.fs.readdir(subdirPath);
-
-        for (const item of subdirContents) {
-          const srcPath = path.join(subdirPath, item);
-          const destPath = path.join(targetDirectory, item);
-          await deps.fs.rename(srcPath, destPath);
+    // Extract ZIP using fflate
+    await new Promise<void>((resolve, reject) => {
+      unzip(zipUint8Array, async (err, extracted) => {
+        if (err) {
+          reject(new RepomixError(`Failed to extract ZIP archive: ${err.message}`));
+          return;
         }
 
-        // Remove empty subdirectory
-        await deps.fs.rmdir(subdirPath);
-      }
-    }
+        try {
+          // Process extracted files
+          const repoPrefix = `${repoInfo.repo}-`;
+
+          for (const [filePath, fileData] of Object.entries(extracted)) {
+            // GitHub archives have a top-level directory like "repo-branch/"
+            // We need to remove this prefix from the file paths
+            let relativePath = filePath;
+
+            // Find and remove the repo prefix
+            const pathParts = filePath.split('/');
+            if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
+              // Remove the first directory (repo-branch/)
+              relativePath = pathParts.slice(1).join('/');
+            }
+
+            // Skip empty paths (root directory)
+            if (!relativePath) {
+              continue;
+            }
+
+            const targetPath = path.join(targetDirectory, relativePath);
+
+            // Ensure parent directory exists
+            const parentDir = path.dirname(targetPath);
+            await deps.fs.mkdir(parentDir, { recursive: true });
+
+            // Write file
+            await deps.fs.writeFile(targetPath, fileData);
+          }
+
+          resolve();
+        } catch (writeError) {
+          reject(new RepomixError(`Failed to write extracted files: ${(writeError as Error).message}`));
+        }
+      });
+    });
   } catch (error) {
     throw new RepomixError(`Failed to extract archive: ${(error as Error).message}`);
   }
@@ -265,7 +266,7 @@ const extractZipArchive = async (
 /**
  * Checks if archive download is supported for the given repository info
  */
-export const isArchiveDownloadSupported = (repoInfo: GitHubRepoInfo): boolean => {
+export const isArchiveDownloadSupported = (_repoInfo: GitHubRepoInfo): boolean => {
   // Archive download is supported for all GitHub repositories
   // In the future, we might add conditions here (e.g., size limits, private repos)
   return true;

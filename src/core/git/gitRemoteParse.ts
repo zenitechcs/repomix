@@ -1,10 +1,15 @@
 import gitUrlParse, { type GitUrl } from 'git-url-parse';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
-import { type GitHubRepoInfo, parseGitHubUrl } from '../github/githubApi.js';
 
 interface IGitUrl extends GitUrl {
   commit: string | undefined;
+}
+
+export interface GitHubRepoInfo {
+  owner: string;
+  repo: string;
+  ref?: string; // branch, tag, or commit SHA
 }
 
 // Check the short form of the GitHub URL. e.g. yamadashy/repomix
@@ -79,26 +84,64 @@ export const isValidRemoteValue = (remoteValue: string, refs: string[] = []): bo
  */
 export const parseGitHubRepoInfo = (remoteValue: string): GitHubRepoInfo | null => {
   try {
-    // First try direct GitHub URL parsing
-    const githubInfo = parseGitHubUrl(remoteValue);
-    if (githubInfo) {
-      return githubInfo;
+    // Handle shorthand format: owner/repo
+    if (isValidShorthand(remoteValue)) {
+      const [owner, repo] = remoteValue.split('/');
+      return { owner, repo };
     }
 
-    // If direct parsing failed, try using the existing git URL parsing
-    // and extract GitHub info from the result
-    const parsed = parseRemoteValue(remoteValue);
-    const githubInfoFromGitUrl = parseGitHubUrl(parsed.repoUrl);
+    // For GitHub URLs with branch/tag/commit info, extract directly from URL
+    if (remoteValue.includes('github.com')) {
+      try {
+        const url = new URL(remoteValue);
+        const pathParts = url.pathname.split('/').filter(Boolean);
 
-    if (githubInfoFromGitUrl) {
-      // Override ref with remoteBranch if available
-      return {
-        ...githubInfoFromGitUrl,
-        ref: parsed.remoteBranch || githubInfoFromGitUrl.ref,
-      };
+        if (pathParts.length >= 2) {
+          const owner = pathParts[0];
+          const repo = pathParts[1].replace(/\.git$/, '');
+
+          const result: GitHubRepoInfo = { owner, repo };
+
+          // Extract ref from URL patterns like /tree/branch or /commit/sha
+          if (pathParts.length >= 4 && (pathParts[2] === 'tree' || pathParts[2] === 'commit')) {
+            result.ref = pathParts.slice(3).join('/');
+          }
+
+          return result;
+        }
+      } catch (urlError) {
+        // Fall back to git-url-parse if URL parsing fails
+        logger.trace('URL parsing failed, falling back to git-url-parse:', (urlError as Error).message);
+      }
     }
 
-    return null;
+    // Parse using git-url-parse for other cases
+    const parsed = gitUrlParse(remoteValue) as IGitUrl;
+
+    // Only proceed if it's a GitHub repository
+    if (parsed.source !== 'github.com') {
+      return null;
+    }
+
+    // Extract owner and repo from full_name (e.g., "owner/repo")
+    const [owner, repo] = parsed.full_name.split('/');
+    if (!owner || !repo) {
+      return null;
+    }
+
+    const result: GitHubRepoInfo = {
+      owner,
+      repo: repo.replace(/\.git$/, ''), // Remove .git suffix
+    };
+
+    // Add ref if available
+    if (parsed.ref) {
+      result.ref = parsed.ref;
+    } else if (parsed.commit) {
+      result.ref = parsed.commit;
+    }
+
+    return result;
   } catch (error) {
     logger.trace('Failed to parse GitHub repo info:', (error as Error).message);
     return null;
