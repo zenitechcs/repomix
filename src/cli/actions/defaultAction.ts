@@ -46,56 +46,79 @@ export const runDefaultAction = async (
 
   logger.trace('Merged config:', config);
 
-  // Handle stdin input
+  // Route to appropriate processing workflow
   if (cliOptions.stdin) {
-    // Guard against empty directories so directories[0] isn't undefined
-    const firstDir = directories[0] ?? '.';
-    if (directories.length > 1 || firstDir !== '.') {
-      throw new RepomixError(
-        'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
-      );
-    }
-
-    const spinner = new Spinner('Reading file paths from stdin...', cliOptions);
-    spinner.start();
-
-    let packResult: PackResult;
-
-    try {
-      const stdinResult = await readFilePathsFromStdin(cwd);
-
-      spinner.update('Packing files...');
-
-      // Create a custom pack variant that uses the stdin file paths directly
-      packResult = await pack(
-        [cwd],
-        config,
-        (message) => {
-          spinner.update(message);
-        },
-        {
-          searchFiles: async () => ({
-            filePaths: stdinResult.filePaths.map((filePath) => path.relative(cwd, filePath)),
-            emptyDirPaths: stdinResult.emptyDirPaths,
-          }),
-        },
-      );
-    } catch (error) {
-      spinner.fail('Error reading from stdin or during packing');
-      throw error;
-    }
-
-    spinner.succeed('Packing completed successfully!');
-
-    printResults(cwd, packResult, config);
-
-    return {
-      packResult,
-      config,
-    };
+    return handleStdinProcessing(directories, cwd, config, cliOptions);
   }
 
-  // Handle normal directory processing
+  return handleDirectoryProcessing(directories, cwd, config, cliOptions);
+};
+
+/**
+ * Handles stdin processing workflow for file paths input.
+ */
+const handleStdinProcessing = async (
+  directories: string[],
+  cwd: string,
+  config: RepomixConfigMerged,
+  cliOptions: CliOptions,
+): Promise<DefaultActionRunnerResult> => {
+  // Validate directory arguments for stdin mode
+  const firstDir = directories[0] ?? '.';
+  if (directories.length > 1 || firstDir !== '.') {
+    throw new RepomixError(
+      'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
+    );
+  }
+
+  const spinner = new Spinner('Reading file paths from stdin...', cliOptions);
+  spinner.start();
+
+  let packResult: PackResult;
+
+  try {
+    const stdinResult = await readFilePathsFromStdin(cwd);
+
+    spinner.update('Packing files...');
+
+    // Create a custom pack variant that uses the stdin file paths directly
+    packResult = await pack(
+      [cwd],
+      config,
+      (message) => {
+        spinner.update(message);
+      },
+      {
+        searchFiles: async () => ({
+          filePaths: stdinResult.filePaths.map((filePath) => path.relative(cwd, filePath)),
+          emptyDirPaths: stdinResult.emptyDirPaths,
+        }),
+      },
+    );
+  } catch (error) {
+    spinner.fail('Error reading from stdin or during packing');
+    throw error;
+  }
+
+  spinner.succeed('Packing completed successfully!');
+
+  printResults(cwd, packResult, config);
+
+  return {
+    packResult,
+    config,
+  };
+};
+
+/**
+ * Handles normal directory processing workflow.
+ */
+const handleDirectoryProcessing = async (
+  directories: string[],
+  cwd: string,
+  config: RepomixConfigMerged,
+  cliOptions: CliOptions,
+): Promise<DefaultActionRunnerResult> => {
   const targetPaths = directories.map((directory) => path.resolve(cwd, directory));
 
   const spinner = new Spinner('Packing files...', cliOptions);
