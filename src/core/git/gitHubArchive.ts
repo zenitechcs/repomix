@@ -203,12 +203,18 @@ const downloadFile = async (
       }
     };
 
-    // Start pumping data
-    pump();
+    // Start pumping data and handle errors
+    const pumpPromise = pump().catch((error) => {
+      progressStream.destroy(error);
+      throw new RepomixError(`Error during stream pumping: ${(error as Error).message}`);
+    });
 
     // Write to file
     const writeStream = deps.createWriteStream(filePath);
-    await deps.pipeline(progressStream, writeStream);
+    const pipelinePromise = deps.pipeline(progressStream, writeStream);
+
+    // Wait for both pump and pipeline to complete
+    await Promise.all([pumpPromise, pipelinePromise]);
   } finally {
     clearTimeout(timeoutId);
   }
@@ -232,62 +238,67 @@ const extractZipArchive = async (
 
     // Extract ZIP using fflate
     await new Promise<void>((resolve, reject) => {
-      unzip(zipUint8Array, async (err, extracted) => {
+      unzip(zipUint8Array, (err, extracted) => {
         if (err) {
           reject(new RepomixError(`Failed to extract ZIP archive: ${err.message}`));
           return;
         }
 
-        try {
-          // Process extracted files
-          const repoPrefix = `${repoInfo.repo}-`;
+        // Process extracted files synchronously in the callback
+        const processFiles = async () => {
+          try {
+            const repoPrefix = `${repoInfo.repo}-`;
 
-          for (const [filePath, fileData] of Object.entries(extracted)) {
-            // GitHub archives have a top-level directory like "repo-branch/"
-            // We need to remove this prefix from the file paths
-            let relativePath = filePath;
+            for (const [filePath, fileData] of Object.entries(extracted)) {
+              // GitHub archives have a top-level directory like "repo-branch/"
+              // We need to remove this prefix from the file paths
+              let relativePath = filePath;
 
-            // Find and remove the repo prefix
-            const pathParts = filePath.split('/');
-            if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
-              // Remove the first directory (repo-branch/)
-              relativePath = pathParts.slice(1).join('/');
-            }
+              // Find and remove the repo prefix
+              const pathParts = filePath.split('/');
+              if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
+                // Remove the first directory (repo-branch/)
+                relativePath = pathParts.slice(1).join('/');
+              }
 
-            // Skip empty paths (root directory)
-            if (!relativePath) {
-              continue;
-            }
+              // Skip empty paths (root directory)
+              if (!relativePath) {
+                continue;
+              }
 
-            const targetPath = path.join(targetDirectory, relativePath);
+              const targetPath = path.join(targetDirectory, relativePath);
 
-            // Check if this entry is a directory (ends with /) or empty file data indicates directory
-            const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
+              // Check if this entry is a directory (ends with /) or empty file data indicates directory
+              const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
 
-            if (isDirectory) {
-              // Create directory
-              logger.trace(`Creating directory: ${targetPath}`);
-              await deps.fs.mkdir(targetPath, { recursive: true });
-            } else {
-              // Ensure parent directory exists for files
-              const parentDir = path.dirname(targetPath);
-              logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
+              if (isDirectory) {
+                // Create directory
+                logger.trace(`Creating directory: ${targetPath}`);
+                await deps.fs.mkdir(targetPath, { recursive: true });
+              } else {
+                // Ensure parent directory exists for files
+                const parentDir = path.dirname(targetPath);
+                logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
 
-              try {
-                await deps.fs.mkdir(parentDir, { recursive: true });
-                // Write file
-                await deps.fs.writeFile(targetPath, fileData);
-              } catch (fileError) {
-                logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
-                throw fileError;
+                try {
+                  await deps.fs.mkdir(parentDir, { recursive: true });
+                  // Write file
+                  await deps.fs.writeFile(targetPath, fileData);
+                } catch (fileError) {
+                  logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
+                  throw fileError;
+                }
               }
             }
-          }
 
-          resolve();
-        } catch (writeError) {
-          reject(new RepomixError(`Failed to write extracted files: ${(writeError as Error).message}`));
-        }
+            resolve();
+          } catch (writeError) {
+            reject(new RepomixError(`Failed to write extracted files: ${(writeError as Error).message}`));
+          }
+        };
+
+        // Execute async file processing and handle errors
+        processFiles().catch(reject);
       });
     });
   } catch (error) {

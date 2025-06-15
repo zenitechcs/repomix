@@ -23,7 +23,7 @@ describe('remoteAction functions', () => {
 
   describe('runRemoteAction', () => {
     test('should clone the repository when not a GitHub repo', async () => {
-      const execGitShallowCloneMock = vi.fn(async (url: string, directory: string) => {
+      const execGitShallowCloneMock = vi.fn(async (_url: string, directory: string) => {
         await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
       });
 
@@ -106,7 +106,7 @@ describe('remoteAction functions', () => {
 
     test('should fallback to git clone when archive download fails', async () => {
       const downloadGitHubArchiveMock = vi.fn().mockRejectedValue(new Error('Archive download failed'));
-      const execGitShallowCloneMock = vi.fn(async (url: string, directory: string) => {
+      const execGitShallowCloneMock = vi.fn(async (_url: string, directory: string) => {
         await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
       });
 
