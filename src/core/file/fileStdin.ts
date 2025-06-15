@@ -1,5 +1,6 @@
 import path from 'node:path';
 import readline from 'node:readline/promises';
+import type { Readable } from 'node:stream';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 
@@ -8,47 +9,83 @@ export interface StdinFileResult {
   emptyDirPaths: string[];
 }
 
+export interface StdinDependencies {
+  stdin: NodeJS.ReadableStream & { isTTY?: boolean };
+  createReadlineInterface: (options: { input: Readable }) => readline.Interface;
+}
+
+/**
+ * Filters and validates lines from stdin input.
+ * Removes empty lines and comments (lines starting with #).
+ */
+export const filterValidLines = (lines: string[]): string[] => {
+  return lines.map((line) => line.trim()).filter((line) => line && !line.startsWith('#'));
+};
+
+/**
+ * Resolves relative paths to absolute paths and deduplicates them.
+ */
+export const resolveAndDeduplicatePaths = (lines: string[], cwd: string): string[] => {
+  const resolvedPaths = lines.map((line) => {
+    const filePath = path.isAbsolute(line) ? path.normalize(line) : path.normalize(path.resolve(cwd, line));
+    logger.trace(`Resolved path: ${line} -> ${filePath}`);
+    return filePath;
+  });
+
+  return [...new Set(resolvedPaths)];
+};
+
+/**
+ * Reads lines from a readable stream using readline interface.
+ */
+export const readLinesFromStream = async (
+  input: Readable,
+  createInterface: (options: { input: Readable }) => readline.Interface = readline.createInterface,
+): Promise<string[]> => {
+  const rl = createInterface({ input });
+  const lines: string[] = [];
+
+  for await (const line of rl) {
+    lines.push(line);
+  }
+
+  return lines;
+};
+
 /**
  * Reads file paths from stdin, one per line.
  * Filters out empty lines and comments (lines starting with #).
  * Converts relative paths to absolute paths based on the current working directory.
  */
-export const readFilePathsFromStdin = async (cwd: string): Promise<StdinFileResult> => {
+export const readFilePathsFromStdin = async (
+  cwd: string,
+  deps: StdinDependencies = {
+    stdin: process.stdin,
+    createReadlineInterface: readline.createInterface,
+  },
+): Promise<StdinFileResult> => {
   logger.trace('Reading file paths from stdin...');
 
   try {
-    const stdin = process.stdin;
+    const { stdin, createReadlineInterface } = deps;
 
     // Check if stdin is a TTY (interactive mode)
     if (stdin.isTTY) {
       throw new RepomixError('No data provided via stdin. Please pipe file paths to repomix when using --stdin flag.');
     }
 
-    // Use readline for memory-efficient line-by-line processing
-    const rl = readline.createInterface({ input: stdin });
-    const lines: string[] = [];
+    // Read all lines from stdin
+    const rawLines = await readLinesFromStream(stdin as Readable, createReadlineInterface);
 
-    for await (const line of rl) {
-      const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith('#')) {
-        lines.push(trimmed);
-      }
-    }
+    // Filter out empty lines and comments
+    const validLines = filterValidLines(rawLines);
 
-    if (lines.length === 0) {
+    if (validLines.length === 0) {
       throw new RepomixError('No valid file paths found in stdin input.');
     }
 
     // Convert relative paths to absolute paths and deduplicate
-    const filePaths = [
-      ...new Set(
-        lines.map((line) => {
-          const filePath = path.isAbsolute(line) ? path.normalize(line) : path.normalize(path.resolve(cwd, line));
-          logger.trace(`Resolved path: ${line} -> ${filePath}`);
-          return filePath;
-        }),
-      ),
-    ];
+    const filePaths = resolveAndDeduplicatePaths(validLines, cwd);
 
     logger.trace(`Found ${filePaths.length} file paths from stdin`);
 
