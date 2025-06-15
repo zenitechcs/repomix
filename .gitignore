@@ -42,3 +42,4 @@ repomix-output.md
 # private files
 .cursor/rules/
 .github/todo.md
+.mcp.json
