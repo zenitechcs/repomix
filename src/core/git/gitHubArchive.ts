@@ -291,7 +291,7 @@ const extractZipArchiveStreaming = async (
 };
 
 /**
- * Process extracted files concurrently
+ * Process extracted files sequentially to avoid EMFILE errors
  */
 const processExtractedFiles = async (
   extracted: Record<string, Uint8Array>,
@@ -302,12 +302,9 @@ const processExtractedFiles = async (
   },
 ): Promise<void> => {
   const repoPrefix = `${repoInfo.repo}-`;
+  const createdDirs = new Set<string>();
 
-  // Group files and directories for processing
-  const directories: string[] = [];
-  const fileWritePromises: Promise<void>[] = [];
-
-  // First pass: identify directories and collect file write operations
+  // Process files sequentially to avoid EMFILE errors completely
   for (const [filePath, fileData] of Object.entries(extracted)) {
     // GitHub archives have a top-level directory like "repo-branch/"
     // We need to remove this prefix from the file paths
@@ -344,38 +341,30 @@ const processExtractedFiles = async (
     const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
 
     if (isDirectory) {
-      directories.push(targetPath);
+      // Create directory immediately
+      if (!createdDirs.has(targetPath)) {
+        logger.trace(`Creating directory: ${targetPath}`);
+        await deps.fs.mkdir(targetPath, { recursive: true });
+        createdDirs.add(targetPath);
+      }
     } else {
-      // Create file write promise
-      const fileWritePromise = (async () => {
-        const parentDir = path.dirname(targetPath);
-        logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
+      // Create parent directory if needed and write file
+      const parentDir = path.dirname(targetPath);
+      if (!createdDirs.has(parentDir)) {
+        logger.trace(`Creating parent directory for file: ${parentDir}`);
+        await deps.fs.mkdir(parentDir, { recursive: true });
+        createdDirs.add(parentDir);
+      }
 
-        try {
-          await deps.fs.mkdir(parentDir, { recursive: true });
-          // Write file
-          await deps.fs.writeFile(targetPath, fileData);
-        } catch (fileError) {
-          logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
-          throw fileError;
-        }
-      })();
-
-      fileWritePromises.push(fileWritePromise);
+      // Write file sequentially
+      logger.trace(`Writing file: ${targetPath}`);
+      try {
+        await deps.fs.writeFile(targetPath, fileData);
+      } catch (fileError) {
+        logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
+        throw fileError;
+      }
     }
-  }
-
-  // Create directories first (sequentially to avoid race conditions)
-  for (const dir of directories) {
-    logger.trace(`Creating directory: ${dir}`);
-    await deps.fs.mkdir(dir, { recursive: true });
-  }
-
-  // Write files with limited concurrency to avoid "too many open files" error
-  const CONCURRENT_WRITES = 50; // Limit concurrent file operations
-  for (let i = 0; i < fileWritePromises.length; i += CONCURRENT_WRITES) {
-    const batch = fileWritePromises.slice(i, i + CONCURRENT_WRITES);
-    await Promise.all(batch);
   }
 };
 
