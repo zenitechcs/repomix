@@ -7,8 +7,8 @@ import {
   type RepomixOutputStyle,
   repomixConfigCliSchema,
 } from '../../config/configSchema.js';
-import { type PackResult, pack } from '../../core/packager.js';
 import { readFilePathsFromStdin } from '../../core/file/fileStdin.js';
+import { type PackResult, pack } from '../../core/packager.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
@@ -49,7 +49,9 @@ export const runDefaultAction = async (
   // Handle stdin input
   if (cliOptions.stdin) {
     if (directories.length > 1 || directories[0] !== '.') {
-      throw new RepomixError('When using --stdin, do not specify directory arguments. File paths will be read from stdin.');
+      throw new RepomixError(
+        'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
+      );
     }
 
     const spinner = new Spinner('Reading file paths from stdin...', cliOptions);
@@ -59,18 +61,23 @@ export const runDefaultAction = async (
 
     try {
       const stdinResult = await readFilePathsFromStdin(cwd);
-      
+
       spinner.update('Packing files...');
-      
+
       // Create a custom pack variant that uses the stdin file paths directly
-      packResult = await pack([cwd], config, (message) => {
-        spinner.update(message);
-      }, {
-        searchFiles: async () => ({
-          filePaths: stdinResult.filePaths.map(filePath => path.relative(cwd, filePath)),
-          emptyDirPaths: stdinResult.emptyDirPaths,
-        }),
-      });
+      packResult = await pack(
+        [cwd],
+        config,
+        (message) => {
+          spinner.update(message);
+        },
+        {
+          searchFiles: async () => ({
+            filePaths: stdinResult.filePaths.map((filePath) => path.relative(cwd, filePath)),
+            emptyDirPaths: stdinResult.emptyDirPaths,
+          }),
+        },
+      );
     } catch (error) {
       spinner.fail('Error during packing');
       throw error;

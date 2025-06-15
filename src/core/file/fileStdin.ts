@@ -22,7 +22,7 @@ export const readFilePathsFromStdin = async (cwd: string): Promise<StdinFileResu
     stdin.setEncoding('utf8');
 
     let data = '';
-    
+
     // Check if stdin is a TTY (interactive mode)
     if (stdin.isTTY) {
       throw new RepomixError('No data provided via stdin. Please pipe file paths to repomix when using --stdin flag.');
@@ -38,16 +38,17 @@ export const readFilePathsFromStdin = async (cwd: string): Promise<StdinFileResu
     }
 
     // Parse the input - split by lines and filter out empty lines and comments
-    const lines = data.split('\n')
-      .map(line => line.trim())
-      .filter(line => line && !line.startsWith('#'));
+    const lines = data
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#'));
 
     if (lines.length === 0) {
       throw new RepomixError('No valid file paths found in stdin input.');
     }
 
     // Convert relative paths to absolute paths
-    const filePaths = lines.map(line => {
+    const filePaths = lines.map((line) => {
       const filePath = path.isAbsolute(line) ? line : path.resolve(cwd, line);
       logger.trace(`Resolved path: ${line} -> ${filePath}`);
       return filePath;
@@ -63,11 +64,11 @@ export const readFilePathsFromStdin = async (cwd: string): Promise<StdinFileResu
     if (error instanceof RepomixError) {
       throw error;
     }
-    
+
     if (error instanceof Error) {
       throw new RepomixError(`Failed to read file paths from stdin: ${error.message}`);
     }
-    
+
     throw new RepomixError('An unexpected error occurred while reading from stdin.');
   }
 };
