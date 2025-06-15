@@ -190,13 +190,14 @@ describe('fileStdin', () => {
     });
 
     it('should successfully read and process file paths from stdin', async () => {
+      const absoluteFile3 = path.resolve('/absolute/file3.txt');
       const mockInterface = {
         [Symbol.asyncIterator]: async function* () {
           yield 'file1.txt';
           yield '# comment';
           yield './file2.txt';
           yield '';
-          yield '/absolute/file3.txt';
+          yield absoluteFile3;
           yield 'file1.txt'; // duplicate
         },
       };
@@ -213,21 +214,19 @@ describe('fileStdin', () => {
 
       expect(mockCreateInterface).toHaveBeenCalledWith({ input: mockStdin });
       expect(result).toEqual({
-        filePaths: [
-          path.resolve(cwd, 'file1.txt'),
-          path.resolve(cwd, 'file2.txt'),
-          path.resolve('/absolute/file3.txt'),
-        ],
+        filePaths: [path.resolve(cwd, 'file1.txt'), path.resolve(cwd, 'file2.txt'), absoluteFile3],
         emptyDirPaths: [],
       });
     });
 
     it('should handle complex path normalization', async () => {
+      const absoluteFile3 = path.resolve('/absolute/file3.txt');
+      const complexAbsolutePath = '/absolute/./path/../file3.txt';
       const mockInterface = {
         [Symbol.asyncIterator]: async function* () {
           yield './dir/../file1.txt';
           yield 'dir/./file2.txt';
-          yield '/absolute/./path/../file3.txt';
+          yield complexAbsolutePath;
         },
       };
 
@@ -243,8 +242,8 @@ describe('fileStdin', () => {
 
       expect(result.filePaths).toEqual([
         path.resolve(cwd, 'file1.txt'),
-        path.resolve(cwd, 'dir/file2.txt'),
-        path.resolve('/absolute/file3.txt'),
+        path.resolve(cwd, 'dir', 'file2.txt'),
+        absoluteFile3,
       ]);
     });
 
