@@ -152,6 +152,7 @@ const downloadFile = async (
     const totalSize = response.headers.get('content-length');
     const total = totalSize ? Number.parseInt(totalSize, 10) : null;
     let downloaded = 0;
+    let lastProgressUpdate = 0;
 
     // Create progress tracking readable stream
     const progressStream = new Readable({
@@ -165,17 +166,28 @@ const downloadFile = async (
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
+            // Send final progress update
+            if (onProgress) {
+              onProgress({
+                downloaded,
+                total,
+                percentage: total ? 100 : null,
+              });
+            }
             progressStream.push(null); // End stream
             break;
           }
 
           downloaded += value.length;
 
-          if (onProgress && total) {
+          // Update progress at most every 100ms to avoid too frequent updates
+          const now = Date.now();
+          if (onProgress && now - lastProgressUpdate > 100) {
+            lastProgressUpdate = now;
             onProgress({
               downloaded,
               total,
-              percentage: Math.round((downloaded / total) * 100),
+              percentage: total ? Math.round((downloaded / total) * 100) : null,
             });
           }
 
@@ -244,12 +256,27 @@ const extractZipArchive = async (
 
             const targetPath = path.join(targetDirectory, relativePath);
 
-            // Ensure parent directory exists
-            const parentDir = path.dirname(targetPath);
-            await deps.fs.mkdir(parentDir, { recursive: true });
+            // Check if this entry is a directory (ends with /) or empty file data indicates directory
+            const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));
 
-            // Write file
-            await deps.fs.writeFile(targetPath, fileData);
+            if (isDirectory) {
+              // Create directory
+              logger.trace(`Creating directory: ${targetPath}`);
+              await deps.fs.mkdir(targetPath, { recursive: true });
+            } else {
+              // Ensure parent directory exists for files
+              const parentDir = path.dirname(targetPath);
+              logger.trace(`Creating parent directory for file: ${parentDir}, writing file: ${targetPath}`);
+
+              try {
+                await deps.fs.mkdir(parentDir, { recursive: true });
+                // Write file
+                await deps.fs.writeFile(targetPath, fileData);
+              } catch (fileError) {
+                logger.trace(`Failed to write file ${targetPath}: ${(fileError as Error).message}`);
+                throw fileError;
+              }
+            }
           }
 
           resolve();
@@ -270,30 +297,4 @@ export const isArchiveDownloadSupported = (_repoInfo: GitHubRepoInfo): boolean =
   // Archive download is supported for all GitHub repositories
   // In the future, we might add conditions here (e.g., size limits, private repos)
   return true;
-};
-
-/**
- * Estimates download size (returns null if cannot determine)
- * This could be enhanced to make a HEAD request to get content-length
- */
-export const estimateDownloadSize = async (
-  repoInfo: GitHubRepoInfo,
-  deps = {
-    fetch: globalThis.fetch,
-  },
-): Promise<number | null> => {
-  try {
-    const archiveUrl = buildGitHubArchiveUrl(repoInfo);
-    const response = await deps.fetch(archiveUrl, { method: 'HEAD' });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const contentLength = response.headers.get('content-length');
-    return contentLength ? Number.parseInt(contentLength, 10) : null;
-  } catch (error) {
-    logger.trace('Failed to estimate download size:', (error as Error).message);
-    return null;
-  }
 };

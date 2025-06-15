@@ -62,7 +62,11 @@ export const runRemoteAction = async (
           },
           (progress) => {
             if (progress.percentage !== null) {
-              spinner.update(`Downloading repository archive... ${progress.percentage}%`);
+              spinner.update(`Downloading repository archive... (${progress.percentage}%)`);
+            } else {
+              // Show downloaded bytes when percentage is not available
+              const downloadedMB = (progress.downloaded / 1024 / 1024).toFixed(1);
+              spinner.update(`Downloading repository archive... (${downloadedMB} MB)`);
             }
           },
         );
