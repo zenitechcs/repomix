@@ -1,3 +1,4 @@
+import path from 'node:path';
 import process from 'node:process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -585,8 +586,9 @@ describe('defaultAction', () => {
   });
 
   describe('handleStdinProcessing', () => {
+    const testCwd = path.resolve('/test/cwd');
     const mockConfig = {
-      cwd: '/test/cwd',
+      cwd: testCwd,
       input: { maxFileSize: 50 * 1024 * 1024 },
       output: {
         filePath: 'output.txt',
@@ -634,39 +636,39 @@ describe('defaultAction', () => {
     });
 
     it('should validate directory arguments and throw error for multiple directories', async () => {
-      await expect(handleStdinProcessing(['dir1', 'dir2'], '/test/cwd', mockConfig, mockCliOptions)).rejects.toThrow(
+      await expect(handleStdinProcessing(['dir1', 'dir2'], testCwd, mockConfig, mockCliOptions)).rejects.toThrow(
         'When using --stdin, do not specify directory arguments',
       );
     });
 
     it('should validate directory arguments and throw error for non-default directory', async () => {
-      await expect(handleStdinProcessing(['src'], '/test/cwd', mockConfig, mockCliOptions)).rejects.toThrow(
+      await expect(handleStdinProcessing(['src'], testCwd, mockConfig, mockCliOptions)).rejects.toThrow(
         'When using --stdin, do not specify directory arguments',
       );
     });
 
     it('should accept default directory argument', async () => {
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue({
-        filePaths: ['/test/cwd/file1.txt'],
+        filePaths: [path.resolve(testCwd, 'file1.txt')],
         emptyDirPaths: [],
       });
 
-      const result = await handleStdinProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions);
+      const result = await handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions);
 
       expect(result).toEqual({
         packResult: expect.any(Object),
         config: mockConfig,
       });
-      expect(fileStdin.readFilePathsFromStdin).toHaveBeenCalledWith('/test/cwd');
+      expect(fileStdin.readFilePathsFromStdin).toHaveBeenCalledWith(testCwd);
     });
 
     it('should handle empty directories array', async () => {
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue({
-        filePaths: ['/test/cwd/file1.txt'],
+        filePaths: [path.resolve(testCwd, 'file1.txt')],
         emptyDirPaths: [],
       });
 
-      const result = await handleStdinProcessing([], '/test/cwd', mockConfig, mockCliOptions);
+      const result = await handleStdinProcessing([], testCwd, mockConfig, mockCliOptions);
 
       expect(result).toEqual({
         packResult: expect.any(Object),
@@ -676,15 +678,15 @@ describe('defaultAction', () => {
 
     it('should call pack with correct arguments from stdin result', async () => {
       const stdinResult = {
-        filePaths: ['/test/cwd/file1.txt', '/test/cwd/subdir/file2.txt'],
-        emptyDirPaths: ['/test/cwd/emptydir'],
+        filePaths: [path.resolve(testCwd, 'file1.txt'), path.resolve(testCwd, 'subdir/file2.txt')],
+        emptyDirPaths: [path.resolve(testCwd, 'emptydir')],
       };
 
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue(stdinResult);
 
-      await handleStdinProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions);
+      await handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions);
 
-      expect(packager.pack).toHaveBeenCalledWith(['/test/cwd'], mockConfig, expect.any(Function), {
+      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function), {
         searchFiles: expect.any(Function),
       });
 
@@ -694,10 +696,10 @@ describe('defaultAction', () => {
       expect(searchFiles).toBeDefined();
 
       if (searchFiles) {
-        const searchResult = await searchFiles('/test/cwd', mockConfig);
+        const searchResult = await searchFiles(testCwd, mockConfig);
         expect(searchResult).toEqual({
           filePaths: ['file1.txt', 'subdir/file2.txt'],
-          emptyDirPaths: ['/test/cwd/emptydir'],
+          emptyDirPaths: [path.resolve(testCwd, 'emptydir')],
         });
       }
     });
@@ -706,27 +708,28 @@ describe('defaultAction', () => {
       const error = new Error('stdin read error');
       vi.mocked(fileStdin.readFilePathsFromStdin).mockRejectedValue(error);
 
-      await expect(handleStdinProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions)).rejects.toThrow(
+      await expect(handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions)).rejects.toThrow(
         'stdin read error',
       );
     });
 
     it('should propagate errors from pack operation', async () => {
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue({
-        filePaths: ['/test/cwd/file1.txt'],
+        filePaths: [path.resolve(testCwd, 'file1.txt')],
         emptyDirPaths: [],
       });
 
       const error = new Error('pack error');
       vi.mocked(packager.pack).mockRejectedValue(error);
 
-      await expect(handleStdinProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions)).rejects.toThrow('pack error');
+      await expect(handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions)).rejects.toThrow('pack error');
     });
   });
 
   describe('handleDirectoryProcessing', () => {
+    const testCwd = path.resolve('/test/cwd');
     const mockConfig = {
-      cwd: '/test/cwd',
+      cwd: testCwd,
       input: { maxFileSize: 50 * 1024 * 1024 },
       output: {
         filePath: 'output.txt',
@@ -774,12 +777,11 @@ describe('defaultAction', () => {
 
     it('should resolve directory paths and call pack with absolute paths', async () => {
       const directories = ['src', 'lib', './docs'];
-      const cwd = '/test/cwd';
 
-      const result = await handleDirectoryProcessing(directories, cwd, mockConfig, mockCliOptions);
+      const result = await handleDirectoryProcessing(directories, testCwd, mockConfig, mockCliOptions);
 
       expect(packager.pack).toHaveBeenCalledWith(
-        ['/test/cwd/src', '/test/cwd/lib', '/test/cwd/docs'],
+        [path.resolve(testCwd, 'src'), path.resolve(testCwd, 'lib'), path.resolve(testCwd, 'docs')],
         mockConfig,
         expect.any(Function),
       );
@@ -792,33 +794,27 @@ describe('defaultAction', () => {
 
     it('should handle single directory', async () => {
       const directories = ['.'];
-      const cwd = '/test/cwd';
 
-      await handleDirectoryProcessing(directories, cwd, mockConfig, mockCliOptions);
+      await handleDirectoryProcessing(directories, testCwd, mockConfig, mockCliOptions);
 
-      expect(packager.pack).toHaveBeenCalledWith(['/test/cwd'], mockConfig, expect.any(Function));
+      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function));
     });
 
     it('should handle absolute directory paths', async () => {
-      const directories = ['/absolute/path', '/another/absolute'];
-      const cwd = '/test/cwd';
+      const absolutePath1 = path.resolve('/absolute/path');
+      const absolutePath2 = path.resolve('/another/absolute');
+      const directories = [absolutePath1, absolutePath2];
 
-      await handleDirectoryProcessing(directories, cwd, mockConfig, mockCliOptions);
+      await handleDirectoryProcessing(directories, testCwd, mockConfig, mockCliOptions);
 
-      expect(packager.pack).toHaveBeenCalledWith(
-        ['/absolute/path', '/another/absolute'],
-        mockConfig,
-        expect.any(Function),
-      );
+      expect(packager.pack).toHaveBeenCalledWith([absolutePath1, absolutePath2], mockConfig, expect.any(Function));
     });
 
     it('should propagate errors from pack operation', async () => {
       const error = new Error('pack error');
       vi.mocked(packager.pack).mockRejectedValue(error);
 
-      await expect(handleDirectoryProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions)).rejects.toThrow(
-        'pack error',
-      );
+      await expect(handleDirectoryProcessing(['.'], testCwd, mockConfig, mockCliOptions)).rejects.toThrow('pack error');
     });
 
     it('should call progress callback during packing', async () => {
@@ -846,7 +842,7 @@ describe('defaultAction', () => {
         } as PackResult;
       });
 
-      await handleDirectoryProcessing(['.'], '/test/cwd', mockConfig, mockCliOptions);
+      await handleDirectoryProcessing(['.'], testCwd, mockConfig, mockCliOptions);
 
       expect(progressCallback).toBeDefined();
       expect(packager.pack).toHaveBeenCalledWith(expect.any(Array), expect.any(Object), expect.any(Function));

@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { Readable } from 'node:stream';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -47,41 +48,57 @@ describe('fileStdin', () => {
   });
 
   describe('resolveAndDeduplicatePaths', () => {
-    const cwd = '/test/cwd';
+    const cwd = path.resolve('/test/cwd');
 
     it('should resolve relative paths to absolute paths', () => {
       const lines = ['file1.txt', './file2.txt', '../file3.txt'];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
-      expect(result).toEqual(['/test/cwd/file1.txt', '/test/cwd/file2.txt', '/test/file3.txt']);
+      const expected = [
+        path.resolve(cwd, 'file1.txt'),
+        path.resolve(cwd, 'file2.txt'),
+        path.resolve(cwd, '../file3.txt'),
+      ];
+      expect(result).toEqual(expected);
     });
 
     it('should keep absolute paths as-is with normalization', () => {
-      const lines = ['/absolute/path/file1.txt', '/another/./absolute/../path/file2.txt'];
+      const absolutePath1 = path.resolve('/absolute/path/file1.txt');
+      const absolutePath2 = path.resolve('/another/path/file2.txt');
+      const lines = [absolutePath1, '/another/./absolute/../path/file2.txt'];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
-      expect(result).toEqual(['/absolute/path/file1.txt', '/another/path/file2.txt']);
+      expect(result).toEqual([absolutePath1, absolutePath2]);
     });
 
     it('should deduplicate identical paths', () => {
       const lines = ['file1.txt', './file1.txt', 'file1.txt'];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
-      expect(result).toEqual(['/test/cwd/file1.txt']);
+      const expected = [path.resolve(cwd, 'file1.txt')];
+      expect(result).toEqual(expected);
     });
 
     it('should handle mixed absolute and relative paths with duplicates', () => {
-      const lines = ['file1.txt', '/test/cwd/file1.txt', './file2.txt', '/absolute/file3.txt', 'file2.txt'];
+      const absolutePath1 = path.resolve(cwd, 'file1.txt');
+      const absolutePath3 = path.resolve('/absolute/file3.txt');
+      const lines = ['file1.txt', absolutePath1, './file2.txt', absolutePath3, 'file2.txt'];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
-      expect(result).toEqual(['/test/cwd/file1.txt', '/test/cwd/file2.txt', '/absolute/file3.txt']);
+      const expected = [absolutePath1, path.resolve(cwd, 'file2.txt'), absolutePath3];
+      expect(result).toEqual(expected);
     });
 
     it('should normalize paths with ./ and ../ segments', () => {
       const lines = ['./dir/../file1.txt', 'dir/./file2.txt', './dir/./sub/../file3.txt'];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
-      expect(result).toEqual(['/test/cwd/file1.txt', '/test/cwd/dir/file2.txt', '/test/cwd/dir/file3.txt']);
+      const expected = [
+        path.resolve(cwd, 'file1.txt'),
+        path.resolve(cwd, 'dir/file2.txt'),
+        path.resolve(cwd, 'dir/file3.txt'),
+      ];
+      expect(result).toEqual(expected);
     });
   });
 
@@ -136,7 +153,7 @@ describe('fileStdin', () => {
   });
 
   describe('readFilePathsFromStdin', () => {
-    const cwd = '/test/cwd';
+    const cwd = path.resolve('/test/cwd');
 
     it('should throw error when stdin is TTY', async () => {
       const mockStdin = { isTTY: true } as NodeJS.ReadableStream & { isTTY?: boolean };
@@ -196,7 +213,11 @@ describe('fileStdin', () => {
 
       expect(mockCreateInterface).toHaveBeenCalledWith({ input: mockStdin });
       expect(result).toEqual({
-        filePaths: ['/test/cwd/file1.txt', '/test/cwd/file2.txt', '/absolute/file3.txt'],
+        filePaths: [
+          path.resolve(cwd, 'file1.txt'),
+          path.resolve(cwd, 'file2.txt'),
+          path.resolve('/absolute/file3.txt'),
+        ],
         emptyDirPaths: [],
       });
     });
@@ -220,7 +241,11 @@ describe('fileStdin', () => {
 
       const result = await readFilePathsFromStdin(cwd, deps);
 
-      expect(result.filePaths).toEqual(['/test/cwd/file1.txt', '/test/cwd/dir/file2.txt', '/absolute/file3.txt']);
+      expect(result.filePaths).toEqual([
+        path.resolve(cwd, 'file1.txt'),
+        path.resolve(cwd, 'dir/file2.txt'),
+        path.resolve('/absolute/file3.txt'),
+      ]);
     });
 
     it('should wrap generic errors in RepomixError', async () => {
