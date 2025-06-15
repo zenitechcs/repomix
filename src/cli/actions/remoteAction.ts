@@ -4,8 +4,9 @@ import path from 'node:path';
 import pc from 'picocolors';
 import { execGitShallowClone } from '../../core/git/gitCommand.js';
 import { getRemoteRefs } from '../../core/git/gitRemoteHandle.js';
-import { parseRemoteValue } from '../../core/git/gitRemoteParse.js';
+import { isGitHubRepository, parseGitHubRepoInfo, parseRemoteValue } from '../../core/git/gitRemoteParse.js';
 import { isGitInstalled } from '../../core/git/gitRepositoryHandle.js';
+import { downloadGitHubArchive, isArchiveDownloadSupported } from '../../core/github/githubArchive.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { Spinner } from '../cliSpinner.js';
@@ -20,12 +21,98 @@ export const runRemoteAction = async (
     execGitShallowClone,
     getRemoteRefs,
     runDefaultAction,
+    downloadGitHubArchive,
+    isGitHubRepository,
+    parseGitHubRepoInfo,
+    isArchiveDownloadSupported,
   },
 ): Promise<DefaultActionRunnerResult> => {
   if (!(await deps.isGitInstalled())) {
     throw new RepomixError('Git is not installed or not in the system PATH.');
   }
 
+  let tempDirPath = await createTempDirectory();
+  let result: DefaultActionRunnerResult;
+  let downloadMethod: 'archive' | 'git' = 'git';
+
+  try {
+    // Check if this is a GitHub repository and archive download is supported
+    const githubRepoInfo = deps.parseGitHubRepoInfo(repoUrl);
+    const shouldTryArchive = githubRepoInfo && deps.isArchiveDownloadSupported(githubRepoInfo);
+
+    if (shouldTryArchive) {
+      // Try GitHub archive download first
+      const spinner = new Spinner('Downloading repository archive...', cliOptions);
+
+      try {
+        spinner.start();
+
+        // Override ref with CLI option if provided
+        const repoInfoWithBranch = {
+          ...githubRepoInfo,
+          ref: cliOptions.remoteBranch || githubRepoInfo.ref,
+        };
+
+        await deps.downloadGitHubArchive(
+          repoInfoWithBranch,
+          tempDirPath,
+          {
+            timeout: 60000, // 1 minute timeout for large repos
+            retries: 2,
+          },
+          (progress) => {
+            if (progress.percentage !== null) {
+              spinner.update(`Downloading repository archive... ${progress.percentage}%`);
+            }
+          },
+        );
+
+        downloadMethod = 'archive';
+        spinner.succeed('Repository archive downloaded successfully!');
+        logger.log('');
+      } catch (archiveError) {
+        spinner.fail('Archive download failed, trying git clone...');
+        logger.trace('Archive download error:', (archiveError as Error).message);
+
+        // Clear the temp directory for git clone attempt
+        await cleanupTempDirectory(tempDirPath);
+        tempDirPath = await createTempDirectory();
+
+        // Fall back to git clone
+        await performGitClone(repoUrl, tempDirPath, cliOptions, deps);
+        downloadMethod = 'git';
+      }
+    } else {
+      // Use git clone directly
+      await performGitClone(repoUrl, tempDirPath, cliOptions, deps);
+      downloadMethod = 'git';
+    }
+
+    // Run the default action on the downloaded/cloned repository
+    result = await deps.runDefaultAction([tempDirPath], tempDirPath, cliOptions);
+    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+
+    logger.trace(`Repository obtained via ${downloadMethod} method`);
+  } finally {
+    // Cleanup the temporary directory
+    await cleanupTempDirectory(tempDirPath);
+  }
+
+  return result;
+};
+
+/**
+ * Performs git clone operation with spinner and error handling
+ */
+const performGitClone = async (
+  repoUrl: string,
+  tempDirPath: string,
+  cliOptions: CliOptions,
+  deps: {
+    getRemoteRefs: typeof getRemoteRefs;
+    execGitShallowClone: typeof execGitShallowClone;
+  },
+): Promise<void> => {
   // Get remote refs
   let refs: string[] = [];
   try {
@@ -39,8 +126,6 @@ export const runRemoteAction = async (
   const parsedFields = parseRemoteValue(repoUrl, refs);
 
   const spinner = new Spinner('Cloning repository...', cliOptions);
-  const tempDirPath = await createTempDirectory();
-  let result: DefaultActionRunnerResult;
 
   try {
     spinner.start();
@@ -52,19 +137,10 @@ export const runRemoteAction = async (
 
     spinner.succeed('Repository cloned successfully!');
     logger.log('');
-
-    // Run the default action on the cloned repository
-    result = await deps.runDefaultAction([tempDirPath], tempDirPath, cliOptions);
-    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
   } catch (error) {
     spinner.fail('Error during repository cloning. cleanup...');
     throw error;
-  } finally {
-    // Cleanup the temporary directory
-    await cleanupTempDirectory(tempDirPath);
   }
-
-  return result;
 };
 
 export const createTempDirectory = async (): Promise<string> => {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { parseRemoteValue } from '../../../src/core/git/gitRemoteParse.js';
+import { isGitHubRepository, parseGitHubRepoInfo, parseRemoteValue } from '../../../src/core/git/gitRemoteParse.js';
 import { isValidRemoteValue } from '../../../src/index.js';
 
 vi.mock('../../../src/shared/logger');
@@ -152,6 +152,76 @@ describe('remoteAction functions', () => {
           expect(isValidRemoteValue(url), `URL should be invalid: ${url}`).toBe(false);
         }
       });
+    });
+  });
+
+  describe('parseGitHubRepoInfo', () => {
+    test('should parse GitHub shorthand', () => {
+      const result = parseGitHubRepoInfo('yamadashy/repomix');
+      expect(result).toEqual({
+        owner: 'yamadashy',
+        repo: 'repomix',
+      });
+    });
+
+    test('should parse GitHub URL with branch', () => {
+      const result = parseGitHubRepoInfo('https://github.com/yamadashy/repomix/tree/develop');
+      expect(result).toEqual({
+        owner: 'yamadashy',
+        repo: 'repomix',
+        ref: 'develop',
+      });
+    });
+
+    test('should parse GitHub git URL', () => {
+      const result = parseGitHubRepoInfo('https://github.com/yamadashy/repomix.git');
+      expect(result).toEqual({
+        owner: 'yamadashy',
+        repo: 'repomix',
+      });
+    });
+
+    test('should return null for non-GitHub URLs', () => {
+      const result = parseGitHubRepoInfo('https://gitlab.com/user/repo');
+      expect(result).toBeNull();
+    });
+
+    test('should return null for invalid URLs', () => {
+      const result = parseGitHubRepoInfo('invalid-url');
+      expect(result).toBeNull();
+    });
+
+    test('should handle git@ URLs', () => {
+      const result = parseGitHubRepoInfo('git@github.com:yamadashy/repomix.git');
+      expect(result).toEqual({
+        owner: 'yamadashy',
+        repo: 'repomix',
+      });
+    });
+
+    test('should merge branch from parsing when URL contains branch info', () => {
+      const result = parseGitHubRepoInfo('https://github.com/yamadashy/repomix/tree/feature/test');
+      expect(result).toEqual({
+        owner: 'yamadashy',
+        repo: 'repomix',
+        ref: 'feature/test',
+      });
+    });
+  });
+
+  describe('isGitHubRepository', () => {
+    test('should return true for GitHub repositories', () => {
+      expect(isGitHubRepository('yamadashy/repomix')).toBe(true);
+      expect(isGitHubRepository('https://github.com/yamadashy/repomix')).toBe(true);
+      expect(isGitHubRepository('git@github.com:yamadashy/repomix.git')).toBe(true);
+      expect(isGitHubRepository('https://github.com/yamadashy/repomix/tree/develop')).toBe(true);
+    });
+
+    test('should return false for non-GitHub repositories', () => {
+      expect(isGitHubRepository('https://gitlab.com/user/repo')).toBe(false);
+      expect(isGitHubRepository('https://bitbucket.org/user/repo')).toBe(false);
+      expect(isGitHubRepository('invalid-url')).toBe(false);
+      expect(isGitHubRepository('')).toBe(false);
     });
   });
 });

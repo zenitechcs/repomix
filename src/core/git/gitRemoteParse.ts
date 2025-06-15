@@ -1,6 +1,7 @@
 import gitUrlParse, { type GitUrl } from 'git-url-parse';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
+import { type GitHubRepoInfo, parseGitHubUrl } from '../github/githubApi.js';
 
 interface IGitUrl extends GitUrl {
   commit: string | undefined;
@@ -70,4 +71,43 @@ export const isValidRemoteValue = (remoteValue: string, refs: string[] = []): bo
   } catch (error) {
     return false;
   }
+};
+
+/**
+ * Parses remote value and extracts GitHub repository information if it's a GitHub repo
+ * Returns null if the remote value is not a GitHub repository
+ */
+export const parseGitHubRepoInfo = (remoteValue: string): GitHubRepoInfo | null => {
+  try {
+    // First try direct GitHub URL parsing
+    const githubInfo = parseGitHubUrl(remoteValue);
+    if (githubInfo) {
+      return githubInfo;
+    }
+
+    // If direct parsing failed, try using the existing git URL parsing
+    // and extract GitHub info from the result
+    const parsed = parseRemoteValue(remoteValue);
+    const githubInfoFromGitUrl = parseGitHubUrl(parsed.repoUrl);
+
+    if (githubInfoFromGitUrl) {
+      // Override ref with remoteBranch if available
+      return {
+        ...githubInfoFromGitUrl,
+        ref: parsed.remoteBranch || githubInfoFromGitUrl.ref,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    logger.trace('Failed to parse GitHub repo info:', (error as Error).message);
+    return null;
+  }
+};
+
+/**
+ * Checks if a remote value represents a GitHub repository
+ */
+export const isGitHubRepository = (remoteValue: string): boolean => {
+  return parseGitHubRepoInfo(remoteValue) !== null;
 };

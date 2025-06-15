@@ -50,6 +50,10 @@ describe('remoteAction functions', () => {
               config: createMockConfig(),
             } satisfies DefaultActionRunnerResult;
           },
+          downloadGitHubArchive: vi.fn().mockRejectedValue(new Error('Archive download not implemented in test')),
+          isGitHubRepository: vi.fn().mockReturnValue(false), // Default to false to test git clone path
+          parseGitHubRepoInfo: vi.fn().mockReturnValue(null),
+          isArchiveDownloadSupported: vi.fn().mockReturnValue(false),
         },
       );
     });
