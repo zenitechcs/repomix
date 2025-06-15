@@ -91,9 +91,11 @@ export const parseGitHubRepoInfo = (remoteValue: string): GitHubRepoInfo | null 
     }
 
     // For GitHub URLs with branch/tag/commit info, extract directly from URL
-    if (remoteValue.includes('github.com')) {
-      try {
-        const url = new URL(remoteValue);
+    try {
+      const url = new URL(remoteValue);
+      const allowedHosts = ['github.com', 'www.github.com'];
+
+      if (allowedHosts.includes(url.hostname)) {
         const pathParts = url.pathname.split('/').filter(Boolean);
 
         if (pathParts.length >= 2) {
@@ -109,10 +111,10 @@ export const parseGitHubRepoInfo = (remoteValue: string): GitHubRepoInfo | null 
 
           return result;
         }
-      } catch (urlError) {
-        // Fall back to git-url-parse if URL parsing fails
-        logger.trace('URL parsing failed, falling back to git-url-parse:', (urlError as Error).message);
       }
+    } catch (urlError) {
+      // Fall back to git-url-parse if URL parsing fails
+      logger.trace('URL parsing failed, falling back to git-url-parse:', (urlError as Error).message);
     }
 
     // Parse using git-url-parse for other cases

@@ -207,6 +207,19 @@ describe('remoteAction functions', () => {
         ref: 'feature/test',
       });
     });
+
+    test('should reject malicious URLs with github.com in path or query', () => {
+      // Malicious URLs that should not be treated as GitHub repositories
+      expect(parseGitHubRepoInfo('https://evil.com/github.com/user/repo')).toBeNull();
+      expect(parseGitHubRepoInfo('https://evil.com/?redirect=github.com/user/repo')).toBeNull();
+      expect(parseGitHubRepoInfo('https://evil.com#github.com/user/repo')).toBeNull();
+      expect(parseGitHubRepoInfo('https://github.com.evil.com/user/repo')).toBeNull();
+    });
+
+    test('should accept legitimate GitHub URLs', () => {
+      expect(parseGitHubRepoInfo('https://github.com/user/repo')).not.toBeNull();
+      expect(parseGitHubRepoInfo('https://www.github.com/user/repo')).not.toBeNull();
+    });
   });
 
   describe('isGitHubRepository', () => {
