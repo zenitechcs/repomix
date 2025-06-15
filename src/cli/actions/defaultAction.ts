@@ -57,7 +57,7 @@ export const runDefaultAction = async (
 /**
  * Handles stdin processing workflow for file paths input.
  */
-const handleStdinProcessing = async (
+export const handleStdinProcessing = async (
   directories: string[],
   cwd: string,
   config: RepomixConfigMerged,
@@ -113,7 +113,7 @@ const handleStdinProcessing = async (
 /**
  * Handles normal directory processing workflow.
  */
-const handleDirectoryProcessing = async (
+export const handleDirectoryProcessing = async (
   directories: string[],
   cwd: string,
   config: RepomixConfigMerged,
