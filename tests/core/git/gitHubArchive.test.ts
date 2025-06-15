@@ -1,8 +1,5 @@
-import { createWriteStream } from 'node:fs';
-import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { Readable, Transform } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
+import { Transform } from 'node:stream';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   type ArchiveDownloadOptions,
@@ -69,8 +66,8 @@ describe('gitHubArchive', () => {
 
   describe('downloadGitHubArchive', () => {
     const mockRepoInfo: GitHubRepoInfo = {
-      owner: 'testowner',
-      repo: 'testrepo',
+      owner: 'yamadashy',
+      repo: 'repomix',
       ref: 'main',
     };
 
@@ -97,10 +94,10 @@ describe('gitHubArchive', () => {
       });
 
       // Mock unzip to extract files
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         const extracted = {
-          'testrepo-main/': new Uint8Array(0), // Directory
-          'testrepo-main/test.txt': new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0x6f]), // "hello"
+          'repomix-main/': new Uint8Array(0), // Directory
+          'repomix-main/test.txt': new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0x6f]), // "hello"
         };
         callback(null, extracted);
       });
@@ -120,7 +117,7 @@ describe('gitHubArchive', () => {
 
       // Verify fetch was called
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://github.com/testowner/testrepo/archive/refs/heads/main.zip',
+        'https://github.com/yamadashy/repomix/archive/refs/heads/main.zip',
         expect.objectContaining({
           signal: expect.any(AbortSignal),
         }),
@@ -133,7 +130,7 @@ describe('gitHubArchive', () => {
       );
 
       // Verify cleanup
-      expect(mockFs.unlink).toHaveBeenCalledWith(path.join(mockTargetDirectory, 'testrepo-main.zip'));
+      expect(mockFs.unlink).toHaveBeenCalledWith(path.join(mockTargetDirectory, 'repomix-main.zip'));
     });
 
     test('should handle progress callback', async () => {
@@ -153,7 +150,7 @@ describe('gitHubArchive', () => {
         body: mockStream,
       });
 
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         callback(null, {});
       });
 
@@ -190,11 +187,12 @@ describe('gitHubArchive', () => {
           }),
         });
 
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         callback(null, {});
       });
 
-      await downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, mockOptions, undefined, {
+      // Use fewer retries to speed up test
+      await downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, { retries: 2 }, undefined, {
         fetch: mockFetch,
         // biome-ignore lint/suspicious/noExplicitAny: Test mocks require any type
         fs: mockFs as any,
@@ -228,11 +226,11 @@ describe('gitHubArchive', () => {
           }),
         });
 
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         callback(null, {});
       });
 
-      const repoInfoNoRef = { owner: 'testowner', repo: 'testrepo' };
+      const repoInfoNoRef = { owner: 'yamadashy', repo: 'repomix' };
 
       await downloadGitHubArchive(repoInfoNoRef, mockTargetDirectory, mockOptions, undefined, {
         fetch: mockFetch,
@@ -246,11 +244,11 @@ describe('gitHubArchive', () => {
 
       // Should try main branch first, then master branch
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://github.com/testowner/testrepo/archive/refs/heads/main.zip',
+        'https://github.com/yamadashy/repomix/archive/refs/heads/main.zip',
         expect.any(Object),
       );
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://github.com/testowner/testrepo/archive/refs/heads/master.zip',
+        'https://github.com/yamadashy/repomix/archive/refs/heads/master.zip',
         expect.any(Object),
       );
     });
@@ -289,12 +287,12 @@ describe('gitHubArchive', () => {
       });
 
       // Mock unzip to fail
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         callback(new Error('Invalid ZIP file'));
       });
 
       await expect(
-        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, mockOptions, undefined, {
+        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, { retries: 1 }, undefined, {
           fetch: mockFetch,
           // biome-ignore lint/suspicious/noExplicitAny: Test mocks require any type
           fs: mockFs as any,
@@ -320,10 +318,10 @@ describe('gitHubArchive', () => {
       });
 
       // Mock unzip with dangerous paths
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         const extracted = {
-          'testrepo-main/../../../etc/passwd': new Uint8Array([0x65, 0x76, 0x69, 0x6c]), // "evil"
-          'testrepo-main/safe.txt': new Uint8Array([0x73, 0x61, 0x66, 0x65]), // "safe"
+          'repomix-main/../../../etc/passwd': new Uint8Array([0x65, 0x76, 0x69, 0x6c]), // "evil"
+          'repomix-main/safe.txt': new Uint8Array([0x73, 0x61, 0x66, 0x65]), // "safe"
         };
         callback(null, extracted);
       });
@@ -362,10 +360,10 @@ describe('gitHubArchive', () => {
       });
 
       // Mock unzip with absolute path
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         const extracted = {
           '/etc/passwd': new Uint8Array([0x65, 0x76, 0x69, 0x6c]), // "evil"
-          'testrepo-main/safe.txt': new Uint8Array([0x73, 0x61, 0x66, 0x65]), // "safe"
+          'repomix-main/safe.txt': new Uint8Array([0x73, 0x61, 0x66, 0x65]), // "safe"
         };
         callback(null, extracted);
       });
@@ -404,12 +402,12 @@ describe('gitHubArchive', () => {
       });
 
       // Mock unzip to fail
-      mockUnzip.mockImplementation((data, callback) => {
+      mockUnzip.mockImplementation((_data, callback) => {
         callback(new Error('Extraction failed'));
       });
 
       await expect(
-        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, mockOptions, undefined, {
+        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, { retries: 1 }, undefined, {
           fetch: mockFetch,
           // biome-ignore lint/suspicious/noExplicitAny: Test mocks require any type
           fs: mockFs as any,
@@ -421,7 +419,7 @@ describe('gitHubArchive', () => {
       ).rejects.toThrow();
 
       // Should still attempt cleanup
-      expect(mockFs.unlink).toHaveBeenCalledWith(path.join(mockTargetDirectory, 'testrepo-main.zip'));
+      expect(mockFs.unlink).toHaveBeenCalledWith(path.join(mockTargetDirectory, 'repomix-main.zip'));
     });
 
     test('should handle missing response body', async () => {
@@ -433,7 +431,7 @@ describe('gitHubArchive', () => {
       });
 
       await expect(
-        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, mockOptions, undefined, {
+        downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, { retries: 1 }, undefined, {
           fetch: mockFetch,
           // biome-ignore lint/suspicious/noExplicitAny: Test mocks require any type
           fs: mockFs as any,
@@ -462,11 +460,11 @@ describe('gitHubArchive', () => {
                   },
                 }),
               });
-            }, 200); // Resolve after 200ms, but timeout is 100ms
+            }, 100); // Resolve after 100ms, but timeout is 50ms
           }),
       );
 
-      const shortTimeout = 100; // 100ms timeout
+      const shortTimeout = 50; // 50ms timeout for faster test
 
       await expect(
         downloadGitHubArchive(mockRepoInfo, mockTargetDirectory, { timeout: shortTimeout, retries: 1 }, undefined, {
@@ -485,8 +483,8 @@ describe('gitHubArchive', () => {
   describe('isArchiveDownloadSupported', () => {
     test('should return true for any GitHub repository', () => {
       const repoInfo: GitHubRepoInfo = {
-        owner: 'testowner',
-        repo: 'testrepo',
+        owner: 'yamadashy',
+        repo: 'repomix',
       };
 
       const result = isArchiveDownloadSupported(repoInfo);
@@ -495,8 +493,8 @@ describe('gitHubArchive', () => {
 
     test('should return true for repository with ref', () => {
       const repoInfo: GitHubRepoInfo = {
-        owner: 'testowner',
-        repo: 'testrepo',
+        owner: 'yamadashy',
+        repo: 'repomix',
         ref: 'develop',
       };
 
