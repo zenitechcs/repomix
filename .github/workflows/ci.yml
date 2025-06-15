@@ -58,13 +58,11 @@ jobs:
           node-version-file: .tool-versions
           cache: npm
       - name: Install website client dependencies
-        run: |
-          cd website/client
-          npm ci
+        working-directory: website/client
+        run: npm ci
       - name: Lint website client
-        run: |
-          cd website/client
-          npm run lint
+        working-directory: website/client
+        run: npm run lint
 
   lint-website-server:
     name: Lint Website Server
@@ -77,13 +75,11 @@ jobs:
           node-version-file: .tool-versions
           cache: npm
       - name: Install website server dependencies
-        run: |
-          cd website/server
-          npm ci
+        working-directory: website/server
+        run: npm ci
       - name: Lint website server
-        run: |
-          cd website/server
-          npm run lint
+        working-directory: website/server
+        run: npm run lint
 
   lint-browser:
     name: Lint Browser Extension
@@ -96,13 +92,11 @@ jobs:
           node-version-file: .tool-versions
           cache: npm
       - name: Install browser extension dependencies
-        run: |
-          cd browser
-          npm ci
+        working-directory: browser
+        run: npm ci
       - name: Lint browser extension
-        run: |
-          cd browser
-          npm run lint
+        working-directory: browser
+        run: npm run lint
 
   lint-action:
     name: Lint GitHub Actions
@@ -173,13 +167,11 @@ jobs:
           node-version-file: .tool-versions
           cache: npm
       - name: Install browser extension dependencies
-        run: |
-          cd browser
-          npm ci
+        working-directory: browser
+        run: npm ci
       - name: Test browser extension
-        run: |
-          cd browser
-          npm run test
+        working-directory: browser
+        run: npm run test
 
   build-and-run:
     name: Build and run
