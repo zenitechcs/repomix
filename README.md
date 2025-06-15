@@ -237,7 +237,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 The `--stdin` option allows you to pipe a list of file paths to Repomix, giving you ultimate flexibility in selecting which files to pack.
 
-**Note:** When using `--stdin`, file paths can be relative or absolute, and Repomix will automatically handle path resolution and deduplication.
+> [!NOTE]
+> When using `--stdin`, file paths can be relative or absolute, and Repomix will automatically handle path resolution and deduplication.
 
 To compress the output:
 
