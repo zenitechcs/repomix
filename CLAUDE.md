@@ -322,6 +322,7 @@ Before marking PR as ready for merge:
 - **Tool discoveries**: "Use `gh api` for line-specific PR comments, `gh pr view --comments` for general ones"
 - **Debug techniques**: "Check `canShareFiles()` implementation when Web Share API behaves unexpectedly"
 - **Performance patterns**: "Always use `{ passive: true }` for scroll listeners in Vue components"
+- **Concurrency limits**: "Limit concurrent file operations to ~50 to avoid EMFILE errors on large repositories"
 - **Architecture insights**: "tooltip-container pattern prevents disabled button event issues"
 - **Documentation workflows**: "Historical release notes archived in `.github/releases/` by semantic versioning structure"
 - **PR management**: "Self-review PRs only when explicitly requested using `gh pr comment` for comprehensive analysis"
