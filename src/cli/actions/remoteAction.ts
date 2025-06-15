@@ -50,7 +50,7 @@ export const runRemoteAction = async (
         // Override ref with CLI option if provided
         const repoInfoWithBranch = {
           ...githubRepoInfo,
-          ref: cliOptions.remoteBranch || githubRepoInfo.ref,
+          ref: cliOptions.remoteBranch ?? githubRepoInfo.ref,
         };
 
         await deps.downloadGitHubArchive(

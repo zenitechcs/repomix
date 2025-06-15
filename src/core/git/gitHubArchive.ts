@@ -8,6 +8,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import {
   buildGitHubArchiveUrl,
+  buildGitHubMasterArchiveUrl,
   buildGitHubTagArchiveUrl,
   checkGitHubResponse,
   getArchiveFilename,
@@ -49,8 +50,12 @@ export const downloadGitHubArchive = async (
 
   let lastError: Error | null = null;
 
-  // Try downloading with branch format first, then tag format if it fails
-  const archiveUrls = [buildGitHubArchiveUrl(repoInfo), buildGitHubTagArchiveUrl(repoInfo)].filter(Boolean) as string[];
+  // Try downloading with multiple URL formats: main branch, master branch (fallback), then tag format
+  const archiveUrls = [
+    buildGitHubArchiveUrl(repoInfo),
+    buildGitHubMasterArchiveUrl(repoInfo),
+    buildGitHubTagArchiveUrl(repoInfo),
+  ].filter(Boolean) as string[];
 
   for (const archiveUrl of archiveUrls) {
     for (let attempt = 1; attempt <= retries; attempt++) {

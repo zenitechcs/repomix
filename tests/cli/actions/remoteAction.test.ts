@@ -22,16 +22,18 @@ describe('remoteAction functions', () => {
   });
 
   describe('runRemoteAction', () => {
-    test('should clone the repository', async () => {
+    test('should clone the repository when not a GitHub repo', async () => {
+      const execGitShallowCloneMock = vi.fn(async (url: string, directory: string) => {
+        await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
+      });
+
       vi.mocked(fs.copyFile).mockResolvedValue(undefined);
       await runRemoteAction(
-        'yamadashy/repomix',
+        'https://gitlab.com/owner/repo.git',
         {},
         {
           isGitInstalled: async () => Promise.resolve(true),
-          execGitShallowClone: async (url: string, directory: string) => {
-            await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
-          },
+          execGitShallowClone: execGitShallowCloneMock,
           getRemoteRefs: async () => Promise.resolve(['main']),
           runDefaultAction: async () => {
             return {
@@ -51,11 +53,95 @@ describe('remoteAction functions', () => {
             } satisfies DefaultActionRunnerResult;
           },
           downloadGitHubArchive: vi.fn().mockRejectedValue(new Error('Archive download not implemented in test')),
-          isGitHubRepository: vi.fn().mockReturnValue(false), // Default to false to test git clone path
+          isGitHubRepository: vi.fn().mockReturnValue(false),
           parseGitHubRepoInfo: vi.fn().mockReturnValue(null),
           isArchiveDownloadSupported: vi.fn().mockReturnValue(false),
         },
       );
+
+      expect(execGitShallowCloneMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('should download GitHub archive successfully', async () => {
+      const downloadGitHubArchiveMock = vi.fn().mockResolvedValue(undefined);
+      const execGitShallowCloneMock = vi.fn();
+
+      vi.mocked(fs.copyFile).mockResolvedValue(undefined);
+      await runRemoteAction(
+        'yamadashy/repomix',
+        {},
+        {
+          isGitInstalled: async () => Promise.resolve(true),
+          execGitShallowClone: execGitShallowCloneMock,
+          getRemoteRefs: async () => Promise.resolve(['main']),
+          runDefaultAction: async () => {
+            return {
+              packResult: {
+                totalFiles: 1,
+                totalCharacters: 1,
+                totalTokens: 1,
+                fileCharCounts: {},
+                fileTokenCounts: {},
+                suspiciousFilesResults: [],
+                suspiciousGitDiffResults: [],
+                processedFiles: [],
+                safeFilePaths: [],
+                gitDiffTokenCount: 0,
+              },
+              config: createMockConfig(),
+            } satisfies DefaultActionRunnerResult;
+          },
+          downloadGitHubArchive: downloadGitHubArchiveMock,
+          isGitHubRepository: vi.fn().mockReturnValue(true),
+          parseGitHubRepoInfo: vi.fn().mockReturnValue({ owner: 'yamadashy', repo: 'repomix' }),
+          isArchiveDownloadSupported: vi.fn().mockReturnValue(true),
+        },
+      );
+
+      expect(downloadGitHubArchiveMock).toHaveBeenCalledTimes(1);
+      expect(execGitShallowCloneMock).not.toHaveBeenCalled();
+    });
+
+    test('should fallback to git clone when archive download fails', async () => {
+      const downloadGitHubArchiveMock = vi.fn().mockRejectedValue(new Error('Archive download failed'));
+      const execGitShallowCloneMock = vi.fn(async (url: string, directory: string) => {
+        await fs.writeFile(path.join(directory, 'README.md'), 'Hello, world!');
+      });
+
+      vi.mocked(fs.copyFile).mockResolvedValue(undefined);
+      await runRemoteAction(
+        'yamadashy/repomix',
+        {},
+        {
+          isGitInstalled: async () => Promise.resolve(true),
+          execGitShallowClone: execGitShallowCloneMock,
+          getRemoteRefs: async () => Promise.resolve(['main']),
+          runDefaultAction: async () => {
+            return {
+              packResult: {
+                totalFiles: 1,
+                totalCharacters: 1,
+                totalTokens: 1,
+                fileCharCounts: {},
+                fileTokenCounts: {},
+                suspiciousFilesResults: [],
+                suspiciousGitDiffResults: [],
+                processedFiles: [],
+                safeFilePaths: [],
+                gitDiffTokenCount: 0,
+              },
+              config: createMockConfig(),
+            } satisfies DefaultActionRunnerResult;
+          },
+          downloadGitHubArchive: downloadGitHubArchiveMock,
+          isGitHubRepository: vi.fn().mockReturnValue(true),
+          parseGitHubRepoInfo: vi.fn().mockReturnValue({ owner: 'yamadashy', repo: 'repomix' }),
+          isArchiveDownloadSupported: vi.fn().mockReturnValue(true),
+        },
+      );
+
+      expect(downloadGitHubArchiveMock).toHaveBeenCalledTimes(1);
+      expect(execGitShallowCloneMock).toHaveBeenCalledTimes(1);
     });
   });
 

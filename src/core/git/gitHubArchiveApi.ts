@@ -12,7 +12,7 @@ export const buildGitHubArchiveUrl = (repoInfo: GitHubRepoInfo): string => {
   const baseUrl = `https://github.com/${owner}/${repo}/archive`;
 
   if (!ref) {
-    // Default to main branch
+    // Default to main branch - fallback to master will be handled by the caller
     return `${baseUrl}/refs/heads/main.zip`;
   }
 
@@ -25,6 +25,18 @@ export const buildGitHubArchiveUrl = (repoInfo: GitHubRepoInfo): string => {
   // For branches and tags, we need to determine the type
   // Default to branch format, will fallback to tag if needed
   return `${baseUrl}/refs/heads/${ref}.zip`;
+};
+
+/**
+ * Builds alternative archive URL for master branch as fallback
+ */
+export const buildGitHubMasterArchiveUrl = (repoInfo: GitHubRepoInfo): string | null => {
+  const { owner, repo, ref } = repoInfo;
+  if (ref) {
+    return null; // Only applicable when no ref is specified
+  }
+
+  return `https://github.com/${owner}/${repo}/archive/refs/heads/master.zip`;
 };
 
 /**

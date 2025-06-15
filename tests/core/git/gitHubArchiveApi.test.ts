@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
   buildGitHubArchiveUrl,
+  buildGitHubMasterArchiveUrl,
   buildGitHubTagArchiveUrl,
   checkGitHubResponse,
   getArchiveFilename,
@@ -32,6 +33,20 @@ describe('GitHub Archive API', () => {
       const repoInfo = { owner: 'user', repo: 'repo', ref: 'abc123def456789012345678901234567890abcd' };
       const url = buildGitHubArchiveUrl(repoInfo);
       expect(url).toBe('https://github.com/user/repo/archive/abc123def456789012345678901234567890abcd.zip');
+    });
+  });
+
+  describe('buildGitHubMasterArchiveUrl', () => {
+    test('should build URL for master branch fallback', () => {
+      const repoInfo = { owner: 'user', repo: 'repo' };
+      const url = buildGitHubMasterArchiveUrl(repoInfo);
+      expect(url).toBe('https://github.com/user/repo/archive/refs/heads/master.zip');
+    });
+
+    test('should return null when ref is specified', () => {
+      const repoInfo = { owner: 'user', repo: 'repo', ref: 'develop' };
+      const url = buildGitHubMasterArchiveUrl(repoInfo);
+      expect(url).toBeNull();
     });
   });
 
