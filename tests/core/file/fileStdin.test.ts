@@ -65,7 +65,9 @@ describe('fileStdin', () => {
     it('should keep absolute paths as-is with normalization', () => {
       const absolutePath1 = path.resolve('/absolute/path/file1.txt');
       const absolutePath2 = path.resolve('/another/path/file2.txt');
-      const lines = [absolutePath1, '/another/./absolute/../path/file2.txt'];
+      // Create a platform-specific complex path that should resolve to absolutePath2
+      const complexPath = path.resolve('/another/./absolute/../path/file2.txt');
+      const lines = [absolutePath1, complexPath];
       const result = resolveAndDeduplicatePaths(lines, cwd);
 
       expect(result).toEqual([absolutePath1, absolutePath2]);
@@ -221,7 +223,8 @@ describe('fileStdin', () => {
 
     it('should handle complex path normalization', async () => {
       const absoluteFile3 = path.resolve('/absolute/file3.txt');
-      const complexAbsolutePath = '/absolute/./path/../file3.txt';
+      // Create a complex path that resolves to the same as absoluteFile3
+      const complexAbsolutePath = path.resolve('/absolute/./path/../file3.txt');
       const mockInterface = {
         [Symbol.asyncIterator]: async function* () {
           yield './dir/../file1.txt';
