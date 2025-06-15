@@ -27,10 +27,6 @@ export const runRemoteAction = async (
     isArchiveDownloadSupported,
   },
 ): Promise<DefaultActionRunnerResult> => {
-  if (!(await deps.isGitInstalled())) {
-    throw new RepomixError('Git is not installed or not in the system PATH.');
-  }
-
   let tempDirPath = await createTempDirectory();
   let result: DefaultActionRunnerResult;
   let downloadMethod: 'archive' | 'git' = 'git';
@@ -113,10 +109,15 @@ const performGitClone = async (
   tempDirPath: string,
   cliOptions: CliOptions,
   deps: {
+    isGitInstalled: typeof isGitInstalled;
     getRemoteRefs: typeof getRemoteRefs;
     execGitShallowClone: typeof execGitShallowClone;
   },
 ): Promise<void> => {
+  // Check if git is installed only when we actually need to use git
+  if (!(await deps.isGitInstalled())) {
+    throw new RepomixError('Git is not installed or not in the system PATH.');
+  }
   // Get remote refs
   let refs: string[] = [];
   try {

@@ -62,16 +62,17 @@ describe('remoteAction functions', () => {
       expect(execGitShallowCloneMock).toHaveBeenCalledTimes(1);
     });
 
-    test('should download GitHub archive successfully', async () => {
+    test('should download GitHub archive successfully without git installed', async () => {
       const downloadGitHubArchiveMock = vi.fn().mockResolvedValue(undefined);
       const execGitShallowCloneMock = vi.fn();
+      const isGitInstalledMock = vi.fn().mockResolvedValue(false); // Git is NOT installed
 
       vi.mocked(fs.copyFile).mockResolvedValue(undefined);
       await runRemoteAction(
         'yamadashy/repomix',
         {},
         {
-          isGitInstalled: async () => Promise.resolve(true),
+          isGitInstalled: isGitInstalledMock,
           execGitShallowClone: execGitShallowCloneMock,
           getRemoteRefs: async () => Promise.resolve(['main']),
           runDefaultAction: async () => {
@@ -100,6 +101,7 @@ describe('remoteAction functions', () => {
 
       expect(downloadGitHubArchiveMock).toHaveBeenCalledTimes(1);
       expect(execGitShallowCloneMock).not.toHaveBeenCalled();
+      expect(isGitInstalledMock).not.toHaveBeenCalled(); // Git check should not be called when archive succeeds
     });
 
     test('should fallback to git clone when archive download fails', async () => {
@@ -142,6 +144,51 @@ describe('remoteAction functions', () => {
 
       expect(downloadGitHubArchiveMock).toHaveBeenCalledTimes(1);
       expect(execGitShallowCloneMock).toHaveBeenCalledTimes(1);
+    });
+
+    test('should fail when archive download fails and git is not installed', async () => {
+      const downloadGitHubArchiveMock = vi.fn().mockRejectedValue(new Error('Archive download failed'));
+      const execGitShallowCloneMock = vi.fn();
+      const isGitInstalledMock = vi.fn().mockResolvedValue(false); // Git is NOT installed
+
+      vi.mocked(fs.copyFile).mockResolvedValue(undefined);
+
+      await expect(
+        runRemoteAction(
+          'yamadashy/repomix',
+          {},
+          {
+            isGitInstalled: isGitInstalledMock,
+            execGitShallowClone: execGitShallowCloneMock,
+            getRemoteRefs: async () => Promise.resolve(['main']),
+            runDefaultAction: async () => {
+              return {
+                packResult: {
+                  totalFiles: 1,
+                  totalCharacters: 1,
+                  totalTokens: 1,
+                  fileCharCounts: {},
+                  fileTokenCounts: {},
+                  suspiciousFilesResults: [],
+                  suspiciousGitDiffResults: [],
+                  processedFiles: [],
+                  safeFilePaths: [],
+                  gitDiffTokenCount: 0,
+                },
+                config: createMockConfig(),
+              } satisfies DefaultActionRunnerResult;
+            },
+            downloadGitHubArchive: downloadGitHubArchiveMock,
+            isGitHubRepository: vi.fn().mockReturnValue(true),
+            parseGitHubRepoInfo: vi.fn().mockReturnValue({ owner: 'yamadashy', repo: 'repomix' }),
+            isArchiveDownloadSupported: vi.fn().mockReturnValue(true),
+          },
+        ),
+      ).rejects.toThrow('Git is not installed or not in the system PATH.');
+
+      expect(downloadGitHubArchiveMock).toHaveBeenCalledTimes(1);
+      expect(isGitInstalledMock).toHaveBeenCalledTimes(1); // Git check should be called when fallback to git clone
+      expect(execGitShallowCloneMock).not.toHaveBeenCalled();
     });
   });
 
