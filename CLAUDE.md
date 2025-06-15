@@ -18,6 +18,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Repomix is a tool that packs repository contents into single files optimized for AI consumption. It converts codebases into structured formats (XML, Markdown, Plain Text) with intelligent compression, security scanning, and token counting for LLM integration.
 
+## Project Structure Overview
+
+### **src/ Directory - Core Library**
+The main Repomix library that powers both CLI tool and web service:
+- **cli/**: Command-line interface with Commander.js
+- **config/**: Zod-based configuration loading and validation  
+- **core/**: Business logic organized by functionality (file, git, metrics, output, security, treeSitter)
+- **mcp/**: Model Context Protocol server for AI assistant integration
+- **shared/**: Common utilities and types
+
+### **website/ Directory - Web Application** 
+Full-stack web application for repomix.com:
+- **client/**: VitePress documentation site with Vue.js components for "Try It" feature
+- **server/**: Hono-based API server for online repository processing
+- **Multi-language support**: 12 languages for documentation
+- **Docker deployment**: Containerized client and server components
+
+#### **Supported Languages (12 total)**
+English, Japanese, Chinese (Simplified/Traditional), Korean, German, French, Spanish, Portuguese (Brazilian), Indonesian, Vietnamese, Hindi
+
+#### **Website Development Guidelines**
+- **Translation workflow**: Update English first, then translate to other languages
+- **Navigation sync**: All language configurations in `website/client/.vitepress/config/` must be synchronized
+- **New language addition**: Complete one language fully before starting another
+- **VitePress architecture**: Uses shared configuration in `configShard.ts` for search and common settings
+- **Content structure**: Each language has dedicated directory (e.g., `website/client/src/ja/`)
+- **Quality assurance**: Test navigation and search functionality for each language
+
+### **browser/ Directory - Browser Extension**
+Cross-browser extension (Chrome/Firefox/Edge) that adds Repomix integration to GitHub:
+- **Manifest V3**: Latest browser extension specification
+- **Content script**: Adds "Repomix" button to GitHub repository pages  
+- **Multi-language**: 11 language support with internationalization
+- **One-click workflow**: Direct integration from GitHub to repomix.com
+
 ## Build & Development Commands
 - `npm run build` - Build the project
 - `npm run lint` - Run all linters (Biome, TypeScript, secretlint)
@@ -72,9 +107,27 @@ Repomix is a tool that packs repository contents into single files optimized for
 - **Imports**: Use `node:` prefix for built-ins, `.js` extension for relative imports, `import type` for types
 - **TypeScript**: Strict type checking, explicit return types, prefer interfaces for object types
 - **Error Handling**: Custom errors extend `RepomixError`, descriptive messages, proper try/catch
-- **Dependencies**: Inject dependencies through deps object parameter for testability
 - **File Structure**: Keep files under 250 lines, organize by feature, use workers for concurrent operations
-- **Testing**: Use Vitest, mock dependencies, descriptive test names, arrange/act/assert pattern
+- **Comments**: All comments must be written in English, clarify non-obvious logic
+- **Testing**: Use Vitest, provide unit tests for all new features, descriptive test names, arrange/act/assert pattern
+
+### **Dependencies and Testing Best Practices**
+- **Dependency Injection**: Inject dependencies through `deps` object parameter for testability
+  ```typescript
+  export const functionName = async (
+    param1: Type1,
+    param2: Type2,
+    deps = {
+      defaultFunction1,
+      defaultFunction2,
+    }
+  ) => {
+    // Use deps.defaultFunction1() instead of direct call
+  };
+  ```
+- **Mocking Strategy**: Mock dependencies by passing test doubles through deps object
+- **vi.mock() Usage**: Use `vi.mock()` only when dependency injection is not feasible
+- **Test Organization**: Tests mirror src/ directory structure in tests/ folder
 
 ## Naming Conventions
 - PascalCase: Classes, interfaces, types
@@ -120,6 +173,9 @@ npm run test
 ### Commit Message Format
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) with scope: `type(scope): Description`
 - **Write all commit messages in English** - both title and body must be in English for consistency
+- **Format**: `type(scope): Description` - Description must start with capital letter
+- **Types**: feat, fix, docs, style, refactor, test, chore, etc.
+- **Scope**: Indicate affected part (cli, core, website, security, etc.)
 - Write detailed commit messages focusing on the "why" rather than the "what"
 - **Include user dialogue context**: Reference the specific conversation or request that led to the change in the commit body
 - Format: Use title for technical change, body with clear dialogue section marker and summary
@@ -193,7 +249,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - Explain rationale for decisions when not implementing suggestions
 - Thank reviewers for their feedback
 
-**4. Resolve Conversations (IMPORTANT!):**
+**4. Self-Review (When Requested):**
+- Perform self-review only when explicitly requested by the user
+- Add comprehensive review comments covering: directory structure, content quality, impact assessment
+- Use `gh pr comment {PR_NUMBER} --body "..."` to add detailed self-review comments
+- Structure self-review with clear sections: code quality, testing, documentation, risk assessment
+- **Be thorough**: Cover all significant changes and their rationale
+
+**5. Resolve Conversations (IMPORTANT!):**
 - **Always resolve addressed feedback** - this helps track progress and shows respect for reviewers
 - CodeRabbit: Use `@coderabbitai resolve` command in PR comments
 - Others: Respond with explanation, then let reviewers mark as resolved
@@ -229,8 +292,9 @@ Before marking PR as ready for merge:
 4. ✅ **Respond to reviewers** - Explain changes and decisions
 5. ✅ **Resolve conversations** - Mark addressed feedback as resolved
 6. ✅ **Update documentation** - If architectural changes were made
+7. ✅ **Perform self-review if requested** - Add comprehensive comments using `gh pr comment`
 
-**Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. This is essential for efficient PR management.
+**Remember**: Resolving conversations shows that feedback has been addressed and helps maintainers track review progress. Self-review should only be performed when explicitly requested by the user.
 
 ## Knowledge Management & Continuous Improvement
 
@@ -244,6 +308,8 @@ Before marking PR as ready for merge:
 - **Debug techniques**: "Check `canShareFiles()` implementation when Web Share API behaves unexpectedly"
 - **Performance patterns**: "Always use `{ passive: true }` for scroll listeners in Vue components"
 - **Architecture insights**: "tooltip-container pattern prevents disabled button event issues"
+- **Documentation workflows**: "Historical release notes archived in `.github/releases/` by semantic versioning structure"
+- **PR management**: "Self-review PRs only when explicitly requested using `gh pr comment` for comprehensive analysis"
 
 ### Maintaining This File
 

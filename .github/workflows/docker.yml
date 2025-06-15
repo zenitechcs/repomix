@@ -16,7 +16,7 @@ on:
       - ".github/workflows/docker.yml"
   workflow_dispatch:
   release:
-    types: [published, edited]
+    types: [published]
 
 permissions:
   contents: read
