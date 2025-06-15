@@ -371,8 +371,12 @@ const processExtractedFiles = async (
     await deps.fs.mkdir(dir, { recursive: true });
   }
 
-  // Write all files concurrently
-  await Promise.all(fileWritePromises);
+  // Write files with limited concurrency to avoid "too many open files" error
+  const CONCURRENT_WRITES = 50; // Limit concurrent file operations
+  for (let i = 0; i < fileWritePromises.length; i += CONCURRENT_WRITES) {
+    const batch = fileWritePromises.slice(i, i + CONCURRENT_WRITES);
+    await Promise.all(batch);
+  }
 };
 
 /**
