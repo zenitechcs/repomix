@@ -3,7 +3,7 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import { Unzip, type UnzipFile, unzip } from 'fflate';
+import { unzip } from 'fflate';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import {
@@ -40,8 +40,8 @@ export const downloadGitHubArchive = async (
     fetch: globalThis.fetch,
     fs,
     pipeline,
-    createWriteStream,
     Transform,
+    createWriteStream,
   },
 ): Promise<void> => {
   const { timeout = 30000, retries = 3 } = options;
@@ -108,8 +108,8 @@ const downloadAndExtractArchive = async (
     fetch: globalThis.fetch,
     fs,
     pipeline,
-    createWriteStream,
     Transform,
+    createWriteStream,
   },
 ): Promise<void> => {
   // Download the archive
@@ -119,10 +119,7 @@ const downloadAndExtractArchive = async (
 
   try {
     // Extract the archive
-    await extractZipArchive(tempArchivePath, targetDirectory, repoInfo, {
-      fs: deps.fs,
-      createWriteStream: deps.createWriteStream,
-    });
+    await extractZipArchive(tempArchivePath, targetDirectory, repoInfo, { fs: deps.fs });
   } finally {
     // Clean up the downloaded archive file
     try {
@@ -145,8 +142,8 @@ const downloadFile = async (
     fetch: globalThis.fetch,
     fs,
     pipeline,
-    createWriteStream,
     Transform,
+    createWriteStream,
   },
 ): Promise<void> => {
   const controller = new AbortController();
@@ -211,7 +208,7 @@ const downloadFile = async (
 };
 
 /**
- * Extracts a ZIP archive using fflate library with memory-efficient streaming approach
+ * Extracts a ZIP archive using fflate library
  */
 const extractZipArchive = async (
   archivePath: string,
@@ -219,22 +216,11 @@ const extractZipArchive = async (
   repoInfo: GitHubRepoInfo,
   deps = {
     fs,
-    createWriteStream,
   },
 ): Promise<void> => {
   try {
-    // Get file size to determine if we should use streaming approach
-    const stats = await deps.fs.stat(archivePath);
-    const fileSizeInMB = stats.size / (1024 * 1024);
-
-    // Use streaming approach for larger files (>50MB) to avoid memory issues
-    if (fileSizeInMB > 50) {
-      logger.trace(`Large archive detected (${fileSizeInMB.toFixed(1)}MB), using streaming extraction`);
-      await extractZipArchiveStreaming(archivePath, targetDirectory, repoInfo, deps);
-    } else {
-      logger.trace(`Small archive (${fileSizeInMB.toFixed(1)}MB), using in-memory extraction`);
-      await extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps);
-    }
+    // Always use in-memory extraction for simplicity and reliability
+    await extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps);
   } catch (error) {
     throw new RepomixError(`Failed to extract archive: ${(error as Error).message}`);
   }
@@ -266,173 +252,6 @@ const extractZipArchiveInMemory = async (
       // Process extracted files concurrently in the callback
       processExtractedFiles(extracted, targetDirectory, repoInfo, deps).then(resolve).catch(reject);
     });
-  });
-};
-
-/**
- * Extracts ZIP archive using true streaming approach to minimize memory usage
- * Uses fflate's Unzip class for real-time file extraction and writing
- */
-const extractZipArchiveStreaming = async (
-  archivePath: string,
-  targetDirectory: string,
-  repoInfo: GitHubRepoInfo,
-  deps = {
-    fs,
-    createWriteStream,
-  },
-): Promise<void> => {
-  logger.trace('Using streaming ZIP extraction for memory efficiency');
-
-  // Read the ZIP file as a buffer
-  const zipBuffer = await deps.fs.readFile(archivePath);
-  const zipUint8Array = new Uint8Array(zipBuffer);
-
-  return new Promise<void>((resolve, reject) => {
-    const fileWritePromises: Promise<void>[] = [];
-    const createdDirs = new Set<string>();
-    let filesProcessed = 0;
-    let totalFiles = 0;
-
-    // Create streaming unzipper
-    const unzipper = new Unzip((file) => {
-      totalFiles++;
-
-      // Handle each file as it's discovered
-      const writePromise = handleStreamingFile(file, targetDirectory, repoInfo, createdDirs, deps)
-        .then(() => {
-          filesProcessed++;
-          logger.trace(`Processed file ${filesProcessed}/${totalFiles}: ${file.name}`);
-        })
-        .catch((error) => {
-          logger.trace(`Failed to process file ${file.name}: ${error.message}`);
-          throw error;
-        });
-
-      fileWritePromises.push(writePromise);
-    });
-
-    // Handle completion
-    const checkCompletion = () => {
-      // Wait a bit to ensure all files are discovered
-      setTimeout(() => {
-        Promise.all(fileWritePromises)
-          .then(() => {
-            logger.trace(`Streaming extraction completed: ${filesProcessed} files processed`);
-            resolve();
-          })
-          .catch(reject);
-      }, 100);
-    };
-
-    try {
-      // Push the entire ZIP data and mark as final
-      unzipper.push(zipUint8Array, true);
-      checkCompletion();
-    } catch (error) {
-      reject(new RepomixError(`Failed to start streaming extraction: ${(error as Error).message}`));
-    }
-  });
-};
-
-/**
- * Handles individual file from streaming ZIP extraction
- */
-const handleStreamingFile = async (
-  file: UnzipFile,
-  targetDirectory: string,
-  repoInfo: GitHubRepoInfo,
-  createdDirs: Set<string>,
-  deps = {
-    fs,
-    createWriteStream,
-  },
-): Promise<void> => {
-  const repoPrefix = `${repoInfo.repo}-`;
-  let relativePath = file.name;
-
-  // Remove repo prefix (same logic as before)
-  const pathParts = file.name.split('/');
-  if (pathParts.length > 0 && pathParts[0].startsWith(repoPrefix)) {
-    relativePath = pathParts.slice(1).join('/');
-  }
-
-  // Skip empty paths
-  if (!relativePath) {
-    return;
-  }
-
-  // Security checks (same as before)
-  const sanitized = path.normalize(relativePath).replace(/^(\.\.([\/\\]|$))+/, '');
-
-  if (path.isAbsolute(sanitized)) {
-    logger.trace(`Absolute path detected in archive, skipping: ${relativePath}`);
-    return;
-  }
-
-  const targetPath = path.resolve(targetDirectory, sanitized);
-  if (!targetPath.startsWith(path.resolve(targetDirectory))) {
-    logger.trace(`Unsafe path detected in archive, skipping: ${relativePath}`);
-    return;
-  }
-
-  const isDirectory = file.name.endsWith('/');
-
-  if (isDirectory) {
-    // Create directory
-    if (!createdDirs.has(targetPath)) {
-      logger.trace(`Creating directory: ${targetPath}`);
-      await deps.fs.mkdir(targetPath, { recursive: true });
-      createdDirs.add(targetPath);
-    }
-    return;
-  }
-
-  // Create parent directory if needed
-  const parentDir = path.dirname(targetPath);
-  if (!createdDirs.has(parentDir)) {
-    logger.trace(`Creating parent directory: ${parentDir}`);
-    await deps.fs.mkdir(parentDir, { recursive: true });
-    createdDirs.add(parentDir);
-  }
-
-  // Stream file data directly to disk
-  return new Promise<void>((resolve, reject) => {
-    const writeStream = deps.createWriteStream(targetPath);
-    let hasData = false;
-
-    writeStream.on('error', (error) => {
-      logger.trace(`Failed to write file ${targetPath}: ${error.message}`);
-      reject(error);
-    });
-
-    writeStream.on('finish', () => {
-      logger.trace(`Successfully wrote file: ${targetPath}`);
-      resolve();
-    });
-
-    // Handle streaming data from fflate
-    file.ondata = (data, final) => {
-      hasData = true;
-      if (!writeStream.destroyed) {
-        writeStream.write(data);
-      }
-
-      if (final) {
-        if (!writeStream.destroyed) {
-          writeStream.end();
-        } else {
-          resolve();
-        }
-      }
-    };
-
-    // Handle case where file has no data
-    setTimeout(() => {
-      if (!hasData) {
-        writeStream.end();
-      }
-    }, 10);
   });
 };
 
