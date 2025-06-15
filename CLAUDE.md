@@ -223,6 +223,21 @@ This repository uses several automated review tools:
 - **Copilot Pull Request Reviewer**: GitHub's automated review suggestions
 - **Codecov**: Test coverage analysis and reporting
 
+### Requesting Additional Reviews
+You can request additional AI reviews manually:
+
+**CodeRabbit Review Request:**
+```
+@coderabbitai review
+```
+
+**Gemini Review Request:**
+```
+/gemini review
+```
+
+**Important**: Post each review request in separate comments for proper processing.
+
 ### Responding to Review Feedback
 
 **1. Address Technical Issues First:**
