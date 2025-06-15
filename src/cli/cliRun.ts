@@ -42,7 +42,6 @@ const semanticSuggestionMap: Record<string, string[]> = {
   print: ['--stdout'],
   console: ['--stdout'],
   terminal: ['--stdout'],
-  input: ['--stdin'],
   pipe: ['--stdin'],
 };
 
