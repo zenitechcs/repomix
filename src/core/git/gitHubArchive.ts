@@ -280,6 +280,8 @@ const extractZipArchiveInMemory = async (
 
 /**
  * Extracts ZIP archive using streaming approach to minimize memory usage
+ * NOTE: Currently falls back to in-memory extraction as a safety measure.
+ * True streaming implementation requires complex ZIP header parsing and error handling.
  */
 const extractZipArchiveStreaming = async (
   archivePath: string,
@@ -289,14 +291,16 @@ const extractZipArchiveStreaming = async (
     fs,
   },
 ): Promise<void> => {
-  return new Promise<void>((resolve, reject) => {
-    // For now, fall back to in-memory approach since implementing streaming ZIP extraction
-    // with fflate requires more complex file header parsing and is quite involved.
-    // This is a placeholder for future enhancement.
-    logger.trace('Streaming extraction not yet implemented, falling back to in-memory approach');
+  // Log warning about memory usage for large files
+  logger.trace(
+    'Large archive detected. Currently using in-memory extraction which may cause memory issues for very large repositories (>500MB).',
+  );
+  logger.trace('Consider implementing true streaming ZIP extraction for production use with very large archives.');
 
-    extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps).then(resolve).catch(reject);
-  });
+  // For now, fall back to in-memory approach since implementing streaming ZIP extraction
+  // with fflate requires more complex file header parsing and is quite involved.
+  // This infrastructure is prepared for future streaming implementation.
+  return extractZipArchiveInMemory(archivePath, targetDirectory, repoInfo, deps);
 };
 
 /**
@@ -334,7 +338,16 @@ const processExtractedFiles = async (
       continue;
     }
 
-    const targetPath = path.join(targetDirectory, relativePath);
+    // Sanitize relativePath to prevent path traversal attacks
+    const sanitized = path.normalize(relativePath).replace(/^(\.\.([\/\\]|$))+/, ''); // strip leading traversal sequences
+
+    const targetPath = path.join(targetDirectory, sanitized);
+
+    // Abort if normalisation still escapes the target directory
+    if (!targetPath.startsWith(path.resolve(targetDirectory))) {
+      logger.trace(`Unsafe path detected in archive, skipping: ${relativePath}`);
+      continue;
+    }
 
     // Check if this entry is a directory (ends with /) or empty file data indicates directory
     const isDirectory = filePath.endsWith('/') || (fileData.length === 0 && relativePath.endsWith('/'));

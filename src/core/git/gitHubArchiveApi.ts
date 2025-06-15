@@ -9,7 +9,7 @@ import type { GitHubRepoInfo } from './gitRemoteParse.js';
  */
 export const buildGitHubArchiveUrl = (repoInfo: GitHubRepoInfo): string => {
   const { owner, repo, ref } = repoInfo;
-  const baseUrl = `https://github.com/${owner}/${repo}/archive`;
+  const baseUrl = `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive`;
 
   if (!ref) {
     // Default to main branch - fallback to master will be handled by the caller
@@ -19,12 +19,12 @@ export const buildGitHubArchiveUrl = (repoInfo: GitHubRepoInfo): string => {
   // Check if ref looks like a commit SHA (40 hex chars or shorter)
   const isCommitSha = /^[0-9a-f]{4,40}$/i.test(ref);
   if (isCommitSha) {
-    return `${baseUrl}/${ref}.zip`;
+    return `${baseUrl}/${encodeURIComponent(ref)}.zip`;
   }
 
   // For branches and tags, we need to determine the type
   // Default to branch format, will fallback to tag if needed
-  return `${baseUrl}/refs/heads/${ref}.zip`;
+  return `${baseUrl}/refs/heads/${encodeURIComponent(ref)}.zip`;
 };
 
 /**
@@ -36,7 +36,7 @@ export const buildGitHubMasterArchiveUrl = (repoInfo: GitHubRepoInfo): string | 
     return null; // Only applicable when no ref is specified
   }
 
-  return `https://github.com/${owner}/${repo}/archive/refs/heads/master.zip`;
+  return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive/refs/heads/master.zip`;
 };
 
 /**
@@ -48,7 +48,7 @@ export const buildGitHubTagArchiveUrl = (repoInfo: GitHubRepoInfo): string | nul
     return null; // Not applicable for commits or no ref
   }
 
-  return `https://github.com/${owner}/${repo}/archive/refs/tags/${ref}.zip`;
+  return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive/refs/tags/${encodeURIComponent(ref)}.zip`;
 };
 
 /**
