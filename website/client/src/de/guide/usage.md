@@ -38,7 +38,7 @@ repomix --remote user/repo --remote-branch main
 repomix --remote user/repo --remote-branch 935b695
 ```
 
-### Dateilisten-Eingabe (stdin)
+### Dateiliste-Eingabe (stdin)
 
 Übergeben Sie Dateipfade über stdin für ultimative Flexibilität:
 
