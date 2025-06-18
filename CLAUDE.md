@@ -18,6 +18,7 @@ The project is organized into the following directories:
 
 ```
 repomix/
+├── browser/ # Browser extension source code
 ├── src/ # Main source code
 │   ├── cli/ # Command-line interface logic (argument parsing, command handling, output)
 │   ├── config/ # Configuration loading, schema, and defaults
@@ -39,14 +40,6 @@ repomix/
 │   ├── shared/
 │   └── testing/
 └── website/ # Documentation website (VitePress)
-    ├── client/      # Client-side code (Vue.js components, styles, configuration)
-    │   ├── .vitepress/  # VitePress configuration and theme
-    │   │   ├── config/  # Site configuration files (navigation, sidebar, etc.)
-    │   │   └── theme/   # Custom theme and styles
-    │   ├── components/ # Vue.js components for the website
-    │   └── src/        # Markdown files for multilingual documentation
-    └── server/      # Server-side API (for remote repository processing)
-        └── src/       # Server source code (API endpoints, request handling)
 ```
 
 

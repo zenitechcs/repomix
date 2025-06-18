@@ -1,25 +1,19 @@
 # Website Documentation
 
-## Supported Languages
-The website documentation is available in the following languages:
-- English (en)
-- Japanese (日本語) (ja)
-- Chinese Simplified (简体中文) (zh-cn)
-- Chinese Traditional (繁體中文) (zh-tw)
-- Korean (한국어) (ko)
-- German (Deutsch) (de)
-- French (Français) (fr)
-- Spanish (Español) (es)
-- Portuguese Brazilian (Português do Brasil) (pt-br)
-- Indonesian (Bahasa Indonesia) (id)
-- Vietnamese (Tiếng Việt) (vi)
-- Hindi (हिन्दी) (hi)
+## Project Overview
+
+Full-stack web application consisting of VitePress documentation site (client) and Hono API server for online repository processing, with 12-language support.
+
+## Supported Languages (12 total)
+English (en), Japanese (ja), Chinese Simplified (zh-cn), Chinese Traditional (zh-tw), Korean (ko), German (de), French (fr), Spanish (es), Portuguese Brazilian (pt-br), Indonesian (id), Vietnamese (vi), Hindi (hi).
 
 All translations should be accurate and maintain consistent terminology across languages. When adding new features or documentation, please ensure that the English version is updated first, followed by translations in other languages.
 
 ## Navigation Configuration
 When modifying website navigation or adding new pages:
-1. Update the configuration files in `website/client/.vitepress/config/`.
+1. Update the configuration files in `website/client/.vitepress/config/`
+2. Each language has its own config file (e.g., `configEnUs.ts`, `configJa.ts`)
+3. Shared configurations are in `configShard.ts`
 
 Ensure all language configurations are synchronized to maintain consistency across the documentation.
 
@@ -37,3 +31,4 @@ When adding support for a new language, follow these steps:
 9. Test navigation and search functionality in the new language
 
 When working on multiple languages simultaneously, approach one language at a time completely before moving to the next language to maintain quality and consistency.
+
