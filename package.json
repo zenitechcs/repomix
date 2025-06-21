@@ -92,7 +92,6 @@
     "picocolors": "^1.1.1",
     "piscina": "^4.9.2",
     "strip-comments": "^2.0.1",
-    "strip-json-comments": "^5.0.1",
     "tiktoken": "^1.0.20",
     "tree-sitter-wasms": "^0.1.12",
     "web-tree-sitter": "^0.24.7",
