@@ -128,7 +128,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run test --reporter=verbose
+      - run: ./node_modules/.bin/vitest --reporter=verbose
         env:
           CI_OS: ${{ runner.os }}
 
@@ -187,7 +187,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run build
+      - run: ./node_modules/.bin/rimraf lib && ./node_modules/.bin/tsc -p tsconfig.build.json --sourceMap --declaration
       - name: Install only production dependencies
         run: npm ci --omit=dev
       - run: node bin/repomix.cjs
