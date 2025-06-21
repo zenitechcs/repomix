@@ -61,7 +61,9 @@ export const printSecurityCheck = (
     suspiciousFilesResults.forEach((suspiciousFilesResult, index) => {
       const relativeFilePath = path.relative(rootDir, suspiciousFilesResult.filePath);
       logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
-      logger.log(pc.dim(`   - ${suspiciousFilesResult.messages.length} security issue(s) detected`));
+      const issueCount = suspiciousFilesResult.messages.length;
+      const issueText = issueCount === 1 ? 'security issue' : 'security issues';
+      logger.log(pc.dim(`   - ${issueCount} ${issueText} detected`));
     });
     logger.log(pc.yellow('\nThese files have been excluded from the output for security reasons.'));
     logger.log(pc.yellow('Please review these files for potential sensitive information.'));
@@ -73,7 +75,9 @@ export const printSecurityCheck = (
     logger.log(pc.yellow(`${suspiciousGitDiffResults.length} security issue(s) found in Git diffs:`));
     suspiciousGitDiffResults.forEach((suspiciousResult, index) => {
       logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(suspiciousResult.filePath)}`);
-      logger.log(pc.dim(`   - ${suspiciousResult.messages.length} security issue(s) detected`));
+      const issueCount = suspiciousResult.messages.length;
+      const issueText = issueCount === 1 ? 'security issue' : 'security issues';
+      logger.log(pc.dim(`   - ${issueCount} ${issueText} detected`));
     });
     logger.log(pc.yellow('\nNote: Git diffs with security issues are still included in the output.'));
     logger.log(pc.yellow('Please review the diffs before sharing the output.'));

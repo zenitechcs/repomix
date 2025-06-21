@@ -114,7 +114,7 @@ describe('cliPrint', () => {
 
       expect(logger.log).toHaveBeenCalledWith('YELLOW:1 suspicious file(s) detected and excluded from the output:');
       expect(logger.log).toHaveBeenCalledWith(`WHITE:1. WHITE:${configRelativePath}`);
-      expect(logger.log).toHaveBeenCalledWith('DIM:   - 2 security issue(s) detected');
+      expect(logger.log).toHaveBeenCalledWith('DIM:   - 2 security issues detected');
       expect(logger.log).toHaveBeenCalledWith(
         expect.stringContaining('Please review these files for potential sensitive information.'),
       );
