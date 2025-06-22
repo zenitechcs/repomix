@@ -36,7 +36,9 @@
     "npm-publish-check-branch": "git branch --show-current | grep -q '^main$' || (echo 'Release is only allowed from the main branch' && exit 1)",
     "npm-release-patch": "npm version patch && node --run npm-publish",
     "npm-release-minor": "npm version minor && node --run npm-publish",
-    "npm-release-prerelease": "npm version prerelease && node --run npm-publish"
+    "npm-release-prerelease": "npm version prerelease && node --run npm-publish",
+    "ratchet-pin": "ratchet pin .github/workflows/*",
+    "ratchet-update": "ratchet update .github/workflows/*"
   },
   "keywords": [
     "repository",
