@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Auto review PR
-        uses: anthropics/claude-code-action@main
+        uses: anthropics/claude-code-action@ebbd9e9be4686249a2952e1a558bbaba07524380 # ratchet:anthropics/claude-code-action@main
         with:
           direct_prompt: |
             Please review this PR. Look at the changes and provide thoughtful feedback on:
