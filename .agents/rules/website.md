@@ -1,5 +1,5 @@
 ---
-applyTo: '**'
+description: Guidelines for working with the Repomix documentation website. Apply these rules when modifying website content, adding translations, updating navigation, or implementing new documentation features.
 ---
 
 # Website Documentation
