@@ -654,5 +654,45 @@ node_modules
       expect(result.filePaths).toEqual(['lib/utils.ts', 'src/main.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
+
+    test('should handle permission errors during globby operation', async () => {
+      const mockConfig = createMockConfig({
+        include: [],
+        ignore: {
+          useGitignore: false,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
+
+      const filePaths = ['/test/src/main.ts'];
+
+      // Mock globby to throw a permission error
+      const permError = new Error('Permission denied');
+      (permError as any).code = 'EPERM';
+      vi.mocked(globby).mockRejectedValue(permError);
+
+      await expect(filterFileList(filePaths, '/test', mockConfig)).rejects.toThrow(PermissionError);
+    });
+
+    test('should handle generic errors during filtering', async () => {
+      const mockConfig = createMockConfig({
+        include: [],
+        ignore: {
+          useGitignore: false,
+          useDefaultPatterns: false,
+          customPatterns: [],
+        },
+      });
+
+      const filePaths = ['/test/src/main.ts'];
+
+      // Mock globby to throw a generic error
+      vi.mocked(globby).mockRejectedValue(new Error('Generic file system error'));
+
+      await expect(filterFileList(filePaths, '/test', mockConfig)).rejects.toThrow(
+        'Failed to filter file list in directory /test',
+      );
+    });
   });
 });
