@@ -668,8 +668,8 @@ node_modules
       const filePaths = ['/test/src/main.ts'];
 
       // Mock globby to throw a permission error
-      const permError = new Error('Permission denied');
-      (permError as any).code = 'EPERM';
+      const permError = new Error('Permission denied') as Error & { code: string };
+      permError.code = 'EPERM';
       vi.mocked(globby).mockRejectedValue(permError);
 
       await expect(filterFileList(filePaths, '/test', mockConfig)).rejects.toThrow(PermissionError);
