@@ -90,7 +90,13 @@ export const runRemoteAction = async (
 
     // Run the default action on the downloaded/cloned repository
     result = await deps.runDefaultAction([tempDirPath], tempDirPath, cliOptions);
-    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+
+    // Copy output file only when not in stdout mode
+    // In stdout mode, output is written directly to stdout without creating a file,
+    // so attempting to copy a non-existent file would cause an error and exit code 1
+    if (!cliOptions.stdout) {
+      await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+    }
 
     logger.trace(`Repository obtained via ${downloadMethod} method`);
   } finally {
