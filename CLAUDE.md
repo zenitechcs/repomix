@@ -87,6 +87,12 @@ repomix/
 - Include a clear summary of the changes at the top of the pull request description
 - Reference any related issues using the format `#issue-number` 
 
+## PR Review Guidelines
+When reviewing pull requests, provide thoughtful feedback on:
+- Code quality and best practices
+- Potential bugs or issues
+- Suggestions for improvements
+- Overall architecture and design decisions
 
 ## Dependencies and Testing
 - Inject dependencies through a deps object parameter for testability
