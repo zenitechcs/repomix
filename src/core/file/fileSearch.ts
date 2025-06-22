@@ -305,14 +305,22 @@ export const filterFileList = async (
     return !isIgnored;
   });
 
-  // TODO: Handle ignoreFiles patterns (.gitignore, .repomixignore)
-  // For now, we skip ignoreFiles processing as it requires reading those files
-  // and applying their patterns, which is complex for stdin file filtering
+  // Apply ignore file patterns (.gitignore, .repomixignore) using globby
+  const finalFilteredPaths = await globby(filteredFilePaths, {
+    cwd: rootDir,
+    ignore: [], // We already applied custom ignore patterns above
+    ignoreFiles: [...ignoreFilePatterns],
+    onlyFiles: false, // We're providing a specific list, not searching
+    absolute: false,
+    dot: true,
+    followSymbolicLinks: false,
+    expandDirectories: false, // Don't expand directories since we have specific file paths
+  });
 
-  logger.trace(`Filtered ${filteredFilePaths.length} files from ${filePaths.length} input files`);
+  logger.trace(`Filtered ${finalFilteredPaths.length} files from ${filePaths.length} input files`);
 
   return {
-    filePaths: sortPaths(filteredFilePaths),
+    filePaths: sortPaths(finalFilteredPaths),
     emptyDirPaths: [], // Empty directories are not applicable for stdin file lists
   };
 };

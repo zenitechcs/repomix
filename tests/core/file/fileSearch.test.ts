@@ -578,13 +578,16 @@ node_modules
 
       const filePaths = ['/test/src/file1.ts', '/test/src/file2.js', '/test/src/file3.ts'];
 
+      // Mock globby to return the filtered files (simulating .gitignore processing)
+      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
+
       const result = await filterFileList(filePaths, '/test', mockConfig);
 
       expect(result.filePaths).toEqual(['src/file1.ts', 'src/file3.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
 
-    test.skip('should filter files based on ignore patterns', async () => {
+    test('should filter files based on ignore patterns', async () => {
       const mockConfig = createMockConfig({
         include: [],
         ignore: {
@@ -601,13 +604,16 @@ node_modules
         '/test/src/file2.test.ts',
       ];
 
+      // Mock globby to return the filtered files (simulating .gitignore processing)
+      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file2.ts']);
+
       const result = await filterFileList(filePaths, '/test', mockConfig);
 
       expect(result.filePaths).toEqual(['src/file1.ts', 'src/file2.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
 
-    test.skip('should apply both include and ignore patterns', async () => {
+    test('should apply both include and ignore patterns', async () => {
       const mockConfig = createMockConfig({
         include: ['**/*.ts'],
         ignore: {
@@ -618,6 +624,9 @@ node_modules
       });
 
       const filePaths = ['/test/src/file1.ts', '/test/src/file1.test.ts', '/test/src/file2.js', '/test/src/file3.ts'];
+
+      // Mock globby to return the filtered files (simulating .gitignore processing)
+      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
 
       const result = await filterFileList(filePaths, '/test', mockConfig);
 
@@ -636,6 +645,9 @@ node_modules
       });
 
       const filePaths = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
+
+      // Mock globby to return the filtered files (simulating .gitignore processing)
+      vi.mocked(globby).mockResolvedValue(['lib/utils.ts', 'src/main.ts']);
 
       const result = await filterFileList(filePaths, '/test', mockConfig);
 
