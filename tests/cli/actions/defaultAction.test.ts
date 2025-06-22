@@ -687,7 +687,7 @@ describe('defaultAction', () => {
       };
 
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue(stdinResult);
-      
+
       // Mock globby to return the expected filtered files (sorted by sortPaths)
       vi.mocked(globby).mockResolvedValue([path.join('subdir', 'file2.txt'), 'file1.txt']);
 
