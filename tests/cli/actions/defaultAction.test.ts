@@ -706,7 +706,7 @@ describe('defaultAction', () => {
         const searchResult = await searchFiles(testCwd, mockConfig);
         expect(searchResult).toEqual({
           filePaths: [path.join('subdir', 'file2.txt'), 'file1.txt'],
-          emptyDirPaths: [path.resolve(testCwd, 'emptydir')],
+          emptyDirPaths: [], // Empty directories from searchFiles, not from stdin
         });
       }
     });

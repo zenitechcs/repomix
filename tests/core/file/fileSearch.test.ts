@@ -7,7 +7,6 @@ import { minimatch } from 'minimatch';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   escapeGlobPattern,
-  filterFileList,
   getIgnoreFilePatterns,
   getIgnorePatterns,
   normalizeGlobPattern,
@@ -563,57 +562,8 @@ node_modules
       expect(result.filePaths).toEqual(['test.js']);
       expect(result.emptyDirPaths).toEqual([]);
     });
-  });
 
-  describe('filterFileList', () => {
-    test('should filter files based on include patterns', async () => {
-      const mockConfig = createMockConfig({
-        include: ['**/*.ts'],
-        ignore: {
-          useGitignore: false,
-          useDefaultPatterns: false,
-          customPatterns: [],
-        },
-      });
-
-      const filePaths = ['/test/src/file1.ts', '/test/src/file2.js', '/test/src/file3.ts'];
-
-      // Mock globby to return the filtered files (simulating .gitignore processing)
-      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
-
-      const result = await filterFileList(filePaths, '/test', mockConfig);
-
-      expect(result.filePaths).toEqual(['src/file1.ts', 'src/file3.ts']);
-      expect(result.emptyDirPaths).toEqual([]);
-    });
-
-    test('should filter files based on ignore patterns', async () => {
-      const mockConfig = createMockConfig({
-        include: [],
-        ignore: {
-          useGitignore: false,
-          useDefaultPatterns: false,
-          customPatterns: ['**/*.test.ts'],
-        },
-      });
-
-      const filePaths = [
-        '/test/src/file1.ts',
-        '/test/src/file1.test.ts',
-        '/test/src/file2.ts',
-        '/test/src/file2.test.ts',
-      ];
-
-      // Mock globby to return the filtered files (simulating .gitignore processing)
-      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file2.ts']);
-
-      const result = await filterFileList(filePaths, '/test', mockConfig);
-
-      expect(result.filePaths).toEqual(['src/file1.ts', 'src/file2.ts']);
-      expect(result.emptyDirPaths).toEqual([]);
-    });
-
-    test('should apply both include and ignore patterns', async () => {
+    test('should filter predefined files based on include and ignore patterns', async () => {
       const mockConfig = createMockConfig({
         include: ['**/*.ts'],
         ignore: {
@@ -623,18 +573,18 @@ node_modules
         },
       });
 
-      const filePaths = ['/test/src/file1.ts', '/test/src/file1.test.ts', '/test/src/file2.js', '/test/src/file3.ts'];
+      const predefinedFiles = ['/test/src/file1.ts', '/test/src/file1.test.ts', '/test/src/file2.js', '/test/src/file3.ts'];
 
       // Mock globby to return the filtered files (simulating .gitignore processing)
       vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
 
-      const result = await filterFileList(filePaths, '/test', mockConfig);
+      const result = await searchFiles('/test', mockConfig, predefinedFiles);
 
       expect(result.filePaths).toEqual(['src/file1.ts', 'src/file3.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
 
-    test('should handle absolute paths correctly', async () => {
+    test('should handle predefined files with ignore patterns only', async () => {
       const mockConfig = createMockConfig({
         include: [],
         ignore: {
@@ -644,55 +594,16 @@ node_modules
         },
       });
 
-      const filePaths = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
+      const predefinedFiles = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
 
       // Mock globby to return the filtered files (simulating .gitignore processing)
       vi.mocked(globby).mockResolvedValue(['lib/utils.ts', 'src/main.ts']);
 
-      const result = await filterFileList(filePaths, '/test', mockConfig);
+      const result = await searchFiles('/test', mockConfig, predefinedFiles);
 
       expect(result.filePaths).toEqual(['lib/utils.ts', 'src/main.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
-
-    test('should handle permission errors during globby operation', async () => {
-      const mockConfig = createMockConfig({
-        include: [],
-        ignore: {
-          useGitignore: false,
-          useDefaultPatterns: false,
-          customPatterns: [],
-        },
-      });
-
-      const filePaths = ['/test/src/main.ts'];
-
-      // Mock globby to throw a permission error
-      const permError = new Error('Permission denied') as Error & { code: string };
-      permError.code = 'EPERM';
-      vi.mocked(globby).mockRejectedValue(permError);
-
-      await expect(filterFileList(filePaths, '/test', mockConfig)).rejects.toThrow(PermissionError);
-    });
-
-    test('should handle generic errors during filtering', async () => {
-      const mockConfig = createMockConfig({
-        include: [],
-        ignore: {
-          useGitignore: false,
-          useDefaultPatterns: false,
-          customPatterns: [],
-        },
-      });
-
-      const filePaths = ['/test/src/main.ts'];
-
-      // Mock globby to throw a generic error
-      vi.mocked(globby).mockRejectedValue(new Error('Generic file system error'));
-
-      await expect(filterFileList(filePaths, '/test', mockConfig)).rejects.toThrow(
-        'Failed to filter file list in directory /test',
-      );
-    });
   });
+
 });
