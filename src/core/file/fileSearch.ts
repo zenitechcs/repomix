@@ -92,6 +92,119 @@ export const normalizeGlobPattern = (pattern: string): string => {
   return pattern;
 };
 
+// Get all file paths considering the config
+export const searchFiles = async (
+  rootDir: string,
+  config: RepomixConfigMerged,
+  predefinedFiles?: string[],
+): Promise<FileSearchResult> => {
+  // Skip directory validation when using predefined files
+  if (!predefinedFiles) {
+    // Check if the path exists and get its type
+    let pathStats: Stats;
+    try {
+      pathStats = await fs.stat(rootDir);
+    } catch (error) {
+      if (error instanceof Error && 'code' in error) {
+        const errorCode = (error as NodeJS.ErrnoException).code;
+        if (errorCode === 'ENOENT') {
+          throw new RepomixError(`Target path does not exist: ${rootDir}`);
+        }
+        if (errorCode === 'EPERM' || errorCode === 'EACCES') {
+          throw new PermissionError(
+            `Permission denied while accessing path. Please check folder access permissions for your terminal app. path: ${rootDir}`,
+            rootDir,
+            errorCode,
+          );
+        }
+        // Handle other specific error codes with more context
+        throw new RepomixError(`Failed to access path: ${rootDir}. Error code: ${errorCode}. ${error.message}`);
+      }
+      // Preserve original error stack trace for debugging
+      const repomixError = new RepomixError(
+        `Failed to access path: ${rootDir}. Reason: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
+      );
+      repomixError.cause = error;
+      throw repomixError;
+    }
+
+    // Check if the path is a directory
+    if (!pathStats.isDirectory()) {
+      throw new RepomixError(
+        `Target path is not a directory: ${rootDir}. Please specify a directory path, not a file path.`,
+      );
+    }
+
+    // Now check directory permissions
+    const permissionCheck = await checkDirectoryPermissions(rootDir);
+
+    if (permissionCheck.details?.read !== true) {
+      if (permissionCheck.error instanceof PermissionError) {
+        throw permissionCheck.error;
+      }
+      throw new RepomixError(
+        `Target directory is not readable or does not exist. Please check folder access permissions for your terminal app.\npath: ${rootDir}`,
+      );
+    }
+  }
+
+  try {
+    const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
+      getIgnorePatterns(rootDir, config),
+      getIgnoreFilePatterns(config),
+    ]);
+
+    // Normalize ignore patterns to handle trailing slashes consistently
+    const normalizedIgnorePatterns = ignorePatterns.map(normalizeGlobPattern);
+
+    // Adjust ignore patterns for git worktree
+    const adjustedIgnorePatterns = await adjustIgnorePatternsForWorktree(normalizedIgnorePatterns, rootDir);
+
+    logger.trace('Ignore patterns:', normalizedIgnorePatterns);
+    logger.trace('Ignore file patterns:', ignoreFilePatterns);
+
+    const includePatterns =
+      config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
+
+    logger.trace('Include patterns:', includePatterns);
+
+    // Get file paths either from predefined files or by searching with globby
+    const filePaths = predefinedFiles
+      ? filterPredefinedFiles(predefinedFiles, rootDir, includePatterns, adjustedIgnorePatterns)
+      : await searchFilesWithGlobby(rootDir, includePatterns, adjustedIgnorePatterns, ignoreFilePatterns);
+
+    // Find empty directories if configured
+    const emptyDirPaths = await findEmptyDirectoriesIfEnabled(
+      config,
+      rootDir,
+      includePatterns,
+      adjustedIgnorePatterns,
+      ignoreFilePatterns,
+      !!predefinedFiles,
+    );
+
+    logger.trace(`Filtered ${filePaths.length} files`);
+
+    return {
+      filePaths: sortPaths(filePaths),
+      emptyDirPaths: sortPaths(emptyDirPaths),
+    };
+  } catch (error: unknown) {
+    // Re-throw PermissionError as is
+    if (error instanceof PermissionError) {
+      throw error;
+    }
+
+    if (error instanceof Error) {
+      logger.error('Error filtering files:', error.message);
+      throw new Error(`Failed to filter files in directory ${rootDir}. Reason: ${error.message}`);
+    }
+
+    logger.error('An unexpected error occurred:', error);
+    throw new Error('An unexpected error occurred while filtering files.');
+  }
+};
+
 /**
  * Filter predefined files based on include and ignore patterns
  */
@@ -206,119 +319,6 @@ const findEmptyDirectoriesIfEnabled = async (
   });
 
   return findEmptyDirectories(rootDir, directories, adjustedIgnorePatterns);
-};
-
-// Get all file paths considering the config
-export const searchFiles = async (
-  rootDir: string,
-  config: RepomixConfigMerged,
-  predefinedFiles?: string[],
-): Promise<FileSearchResult> => {
-  // Skip directory validation when using predefined files
-  if (!predefinedFiles) {
-    // Check if the path exists and get its type
-    let pathStats: Stats;
-    try {
-      pathStats = await fs.stat(rootDir);
-    } catch (error) {
-      if (error instanceof Error && 'code' in error) {
-        const errorCode = (error as NodeJS.ErrnoException).code;
-        if (errorCode === 'ENOENT') {
-          throw new RepomixError(`Target path does not exist: ${rootDir}`);
-        }
-        if (errorCode === 'EPERM' || errorCode === 'EACCES') {
-          throw new PermissionError(
-            `Permission denied while accessing path. Please check folder access permissions for your terminal app. path: ${rootDir}`,
-            rootDir,
-            errorCode,
-          );
-        }
-        // Handle other specific error codes with more context
-        throw new RepomixError(`Failed to access path: ${rootDir}. Error code: ${errorCode}. ${error.message}`);
-      }
-      // Preserve original error stack trace for debugging
-      const repomixError = new RepomixError(
-        `Failed to access path: ${rootDir}. Reason: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
-      );
-      repomixError.cause = error;
-      throw repomixError;
-    }
-
-    // Check if the path is a directory
-    if (!pathStats.isDirectory()) {
-      throw new RepomixError(
-        `Target path is not a directory: ${rootDir}. Please specify a directory path, not a file path.`,
-      );
-    }
-
-    // Now check directory permissions
-    const permissionCheck = await checkDirectoryPermissions(rootDir);
-
-    if (permissionCheck.details?.read !== true) {
-      if (permissionCheck.error instanceof PermissionError) {
-        throw permissionCheck.error;
-      }
-      throw new RepomixError(
-        `Target directory is not readable or does not exist. Please check folder access permissions for your terminal app.\npath: ${rootDir}`,
-      );
-    }
-  }
-
-  try {
-    const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
-      getIgnorePatterns(rootDir, config),
-      getIgnoreFilePatterns(config),
-    ]);
-
-    // Normalize ignore patterns to handle trailing slashes consistently
-    const normalizedIgnorePatterns = ignorePatterns.map(normalizeGlobPattern);
-
-    // Adjust ignore patterns for git worktree
-    const adjustedIgnorePatterns = await adjustIgnorePatternsForWorktree(normalizedIgnorePatterns, rootDir);
-
-    logger.trace('Ignore patterns:', normalizedIgnorePatterns);
-    logger.trace('Ignore file patterns:', ignoreFilePatterns);
-
-    const includePatterns =
-      config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
-
-    logger.trace('Include patterns:', includePatterns);
-
-    // Get file paths either from predefined files or by searching with globby
-    const filePaths = predefinedFiles
-      ? filterPredefinedFiles(predefinedFiles, rootDir, includePatterns, adjustedIgnorePatterns)
-      : await searchFilesWithGlobby(rootDir, includePatterns, adjustedIgnorePatterns, ignoreFilePatterns);
-
-    // Find empty directories if configured
-    const emptyDirPaths = await findEmptyDirectoriesIfEnabled(
-      config,
-      rootDir,
-      includePatterns,
-      adjustedIgnorePatterns,
-      ignoreFilePatterns,
-      !!predefinedFiles,
-    );
-
-    logger.trace(`Filtered ${filePaths.length} files`);
-
-    return {
-      filePaths: sortPaths(filePaths),
-      emptyDirPaths: sortPaths(emptyDirPaths),
-    };
-  } catch (error: unknown) {
-    // Re-throw PermissionError as is
-    if (error instanceof PermissionError) {
-      throw error;
-    }
-
-    if (error instanceof Error) {
-      logger.error('Error filtering files:', error.message);
-      throw new Error(`Failed to filter files in directory ${rootDir}. Reason: ${error.message}`);
-    }
-
-    logger.error('An unexpected error occurred:', error);
-    throw new Error('An unexpected error occurred while filtering files.');
-  }
 };
 
 export const parseIgnoreContent = (content: string): string[] => {
