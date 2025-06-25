@@ -42,9 +42,11 @@ repomix-output.md
 # repomix runner
 .repomix/
 
-# private files
+# Agent
 .cursor/rules/
-.github/todo.md
 .mcp.json
-.private/
 .agents/local/
+
+# private files
+.private/
+.env
