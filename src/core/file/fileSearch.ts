@@ -93,9 +93,9 @@ export const normalizeGlobPattern = (pattern: string): string => {
 
 // Get all file paths considering the config
 export const searchFiles = async (
-  rootDir: string, 
+  rootDir: string,
   config: RepomixConfigMerged,
-  predefinedFiles?: string[]
+  predefinedFiles?: string[],
 ): Promise<FileSearchResult> => {
   // Skip directory validation when using predefined files
   if (!predefinedFiles) {
@@ -150,8 +150,8 @@ export const searchFiles = async (
   // Use predefined files if provided, otherwise use include patterns from config
   const includePatterns = predefinedFiles
     ? predefinedFiles.map((filePath) => path.relative(rootDir, filePath))
-    : config.include.length > 0 
-      ? config.include.map((pattern) => escapeGlobPattern(pattern)) 
+    : config.include.length > 0
+      ? config.include.map((pattern) => escapeGlobPattern(pattern))
       : ['**/*'];
 
   try {
@@ -261,7 +261,6 @@ export const getIgnoreFilePatterns = async (config: RepomixConfigMerged): Promis
 
   return ignoreFilePatterns;
 };
-
 
 export const getIgnorePatterns = async (rootDir: string, config: RepomixConfigMerged): Promise<string[]> => {
   const ignorePatterns = new Set<string>();

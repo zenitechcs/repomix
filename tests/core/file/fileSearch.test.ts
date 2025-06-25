@@ -573,7 +573,12 @@ node_modules
         },
       });
 
-      const predefinedFiles = ['/test/src/file1.ts', '/test/src/file1.test.ts', '/test/src/file2.js', '/test/src/file3.ts'];
+      const predefinedFiles = [
+        '/test/src/file1.ts',
+        '/test/src/file1.test.ts',
+        '/test/src/file2.js',
+        '/test/src/file3.ts',
+      ];
 
       // Mock globby to return the filtered files (simulating .gitignore processing)
       vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
@@ -605,5 +610,4 @@ node_modules
       expect(result.emptyDirPaths).toEqual([]);
     });
   });
-
 });
