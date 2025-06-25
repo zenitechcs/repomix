@@ -693,22 +693,10 @@ describe('defaultAction', () => {
 
       await handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions);
 
-      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function), {
-        searchFiles: expect.any(Function),
-      });
-
-      // Test the searchFiles function
-      const packCall = vi.mocked(packager.pack).mock.calls[0];
-      const searchFiles = packCall[3]?.searchFiles;
-      expect(searchFiles).toBeDefined();
-
-      if (searchFiles) {
-        const searchResult = await searchFiles(testCwd, mockConfig);
-        expect(searchResult).toEqual({
-          filePaths: [path.join('subdir', 'file2.txt'), 'file1.txt'],
-          emptyDirPaths: [], // Empty directories from searchFiles, not from stdin
-        });
-      }
+      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function), {}, [
+        path.join(testCwd, 'file1.txt'),
+        path.join(testCwd, 'subdir', 'file2.txt'),
+      ]);
     });
 
     it('should propagate errors from readFilePathsFromStdin', async () => {

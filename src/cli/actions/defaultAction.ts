@@ -7,7 +7,6 @@ import {
   type RepomixOutputStyle,
   repomixConfigCliSchema,
 } from '../../config/configSchema.js';
-import { searchFiles } from '../../core/file/fileSearch.js';
 import { readFilePathsFromStdin } from '../../core/file/fileStdin.js';
 import { type PackResult, pack } from '../../core/packager.js';
 import { RepomixError } from '../../shared/errorHandle.js';
@@ -80,26 +79,17 @@ export const handleStdinProcessing = async (
   try {
     const stdinResult = await readFilePathsFromStdin(cwd);
 
-    spinner.update('Filtering files...');
-
-    // Use searchFiles with predefined files from stdin
-    const filteredResult = await searchFiles(cwd, config, stdinResult.filePaths);
-
     spinner.update('Packing files...');
 
-    // Create a custom pack variant that uses the filtered file paths
+    // Use pack with predefined files from stdin
     packResult = await pack(
       [cwd],
       config,
       (message) => {
         spinner.update(message);
       },
-      {
-        searchFiles: async () => ({
-          filePaths: filteredResult.filePaths,
-          emptyDirPaths: filteredResult.emptyDirPaths,
-        }),
-      },
+      {},
+      stdinResult.filePaths,
     );
   } catch (error) {
     spinner.fail('Error reading from stdin or during packing');
