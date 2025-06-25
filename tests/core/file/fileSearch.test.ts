@@ -580,9 +580,6 @@ node_modules
         '/test/src/file3.ts',
       ];
 
-      // Mock globby to return the filtered files (simulating .gitignore processing)
-      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
-
       const result = await searchFiles('/test', mockConfig, predefinedFiles);
 
       expect(result.filePaths).toEqual(['src/file1.ts', 'src/file3.ts']);
@@ -600,9 +597,6 @@ node_modules
       });
 
       const predefinedFiles = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
-
-      // Mock globby to return the filtered files (simulating .gitignore processing)
-      vi.mocked(globby).mockResolvedValue(['lib/utils.ts', 'src/main.ts']);
 
       const result = await searchFiles('/test', mockConfig, predefinedFiles);
 

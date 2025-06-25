@@ -84,7 +84,8 @@ export const normalizeGlobPattern = (pattern: string): string => {
   }
 
   // Convert **/folder to **/folder/** for consistent ignore pattern behavior
-  if (pattern.startsWith('**/') && !pattern.includes('/**')) {
+  // Only do this for directory patterns (no file extension and no wildcard at the end)
+  if (pattern.startsWith('**/') && !pattern.includes('/**') && !pattern.includes('*', 3) && !pattern.includes('.')) {
     return `${pattern}/**`;
   }
 
@@ -147,13 +148,6 @@ export const searchFiles = async (
     }
   }
 
-  // Use predefined files if provided, otherwise use include patterns from config
-  const includePatterns = predefinedFiles
-    ? predefinedFiles.map((filePath) => path.relative(rootDir, filePath))
-    : config.include.length > 0
-      ? config.include.map((pattern) => escapeGlobPattern(pattern))
-      : ['**/*'];
-
   try {
     const [ignorePatterns, ignoreFilePatterns] = await Promise.all([
       getIgnorePatterns(rootDir, config),
@@ -163,7 +157,6 @@ export const searchFiles = async (
     // Normalize ignore patterns to handle trailing slashes consistently
     const normalizedIgnorePatterns = ignorePatterns.map(normalizeGlobPattern);
 
-    logger.trace('Include patterns:', includePatterns);
     logger.trace('Ignore patterns:', normalizedIgnorePatterns);
     logger.trace('Ignore file patterns:', ignoreFilePatterns);
 
@@ -182,27 +175,56 @@ export const searchFiles = async (
       }
     }
 
-    const filePaths = await globby(includePatterns, {
-      cwd: rootDir,
-      ignore: [...adjustedIgnorePatterns],
-      ignoreFiles: [...ignoreFilePatterns],
-      onlyFiles: true,
-      absolute: false,
-      dot: true,
-      followSymbolicLinks: false,
-    }).catch((error) => {
-      // Handle EPERM errors specifically
-      if (error.code === 'EPERM' || error.code === 'EACCES') {
-        throw new PermissionError(
-          `Permission denied while scanning directory. Please check folder access permissions for your terminal app. path: ${rootDir}`,
-          rootDir,
-        );
-      }
-      throw error;
-    });
+    let filePaths: string[];
+    const includePatterns =
+      config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
+
+    if (predefinedFiles) {
+      // When predefinedFiles are provided, filter them based on include/ignore patterns
+      // Convert absolute paths to relative paths for pattern matching
+      const relativeFilePaths = predefinedFiles.map((filePath) => path.relative(rootDir, filePath));
+
+      // Apply include patterns first
+      const includeFilteredPaths = relativeFilePaths.filter((filePath) =>
+        includePatterns.some((pattern) => minimatch(filePath, pattern)),
+      );
+
+      // Apply ignore patterns to the include-filtered paths
+      filePaths = includeFilteredPaths.filter((filePath) => {
+        // Check if file matches any ignore pattern
+        const isIgnored = adjustedIgnorePatterns.some((pattern) => minimatch(filePath, pattern));
+        return !isIgnored;
+      });
+
+      logger.trace('Include patterns:', includePatterns);
+      logger.trace(`Filtered ${filePaths.length} files from ${predefinedFiles.length} predefined files`);
+    } else {
+      // Use include patterns from config for globby
+      logger.trace('Include patterns:', includePatterns);
+
+      filePaths = await globby(includePatterns, {
+        cwd: rootDir,
+        ignore: [...adjustedIgnorePatterns],
+        ignoreFiles: [...ignoreFilePatterns],
+        onlyFiles: true,
+        absolute: false,
+        dot: true,
+        followSymbolicLinks: false,
+      }).catch((error) => {
+        // Handle EPERM errors specifically
+        if (error.code === 'EPERM' || error.code === 'EACCES') {
+          throw new PermissionError(
+            `Permission denied while scanning directory. Please check folder access permissions for your terminal app. path: ${rootDir}`,
+            rootDir,
+          );
+        }
+        throw error;
+      });
+    }
 
     let emptyDirPaths: string[] = [];
-    if (config.output.includeEmptyDirectories) {
+    if (config.output.includeEmptyDirectories && !predefinedFiles) {
+      // Empty directories are not applicable for predefined file lists
       const directories = await globby(includePatterns, {
         cwd: rootDir,
         ignore: [...adjustedIgnorePatterns],
