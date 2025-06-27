@@ -157,31 +157,72 @@ export const searchFiles = async (
     // Normalize ignore patterns to handle trailing slashes consistently
     const normalizedIgnorePatterns = ignorePatterns.map(normalizeGlobPattern);
 
-    // Adjust ignore patterns for git worktree
-    const adjustedIgnorePatterns = await adjustIgnorePatternsForWorktree(normalizedIgnorePatterns, rootDir);
-
     logger.trace('Ignore patterns:', normalizedIgnorePatterns);
     logger.trace('Ignore file patterns:', ignoreFilePatterns);
 
-    const includePatterns =
+    // Check if .git is a worktree reference
+    const gitPath = path.join(rootDir, '.git');
+    const isWorktree = await isGitWorktreeRef(gitPath);
+
+    // Modify ignore patterns for git worktree
+    const adjustedIgnorePatterns = [...normalizedIgnorePatterns];
+    if (isWorktree) {
+      // Remove '.git/**' pattern and add '.git' to ignore the reference file
+      const gitIndex = adjustedIgnorePatterns.indexOf('.git/**');
+      if (gitIndex !== -1) {
+        adjustedIgnorePatterns.splice(gitIndex, 1);
+        adjustedIgnorePatterns.push('.git');
+      }
+    }
+
+    let includePatterns =
       config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
+
+    // If predefined files are provided, add them to include patterns
+    if (predefinedFiles) {
+      const relativePaths = predefinedFiles.map((filePath) => {
+        const relativePath = path.relative(rootDir, filePath);
+        // Escape the path to handle special characters
+        return escapeGlobPattern(relativePath);
+      });
+      includePatterns = [...includePatterns, ...relativePaths];
+    }
 
     logger.trace('Include patterns:', includePatterns);
 
-    // Get file paths either from predefined files or by searching with globby
-    const filePaths = predefinedFiles
-      ? filterPredefinedFiles(predefinedFiles, rootDir, includePatterns, adjustedIgnorePatterns)
-      : await searchFilesWithGlobby(rootDir, includePatterns, adjustedIgnorePatterns, ignoreFilePatterns);
+    const filePaths = await globby(includePatterns, {
+      cwd: rootDir,
+      ignore: [...adjustedIgnorePatterns],
+      ignoreFiles: [...ignoreFilePatterns],
+      onlyFiles: true,
+      absolute: false,
+      dot: true,
+      followSymbolicLinks: false,
+    }).catch((error) => {
+      // Handle EPERM errors specifically
+      if (error.code === 'EPERM' || error.code === 'EACCES') {
+        throw new PermissionError(
+          `Permission denied while scanning directory. Please check folder access permissions for your terminal app. path: ${rootDir}`,
+          rootDir,
+        );
+      }
+      throw error;
+    });
 
-    // Find empty directories if configured
-    const emptyDirPaths = await findEmptyDirectoriesIfEnabled(
-      config,
-      rootDir,
-      includePatterns,
-      adjustedIgnorePatterns,
-      ignoreFilePatterns,
-      !!predefinedFiles,
-    );
+    let emptyDirPaths: string[] = [];
+    if (config.output.includeEmptyDirectories && !predefinedFiles) {
+      const directories = await globby(includePatterns, {
+        cwd: rootDir,
+        ignore: [...adjustedIgnorePatterns],
+        ignoreFiles: [...ignoreFilePatterns],
+        onlyDirectories: true,
+        absolute: false,
+        dot: true,
+        followSymbolicLinks: false,
+      });
+
+      emptyDirPaths = await findEmptyDirectories(rootDir, directories, adjustedIgnorePatterns);
+    }
 
     logger.trace(`Filtered ${filePaths.length} files`);
 
@@ -203,122 +244,6 @@ export const searchFiles = async (
     logger.error('An unexpected error occurred:', error);
     throw new Error('An unexpected error occurred while filtering files.');
   }
-};
-
-/**
- * Filter predefined files based on include and ignore patterns
- */
-const filterPredefinedFiles = (
-  predefinedFiles: string[],
-  rootDir: string,
-  includePatterns: string[],
-  adjustedIgnorePatterns: string[],
-): string[] => {
-  // Convert absolute paths to relative paths for pattern matching
-  const relativeFilePaths = predefinedFiles.map((filePath) => path.relative(rootDir, filePath));
-
-  // Apply include patterns first
-  const includeFilteredPaths = relativeFilePaths.filter((filePath) =>
-    includePatterns.some((pattern) => minimatch(filePath, pattern)),
-  );
-
-  // Apply ignore patterns to the include-filtered paths
-  const filteredFilePaths = includeFilteredPaths.filter((filePath) => {
-    // Check if file matches any ignore pattern
-    const isIgnored = adjustedIgnorePatterns.some((pattern) => minimatch(filePath, pattern));
-    return !isIgnored;
-  });
-
-  logger.trace(`Filtered ${filteredFilePaths.length} files from ${predefinedFiles.length} predefined files`);
-  return filteredFilePaths;
-};
-
-/**
- * Adjust ignore patterns for git worktree
- */
-const adjustIgnorePatternsForWorktree = async (
-  normalizedIgnorePatterns: string[],
-  rootDir: string,
-): Promise<string[]> => {
-  const adjustedIgnorePatterns = [...normalizedIgnorePatterns];
-
-  // Check if .git is a worktree reference
-  const gitPath = path.join(rootDir, '.git');
-  const isWorktree = await isGitWorktreeRef(gitPath);
-
-  if (isWorktree) {
-    // Remove '.git/**' pattern and add '.git' to ignore the reference file
-    const gitIndex = adjustedIgnorePatterns.indexOf('.git/**');
-    if (gitIndex !== -1) {
-      adjustedIgnorePatterns.splice(gitIndex, 1);
-      adjustedIgnorePatterns.push('.git');
-    }
-  }
-
-  return adjustedIgnorePatterns;
-};
-
-/**
- * Search files using globby with error handling
- */
-const searchFilesWithGlobby = async (
-  rootDir: string,
-  includePatterns: string[],
-  adjustedIgnorePatterns: string[],
-  ignoreFilePatterns: string[],
-): Promise<string[]> => {
-  try {
-    return await globby(includePatterns, {
-      cwd: rootDir,
-      ignore: [...adjustedIgnorePatterns],
-      ignoreFiles: [...ignoreFilePatterns],
-      onlyFiles: true,
-      absolute: false,
-      dot: true,
-      followSymbolicLinks: false,
-    });
-  } catch (error: unknown) {
-    // Handle EPERM errors specifically
-    if (error && typeof error === 'object' && 'code' in error) {
-      const errorCode = (error as { code: string }).code;
-      if (errorCode === 'EPERM' || errorCode === 'EACCES') {
-        throw new PermissionError(
-          `Permission denied while scanning directory. Please check folder access permissions for your terminal app. path: ${rootDir}`,
-          rootDir,
-        );
-      }
-    }
-    throw error;
-  }
-};
-
-/**
- * Find empty directories if configured to include them
- */
-const findEmptyDirectoriesIfEnabled = async (
-  config: RepomixConfigMerged,
-  rootDir: string,
-  includePatterns: string[],
-  adjustedIgnorePatterns: string[],
-  ignoreFilePatterns: string[],
-  hasPredefinedFiles: boolean,
-): Promise<string[]> => {
-  if (!config.output.includeEmptyDirectories || hasPredefinedFiles) {
-    // Empty directories are not applicable for predefined file lists
-    return [];
-  }
-
-  const directories = await globby(includePatterns, {
-    cwd: rootDir,
-    ignore: [...adjustedIgnorePatterns],
-    ignoreFiles: [...ignoreFilePatterns],
-    onlyDirectories: true,
-    absolute: false,
-    dot: true,
-    followSymbolicLinks: false,
-  });
-
-  return findEmptyDirectories(rootDir, directories, adjustedIgnorePatterns);
 };
 
 export const parseIgnoreContent = (content: string): string[] => {
