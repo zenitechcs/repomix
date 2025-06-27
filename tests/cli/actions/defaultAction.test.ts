@@ -1,5 +1,6 @@
 import path from 'node:path';
 import process from 'node:process';
+import { globby } from 'globby';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   buildCliConfig,
@@ -14,6 +15,7 @@ import * as packageJsonParser from '../../../src/core/file/packageJsonParse.js';
 import * as packager from '../../../src/core/packager.js';
 import type { PackResult } from '../../../src/core/packager.js';
 
+vi.mock('globby');
 vi.mock('../../../src/core/packager');
 vi.mock('../../../src/config/configLoad');
 vi.mock('../../../src/core/file/packageJsonParse');
@@ -27,6 +29,8 @@ describe('defaultAction', () => {
     vi.resetAllMocks();
     vi.mocked(packageJsonParser.getVersion).mockResolvedValue('1.0.0');
     vi.mocked(configLoader.loadFileConfig).mockResolvedValue({});
+    // Default globby mock
+    vi.mocked(globby).mockResolvedValue([]);
     vi.mocked(configLoader.mergeConfigs).mockReturnValue({
       cwd: process.cwd(),
       input: {
@@ -684,24 +688,15 @@ describe('defaultAction', () => {
 
       vi.mocked(fileStdin.readFilePathsFromStdin).mockResolvedValue(stdinResult);
 
+      // Mock globby to return the expected filtered files (sorted by sortPaths)
+      vi.mocked(globby).mockResolvedValue([path.join('subdir', 'file2.txt'), 'file1.txt']);
+
       await handleStdinProcessing(['.'], testCwd, mockConfig, mockCliOptions);
 
-      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function), {
-        searchFiles: expect.any(Function),
-      });
-
-      // Test the searchFiles function
-      const packCall = vi.mocked(packager.pack).mock.calls[0];
-      const searchFiles = packCall[3]?.searchFiles;
-      expect(searchFiles).toBeDefined();
-
-      if (searchFiles) {
-        const searchResult = await searchFiles(testCwd, mockConfig);
-        expect(searchResult).toEqual({
-          filePaths: ['file1.txt', path.join('subdir', 'file2.txt')],
-          emptyDirPaths: [path.resolve(testCwd, 'emptydir')],
-        });
-      }
+      expect(packager.pack).toHaveBeenCalledWith([testCwd], mockConfig, expect.any(Function), {}, [
+        path.join(testCwd, 'file1.txt'),
+        path.join(testCwd, 'subdir', 'file2.txt'),
+      ]);
     });
 
     it('should propagate errors from readFilePathsFromStdin', async () => {

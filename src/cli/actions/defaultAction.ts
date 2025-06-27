@@ -81,19 +81,15 @@ export const handleStdinProcessing = async (
 
     spinner.update('Packing files...');
 
-    // Create a custom pack variant that uses the stdin file paths directly
+    // Use pack with predefined files from stdin
     packResult = await pack(
       [cwd],
       config,
       (message) => {
         spinner.update(message);
       },
-      {
-        searchFiles: async () => ({
-          filePaths: stdinResult.filePaths.map((filePath) => path.relative(cwd, filePath)),
-          emptyDirPaths: stdinResult.emptyDirPaths,
-        }),
-      },
+      {},
+      stdinResult.filePaths,
     );
   } catch (error) {
     spinner.fail('Error reading from stdin or during packing');

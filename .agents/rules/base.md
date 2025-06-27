@@ -74,6 +74,11 @@ repomix/
 - Description should be clear and concise in present tense
 - Description must start with a capital letter
 
+### Commit Body Guidelines
+- Include context about what led to this commit
+- Describe the conversation or problem that motivated the change
+- This helps preserve the decision-making process for future reference
+
 ## Pull Request Guidelines
 - All pull requests must follow the template:
   ```md

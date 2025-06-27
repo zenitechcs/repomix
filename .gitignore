@@ -39,9 +39,14 @@ repomix-output.md
 # aider
 .aider*
 
-# private files
+# repomix runner
+.repomix/
+
+# Agent
 .cursor/rules/
-.github/todo.md
 .mcp.json
-.private/
 .agents/local/
+
+# private files
+.private/
+.env
