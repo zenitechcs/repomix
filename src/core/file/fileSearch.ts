@@ -85,7 +85,7 @@ export const normalizeGlobPattern = (pattern: string): string => {
 
   // Convert **/folder to **/folder/** for consistent ignore pattern behavior
   // Only do this for directory patterns (no file extension and no wildcard at the end)
-  if (pattern.startsWith('**/') && !pattern.includes('/**') && !pattern.includes('*', 3) && !pattern.includes('.')) {
+  if (pattern.startsWith('**/') && !pattern.includes('/**')) {
     return `${pattern}/**`;
   }
 
