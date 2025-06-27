@@ -171,10 +171,8 @@ export const searchFiles = async (
       }
     }
 
-    let includePatterns =
-      config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
-
-    logger.trace('Include patterns:', includePatterns);
+    // Start with configured include patterns
+    let includePatterns = config.include.map((pattern) => escapeGlobPattern(pattern));
 
     // If explicit files are provided, add them to include patterns
     if (explicitFiles) {
@@ -184,6 +182,11 @@ export const searchFiles = async (
         return escapeGlobPattern(relativePath);
       });
       includePatterns = [...includePatterns, ...relativePaths];
+    }
+
+    // If no include patterns at all, default to all files
+    if (includePatterns.length === 0) {
+      includePatterns = ['**/*'];
     }
 
     logger.trace('Include patterns with explicit files:', includePatterns);
