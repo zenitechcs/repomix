@@ -84,7 +84,6 @@ export const normalizeGlobPattern = (pattern: string): string => {
   }
 
   // Convert **/folder to **/folder/** for consistent ignore pattern behavior
-  // Only do this for directory patterns (no file extension and no wildcard at the end)
   if (pattern.startsWith('**/') && !pattern.includes('/**')) {
     return `${pattern}/**`;
   }
@@ -96,7 +95,7 @@ export const normalizeGlobPattern = (pattern: string): string => {
 export const searchFiles = async (
   rootDir: string,
   config: RepomixConfigMerged,
-  predefinedFiles?: string[],
+  explicitFiles?: string[],
 ): Promise<FileSearchResult> => {
   // Check if the path exists and get its type
   let pathStats: Stats;
@@ -175,9 +174,11 @@ export const searchFiles = async (
     let includePatterns =
       config.include.length > 0 ? config.include.map((pattern) => escapeGlobPattern(pattern)) : ['**/*'];
 
-    // If predefined files are provided, add them to include patterns
-    if (predefinedFiles) {
-      const relativePaths = predefinedFiles.map((filePath) => {
+    logger.trace('Include patterns:', includePatterns);
+
+    // If explicit files are provided, add them to include patterns
+    if (explicitFiles) {
+      const relativePaths = explicitFiles.map((filePath) => {
         const relativePath = path.relative(rootDir, filePath);
         // Escape the path to handle special characters
         return escapeGlobPattern(relativePath);
@@ -185,7 +186,7 @@ export const searchFiles = async (
       includePatterns = [...includePatterns, ...relativePaths];
     }
 
-    logger.trace('Include patterns:', includePatterns);
+    logger.trace('Include patterns with explicit files:', includePatterns);
 
     const filePaths = await globby(includePatterns, {
       cwd: rootDir,
@@ -207,7 +208,7 @@ export const searchFiles = async (
     });
 
     let emptyDirPaths: string[] = [];
-    if (config.output.includeEmptyDirectories && !predefinedFiles) {
+    if (config.output.includeEmptyDirectories) {
       const directories = await globby(includePatterns, {
         cwd: rootDir,
         ignore: [...adjustedIgnorePatterns],

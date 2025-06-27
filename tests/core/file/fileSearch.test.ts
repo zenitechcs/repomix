@@ -563,7 +563,7 @@ node_modules
       expect(result.emptyDirPaths).toEqual([]);
     });
 
-    test('should filter predefined files based on include and ignore patterns', async () => {
+    test('should filter explicit files based on include and ignore patterns', async () => {
       const mockConfig = createMockConfig({
         include: ['**/*.ts'],
         ignore: {
@@ -573,7 +573,7 @@ node_modules
         },
       });
 
-      const predefinedFiles = [
+      const explicitFiles = [
         '/test/src/file1.ts',
         '/test/src/file1.test.ts',
         '/test/src/file2.js',
@@ -583,13 +583,13 @@ node_modules
       // Mock globby to return the expected filtered files
       vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
 
-      const result = await searchFiles('/test', mockConfig, predefinedFiles);
+      const result = await searchFiles('/test', mockConfig, explicitFiles);
 
       expect(result.filePaths).toEqual(['src/file1.ts', 'src/file3.ts']);
       expect(result.emptyDirPaths).toEqual([]);
     });
 
-    test('should handle predefined files with ignore patterns only', async () => {
+    test('should handle explicit files with ignore patterns only', async () => {
       const mockConfig = createMockConfig({
         include: [],
         ignore: {
@@ -599,12 +599,12 @@ node_modules
         },
       });
 
-      const predefinedFiles = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
+      const explicitFiles = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
 
       // Mock globby to return the expected filtered files
       vi.mocked(globby).mockResolvedValue(['src/main.ts', 'lib/utils.ts']);
 
-      const result = await searchFiles('/test', mockConfig, predefinedFiles);
+      const result = await searchFiles('/test', mockConfig, explicitFiles);
 
       expect(result.filePaths).toEqual(['lib/utils.ts', 'src/main.ts']);
       expect(result.emptyDirPaths).toEqual([]);
