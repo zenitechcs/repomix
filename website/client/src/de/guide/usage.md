@@ -49,10 +49,10 @@ find src -name "*.ts" -type f | repomix --stdin
 # Mit Git für verfolgte Dateien
 git ls-files "*.ts" | repomix --stdin
 
-# Mit ripgrep (rg) zum Dateien finden
+# Mit ripgrep (rg) zum Finden von Dateien
 rg --files --type ts | repomix --stdin
 
-# Mit sharkdp/fd zum Dateien finden
+# Mit sharkdp/fd zum Finden von Dateien
 fd -e ts | repomix --stdin
 
 # Mit fzf aus allen Dateien auswählen
