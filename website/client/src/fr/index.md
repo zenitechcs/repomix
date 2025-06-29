@@ -74,7 +74,7 @@ Repomix peut être utilisé comme un outil en ligne de commande, offrant des fon
 Vous pouvez essayer Repomix instantanément dans votre répertoire de projet sans installation :
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Ou l'installer globalement pour une utilisation répétée :

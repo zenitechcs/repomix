@@ -19,7 +19,7 @@ Repomix ist ein Tool, das Ihr gesamtes Repository in eine einzige, KI-freundlich
 Führen Sie diesen Befehl in Ihrem Projektverzeichnis aus:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Das war's! Sie finden eine `repomix-output.xml` Datei, die Ihr gesamtes Repository in einem KI-freundlichen Format enthält.

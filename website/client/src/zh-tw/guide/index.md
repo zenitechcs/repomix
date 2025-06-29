@@ -19,7 +19,7 @@ Repomix 是一個將程式碼庫打包成單個 AI 友好文件的工具。它�
 在你的專案目錄中執行以下命令：
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 就這麼簡單！你會在當前目錄中找到一個 `repomix-output.xml` 文件，其中包含了以 AI 友好格式整理的整個程式碼庫。

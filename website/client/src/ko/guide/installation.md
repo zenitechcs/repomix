@@ -3,7 +3,7 @@
 ## npx 사용 (설치 불필요)
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 ## 전역 설치

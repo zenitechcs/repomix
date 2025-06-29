@@ -19,7 +19,7 @@ Repomix es una herramienta que empaqueta todo tu repositorio en un solo archivo 
 Ejecuta este comando en el directorio de tu proyecto:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 ¡Eso es todo! Encontrarás un archivo `repomix-output.xml` que contiene todo tu repositorio en un formato amigable para la IA.

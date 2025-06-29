@@ -79,7 +79,7 @@ Repomix 可以作為命令行工具使用，提供強大的功能和自定義選
 您可以在專案目錄中無需安裝即可立即嘗試 Repomix：
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 或者全局安裝以便重複使用：

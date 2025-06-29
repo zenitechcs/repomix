@@ -77,7 +77,7 @@ Repomix can be used as a command-line tool, offering powerful features and custo
 You can try Repomix instantly in your project directory without installation:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Or install globally for repeated use:

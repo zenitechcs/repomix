@@ -19,7 +19,7 @@ Repomix is a tool that packs your entire repository into a single, AI-friendly f
 Run this command in your project directory:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 That's it! You'll find a `repomix-output.xml` file containing your entire repository in an AI-friendly format.

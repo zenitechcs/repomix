@@ -19,7 +19,7 @@ Repomix est un outil qui regroupe l'ensemble de votre dépôt de code en un seul
 Exécutez cette commande dans le répertoire de votre projet:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 C'est tout! Vous trouverez un fichier `repomix-output.xml` contenant l'intégralité de votre dépôt dans un format adapté à l'IA.

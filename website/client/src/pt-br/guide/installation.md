@@ -3,7 +3,7 @@
 ## Usando npx (Nenhuma Instalação Necessária)
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 ## Instalação Global

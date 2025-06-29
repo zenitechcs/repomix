@@ -83,7 +83,7 @@ If Repomix has helped you analyze or pack codebases for AI tools, we'd be gratef
 You can try Repomix instantly in your project directory without installation:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Or install globally for repeated use:

@@ -77,7 +77,7 @@ Repomix kann als Kommandozeilen-Tool verwendet werden und bietet leistungsstarke
 Sie können Repomix sofort in Ihrem Projektverzeichnis ohne Installation ausprobieren:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Oder installieren Sie es global für wiederholte Verwendung:

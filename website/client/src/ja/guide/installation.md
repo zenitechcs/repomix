@@ -3,7 +3,7 @@
 ## npx を使用する方法 (インストール不要)
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 ## グローバルインストール
