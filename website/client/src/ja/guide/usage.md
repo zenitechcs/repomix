@@ -49,6 +49,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # gitを使用してトラッキングされているファイルを取得
 git ls-files "*.ts" | repomix --stdin
 
+# ripgrepを使用してファイルを検索
+rg --files --type ts | repomix --stdin
+
+# fdを使用してファイルを検索
+fd -e ts | repomix --stdin
+
 # globパターンを使用したls
 ls src/**/*.ts | repomix --stdin
 

@@ -49,6 +49,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # Usando git para obter arquivos rastreados
 git ls-files "*.ts" | repomix --stdin
 
+# Usando ripgrep para encontrar arquivos
+rg --files --type ts | repomix --stdin
+
+# Usando fd para encontrar arquivos
+fd -e ts | repomix --stdin
+
 # Usando ls com padrões glob
 ls src/**/*.ts | repomix --stdin
 
@@ -64,31 +70,14 @@ A opção `--stdin` permite que você canalize uma lista de caminhos de arquivos
 > [!NOTE]
 > Ao usar `--stdin`, os caminhos de arquivos podem ser relativos ou absolutos, e o Repomix tratará automaticamente da resolução de caminhos e deduplicação.
 
-### Entrada de Lista de Arquivos (stdin)
-
-Passe caminhos de arquivos via stdin para máxima flexibilidade:
+### Compressão de Código
 
 ```bash
-# Usando o comando find
-find src -name "*.ts" -type f | repomix --stdin
+repomix --compress
 
-# Usando git para obter arquivos rastreados
-git ls-files "*.ts" | repomix --stdin
-
-# Usando ls com padrões glob
-ls src/**/*.ts | repomix --stdin
-
-# De um arquivo contendo caminhos de arquivos
-cat file-list.txt | repomix --stdin
-
-# Entrada direta com echo
-echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+# Você também pode usar com repositórios remotos:
+repomix --remote yamadashy/repomix --compress
 ```
-
-A opção `--stdin` permite canalizar uma lista de caminhos de arquivos para o Repomix, oferecendo máxima flexibilidade na seleção de quais arquivos compactar.
-
-> [!NOTE]
-> Ao usar `--stdin`, os caminhos de arquivos podem ser relativos ou absolutos, e o Repomix irá automaticamente lidar com a resolução de caminhos e desduplicação.
 
 ## Formatos de Saída
 

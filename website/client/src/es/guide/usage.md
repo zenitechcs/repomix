@@ -49,6 +49,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # Usando git para obtener archivos rastreados
 git ls-files "*.ts" | repomix --stdin
 
+# Usando ripgrep para encontrar archivos
+rg --files --type ts | repomix --stdin
+
+# Usando fd para encontrar archivos
+fd -e ts | repomix --stdin
+
 # Usando ls con patrones glob
 ls src/**/*.ts | repomix --stdin
 
@@ -63,6 +69,15 @@ La opción `--stdin` te permite canalizar una lista de rutas de archivos a Repom
 
 > [!NOTE]
 > Cuando uses `--stdin`, las rutas de archivos pueden ser relativas o absolutas, y Repomix manejará automáticamente la resolución de rutas y la eliminación de duplicados.
+
+### Compresión de código
+
+```bash
+repomix --compress
+
+# También puedes usarlo con repositorios remotos:
+repomix --remote yamadashy/repomix --compress
+```
 
 ## Formatos de salida
 

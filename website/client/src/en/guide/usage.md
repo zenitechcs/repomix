@@ -49,6 +49,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # Using git to get tracked files
 git ls-files "*.ts" | repomix --stdin
 
+# Using ripgrep to find files
+rg --files --type ts | repomix --stdin
+
+# Using fd to find files
+fd -e ts | repomix --stdin
+
 # Using ls with glob patterns
 ls src/**/*.ts | repomix --stdin
 

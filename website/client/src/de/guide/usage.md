@@ -49,6 +49,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # Mit Git für verfolgte Dateien
 git ls-files "*.ts" | repomix --stdin
 
+# Mit ripgrep zum Dateien finden
+rg --files --type ts | repomix --stdin
+
+# Mit fd zum Dateien finden
+fd -e ts | repomix --stdin
+
 # Mit ls und Glob-Mustern
 ls src/**/*.ts | repomix --stdin
 
@@ -63,6 +69,15 @@ Die `--stdin`-Option ermöglicht es Ihnen, eine Liste von Dateipfaden an Repomix
 
 > [!NOTE]
 > Bei der Verwendung von `--stdin` können Dateipfade relativ oder absolut angegeben werden, und Repomix übernimmt automatisch die Pfadauflösung und Deduplizierung.
+
+### Code-Komprimierung
+
+```bash
+repomix --compress
+
+# Sie können es auch mit Remote-Repositories verwenden:
+repomix --remote yamadashy/repomix --compress
+```
 
 ## Ausgabeformate
 
