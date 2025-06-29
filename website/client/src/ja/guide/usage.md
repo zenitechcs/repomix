@@ -52,6 +52,15 @@ git ls-files "*.ts" | repomix --stdin
 # ripgrep (rg) を使用してファイルを検索
 rg --files --type ts | repomix --stdin
 
+# grepを使用して特定の内容を含むファイルを検索
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# ripgrepを使用して特定の内容を含むファイルを検索
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
+# ripgrep (rg) を使用してファイルを検索
+rg --files --type ts | repomix --stdin
+
 # sharkdp/fd を使用してファイルを検索
 fd -e ts | repomix --stdin
 

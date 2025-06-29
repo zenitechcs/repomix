@@ -52,6 +52,15 @@ git ls-files "*.ts" | repomix --stdin
 # 使用 ripgrep (rg) 查找文件
 rg --files --type ts | repomix --stdin
 
+# 使用 grep 查找包含特定內容的文件
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# 使用 ripgrep 查找包含特定內容的文件
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
+# 使用 ripgrep (rg) 查找文件
+rg --files --type ts | repomix --stdin
+
 # 使用 sharkdp/fd 查找文件
 fd -e ts | repomix --stdin
 

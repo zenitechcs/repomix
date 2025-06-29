@@ -92,6 +92,12 @@ find src -name "*.ts" -type f | repomix --stdin
 # git का उपयोग करके ट्रैक्ड फ़ाइलें प्राप्त करने के लिए
 git ls-files "*.ts" | repomix --stdin
 
+# विशिष्ट सामग्री वाली फ़ाइलें खोजने के लिए grep का उपयोग करके
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# विशिष्ट सामग्री वाली फ़ाइलें खोजने के लिए ripgrep का उपयोग करके
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
 # फ़ाइलें खोजने के लिए ripgrep (rg) का उपयोग करके
 rg --files --type ts | repomix --stdin
 
