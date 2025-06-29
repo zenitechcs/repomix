@@ -185,8 +185,11 @@ export const runCli = async (directories: string[], cwd: string, options: CliOpt
     return;
   }
 
-  const version = await getVersion();
-  logger.log(pc.dim(`\n📦 Repomix v${version}\n`));
+  // Skip version header in stdin mode to avoid interfering with piped output from interactive tools like fzf
+  if (!options.stdin) {
+    const version = await getVersion();
+    logger.log(pc.dim(`\n📦 Repomix v${version}\n`));
+  }
 
   if (options.init) {
     await runInitAction(cwd, options.global || false);

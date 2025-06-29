@@ -37,6 +37,8 @@ export const resolveAndDeduplicatePaths = (lines: string[], cwd: string): string
 
 /**
  * Reads lines from a readable stream using readline interface.
+ * Waits for EOF before returning all collected lines.
+ * Handles interactive tools like fzf that may take time to provide output.
  */
 export const readLinesFromStream = async (
   input: Readable,
@@ -45,11 +47,18 @@ export const readLinesFromStream = async (
   const rl = createInterface({ input });
   const lines: string[] = [];
 
-  for await (const line of rl) {
-    lines.push(line);
+  try {
+    for await (const line of rl) {
+      lines.push(line);
+    }
+    // The for-await loop naturally waits for EOF before completing
+    return lines;
+  } finally {
+    // Safely close the readline interface if it has a close method
+    if (rl && typeof rl.close === 'function') {
+      rl.close();
+    }
   }
-
-  return lines;
 };
 
 /**
@@ -74,7 +83,7 @@ export const readFilePathsFromStdin = async (
       throw new RepomixError('No data provided via stdin. Please pipe file paths to repomix when using --stdin flag.');
     }
 
-    // Read all lines from stdin
+    // Read all lines from stdin (wait for EOF)
     const rawLines = await readLinesFromStream(stdin as Readable, createReadlineInterface);
 
     // Filter out empty lines and comments

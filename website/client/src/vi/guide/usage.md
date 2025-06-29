@@ -61,6 +61,24 @@ find src -name "*.ts" -type f | repomix --stdin
 # Sử dụng git để lấy các tệp được theo dõi
 git ls-files "*.ts" | repomix --stdin
 
+# Sử dụng grep để tìm tệp chứa nội dung cụ thể
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# Sử dụng ripgrep để tìm tệp với nội dung cụ thể
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
+# Sử dụng ripgrep (rg) để tìm tệp
+rg --files --type ts | repomix --stdin
+
+# Sử dụng sharkdp/fd để tìm tệp
+fd -e ts | repomix --stdin
+
+# Sử dụng fzf để chọn từ tất cả các tệp
+fzf -m | repomix --stdin
+
+# Chọn tệp tương tác với fzf
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
+
 # Sử dụng ls với các mẫu glob
 ls src/**/*.ts | repomix --stdin
 

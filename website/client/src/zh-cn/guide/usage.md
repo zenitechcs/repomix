@@ -49,6 +49,24 @@ find src -name "*.ts" -type f | repomix --stdin
 # 使用 git 获取跟踪的文件
 git ls-files "*.ts" | repomix --stdin
 
+# 使用 ripgrep (rg) 查找文件
+rg --files --type ts | repomix --stdin
+
+# 使用 grep 查找包含特定内容的文件
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# 使用 ripgrep 查找包含特定内容的文件
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
+# 使用 sharkdp/fd 查找文件
+fd -e ts | repomix --stdin
+
+# 使用 fzf 从所有文件中选择
+fzf -m | repomix --stdin
+
+# 使用 fzf 进行交互式文件选择
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
+
 # 使用 ls 和 glob 模式
 ls src/**/*.ts | repomix --stdin
 
@@ -63,6 +81,15 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 > [!NOTE]
 > 使用 `--stdin` 时，文件路径可以是相对路径或绝对路径，Repomix 会自动处理路径解析和去重。
+
+### 代码压缩
+
+```bash
+repomix --compress
+
+# 您也可以将其用于远程仓库：
+repomix --remote yamadashy/repomix --compress
+```
 
 ## 输出格式
 
