@@ -78,7 +78,7 @@ Repomix có thể được sử dụng như một công cụ dòng lệnh, cung 
 Bạn có thể thử Repomix ngay lập tức trong thư mục dự án của bạn mà không cần cài đặt:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Hoặc cài đặt toàn cục để sử dụng nhiều lần:

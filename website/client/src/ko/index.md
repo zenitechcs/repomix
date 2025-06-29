@@ -79,7 +79,7 @@ Repomix는 강력한 기능과 사용자 정의 옵션을 제공하는 명령줄
 프로젝트 디렉토리에서 설치 없이 바로 Repomix를 시작할 수 있습니다:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 또는 반복 사용을 위해 전역 설치:

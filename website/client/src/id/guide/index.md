@@ -19,7 +19,7 @@ Repomix adalah alat yang mengemas seluruh repositori Anda menjadi satu file yang
 Jalankan perintah ini di direktori proyek Anda:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Itu saja! Anda akan menemukan file `repomix-output.xml` yang berisi seluruh repositori Anda dalam format yang ramah AI.

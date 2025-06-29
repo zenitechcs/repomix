@@ -19,7 +19,7 @@ Repomix là một công cụ đóng gói toàn bộ kho lưu trữ của bạn t
 Chạy lệnh này trong thư mục dự án của bạn:
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 Vậy là xong! Bạn sẽ tìm thấy một tệp `repomix-output.xml` chứa toàn bộ kho lưu trữ của bạn ở định dạng thân thiện với AI.

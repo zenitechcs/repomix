@@ -19,7 +19,7 @@ Repomixは、リポジトリ全体をAIフレンドリーな単一ファイル�
 プロジェクトディレクトリで以下のコマンドを実行するだけです。
 
 ```bash
-npx repomix
+npx repomix@latest
 ```
 
 これだけで、`repomix-output.xml`ファイルにAIが理解しやすい形式でリポジトリ全体がまとめられます。
