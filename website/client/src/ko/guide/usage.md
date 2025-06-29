@@ -49,11 +49,17 @@ find src -name "*.ts" -type f | repomix --stdin
 # git을 사용하여 추적된 파일 가져오기
 git ls-files "*.ts" | repomix --stdin
 
-# ripgrep을 사용하여 파일 찾기
+# ripgrep (rg) 을 사용하여 파일 찾기
 rg --files --type ts | repomix --stdin
 
-# fd를 사용하여 파일 찾기
+# sharkdp/fd 를 사용하여 파일 찾기
 fd -e ts | repomix --stdin
+
+# fzf를 사용하여 모든 파일에서 선택
+fzf -m | repomix --stdin
+
+# fzf를 사용한 대화형 파일 선택
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
 
 # glob 패턴과 함께 ls 사용
 ls src/**/*.ts | repomix --stdin

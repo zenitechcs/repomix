@@ -53,11 +53,17 @@ find src -name "*.ts" -type f | repomix --stdin
 # En utilisant git pour obtenir les fichiers suivis
 git ls-files "*.ts" | repomix --stdin
 
-# En utilisant ripgrep pour trouver des fichiers
+# En utilisant ripgrep (rg) pour trouver des fichiers
 rg --files --type ts | repomix --stdin
 
-# En utilisant fd pour trouver des fichiers
+# En utilisant sharkdp/fd pour trouver des fichiers
 fd -e ts | repomix --stdin
+
+# En utilisant fzf pour sélectionner à partir de tous les fichiers
+fzf -m | repomix --stdin
+
+# Sélection interactive de fichiers avec fzf
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
 
 # En utilisant ls avec des motifs glob
 ls src/**/*.ts | repomix --stdin

@@ -64,11 +64,17 @@ find src -name "*.ts" -type f | repomix --stdin
 # Menggunakan git untuk mendapatkan file yang terlacak
 git ls-files "*.ts" | repomix --stdin
 
-# Menggunakan ripgrep untuk mencari file
+# Menggunakan ripgrep (rg) untuk mencari file
 rg --files --type ts | repomix --stdin
 
-# Menggunakan fd untuk mencari file
+# Menggunakan sharkdp/fd untuk mencari file
 fd -e ts | repomix --stdin
+
+# Menggunakan fzf untuk memilih dari semua file
+fzf -m | repomix --stdin
+
+# Pemilihan file interaktif dengan fzf
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
 
 # Menggunakan ls dengan pola glob
 ls src/**/*.ts | repomix --stdin

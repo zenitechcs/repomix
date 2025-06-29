@@ -49,11 +49,17 @@ find src -name "*.ts" -type f | repomix --stdin
 # 使用 git 獲取追蹤的文件
 git ls-files "*.ts" | repomix --stdin
 
-# 使用 ripgrep 查找文件
+# 使用 ripgrep (rg) 查找文件
 rg --files --type ts | repomix --stdin
 
-# 使用 fd 查找文件
+# 使用 sharkdp/fd 查找文件
 fd -e ts | repomix --stdin
+
+# 使用 fzf 從所有文件中選擇
+fzf -m | repomix --stdin
+
+# 使用 fzf 進行互動式文件選擇
+find . -name "*.ts" -type f | fzf -m | repomix --stdin
 
 # 使用 ls 和 glob 模式
 ls src/**/*.ts | repomix --stdin
