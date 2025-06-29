@@ -71,14 +71,15 @@ export const handleStdinProcessing = async (
     );
   }
 
-  const spinner = new Spinner('', cliOptions);
+  const spinner = new Spinner('Reading file paths from stdin...', cliOptions);
 
   let packResult: PackResult;
 
   try {
     const stdinResult = await readFilePathsFromStdin(cwd);
 
-    spinner.start('Packing files...');
+    spinner.start();
+    spinner.update('Packing files...');
 
     // Use pack with predefined files from stdin
     packResult = await pack(
