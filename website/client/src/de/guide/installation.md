@@ -71,7 +71,7 @@ Erhalten Sie direkten Zugang zu Repomix von jedem GitHub-Repository! Unsere Chro
 
 ## Systemanforderungen
 
-- Node.js: ≥ 18.0.0
+- Node.js: ≥ 20.0.0
 - Git: Erforderlich für die Verarbeitung von Remote-Repositories
 
 ## Überprüfung
