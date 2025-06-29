@@ -58,9 +58,6 @@ grep -l "TODO" **/*.ts | repomix --stdin
 # Usando ripgrep para encontrar arquivos com conteúdo específico
 rg -l "TODO|FIXME" --type ts | repomix --stdin
 
-# Usando ripgrep (rg) para encontrar arquivos
-rg --files --type ts | repomix --stdin
-
 # Usando sharkdp/fd para encontrar arquivos
 fd -e ts | repomix --stdin
 

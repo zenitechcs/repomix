@@ -58,9 +58,6 @@ grep -l "TODO" **/*.ts | repomix --stdin
 # ripgrep을 사용하여 특정 내용을 포함하는 파일 찾기
 rg -l "TODO|FIXME" --type ts | repomix --stdin
 
-# ripgrep (rg) 을 사용하여 파일 찾기
-rg --files --type ts | repomix --stdin
-
 # sharkdp/fd 를 사용하여 파일 찾기
 fd -e ts | repomix --stdin
 
