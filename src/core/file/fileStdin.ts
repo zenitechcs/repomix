@@ -47,24 +47,18 @@ export const readLinesFromStream = async (
   const rl = createInterface({ input });
   const lines: string[] = [];
 
-  return new Promise<string[]>((resolve, reject) => {
-    rl.on('line', (line) => {
+  try {
+    for await (const line of rl) {
       lines.push(line);
-    });
-
-    rl.on('close', () => {
-      resolve(lines);
-    });
-
-    rl.on('error', (error) => {
-      reject(error);
-    });
-
-    // Ensure we wait for the end of input
-    input.on('end', () => {
+    }
+    // The for-await loop naturally waits for EOF before completing
+    return lines;
+  } finally {
+    // Safely close the readline interface if it has a close method
+    if (rl && typeof rl.close === 'function') {
       rl.close();
-    });
-  });
+    }
+  }
 };
 
 /**
@@ -84,7 +78,12 @@ export const readFilePathsFromStdin = async (
   try {
     const { stdin, createReadlineInterface } = deps;
 
-    // Read all lines from stdin (wait for EOF even if stdin is TTY for tools like fzf)
+    // Check if stdin is a TTY (interactive mode)
+    if (stdin.isTTY) {
+      throw new RepomixError('No data provided via stdin. Please pipe file paths to repomix when using --stdin flag.');
+    }
+
+    // Read all lines from stdin (wait for EOF)
     const rawLines = await readLinesFromStream(stdin as Readable, createReadlineInterface);
 
     // Filter out empty lines and comments
