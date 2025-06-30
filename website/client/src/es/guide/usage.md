@@ -79,6 +79,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 La opción `--stdin` te permite canalizar una lista de rutas de archivos a Repomix, brindando máxima flexibilidad en la selección de qué archivos empaquetar.
 
+Cuando se usa `--stdin`, los archivos especificados se agregan efectivamente a los patrones de inclusión. Esto significa que el comportamiento normal de inclusión e ignorar sigue aplicando - los archivos especificados vía stdin aún serán excluidos si coinciden con patrones de ignorar.
+
 > [!NOTE]
 > Cuando uses `--stdin`, las rutas de archivos pueden ser relativas o absolutas, y Repomix manejará automáticamente la resolución de rutas y la eliminación de duplicados.
 

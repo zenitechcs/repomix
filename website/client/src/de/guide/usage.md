@@ -79,6 +79,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 Die `--stdin`-Option ermöglicht es Ihnen, eine Liste von Dateipfaden an Repomix zu übertragen und bietet ultimative Flexibilität bei der Auswahl der zu packenden Dateien.
 
+Bei der Verwendung von `--stdin` werden die angegebenen Dateien effektiv zu den Include-Mustern hinzugefügt. Das bedeutet, dass das normale Include- und Ignore-Verhalten weiterhin gilt - über stdin angegebene Dateien werden trotzdem ausgeschlossen, wenn sie mit Ignore-Mustern übereinstimmen.
+
 > [!NOTE]
 > Bei der Verwendung von `--stdin` können Dateipfade relativ oder absolut angegeben werden, und Repomix übernimmt automatisch die Pfadauflösung und Deduplizierung.
 
