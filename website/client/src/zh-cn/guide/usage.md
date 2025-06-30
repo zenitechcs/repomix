@@ -79,6 +79,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 `--stdin` 选项允许您向 Repomix 传递文件路径列表，在选择要打包的文件时提供终极灵活性。
 
+使用 `--stdin` 时，指定的文件实际上被添加到包含模式中。这意味着正常的包含和忽略行为仍然适用 - 通过 stdin 指定的文件如果匹配忽略模式仍会被排除。
+
 > [!NOTE]
 > 使用 `--stdin` 时，文件路径可以是相对路径或绝对路径，Repomix 会自动处理路径解析和去重。
 

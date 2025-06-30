@@ -94,6 +94,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 Opsi `--stdin` memungkinkan Anda untuk mem-pipe daftar jalur file ke Repomix, memberikan fleksibilitas maksimum dalam memilih file mana yang akan dikemas.
 
+Saat menggunakan `--stdin`, file yang ditentukan secara efektif ditambahkan ke pola include. Ini berarti perilaku include dan ignore normal masih berlaku - file yang ditentukan melalui stdin masih akan dikecualikan jika cocok dengan pola ignore.
+
 > [!NOTE]
 > Saat menggunakan `--stdin`, jalur file dapat berupa jalur relatif atau absolut, dan Repomix akan menangani resolusi jalur dan deduplikasi secara otomatis.
 

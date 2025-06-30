@@ -79,6 +79,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 A opção `--stdin` permite que você canalize uma lista de caminhos de arquivos para o Repomix, oferecendo máxima flexibilidade na seleção de quais arquivos compactar.
 
+Ao usar `--stdin`, os arquivos especificados são efetivamente adicionados aos padrões de inclusão. Isso significa que o comportamento normal de inclusão e exclusão ainda se aplica - arquivos especificados via stdin ainda serão excluídos se coincidirem com padrões de exclusão.
+
 > [!NOTE]
 > Ao usar `--stdin`, os caminhos de arquivos podem ser relativos ou absolutos, e o Repomix tratará automaticamente da resolução de caminhos e deduplicação.
 

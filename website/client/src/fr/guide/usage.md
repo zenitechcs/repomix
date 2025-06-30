@@ -83,6 +83,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 L'option `--stdin` vous permet de transmettre une liste de chemins de fichiers à Repomix, offrant une flexibilité ultime dans la sélection des fichiers à empaqueter.
 
+Lorsque vous utilisez `--stdin`, les fichiers spécifiés sont effectivement ajoutés aux motifs d'inclusion. Cela signifie que le comportement normal d'inclusion et d'exclusion s'applique toujours - les fichiers spécifiés via stdin seront toujours exclus s'ils correspondent aux motifs d'exclusion.
+
 > [!NOTE]
 > Lors de l'utilisation de `--stdin`, les chemins de fichiers peuvent être relatifs ou absolus, et Repomix gèrera automatiquement la résolution des chemins et la déduplication.
 

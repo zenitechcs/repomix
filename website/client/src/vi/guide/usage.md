@@ -91,6 +91,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 Tùy chọn `--stdin` cho phép bạn truyền danh sách đường dẫn tệp tới Repomix, mang lại tính linh hoạt tối đa trong việc chọn tệp nào để đóng gói.
 
+Khi sử dụng `--stdin`, các tệp được chỉ định thực sự được thêm vào các mẫu bao gồm. Điều này có nghĩa là hành vi bao gồm và bỏ qua bình thường vẫn áp dụng - các tệp được chỉ định qua stdin vẫn sẽ bị loại trừ nếu chúng khớp với các mẫu bỏ qua.
+
 > [!NOTE]
 > Khi sử dụng `--stdin`, đường dẫn tệp có thể là tương đối hoặc tuyệt đối, và Repomix sẽ tự động xử lý việc phân giải đường dẫn và loại bỏ trùng lặp.
 

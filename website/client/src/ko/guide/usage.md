@@ -79,6 +79,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 `--stdin` 옵션을 사용하면 파일 경로 목록을 Repomix로 파이프할 수 있어 패킹할 파일 선택에 최고의 유연성을 제공합니다.
 
+`--stdin`을 사용할 때 지정된 파일은 실질적으로 include 패턴에 추가됩니다. 즉, 일반적인 include 및 ignore 동작이 여전히 적용되므로 stdin으로 지정한 파일도 ignore 패턴과 일치하면 제외됩니다.
+
 > [!NOTE]
 > `--stdin`을 사용할 때 파일 경로는 상대 경로 또는 절대 경로가 될 수 있으며, Repomix가 자동으로 경로 해석과 중복 제거를 처리합니다.
 
