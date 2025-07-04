@@ -9,7 +9,9 @@ const EXIT_CODES = {
 };
 
 if (major < 20) {
-  console.warn(`Warning: Repomix recommends Node.js version 20 or higher. Current version: ${nodeVersion}. Some features may not work as expected.\n`);
+  console.warn(
+    `Warning: Repomix recommends Node.js version 20 or higher. Current version: ${nodeVersion}. Some features may not work as expected.\n`,
+  );
 }
 
 function setupErrorHandlers() {
