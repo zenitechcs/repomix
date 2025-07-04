@@ -1,7 +1,7 @@
 import os from 'node:os';
 import { Tinypool } from 'tinypool';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getProcessConcurrency, getWorkerThreadCount, initTinypool } from '../../src/shared/processConcurrency.js';
+import { getProcessConcurrency, getWorkerThreadCount, initWorker } from '../../src/shared/processConcurrency.js';
 
 vi.mock('node:os');
 vi.mock('tinypool');
@@ -60,7 +60,7 @@ describe('processConcurrency', () => {
     });
   });
 
-  describe('initTinypool', () => {
+  describe('initWorker', () => {
     beforeEach(() => {
       vi.mocked(os).availableParallelism = vi.fn().mockReturnValue(4);
       vi.mocked(Tinypool).mockImplementation(() => ({}) as Tinypool);
@@ -68,7 +68,7 @@ describe('processConcurrency', () => {
 
     it('should initialize Tinypool with correct configuration', () => {
       const workerPath = '/path/to/worker.js';
-      const tinypool = initTinypool(500, workerPath);
+      const tinypool = initWorker(500, workerPath);
 
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,

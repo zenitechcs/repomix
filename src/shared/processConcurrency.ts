@@ -20,7 +20,7 @@ export const getWorkerThreadCount = (numOfTasks: number): { minThreads: number; 
   };
 };
 
-export const initTinypool = (numOfTasks: number, workerPath: string): Tinypool => {
+export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => {
   const { minThreads, maxThreads } = getWorkerThreadCount(numOfTasks);
 
   logger.trace(

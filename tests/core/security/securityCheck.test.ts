@@ -12,7 +12,7 @@ import { repomixLogLevels } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');
 vi.mock('../../../src/shared/processConcurrency', () => ({
-  initTinypool: vi.fn(() => ({
+  initWorker: vi.fn(() => ({
     run: vi.fn().mockImplementation(async (task: SecurityCheckTask) => {
       return await securityCheckWorker(task);
     }),
