@@ -236,9 +236,9 @@ jobs:
       - run: bun run build
       - name: Install only production dependencies
         run: bun install --production
-      - run: node bin/repomix.cjs
-      - run: node bin/repomix.cjs --version
-      - run: node bin/repomix.cjs --help
+      - run: bun bin/repomix.cjs
+      - run: bun bin/repomix.cjs --version
+      - run: bun bin/repomix.cjs --help
       - name: Upload build artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4
         with:
