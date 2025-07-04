@@ -8,8 +8,8 @@ const EXIT_CODES = {
   ERROR: 1,
 };
 
-if (major < 16) {
-  console.error(`Repomix requires Node.js version 16 or higher. Current version: ${nodeVersion}\n`);
+if (major < 20) {
+  console.error(`Repomix requires Node.js version 20 or higher. Current version: ${nodeVersion}\n`);
   process.exit(EXIT_CODES.ERROR);
 }
 
