@@ -19,8 +19,8 @@
   },
   "bin": "./bin/repomix.cjs",
   "scripts": {
-    "clean": "rimraf lib",
-    "build": "node --run clean && tsc -p tsconfig.build.json --sourceMap --declaration",
+    "build": "rimraf lib && tsc -p tsconfig.build.json --sourceMap --declaration",
+    "build-bun": "bun run build",
     "lint": "node --run lint-biome && node --run lint-ts && node --run lint-secretlint",
     "lint-biome": "biome check --write",
     "lint-ts": "tsc --noEmit",
