@@ -34,10 +34,15 @@ describe('MCP Server', () => {
     test('should create server with correct configuration', async () => {
       const server = await createMcpServer();
 
-      expect(McpServer).toHaveBeenCalledWith({
-        name: 'repomix-mcp-server',
-        version: mockVersion,
-      });
+      expect(McpServer).toHaveBeenCalledWith(
+        {
+          name: 'repomix-mcp-server',
+          version: mockVersion,
+        },
+        {
+          instructions: expect.stringContaining('Repomix MCP Server provides AI-optimized codebase analysis tools'),
+        },
+      );
       expect(server).toBeDefined();
     });
   });
