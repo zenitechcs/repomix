@@ -154,12 +154,39 @@ You can use grep with \`path="<file-path>"\` to locate specific files within the
 
 export const convertErrorToJson = (
   error: unknown,
-): { errorMessage: string; details: { stack?: string; name: string } } => {
+): {
+  errorMessage: string;
+  details: {
+    stack?: string;
+    name: string;
+    cause?: unknown;
+    code?: string | number;
+    timestamp: string;
+    type: 'Error' | 'Unknown';
+  };
+} => {
+  const timestamp = new Date().toISOString();
+  
+  if (error instanceof Error) {
+    return {
+      errorMessage: error.message,
+      details: {
+        stack: error.stack,
+        name: error.name,
+        cause: error.cause,
+        code: (error as any).code || (error as any).errno,
+        timestamp,
+        type: 'Error',
+      },
+    };
+  }
+  
   return {
-    errorMessage: error instanceof Error ? error.message : String(error),
+    errorMessage: String(error),
     details: {
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'UnknownError',
+      name: 'UnknownError',
+      timestamp,
+      type: 'Unknown',
     },
   };
 };
