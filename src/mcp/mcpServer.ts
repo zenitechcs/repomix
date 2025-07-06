@@ -11,10 +11,16 @@ import { registerPackRemoteRepositoryTool } from './tools/packRemoteRepositoryTo
 import { registerReadRepomixOutputTool } from './tools/readRepomixOutputTool.js';
 
 export const createMcpServer = async () => {
-  const mcpServer = new McpServer({
-    name: 'repomix-mcp-server',
-    version: await getVersion(),
-  });
+  const mcpServer = new McpServer(
+    {
+      name: 'repomix-mcp-server',
+      version: await getVersion(),
+    },
+    {
+      instructions:
+        'Repomix MCP Server provides AI-optimized codebase analysis tools. Use pack_codebase or pack_remote_repository to consolidate code into a single XML file, then read_repomix_output and grep_repomix_output to analyze it. Perfect for code reviews, documentation generation, bug investigation, and understanding large codebases. Includes security scanning and supports compression for token efficiency.',
+    },
+  );
 
   // Register the prompts
   registerPackRemoteRepositoryPrompt(mcpServer);
