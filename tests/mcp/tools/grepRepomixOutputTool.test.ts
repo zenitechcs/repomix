@@ -468,7 +468,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       expect(parsedResult.formattedOutput).toContain('2:pattern match');
       expect(parsedResult.formattedOutput).toContain('4:another pattern');
     });
@@ -551,7 +551,7 @@ describe('grepRepomixOutputTool', () => {
       const result = await toolHandler({ outputId: 'test-id', pattern: 'notfound' });
 
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('No matches found');
+      expect(parsedResult.description).toContain('No matches found');
     });
 
     it('should handle invalid regex patterns', async () => {
@@ -563,7 +563,7 @@ describe('grepRepomixOutputTool', () => {
 
       expect(result.isError).toBe(true);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Invalid regular expression pattern');
+      expect(parsedResult.errorMessage).toContain('Invalid regular expression pattern');
     });
 
     it('should handle file not found error', async () => {
@@ -573,7 +573,7 @@ describe('grepRepomixOutputTool', () => {
 
       expect(result.isError).toBe(true);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Output file with ID test-id not found');
+      expect(parsedResult.errorMessage).toContain('Output file with ID test-id not found');
     });
 
     it('should handle file access error', async () => {
@@ -584,7 +584,7 @@ describe('grepRepomixOutputTool', () => {
 
       expect(result.isError).toBe(true);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Output file does not exist');
+      expect(parsedResult.errorMessage).toContain('Output file does not exist');
     });
 
     // Multilingual and Unicode content integration tests
@@ -600,7 +600,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       expect(parsedResult.formattedOutput).toContain('2:日本語のパターン');
       expect(parsedResult.formattedOutput).toContain('4:別の日本語');
     });
@@ -615,7 +615,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       expect(parsedResult.formattedOutput).toContain('2:中文搜索');
       expect(parsedResult.formattedOutput).toContain('4:更多中文');
     });
@@ -632,7 +632,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       expect(parsedResult.formattedOutput).toContain('2:한국어 검색');
       expect(parsedResult.formattedOutput).toContain('4:다른 한국어');
     });
@@ -649,7 +649,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       expect(parsedResult.formattedOutput).toContain('2:🎉 celebration');
       expect(parsedResult.formattedOutput).toContain('4:🚀 rocket emoji');
     });
@@ -666,7 +666,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 4 match(es)');
+      expect(parsedResult.description).toContain('Found 4 match(es)');
       const formattedOutputString = parsedResult.formattedOutput.join('\n');
       expect(formattedOutputString).toContain('1:English line');
       expect(formattedOutputString).toContain('2-日本語とEnglish混在');
@@ -686,7 +686,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 4 match(es)');
+      expect(parsedResult.description).toContain('Found 4 match(es)');
       const formattedOutputString = parsedResult.formattedOutput.join('\n');
       expect(formattedOutputString).toContain('1:user@example.com');
       expect(formattedOutputString).toContain('2:ユーザー@例.jp');
@@ -706,7 +706,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       const formattedOutputString = parsedResult.formattedOutput.join('\n');
       expect(formattedOutputString).toContain('2:$special chars #symbols');
       expect(formattedOutputString).toContain('4:&more $special items');
@@ -724,7 +724,7 @@ describe('grepRepomixOutputTool', () => {
       expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const parsedResult = JSON.parse(result.content[0].text);
-      expect(parsedResult.message).toContain('Found 2 match(es)');
+      expect(parsedResult.description).toContain('Found 2 match(es)');
       const formattedOutputString = parsedResult.formattedOutput.join('\n');
       expect(formattedOutputString).toContain('2:NIPPON語test');
       expect(formattedOutputString).toContain('4:TEST中文');

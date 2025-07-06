@@ -206,7 +206,7 @@ describe('mcpToolRuntime', () => {
 
   describe('buildMcpToolSuccessResponse', () => {
     it('should create a successful response with structured content', () => {
-      const structuredContent = { message: 'Operation completed successfully' };
+      const structuredContent = { description: 'Operation completed successfully' };
       const response = buildMcpToolSuccessResponse(structuredContent);
 
       expect(response).toEqual({
@@ -223,7 +223,7 @@ describe('mcpToolRuntime', () => {
 
     it('should create a successful response with complex structured content', () => {
       const structuredContent = {
-        message: 'Operation completed successfully',
+        description: 'Operation completed successfully',
         results: ['First result', 'Second result', 'Third result'],
         count: 3,
       };

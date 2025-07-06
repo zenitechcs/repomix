@@ -30,7 +30,7 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
         // Ensure path is absolute
         if (!path.isAbsolute(directoryPath)) {
           return buildMcpToolErrorResponse({
-            message: `Error: Path must be absolute. Received: ${directoryPath}`,
+            errorMessage: `Error: Path must be absolute. Received: ${directoryPath}`,
           });
         }
 
@@ -39,12 +39,12 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
           const stats = await fs.stat(directoryPath);
           if (!stats.isDirectory()) {
             return buildMcpToolErrorResponse({
-              message: `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
+              errorMessage: `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
             });
           }
         } catch {
           return buildMcpToolErrorResponse({
-            message: `Error: Directory not found at path: ${directoryPath}`,
+            errorMessage: `Error: Directory not found at path: ${directoryPath}`,
           });
         }
 
@@ -55,13 +55,13 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
           .join('\n');
 
         return buildMcpToolSuccessResponse({
-          message: `Contents of ${directoryPath}:`,
+          description: `Contents of ${directoryPath}:`,
           content: formatted || '(empty directory)',
         });
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
         return buildMcpToolErrorResponse({
-          message: `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
+          errorMessage: `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
         });
       }
     },

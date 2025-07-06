@@ -71,7 +71,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
         const result = await runCli(['.'], directory, cliOptions);
         if (!result) {
           return buildMcpToolErrorResponse({
-            message: 'Failed to return a result',
+            errorMessage: 'Failed to return a result',
           });
         }
 

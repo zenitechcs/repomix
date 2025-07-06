@@ -76,7 +76,7 @@ export const registerPackRemoteRepositoryTool = (mcpServer: McpServer) => {
         const result = await runCli(['.'], process.cwd(), cliOptions);
         if (!result) {
           return buildMcpToolErrorResponse({
-            message: 'Failed to return a result',
+            errorMessage: 'Failed to return a result',
           });
         }
 

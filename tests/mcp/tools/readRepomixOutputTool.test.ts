@@ -72,7 +72,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Error: Output file with ID non-existent-id not found');
+    expect(parsedResult.errorMessage).toContain('Error: Output file with ID non-existent-id not found');
   });
 
   it('should return an error if the file does not exist', async () => {
@@ -86,7 +86,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Error: Output file does not exist at path: /path/to/file.xml');
+    expect(parsedResult.errorMessage).toContain('Error: Output file does not exist at path: /path/to/file.xml');
   });
 
   it('should successfully read the file content', async () => {
@@ -102,7 +102,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBeUndefined();
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id)');
+    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id)');
     expect(parsedResult.processedContent).toBe('File content here');
   });
 
@@ -116,7 +116,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Unexpected error');
+    expect(parsedResult.errorMessage).toContain('Unexpected error');
   });
 
   it('should read specific line range when startLine and endLine are provided', async () => {
@@ -130,7 +130,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBeUndefined();
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 2-4)');
+    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 2-4)');
     expect(parsedResult.processedContent).toBe('Line 2\nLine 3\nLine 4');
   });
 
@@ -143,7 +143,7 @@ describe('readRepomixOutputTool', () => {
 
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 3-end)');
+    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 3-end)');
     expect(parsedResult.processedContent).toBe('Line 3\nLine 4\nLine 5');
   });
 
@@ -156,7 +156,7 @@ describe('readRepomixOutputTool', () => {
 
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 1-2)');
+    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 1-2)');
     expect(parsedResult.processedContent).toBe('Line 1\nLine 2');
   });
 
@@ -170,7 +170,7 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Error: Start line 10 exceeds total lines (3)');
+    expect(parsedResult.errorMessage).toContain('Error: Start line 10 exceeds total lines (3)');
   });
 
   it('should return an error if startLine is greater than endLine', async () => {
@@ -183,6 +183,6 @@ describe('readRepomixOutputTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.message).toContain('Error: Start line (4) cannot be greater than end line (2)');
+    expect(parsedResult.errorMessage).toContain('Error: Start line (4) cannot be greater than end line (2)');
   });
 });

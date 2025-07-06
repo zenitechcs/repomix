@@ -152,9 +152,11 @@ You can use grep with \`path="<file-path>"\` to locate specific files within the
   });
 };
 
-export const convertErrorToJson = (error: unknown): { message: string; details: { stack?: string; name: string } } => {
+export const convertErrorToJson = (
+  error: unknown,
+): { errorMessage: string; details: { stack?: string; name: string } } => {
   return {
-    message: error instanceof Error ? error.message : String(error),
+    errorMessage: error instanceof Error ? error.message : String(error),
     details: {
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : 'UnknownError',

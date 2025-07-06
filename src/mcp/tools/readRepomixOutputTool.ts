@@ -43,7 +43,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
         const filePath = getOutputFilePath(outputId);
         if (!filePath) {
           return buildMcpToolErrorResponse({
-            message: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
+            errorMessage: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
           });
         }
 
@@ -52,7 +52,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
           await fs.access(filePath);
         } catch (error) {
           return buildMcpToolErrorResponse({
-            message: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
+            errorMessage: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
           });
         }
 
@@ -64,7 +64,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
           // Validate that startLine is less than or equal to endLine when both are provided
           if (startLine !== undefined && endLine !== undefined && startLine > endLine) {
             return buildMcpToolErrorResponse({
-              message: `Error: Start line (${startLine}) cannot be greater than end line (${endLine}).`,
+              errorMessage: `Error: Start line (${startLine}) cannot be greater than end line (${endLine}).`,
             });
           }
 
@@ -74,7 +74,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
 
           if (start >= lines.length) {
             return buildMcpToolErrorResponse({
-              message: `Error: Start line ${startLine} exceeds total lines (${lines.length}) in the file.`,
+              errorMessage: `Error: Start line ${startLine} exceeds total lines (${lines.length}) in the file.`,
             });
           }
 
@@ -82,7 +82,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
         }
 
         return buildMcpToolSuccessResponse({
-          message: `Content of Repomix output file (ID: ${outputId})${startLine || endLine ? ` (lines ${startLine || 1}-${endLine || 'end'})` : ''}:`,
+          description: `Content of Repomix output file (ID: ${outputId})${startLine || endLine ? ` (lines ${startLine || 1}-${endLine || 'end'})` : ''}:`,
           processedContent,
         });
       } catch (error) {

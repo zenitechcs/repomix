@@ -145,7 +145,7 @@ describe('PackCodebaseTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text as string);
-    expect(parsedResult.message).toBe('Failed to return a result');
+    expect(parsedResult.errorMessage).toBe('Failed to return a result');
   });
 
   test('should handle general error', async () => {
@@ -158,7 +158,7 @@ describe('PackCodebaseTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text as string);
-    expect(parsedResult.message).toBe('Pack failed');
+    expect(parsedResult.errorMessage).toBe('Pack failed');
   });
 
   test('should handle workspace creation error', async () => {
@@ -171,6 +171,6 @@ describe('PackCodebaseTool', () => {
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
     const parsedResult = JSON.parse(result.content[0].text as string);
-    expect(parsedResult.message).toBe('Workspace creation failed');
+    expect(parsedResult.errorMessage).toBe('Workspace creation failed');
   });
 });

@@ -32,7 +32,7 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
         // Ensure path is absolute
         if (!path.isAbsolute(filePath)) {
           return buildMcpToolErrorResponse({
-            message: `Error: Path must be absolute. Received: ${filePath}`,
+            errorMessage: `Error: Path must be absolute. Received: ${filePath}`,
           });
         }
 
@@ -41,7 +41,7 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
           await fs.access(filePath);
         } catch {
           return buildMcpToolErrorResponse({
-            message: `Error: File not found at path: ${filePath}`,
+            errorMessage: `Error: File not found at path: ${filePath}`,
           });
         }
 
@@ -49,7 +49,7 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
         const stats = await fs.stat(filePath);
         if (stats.isDirectory()) {
           return buildMcpToolErrorResponse({
-            message: `Error: The specified path is a directory, not a file: ${filePath}. Use file_system_read_directory for directories.`,
+            errorMessage: `Error: The specified path is a directory, not a file: ${filePath}. Use file_system_read_directory for directories.`,
           });
         }
 
@@ -63,18 +63,18 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
         // If security check found issues, block the file
         if (securityCheckResult !== null) {
           return buildMcpToolErrorResponse({
-            message: `Error: Security check failed. The file at ${filePath} may contain sensitive information.`,
+            errorMessage: `Error: Security check failed. The file at ${filePath} may contain sensitive information.`,
           });
         }
 
         return buildMcpToolSuccessResponse({
-          message: `Content of ${filePath}:`,
+          description: `Content of ${filePath}:`,
           content: fileContent,
         });
       } catch (error) {
         logger.error(`Error in file_system_read_file tool: ${error}`);
         return buildMcpToolErrorResponse({
-          message: `Error reading file: ${error instanceof Error ? error.message : String(error)}`,
+          errorMessage: `Error reading file: ${error instanceof Error ? error.message : String(error)}`,
         });
       }
     },

@@ -89,7 +89,7 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
         const filePath = getOutputFilePath(outputId);
         if (!filePath) {
           return buildMcpToolErrorResponse({
-            message: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
+            errorMessage: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
           });
         }
 
@@ -97,7 +97,7 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
           await fs.access(filePath);
         } catch (error) {
           return buildMcpToolErrorResponse({
-            message: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
+            errorMessage: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
           });
         }
 
@@ -119,18 +119,18 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
           });
         } catch (error) {
           return buildMcpToolErrorResponse({
-            message: `Error: ${error instanceof Error ? error.message : String(error)}`,
+            errorMessage: `Error: ${error instanceof Error ? error.message : String(error)}`,
           });
         }
 
         if (searchResult.matches.length === 0) {
           return buildMcpToolSuccessResponse({
-            message: `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
+            description: `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
           });
         }
 
         return buildMcpToolSuccessResponse({
-          message: `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
+          description: `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
           matches: searchResult.matches,
           formattedOutput: searchResult.formattedOutput,
         });
