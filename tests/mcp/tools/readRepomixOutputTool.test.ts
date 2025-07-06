@@ -70,7 +70,9 @@ describe('readRepomixOutputTool', () => {
 
     expect(mcpToolRuntime.getOutputFilePath).toHaveBeenCalledWith('non-existent-id');
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('Error: Output file with ID non-existent-id not found');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Error: Output file with ID non-existent-id not found');
   });
 
   it('should return an error if the file does not exist', async () => {
@@ -82,7 +84,9 @@ describe('readRepomixOutputTool', () => {
     expect(mcpToolRuntime.getOutputFilePath).toHaveBeenCalledWith('test-id');
     expect(fs.access).toHaveBeenCalledWith('/path/to/file.xml');
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('Error: Output file does not exist at path: /path/to/file.xml');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Error: Output file does not exist at path: /path/to/file.xml');
   });
 
   it('should successfully read the file content', async () => {
@@ -96,9 +100,10 @@ describe('readRepomixOutputTool', () => {
     expect(fs.access).toHaveBeenCalledWith('/path/to/file.xml');
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.xml', 'utf8');
     expect(result.isError).toBeUndefined();
-    expect(result.content).toHaveLength(2);
-    expect(result.content[0].text).toContain('Content of Repomix output file (ID: test-id)');
-    expect(result.content[1].text).toBe('File content here');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id)');
+    expect(parsedResult.processedContent).toBe('File content here');
   });
 
   it('should handle unexpected errors during execution', async () => {
@@ -109,7 +114,9 @@ describe('readRepomixOutputTool', () => {
     const result = await toolHandler({ outputId: 'test-id' });
 
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('Error reading Repomix output: Unexpected error');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Unexpected error');
   });
 
   it('should read specific line range when startLine and endLine are provided', async () => {
@@ -121,9 +128,10 @@ describe('readRepomixOutputTool', () => {
 
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.xml', 'utf8');
     expect(result.isError).toBeUndefined();
-    expect(result.content).toHaveLength(2);
-    expect(result.content[0].text).toContain('Content of Repomix output file (ID: test-id) (lines 2-4)');
-    expect(result.content[1].text).toBe('Line 2\nLine 3\nLine 4');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 2-4)');
+    expect(parsedResult.processedContent).toBe('Line 2\nLine 3\nLine 4');
   });
 
   it('should read from startLine to end when only startLine is provided', async () => {
@@ -133,8 +141,10 @@ describe('readRepomixOutputTool', () => {
 
     const result = await toolHandler({ outputId: 'test-id', startLine: 3 });
 
-    expect(result.content[0].text).toContain('Content of Repomix output file (ID: test-id) (lines 3-end)');
-    expect(result.content[1].text).toBe('Line 3\nLine 4\nLine 5');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 3-end)');
+    expect(parsedResult.processedContent).toBe('Line 3\nLine 4\nLine 5');
   });
 
   it('should read from beginning to endLine when only endLine is provided', async () => {
@@ -144,8 +154,10 @@ describe('readRepomixOutputTool', () => {
 
     const result = await toolHandler({ outputId: 'test-id', endLine: 2 });
 
-    expect(result.content[0].text).toContain('Content of Repomix output file (ID: test-id) (lines 1-2)');
-    expect(result.content[1].text).toBe('Line 1\nLine 2');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Content of Repomix output file (ID: test-id) (lines 1-2)');
+    expect(parsedResult.processedContent).toBe('Line 1\nLine 2');
   });
 
   it('should return an error if startLine exceeds total lines', async () => {
@@ -156,7 +168,9 @@ describe('readRepomixOutputTool', () => {
     const result = await toolHandler({ outputId: 'test-id', startLine: 10 });
 
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('Error: Start line 10 exceeds total lines (3)');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Error: Start line 10 exceeds total lines (3)');
   });
 
   it('should return an error if startLine is greater than endLine', async () => {
@@ -167,6 +181,8 @@ describe('readRepomixOutputTool', () => {
     const result = await toolHandler({ outputId: 'test-id', startLine: 4, endLine: 2 });
 
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('Error: Start line (4) cannot be greater than end line (2)');
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text);
+    expect(parsedResult.message).toContain('Error: Start line (4) cannot be greater than end line (2)');
   });
 });

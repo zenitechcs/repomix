@@ -3,7 +3,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { runCli } from '../../../src/cli/cliRun.js';
-import { createToolWorkspace, formatToolError, formatToolResponse } from '../../../src/mcp/tools/mcpToolRuntime.js';
+import { createToolWorkspace, formatPackToolResponse } from '../../../src/mcp/tools/mcpToolRuntime.js';
 import { registerPackCodebaseTool } from '../../../src/mcp/tools/packCodebaseTool.js';
 
 vi.mock('node:path');
@@ -13,8 +13,7 @@ vi.mock('../../../src/mcp/tools/mcpToolRuntime.js', async () => {
   return {
     ...actual,
     createToolWorkspace: vi.fn(),
-    formatToolError: vi.fn(),
-    formatToolResponse: vi.fn(),
+    formatPackToolResponse: vi.fn(),
   };
 });
 
@@ -54,12 +53,8 @@ describe('PackCodebaseTool', () => {
 
     // mcpToolRuntimeのデフォルトの動作をモック
     vi.mocked(createToolWorkspace).mockResolvedValue('/temp/dir');
-    vi.mocked(formatToolResponse).mockImplementation(async () => ({
+    vi.mocked(formatPackToolResponse).mockResolvedValue({
       content: [{ type: 'text', text: 'Success response' }],
-    }));
-    vi.mocked(formatToolError).mockReturnValue({
-      isError: true,
-      content: [{ type: 'text', text: 'Error response' }],
     });
 
     // runCliのデフォルト動作
@@ -147,15 +142,10 @@ describe('PackCodebaseTool', () => {
 
     const result = await toolHandler({ directory: testDir });
 
-    expect(result).toEqual({
-      isError: true,
-      content: [
-        {
-          type: 'text',
-          text: 'Failed to return a result',
-        },
-      ],
-    });
+    expect(result.isError).toBe(true);
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text as string);
+    expect(parsedResult.message).toBe('Failed to return a result');
   });
 
   test('should handle general error', async () => {
@@ -165,11 +155,10 @@ describe('PackCodebaseTool', () => {
 
     const result = await toolHandler({ directory: testDir });
 
-    expect(formatToolError).toHaveBeenCalledWith(error);
-    expect(result).toEqual({
-      isError: true,
-      content: [{ type: 'text', text: 'Error response' }],
-    });
+    expect(result.isError).toBe(true);
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text as string);
+    expect(parsedResult.message).toBe('Pack failed');
   });
 
   test('should handle workspace creation error', async () => {
@@ -179,10 +168,9 @@ describe('PackCodebaseTool', () => {
 
     const result = await toolHandler({ directory: testDir });
 
-    expect(formatToolError).toHaveBeenCalledWith(error);
-    expect(result).toEqual({
-      isError: true,
-      content: [{ type: 'text', text: 'Error response' }],
-    });
+    expect(result.isError).toBe(true);
+    expect(result.content).toHaveLength(1);
+    const parsedResult = JSON.parse(result.content[0].text as string);
+    expect(parsedResult.message).toBe('Workspace creation failed');
   });
 });

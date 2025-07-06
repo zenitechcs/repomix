@@ -3,9 +3,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { generateFileTree, generateTreeString } from '../../core/file/fileTreeGenerate.js';
+import { generateTreeString } from '../../core/file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
-import { logger } from '../../shared/logger.js';
 
 // Map to store generated output files
 const outputFileRegistry = new Map<string, string>();
@@ -35,6 +34,8 @@ export interface McpToolContext {
   repository?: string;
 }
 
+type McpToolStructuredContent = { [p: string]: unknown } | undefined;
+
 /**
  * Creates a temporary directory for MCP tool operations
  */
@@ -60,7 +61,7 @@ export const generateOutputId = (): string => {
 /**
  * Creates a result object with metrics information for MCP tools
  */
-export const formatToolResponse = async (
+export const formatPackToolResponse = async (
   context: McpToolContext,
   metrics: McpToolMetrics,
   outputFilePath: string,
@@ -106,31 +107,14 @@ export const formatToolResponse = async (
     2,
   );
 
-  return {
-    content: [
-      {
-        type: 'text',
-        text: '🎉 Successfully packed codebase!\nPlease review the metrics below and consider adjusting compress/includePatterns/ignorePatterns if the token count is too high and you need to reduce it before reading the file content.',
-      },
-      {
-        type: 'text',
-        text: jsonResult,
-      },
-      {
-        type: 'text',
-        text: `Directory Structure\n\n${directoryStructure}`,
-      },
-      {
-        type: 'text',
-        text: `For environments with direct file system access, you can read the file directly using path: ${outputFilePath}`,
-      },
-      {
-        type: 'text',
-        text: `For environments without direct file access (e.g., web browsers or sandboxed apps), use the \`read_repomix_output\` tool with this outputId: ${outputId} to access the packed codebase contents.`,
-      },
-      {
-        type: 'text',
-        text: `The output retrieved with \`read_repomix_output\` has the following structure:
+  return buildMcpToolSuccessResponse({
+    description: `
+🎉 Successfully packed codebase!\nPlease review the metrics below and consider adjusting compress/includePatterns/ignorePatterns if the token count is too high and you need to reduce it before reading the file content.
+
+For environments with direct file system access, you can read the file directly using path: ${outputFilePath}
+For environments without direct file access (e.g., web browsers or sandboxed apps), use the \`read_repomix_output\` tool with this outputId: ${outputId} to access the packed codebase contents.
+
+The output retrieved with \`read_repomix_output\` has the following structure:
 
 \`\`\`xml
 This file is a merged representation of the entire codebase, combining all repository files into a single document.
@@ -161,57 +145,50 @@ index.ts
 </instruction>
 \`\`\`
 
-You can use grep with \`path="<file-path>"\` to locate specific files within the output.`,
-      },
-    ],
-  };
+You can use grep with \`path="<file-path>"\` to locate specific files within the output.
+`,
+    result: jsonResult,
+    directoryStructure: directoryStructure,
+  });
 };
 
-/**
- * Creates an error result for MCP tools
- */
-export const formatToolError = (error: unknown): CallToolResult => {
-  logger.error(`Error in MCP tool: ${error instanceof Error ? error.message : String(error)}`);
-
+export const convertErrorToJson = (error: unknown): { message: string; details: { stack?: string; name: string } } => {
   return {
-    isError: true,
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(
-          {
-            success: false,
-            error: error instanceof Error ? error.message : String(error),
-          },
-          null,
-          2,
-        ),
-      },
-    ],
+    message: error instanceof Error ? error.message : String(error),
+    details: {
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'UnknownError',
+    },
   };
 };
 
 /**
  * Creates a successful MCP tool response with type safety
  */
-export const buildMcpToolSuccessResponse = (messages: string[]): CallToolResult => {
+export const buildMcpToolSuccessResponse = (structuredContent: McpToolStructuredContent): CallToolResult => {
   return {
-    content: messages.map((message) => ({
-      type: 'text' as const,
-      text: message,
-    })),
+    content: [
+      {
+        type: 'text',
+        text: JSON.stringify(structuredContent, null, 2),
+      },
+    ],
+    structuredContent: structuredContent,
   };
 };
 
 /**
  * Creates an error MCP tool response with type safety
  */
-export const buildMcpToolErrorResponse = (errorMessages: string[]): CallToolResult => {
+export const buildMcpToolErrorResponse = (structuredContent: McpToolStructuredContent): CallToolResult => {
   return {
     isError: true,
-    content: errorMessages.map((message) => ({
-      type: 'text' as const,
-      text: message,
-    })),
+    content: [
+      {
+        type: 'text',
+        text: JSON.stringify(structuredContent, null, 2),
+      },
+    ],
+    structuredContent: structuredContent,
   };
 };

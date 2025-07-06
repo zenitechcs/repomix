@@ -6,9 +6,9 @@ import { runCli } from '../../cli/cliRun.js';
 import type { CliOptions } from '../../cli/types.js';
 import {
   buildMcpToolErrorResponse,
+  convertErrorToJson,
   createToolWorkspace,
-  formatToolError,
-  formatToolResponse,
+  formatPackToolResponse,
 } from './mcpToolRuntime.js';
 
 export const registerPackCodebaseTool = (mcpServer: McpServer) => {
@@ -70,15 +70,17 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
 
         const result = await runCli(['.'], directory, cliOptions);
         if (!result) {
-          return buildMcpToolErrorResponse(['Failed to return a result']);
+          return buildMcpToolErrorResponse({
+            message: 'Failed to return a result',
+          });
         }
 
         // Extract metrics information from the pack result
         const { packResult } = result;
 
-        return await formatToolResponse({ directory }, packResult, outputFilePath, topFilesLength);
+        return await formatPackToolResponse({ directory }, packResult, outputFilePath, topFilesLength);
       } catch (error) {
-        return formatToolError(error);
+        return buildMcpToolErrorResponse(convertErrorToJson(error));
       }
     },
   );

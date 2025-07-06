@@ -29,19 +29,23 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
 
         // Ensure path is absolute
         if (!path.isAbsolute(directoryPath)) {
-          return buildMcpToolErrorResponse([`Error: Path must be absolute. Received: ${directoryPath}`]);
+          return buildMcpToolErrorResponse({
+            message: `Error: Path must be absolute. Received: ${directoryPath}`,
+          });
         }
 
         // Check if directory exists
         try {
           const stats = await fs.stat(directoryPath);
           if (!stats.isDirectory()) {
-            return buildMcpToolErrorResponse([
-              `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
-            ]);
+            return buildMcpToolErrorResponse({
+              message: `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
+            });
           }
         } catch {
-          return buildMcpToolErrorResponse([`Error: Directory not found at path: ${directoryPath}`]);
+          return buildMcpToolErrorResponse({
+            message: `Error: Directory not found at path: ${directoryPath}`,
+          });
         }
 
         // Read directory contents
@@ -50,12 +54,15 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
           .map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`)
           .join('\n');
 
-        return buildMcpToolSuccessResponse([`Contents of ${directoryPath}:`, formatted || '(empty directory)']);
+        return buildMcpToolSuccessResponse({
+          message: `Contents of ${directoryPath}:`,
+          content: formatted || '(empty directory)',
+        });
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
-        return buildMcpToolErrorResponse([
-          `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
-        ]);
+        return buildMcpToolErrorResponse({
+          message: `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
+        });
       }
     },
   );

@@ -3,7 +3,12 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { logger } from '../../shared/logger.js';
-import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse, getOutputFilePath } from './mcpToolRuntime.js';
+import {
+  buildMcpToolErrorResponse,
+  buildMcpToolSuccessResponse,
+  convertErrorToJson,
+  getOutputFilePath,
+} from './mcpToolRuntime.js';
 
 /**
  * Search options for grep functionality
@@ -83,17 +88,17 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
 
         const filePath = getOutputFilePath(outputId);
         if (!filePath) {
-          return buildMcpToolErrorResponse([
-            `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
-          ]);
+          return buildMcpToolErrorResponse({
+            message: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
+          });
         }
 
         try {
           await fs.access(filePath);
         } catch (error) {
-          return buildMcpToolErrorResponse([
-            `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
-          ]);
+          return buildMcpToolErrorResponse({
+            message: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
+          });
         }
 
         const content = await fs.readFile(filePath, 'utf8');
@@ -113,24 +118,25 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
             ignoreCase,
           });
         } catch (error) {
-          return buildMcpToolErrorResponse([`Error: ${error instanceof Error ? error.message : String(error)}`]);
+          return buildMcpToolErrorResponse({
+            message: `Error: ${error instanceof Error ? error.message : String(error)}`,
+          });
         }
 
         if (searchResult.matches.length === 0) {
-          return buildMcpToolSuccessResponse([
-            `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
-          ]);
+          return buildMcpToolSuccessResponse({
+            message: `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
+          });
         }
 
-        return buildMcpToolSuccessResponse([
-          `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
-          searchResult.formattedOutput.join('\n'),
-        ]);
+        return buildMcpToolSuccessResponse({
+          message: `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
+          matches: searchResult.matches,
+          formattedOutput: searchResult.formattedOutput,
+        });
       } catch (error) {
         logger.error(`Error in grep_repomix_output: ${error}`);
-        return buildMcpToolErrorResponse([
-          `Error searching Repomix output: ${error instanceof Error ? error.message : String(error)}`,
-        ]);
+        return buildMcpToolErrorResponse(convertErrorToJson(error));
       }
     },
   );

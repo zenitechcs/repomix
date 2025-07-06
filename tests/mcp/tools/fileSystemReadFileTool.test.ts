@@ -50,9 +50,12 @@ describe('FileSystemReadFileTool', () => {
       content: [
         {
           type: 'text',
-          text: `Error: Path must be absolute. Received: ${testPath}`,
+          text: JSON.stringify({ message: `Error: Path must be absolute. Received: ${testPath}` }, null, 2),
         },
       ],
+      structuredContent: {
+        message: `Error: Path must be absolute. Received: ${testPath}`,
+      },
     });
   });
 
@@ -68,9 +71,12 @@ describe('FileSystemReadFileTool', () => {
       content: [
         {
           type: 'text',
-          text: `Error: File not found at path: ${testPath}`,
+          text: JSON.stringify({ message: `Error: File not found at path: ${testPath}` }, null, 2),
         },
       ],
+      structuredContent: {
+        message: `Error: File not found at path: ${testPath}`,
+      },
     });
   });
 });
