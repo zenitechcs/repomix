@@ -3,6 +3,16 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Type guard for structured content with result property
+function hasResult(obj: unknown): obj is { result: string } {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'result' in obj &&
+    typeof (obj as Record<string, unknown>).result === 'string'
+  );
+}
 import {
   buildMcpToolErrorResponse,
   buildMcpToolSuccessResponse,
@@ -119,7 +129,12 @@ describe('mcpToolRuntime', () => {
       // Check that the structured content contains the expected result JSON
       const structuredContent = response.structuredContent;
       expect(structuredContent).toHaveProperty('result');
-      const resultJson = JSON.parse((structuredContent as Record<string, unknown>).result as string);
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const resultJson = JSON.parse(structuredContent.result);
       expect(resultJson.directory).toBe('/path/to/dir');
       expect(resultJson.outputId).toBe('abcdef1234567890');
       expect(resultJson.metrics.totalFiles).toBe(10);
@@ -155,7 +170,12 @@ describe('mcpToolRuntime', () => {
       // Check that the structured content contains the expected result JSON
       const structuredContent = response.structuredContent;
       expect(structuredContent).toHaveProperty('result');
-      const resultJson = JSON.parse((structuredContent as Record<string, unknown>).result as string);
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const resultJson = JSON.parse(structuredContent.result);
       expect(resultJson.repository).toBe('user/repo');
       expect(resultJson.directory).toBeUndefined();
       expect(resultJson.metrics.totalLines).toBe(5);
@@ -195,7 +215,12 @@ describe('mcpToolRuntime', () => {
       // Check that the structured content contains the expected result JSON
       const structuredContent = response.structuredContent;
       expect(structuredContent).toHaveProperty('result');
-      const result = JSON.parse((structuredContent as Record<string, unknown>).result as string);
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const result = JSON.parse(structuredContent.result);
       expect(result.metrics.topFiles).toHaveLength(3);
       expect(result.metrics.topFiles[0].path).toBe('file1.js');
       expect(result.metrics.topFiles[1].path).toBe('file2.js');
@@ -249,7 +274,7 @@ describe('mcpToolRuntime', () => {
         content: [
           {
             type: 'text',
-            text: JSON.stringify(structuredContent, null, 2),
+            text: 'null',
           },
         ],
         structuredContent: structuredContent,
@@ -304,7 +329,7 @@ describe('mcpToolRuntime', () => {
         content: [
           {
             type: 'text',
-            text: JSON.stringify(errorContent, null, 2),
+            text: 'null',
           },
         ],
         structuredContent: errorContent,

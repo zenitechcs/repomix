@@ -39,6 +39,27 @@ interface SearchResult {
 }
 
 /**
+ * Grep tool response structure for success cases
+ */
+interface GrepToolSuccessResponse extends Record<string, unknown> {
+  description: string;
+  matches: SearchMatch[];
+  formattedOutput: string[];
+}
+
+/**
+ * Grep tool response structure for error cases
+ */
+interface GrepToolErrorResponse extends Record<string, unknown> {
+  errorMessage: string;
+  details?: {
+    outputId?: string;
+    pattern?: string;
+    reason?: string;
+  };
+}
+
+/**
  * Register the tool to search Repomix output files with grep-like functionality
  */
 export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
@@ -88,17 +109,27 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
 
         const filePath = getOutputFilePath(outputId);
         if (!filePath) {
-          return buildMcpToolErrorResponse({
+          const errorResponse: GrepToolErrorResponse = {
             errorMessage: `Error: Output file with ID ${outputId} not found. The output file may have been deleted or the ID is invalid.`,
-          });
+            details: {
+              outputId,
+              reason: 'FILE_NOT_FOUND',
+            },
+          };
+          return buildMcpToolErrorResponse(errorResponse);
         }
 
         try {
           await fs.access(filePath);
         } catch (error) {
-          return buildMcpToolErrorResponse({
+          const errorResponse: GrepToolErrorResponse = {
             errorMessage: `Error: Output file does not exist at path: ${filePath}. The temporary file may have been cleaned up.`,
-          });
+            details: {
+              outputId,
+              reason: 'FILE_ACCESS_ERROR',
+            },
+          };
+          return buildMcpToolErrorResponse(errorResponse);
         }
 
         const content = await fs.readFile(filePath, 'utf8');
@@ -118,22 +149,32 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
             ignoreCase,
           });
         } catch (error) {
-          return buildMcpToolErrorResponse({
+          const errorResponse: GrepToolErrorResponse = {
             errorMessage: `Error: ${error instanceof Error ? error.message : String(error)}`,
-          });
+            details: {
+              outputId,
+              pattern,
+              reason: 'SEARCH_ERROR',
+            },
+          };
+          return buildMcpToolErrorResponse(errorResponse);
         }
 
         if (searchResult.matches.length === 0) {
-          return buildMcpToolSuccessResponse({
+          const successResponse: GrepToolSuccessResponse = {
             description: `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
-          });
+            matches: [],
+            formattedOutput: [],
+          };
+          return buildMcpToolSuccessResponse(successResponse);
         }
 
-        return buildMcpToolSuccessResponse({
+        const successResponse: GrepToolSuccessResponse = {
           description: `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
           matches: searchResult.matches,
           formattedOutput: searchResult.formattedOutput,
-        });
+        };
+        return buildMcpToolSuccessResponse(successResponse);
       } catch (error) {
         logger.error(`Error in grep_repomix_output: ${error}`);
         return buildMcpToolErrorResponse(convertErrorToJson(error));

@@ -34,7 +34,14 @@ export interface McpToolContext {
   repository?: string;
 }
 
-type McpToolStructuredContent = { [p: string]: unknown } | undefined;
+// Base interface for all MCP tool responses
+interface BaseMcpToolResponse {
+  description?: string;
+  errorMessage?: string;
+}
+
+// Structured content for MCP tool responses with proper typing
+type McpToolStructuredContent = (BaseMcpToolResponse & Record<string, unknown>) | undefined;
 
 /**
  * Creates a temporary directory for MCP tool operations
@@ -166,7 +173,7 @@ export const convertErrorToJson = (
   };
 } => {
   const timestamp = new Date().toISOString();
-  
+
   if (error instanceof Error) {
     return {
       errorMessage: error.message,
@@ -174,13 +181,18 @@ export const convertErrorToJson = (
         stack: error.stack,
         name: error.name,
         cause: error.cause,
-        code: (error as any).code || (error as any).errno,
+        code:
+          'code' in error
+            ? (error.code as string | number)
+            : 'errno' in error
+              ? (error.errno as string | number)
+              : undefined,
         timestamp,
         type: 'Error',
       },
     };
   }
-  
+
   return {
     errorMessage: String(error),
     details: {
@@ -193,13 +205,17 @@ export const convertErrorToJson = (
 
 /**
  * Creates a successful MCP tool response with type safety
+ * @param structuredContent - Object containing both machine-readable data and human-readable description
+ * @returns CallToolResult with both text and structured content
  */
 export const buildMcpToolSuccessResponse = (structuredContent: McpToolStructuredContent): CallToolResult => {
+  const textContent = structuredContent !== undefined ? JSON.stringify(structuredContent, null, 2) : 'null';
+
   return {
     content: [
       {
         type: 'text',
-        text: JSON.stringify(structuredContent, null, 2),
+        text: textContent,
       },
     ],
     structuredContent: structuredContent,
@@ -208,14 +224,18 @@ export const buildMcpToolSuccessResponse = (structuredContent: McpToolStructured
 
 /**
  * Creates an error MCP tool response with type safety
+ * @param structuredContent - Object containing error message and details
+ * @returns CallToolResult with error flag, text content, and structured content
  */
 export const buildMcpToolErrorResponse = (structuredContent: McpToolStructuredContent): CallToolResult => {
+  const textContent = structuredContent !== undefined ? JSON.stringify(structuredContent, null, 2) : 'null';
+
   return {
     isError: true,
     content: [
       {
         type: 'text',
-        text: JSON.stringify(structuredContent, null, 2),
+        text: textContent,
       },
     ],
     structuredContent: structuredContent,

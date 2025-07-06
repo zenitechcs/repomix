@@ -61,6 +61,19 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
 
         let processedContent = content;
         if (startLine !== undefined || endLine !== undefined) {
+          // Validate that startLine and endLine are positive values
+          if (startLine !== undefined && startLine < 1) {
+            return buildMcpToolErrorResponse({
+              errorMessage: `Error: Start line must be >= 1, got ${startLine}.`,
+            });
+          }
+
+          if (endLine !== undefined && endLine < 1) {
+            return buildMcpToolErrorResponse({
+              errorMessage: `Error: End line must be >= 1, got ${endLine}.`,
+            });
+          }
+
           // Validate that startLine is less than or equal to endLine when both are provided
           if (startLine !== undefined && endLine !== undefined && startLine > endLine) {
             return buildMcpToolErrorResponse({
