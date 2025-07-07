@@ -21,7 +21,7 @@ vi.mock('../../../src/shared/logger.js', () => ({
 
 describe('readRepomixOutputTool', () => {
   const mockMcpServer = {
-    tool: vi.fn(),
+    registerTool: vi.fn(),
   } as const;
 
   type ToolHandlerType = (args: {
@@ -40,25 +40,13 @@ describe('readRepomixOutputTool', () => {
 
     registerReadRepomixOutputTool(mockMcpServer as unknown as McpServer);
 
-    toolHandler = mockMcpServer.tool.mock.calls[0][4];
+    toolHandler = mockMcpServer.registerTool.mock.calls[0][2];
   });
 
   it('should register the tool with correct parameters', () => {
-    expect(mockMcpServer.tool).toHaveBeenCalledWith(
+    expect(mockMcpServer.registerTool).toHaveBeenCalledWith(
       'read_repomix_output',
-      expect.any(String),
-      expect.objectContaining({
-        outputId: expect.any(Object),
-        startLine: expect.any(Object),
-        endLine: expect.any(Object),
-      }),
-      expect.objectContaining({
-        title: 'Read Repomix Output',
-        readOnlyHint: true,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false,
-      }),
+      expect.any(Object), // tool spec
       expect.any(Function),
     );
   });
@@ -101,9 +89,8 @@ describe('readRepomixOutputTool', () => {
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.xml', 'utf8');
     expect(result.isError).toBeUndefined();
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id)');
-    expect(parsedResult.processedContent).toBe('File content here');
+    expect(result.structuredContent).toBeDefined();
+    expect(result.structuredContent.content).toBe('File content here');
   });
 
   it('should handle unexpected errors during execution', async () => {
@@ -129,9 +116,8 @@ describe('readRepomixOutputTool', () => {
     expect(fs.readFile).toHaveBeenCalledWith('/path/to/file.xml', 'utf8');
     expect(result.isError).toBeUndefined();
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 2-4)');
-    expect(parsedResult.processedContent).toBe('Line 2\nLine 3\nLine 4');
+    expect(result.structuredContent).toBeDefined();
+    expect(result.structuredContent.content).toBe('Line 2\nLine 3\nLine 4');
   });
 
   it('should read from startLine to end when only startLine is provided', async () => {
@@ -142,9 +128,8 @@ describe('readRepomixOutputTool', () => {
     const result = await toolHandler({ outputId: 'test-id', startLine: 3 });
 
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 3-end)');
-    expect(parsedResult.processedContent).toBe('Line 3\nLine 4\nLine 5');
+    expect(result.structuredContent).toBeDefined();
+    expect(result.structuredContent.content).toBe('Line 3\nLine 4\nLine 5');
   });
 
   it('should read from beginning to endLine when only endLine is provided', async () => {
@@ -155,9 +140,8 @@ describe('readRepomixOutputTool', () => {
     const result = await toolHandler({ outputId: 'test-id', endLine: 2 });
 
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text);
-    expect(parsedResult.description).toContain('Content of Repomix output file (ID: test-id) (lines 1-2)');
-    expect(parsedResult.processedContent).toBe('Line 1\nLine 2');
+    expect(result.structuredContent).toBeDefined();
+    expect(result.structuredContent.content).toBe('Line 1\nLine 2');
   });
 
   it('should return an error if startLine exceeds total lines', async () => {

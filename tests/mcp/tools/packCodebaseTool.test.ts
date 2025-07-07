@@ -19,7 +19,7 @@ vi.mock('../../../src/mcp/tools/mcpToolRuntime.js', async () => {
 
 describe('PackCodebaseTool', () => {
   const mockServer = {
-    tool: vi.fn().mockReturnThis(),
+    registerTool: vi.fn().mockReturnThis(),
   } as unknown as McpServer;
 
   let toolHandler: (args: {
@@ -46,7 +46,7 @@ describe('PackCodebaseTool', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     registerPackCodebaseTool(mockServer);
-    toolHandler = (mockServer.tool as ReturnType<typeof vi.fn>).mock.calls[0][4];
+    toolHandler = (mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls[0][2];
 
     // デフォルトのパスの動作をモック
     vi.mocked(path.join).mockImplementation((...args) => args.join('/'));
@@ -103,11 +103,9 @@ describe('PackCodebaseTool', () => {
   });
 
   test('should register tool with correct parameters', () => {
-    expect(mockServer.tool).toHaveBeenCalledWith(
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
       'pack_codebase',
-      'Package a local code directory into a consolidated XML file for AI analysis. This tool analyzes the codebase structure, extracts relevant code content, and generates a comprehensive report including metrics, file tree, and formatted code content. Supports Tree-sitter compression for efficient token usage.',
-      expect.any(Object),
-      expect.any(Object), // annotations
+      expect.any(Object), // tool spec
       expect.any(Function),
     );
   });

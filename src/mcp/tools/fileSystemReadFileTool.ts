@@ -12,18 +12,28 @@ import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToo
  * Register file system read file tool with security checks
  */
 export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
-  mcpServer.tool(
+  mcpServer.registerTool(
     'file_system_read_file',
-    'Read a file from the local file system using an absolute path. Includes built-in security validation to detect and prevent access to files containing sensitive information (API keys, passwords, secrets).',
-    {
-      path: z.string().describe('Absolute path to the file to read'),
-    },
     {
       title: 'Read File',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      description:
+        'Read a file from the local file system using an absolute path. Includes built-in security validation to detect and prevent access to files containing sensitive information (API keys, passwords, secrets).',
+      inputSchema: {
+        path: z.string().describe('Absolute path to the file to read'),
+      },
+      outputSchema: {
+        path: z.string().describe('The file path that was read'),
+        content: z.string().describe('The file content'),
+        size: z.number().describe('File size in bytes'),
+        encoding: z.string().describe('Text encoding used to read the file'),
+        lines: z.number().describe('Number of lines in the file'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     async ({ path: filePath }): Promise<CallToolResult> => {
       try {
@@ -53,6 +63,9 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
           });
         }
 
+        // Get file stats
+        const fileStats = await fs.stat(filePath);
+
         // Read file content
         const fileContent = await fs.readFile(filePath, 'utf8');
 
@@ -67,9 +80,16 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
           });
         }
 
+        // Calculate file metrics
+        const lines = fileContent.split('\n').length;
+        const size = fileStats.size;
+
         return buildMcpToolSuccessResponse({
-          description: `Content of ${filePath}:`,
+          path: filePath,
           content: fileContent,
+          size,
+          encoding: 'utf8',
+          lines,
         });
       } catch (error) {
         logger.error(`Error in file_system_read_file tool: ${error}`);

@@ -408,7 +408,7 @@ describe('grepRepomixOutputTool', () => {
 
   describe('registerGrepRepomixOutputTool integration tests', () => {
     const mockMcpServer = {
-      tool: vi.fn(),
+      registerTool: vi.fn(),
     } as const;
 
     type ToolHandlerType = (args: {
@@ -430,28 +430,13 @@ describe('grepRepomixOutputTool', () => {
 
       registerGrepRepomixOutputTool(mockMcpServer as unknown as McpServer);
 
-      toolHandler = mockMcpServer.tool.mock.calls[0][4];
+      toolHandler = mockMcpServer.registerTool.mock.calls[0][2];
     });
 
     it('should register the tool with correct parameters', () => {
-      expect(mockMcpServer.tool).toHaveBeenCalledWith(
+      expect(mockMcpServer.registerTool).toHaveBeenCalledWith(
         'grep_repomix_output',
-        expect.any(String),
-        expect.objectContaining({
-          outputId: expect.any(Object),
-          pattern: expect.any(Object),
-          contextLines: expect.any(Object),
-          beforeLines: expect.any(Object),
-          afterLines: expect.any(Object),
-          ignoreCase: expect.any(Object),
-        }),
-        expect.objectContaining({
-          title: 'Grep Repomix Output',
-          readOnlyHint: true,
-          destructiveHint: false,
-          idempotentHint: true,
-          openWorldHint: false,
-        }),
+        expect.any(Object), // tool spec
         expect.any(Function),
       );
     });

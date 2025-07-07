@@ -156,6 +156,10 @@ You can use grep with \`path="<file-path>"\` to locate specific files within the
 `,
     result: jsonResult,
     directoryStructure: directoryStructure,
+    outputId: outputId,
+    outputFilePath: outputFilePath,
+    totalFiles: metrics.totalFiles,
+    totalTokens: metrics.totalTokens,
   });
 };
 

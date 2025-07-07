@@ -14,26 +14,36 @@ import {
  * Register the tool to read Repomix output files
  */
 export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
-  mcpServer.tool(
+  mcpServer.registerTool(
     'read_repomix_output',
-    'Read the contents of a Repomix-generated output file. Supports partial reading with line range specification for large files. This tool is designed for environments where direct file system access is limited (e.g., web-based environments, sandboxed applications). For direct file system access, use standard file operations.',
-    {
-      outputId: z.string().describe('ID of the Repomix output file to read'),
-      startLine: z
-        .number()
-        .optional()
-        .describe('Starting line number (1-based, inclusive). If not specified, reads from beginning.'),
-      endLine: z
-        .number()
-        .optional()
-        .describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
-    },
     {
       title: 'Read Repomix Output',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      description:
+        'Read the contents of a Repomix-generated output file. Supports partial reading with line range specification for large files. This tool is designed for environments where direct file system access is limited (e.g., web-based environments, sandboxed applications). For direct file system access, use standard file operations.',
+      inputSchema: {
+        outputId: z.string().describe('ID of the Repomix output file to read'),
+        startLine: z
+          .number()
+          .optional()
+          .describe('Starting line number (1-based, inclusive). If not specified, reads from beginning.'),
+        endLine: z
+          .number()
+          .optional()
+          .describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
+      },
+      outputSchema: {
+        content: z.string().describe('The file content or specified line range'),
+        totalLines: z.number().describe('Total number of lines in the file'),
+        linesRead: z.number().describe('Number of lines actually read'),
+        startLine: z.number().optional().describe('Starting line number used'),
+        endLine: z.number().optional().describe('Ending line number used'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     async ({ outputId, startLine, endLine }): Promise<CallToolResult> => {
       try {
@@ -58,8 +68,14 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
 
         // Read the file content
         const content = await fs.readFile(filePath, 'utf8');
+        const lines = content.split('\n');
+        const totalLines = lines.length;
 
         let processedContent = content;
+        let actualStartLine = 1;
+        let actualEndLine = totalLines;
+        let linesRead = totalLines;
+
         if (startLine !== undefined || endLine !== undefined) {
           // Validate that startLine and endLine are positive values
           if (startLine !== undefined && startLine < 1) {
@@ -81,7 +97,6 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
             });
           }
 
-          const lines = content.split('\n');
           const start = Math.max(0, (startLine || 1) - 1);
           const end = endLine ? Math.min(lines.length, endLine) : lines.length;
 
@@ -92,11 +107,17 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
           }
 
           processedContent = lines.slice(start, end).join('\n');
+          actualStartLine = start + 1;
+          actualEndLine = end;
+          linesRead = end - start;
         }
 
         return buildMcpToolSuccessResponse({
-          description: `Content of Repomix output file (ID: ${outputId})${startLine || endLine ? ` (lines ${startLine || 1}-${endLine || 'end'})` : ''}:`,
-          processedContent,
+          content: processedContent,
+          totalLines,
+          linesRead,
+          startLine: startLine || actualStartLine,
+          endLine: endLine || actualEndLine,
         });
       } catch (error) {
         logger.error(`Error reading Repomix output: ${error}`);

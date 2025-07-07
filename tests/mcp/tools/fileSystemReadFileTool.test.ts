@@ -15,7 +15,7 @@ vi.mock('../../../src/core/security/workers/securityCheckWorker.js');
 
 describe('FileSystemReadFileTool', () => {
   const mockServer = {
-    tool: vi.fn().mockReturnThis(),
+    registerTool: vi.fn().mockReturnThis(),
   } as unknown as McpServer;
 
   let toolHandler: (args: { path: string }) => Promise<CallToolResult>;
@@ -23,18 +23,16 @@ describe('FileSystemReadFileTool', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     registerFileSystemReadFileTool(mockServer);
-    toolHandler = (mockServer.tool as ReturnType<typeof vi.fn>).mock.calls[0][4];
+    toolHandler = (mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls[0][2];
 
     // デフォルトのpath.isAbsoluteの動作をモック
     vi.mocked(path.isAbsolute).mockImplementation((p: string) => p.startsWith('/'));
   });
 
   test('should register tool with correct parameters', () => {
-    expect(mockServer.tool).toHaveBeenCalledWith(
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
       'file_system_read_file',
-      'Read a file from the local file system using an absolute path. Includes built-in security validation to detect and prevent access to files containing sensitive information (API keys, passwords, secrets).',
-      expect.any(Object),
-      expect.any(Object), // annotations
+      expect.any(Object), // tool spec
       expect.any(Function),
     );
   });

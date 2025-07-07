@@ -45,6 +45,8 @@ interface GrepToolSuccessResponse extends Record<string, unknown> {
   description: string;
   matches: SearchMatch[];
   formattedOutput: string[];
+  totalMatches: number;
+  pattern: string;
 }
 
 /**
@@ -63,38 +65,56 @@ interface GrepToolErrorResponse extends Record<string, unknown> {
  * Register the tool to search Repomix output files with grep-like functionality
  */
 export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
-  mcpServer.tool(
+  mcpServer.registerTool(
     'grep_repomix_output',
-    'Search for patterns in a Repomix output file using grep-like functionality with JavaScript RegExp syntax. Returns matching lines with optional context lines around matches.',
-    {
-      outputId: z.string().describe('ID of the Repomix output file to search'),
-      pattern: z.string().describe('Search pattern (JavaScript RegExp regular expression syntax)'),
-      contextLines: z
-        .number()
-        .default(0)
-        .describe(
-          'Number of context lines to show before and after each match (default: 0). Overridden by beforeLines/afterLines if specified.',
-        ),
-      beforeLines: z
-        .number()
-        .optional()
-        .describe(
-          'Number of context lines to show before each match (like grep -B). Takes precedence over contextLines.',
-        ),
-      afterLines: z
-        .number()
-        .optional()
-        .describe(
-          'Number of context lines to show after each match (like grep -A). Takes precedence over contextLines.',
-        ),
-      ignoreCase: z.boolean().default(false).describe('Perform case-insensitive matching (default: false)'),
-    },
     {
       title: 'Grep Repomix Output',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      description:
+        'Search for patterns in a Repomix output file using grep-like functionality with JavaScript RegExp syntax. Returns matching lines with optional context lines around matches.',
+      inputSchema: {
+        outputId: z.string().describe('ID of the Repomix output file to search'),
+        pattern: z.string().describe('Search pattern (JavaScript RegExp regular expression syntax)'),
+        contextLines: z
+          .number()
+          .default(0)
+          .describe(
+            'Number of context lines to show before and after each match (default: 0). Overridden by beforeLines/afterLines if specified.',
+          ),
+        beforeLines: z
+          .number()
+          .optional()
+          .describe(
+            'Number of context lines to show before each match (like grep -B). Takes precedence over contextLines.',
+          ),
+        afterLines: z
+          .number()
+          .optional()
+          .describe(
+            'Number of context lines to show after each match (like grep -A). Takes precedence over contextLines.',
+          ),
+        ignoreCase: z.boolean().default(false).describe('Perform case-insensitive matching (default: false)'),
+      },
+      outputSchema: {
+        description: z.string().describe('Human-readable description of the search results'),
+        matches: z
+          .array(
+            z.object({
+              lineNumber: z.number().describe('Line number where the match was found'),
+              line: z.string().describe('The full line content'),
+              matchedText: z.string().describe('The actual text that matched the pattern'),
+            }),
+          )
+          .describe('Array of search matches found'),
+        formattedOutput: z.array(z.string()).describe('Formatted grep-style output with context lines'),
+        totalMatches: z.number().describe('Total number of matches found'),
+        pattern: z.string().describe('The search pattern that was used'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     async ({
       outputId,
@@ -165,6 +185,8 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
             description: `No matches found for pattern "${pattern}" in Repomix output file (ID: ${outputId}).`,
             matches: [],
             formattedOutput: [],
+            totalMatches: 0,
+            pattern,
           };
           return buildMcpToolSuccessResponse(successResponse);
         }
@@ -173,6 +195,8 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
           description: `Found ${searchResult.matches.length} match(es) for pattern "${pattern}" in Repomix output file (ID: ${outputId}):`,
           matches: searchResult.matches,
           formattedOutput: searchResult.formattedOutput,
+          totalMatches: searchResult.matches.length,
+          pattern,
         };
         return buildMcpToolSuccessResponse(successResponse);
       } catch (error) {

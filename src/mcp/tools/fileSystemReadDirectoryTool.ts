@@ -10,18 +10,28 @@ import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToo
  * Register file system directory listing tool
  */
 export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
-  mcpServer.tool(
+  mcpServer.registerTool(
     'file_system_read_directory',
-    'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
-    {
-      path: z.string().describe('Absolute path to the directory to list'),
-    },
     {
       title: 'Read Directory',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      description:
+        'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
+      inputSchema: {
+        path: z.string().describe('Absolute path to the directory to list'),
+      },
+      outputSchema: {
+        path: z.string().describe('The directory path that was listed'),
+        contents: z.array(z.string()).describe('Array of directory contents with [FILE]/[DIR] indicators'),
+        totalItems: z.number().describe('Total number of items in the directory'),
+        fileCount: z.number().describe('Number of files in the directory'),
+        directoryCount: z.number().describe('Number of subdirectories in the directory'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     async ({ path: directoryPath }): Promise<CallToolResult> => {
       try {
@@ -50,13 +60,18 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
 
         // Read directory contents
         const entries = await fs.readdir(directoryPath, { withFileTypes: true });
-        const formatted = entries
-          .map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`)
-          .join('\n');
+        const contents = entries.map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`);
+
+        const fileCount = entries.filter((entry) => entry.isFile()).length;
+        const directoryCount = entries.filter((entry) => entry.isDirectory()).length;
+        const totalItems = entries.length;
 
         return buildMcpToolSuccessResponse({
-          description: `Contents of ${directoryPath}:`,
-          content: formatted || '(empty directory)',
+          path: directoryPath,
+          contents: contents.length > 0 ? contents : ['(empty directory)'],
+          totalItems,
+          fileCount,
+          directoryCount,
         });
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
