@@ -8,6 +8,18 @@ import { createSecretLintConfig, runSecretLint } from '../../core/security/worke
 import { logger } from '../../shared/logger.js';
 import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToolRuntime.js';
 
+const fileSystemReadFileInputSchema = z.object({
+  path: z.string().describe('Absolute path to the file to read'),
+});
+
+const fileSystemReadFileOutputSchema = z.object({
+  path: z.string().describe('The file path that was read'),
+  content: z.string().describe('The file content'),
+  size: z.number().describe('File size in bytes'),
+  encoding: z.string().describe('Text encoding used to read the file'),
+  lines: z.number().describe('Number of lines in the file'),
+});
+
 /**
  * Register file system read file tool with security checks
  */
@@ -18,16 +30,8 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
       title: 'Read File',
       description:
         'Read a file from the local file system using an absolute path. Includes built-in security validation to detect and prevent access to files containing sensitive information (API keys, passwords, secrets).',
-      inputSchema: {
-        path: z.string().describe('Absolute path to the file to read'),
-      },
-      outputSchema: {
-        path: z.string().describe('The file path that was read'),
-        content: z.string().describe('The file content'),
-        size: z.number().describe('File size in bytes'),
-        encoding: z.string().describe('Text encoding used to read the file'),
-        lines: z.number().describe('Number of lines in the file'),
-      },
+      inputSchema: fileSystemReadFileInputSchema.shape,
+      outputSchema: fileSystemReadFileOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -90,7 +94,7 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
           size,
           encoding: 'utf8',
           lines,
-        });
+        } satisfies z.infer<typeof fileSystemReadFileOutputSchema>);
       } catch (error) {
         logger.error(`Error in file_system_read_file tool: ${error}`);
         return buildMcpToolErrorResponse({

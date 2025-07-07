@@ -10,6 +10,23 @@ import {
   getOutputFilePath,
 } from './mcpToolRuntime.js';
 
+const readRepomixOutputInputSchema = z.object({
+  outputId: z.string().describe('ID of the Repomix output file to read'),
+  startLine: z
+    .number()
+    .optional()
+    .describe('Starting line number (1-based, inclusive). If not specified, reads from beginning.'),
+  endLine: z.number().optional().describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
+});
+
+const readRepomixOutputOutputSchema = z.object({
+  content: z.string().describe('The file content or specified line range'),
+  totalLines: z.number().describe('Total number of lines in the file'),
+  linesRead: z.number().describe('Number of lines actually read'),
+  startLine: z.number().optional().describe('Starting line number used'),
+  endLine: z.number().optional().describe('Ending line number used'),
+});
+
 /**
  * Register the tool to read Repomix output files
  */
@@ -20,24 +37,8 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
       title: 'Read Repomix Output',
       description:
         'Read the contents of a Repomix-generated output file. Supports partial reading with line range specification for large files. This tool is designed for environments where direct file system access is limited (e.g., web-based environments, sandboxed applications). For direct file system access, use standard file operations.',
-      inputSchema: {
-        outputId: z.string().describe('ID of the Repomix output file to read'),
-        startLine: z
-          .number()
-          .optional()
-          .describe('Starting line number (1-based, inclusive). If not specified, reads from beginning.'),
-        endLine: z
-          .number()
-          .optional()
-          .describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
-      },
-      outputSchema: {
-        content: z.string().describe('The file content or specified line range'),
-        totalLines: z.number().describe('Total number of lines in the file'),
-        linesRead: z.number().describe('Number of lines actually read'),
-        startLine: z.number().optional().describe('Starting line number used'),
-        endLine: z.number().optional().describe('Ending line number used'),
-      },
+      inputSchema: readRepomixOutputInputSchema.shape,
+      outputSchema: readRepomixOutputOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -118,7 +119,7 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
           linesRead,
           startLine: startLine || actualStartLine,
           endLine: endLine || actualEndLine,
-        });
+        } satisfies z.infer<typeof readRepomixOutputOutputSchema>);
       } catch (error) {
         logger.error(`Error reading Repomix output: ${error}`);
         return buildMcpToolErrorResponse(convertErrorToJson(error));

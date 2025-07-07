@@ -6,6 +6,18 @@ import { z } from 'zod';
 import { logger } from '../../shared/logger.js';
 import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToolRuntime.js';
 
+const fileSystemReadDirectoryInputSchema = z.object({
+  path: z.string().describe('Absolute path to the directory to list'),
+});
+
+const fileSystemReadDirectoryOutputSchema = z.object({
+  path: z.string().describe('The directory path that was listed'),
+  contents: z.array(z.string()).describe('Array of directory contents with [FILE]/[DIR] indicators'),
+  totalItems: z.number().describe('Total number of items in the directory'),
+  fileCount: z.number().describe('Number of files in the directory'),
+  directoryCount: z.number().describe('Number of subdirectories in the directory'),
+});
+
 /**
  * Register file system directory listing tool
  */
@@ -16,16 +28,8 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
       title: 'Read Directory',
       description:
         'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
-      inputSchema: {
-        path: z.string().describe('Absolute path to the directory to list'),
-      },
-      outputSchema: {
-        path: z.string().describe('The directory path that was listed'),
-        contents: z.array(z.string()).describe('Array of directory contents with [FILE]/[DIR] indicators'),
-        totalItems: z.number().describe('Total number of items in the directory'),
-        fileCount: z.number().describe('Number of files in the directory'),
-        directoryCount: z.number().describe('Number of subdirectories in the directory'),
-      },
+      inputSchema: fileSystemReadDirectoryInputSchema.shape,
+      outputSchema: fileSystemReadDirectoryOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -72,7 +76,7 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
           totalItems,
           fileCount,
           directoryCount,
-        });
+        } satisfies z.infer<typeof fileSystemReadDirectoryOutputSchema>);
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
         return buildMcpToolErrorResponse({
