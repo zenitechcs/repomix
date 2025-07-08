@@ -6,22 +6,36 @@ import { z } from 'zod';
 import { logger } from '../../shared/logger.js';
 import { buildMcpToolErrorResponse, buildMcpToolSuccessResponse } from './mcpToolRuntime.js';
 
+const fileSystemReadDirectoryInputSchema = z.object({
+  path: z.string().describe('Absolute path to the directory to list'),
+});
+
+const fileSystemReadDirectoryOutputSchema = z.object({
+  path: z.string().describe('The directory path that was listed'),
+  contents: z.array(z.string()).describe('Array of directory contents with [FILE]/[DIR] indicators'),
+  totalItems: z.number().describe('Total number of items in the directory'),
+  fileCount: z.number().describe('Number of files in the directory'),
+  directoryCount: z.number().describe('Number of subdirectories in the directory'),
+});
+
 /**
  * Register file system directory listing tool
  */
 export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
-  mcpServer.tool(
+  mcpServer.registerTool(
     'file_system_read_directory',
-    'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
-    {
-      path: z.string().describe('Absolute path to the directory to list'),
-    },
     {
       title: 'Read Directory',
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+      description:
+        'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
+      inputSchema: fileSystemReadDirectoryInputSchema.shape,
+      outputSchema: fileSystemReadDirectoryOutputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     async ({ path: directoryPath }): Promise<CallToolResult> => {
       try {
@@ -29,33 +43,45 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
 
         // Ensure path is absolute
         if (!path.isAbsolute(directoryPath)) {
-          return buildMcpToolErrorResponse([`Error: Path must be absolute. Received: ${directoryPath}`]);
+          return buildMcpToolErrorResponse({
+            errorMessage: `Error: Path must be absolute. Received: ${directoryPath}`,
+          });
         }
 
         // Check if directory exists
         try {
           const stats = await fs.stat(directoryPath);
           if (!stats.isDirectory()) {
-            return buildMcpToolErrorResponse([
-              `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
-            ]);
+            return buildMcpToolErrorResponse({
+              errorMessage: `Error: The specified path is not a directory: ${directoryPath}. Use file_system_read_file for files.`,
+            });
           }
         } catch {
-          return buildMcpToolErrorResponse([`Error: Directory not found at path: ${directoryPath}`]);
+          return buildMcpToolErrorResponse({
+            errorMessage: `Error: Directory not found at path: ${directoryPath}`,
+          });
         }
 
         // Read directory contents
         const entries = await fs.readdir(directoryPath, { withFileTypes: true });
-        const formatted = entries
-          .map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`)
-          .join('\n');
+        const contents = entries.map((entry) => `${entry.isDirectory() ? '[DIR]' : '[FILE]'} ${entry.name}`);
 
-        return buildMcpToolSuccessResponse([`Contents of ${directoryPath}:`, formatted || '(empty directory)']);
+        const fileCount = entries.filter((entry) => entry.isFile()).length;
+        const directoryCount = entries.filter((entry) => entry.isDirectory()).length;
+        const totalItems = entries.length;
+
+        return buildMcpToolSuccessResponse({
+          path: directoryPath,
+          contents: contents.length > 0 ? contents : ['(empty directory)'],
+          totalItems,
+          fileCount,
+          directoryCount,
+        } satisfies z.infer<typeof fileSystemReadDirectoryOutputSchema>);
       } catch (error) {
         logger.error(`Error in file_system_read_directory tool: ${error}`);
-        return buildMcpToolErrorResponse([
-          `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
-        ]);
+        return buildMcpToolErrorResponse({
+          errorMessage: `Error listing directory: ${error instanceof Error ? error.message : String(error)}`,
+        });
       }
     },
   );

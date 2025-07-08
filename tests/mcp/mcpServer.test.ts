@@ -34,10 +34,15 @@ describe('MCP Server', () => {
     test('should create server with correct configuration', async () => {
       const server = await createMcpServer();
 
-      expect(McpServer).toHaveBeenCalledWith({
-        name: 'repomix-mcp-server',
-        version: mockVersion,
-      });
+      expect(McpServer).toHaveBeenCalledWith(
+        {
+          name: 'repomix-mcp-server',
+          version: mockVersion,
+        },
+        {
+          instructions: expect.stringContaining('Repomix MCP Server provides AI-optimized codebase analysis tools'),
+        },
+      );
       expect(server).toBeDefined();
     });
   });
@@ -58,6 +63,8 @@ describe('MCP Server', () => {
       const mockMcpServer = {
         tool: vi.fn().mockReturnThis(),
         prompt: vi.fn().mockReturnThis(),
+        registerTool: vi.fn().mockReturnThis(),
+        registerPrompt: vi.fn().mockReturnThis(),
         connect: vi.fn().mockRejectedValue(error),
         close: vi.fn().mockResolvedValue(undefined),
         ...createMockServerProps(),
@@ -78,6 +85,8 @@ describe('MCP Server', () => {
       const mockServer = {
         tool: vi.fn().mockReturnThis(),
         prompt: vi.fn().mockReturnThis(),
+        registerTool: vi.fn().mockReturnThis(),
+        registerPrompt: vi.fn().mockReturnThis(),
         connect: vi.fn().mockResolvedValue(undefined),
         close: vi.fn().mockResolvedValue(undefined),
         ...createMockServerProps(),
@@ -100,6 +109,8 @@ describe('MCP Server', () => {
       const mockServer = {
         tool: vi.fn().mockReturnThis(),
         prompt: vi.fn().mockReturnThis(),
+        registerTool: vi.fn().mockReturnThis(),
+        registerPrompt: vi.fn().mockReturnThis(),
         connect: vi.fn().mockResolvedValue(undefined),
         close: vi.fn().mockResolvedValue(undefined),
         ...createMockServerProps(),
@@ -123,6 +134,8 @@ describe('MCP Server', () => {
       const mockServer = {
         tool: vi.fn().mockReturnThis(),
         prompt: vi.fn().mockReturnThis(),
+        registerTool: vi.fn().mockReturnThis(),
+        registerPrompt: vi.fn().mockReturnThis(),
         connect: vi.fn().mockResolvedValue(undefined),
         close: vi.fn().mockRejectedValue(error),
         ...createMockServerProps(),

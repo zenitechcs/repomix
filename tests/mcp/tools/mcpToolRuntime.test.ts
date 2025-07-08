@@ -3,12 +3,21 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Type guard for structured content with result property
+function hasResult(obj: unknown): obj is { result: string } {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'result' in obj &&
+    typeof (obj as Record<string, unknown>).result === 'string'
+  );
+}
 import {
   buildMcpToolErrorResponse,
   buildMcpToolSuccessResponse,
   createToolWorkspace,
-  formatToolError,
-  formatToolResponse,
+  formatPackToolResponse,
   generateOutputId,
   getOutputFilePath,
   registerOutputFile,
@@ -112,16 +121,28 @@ describe('mcpToolRuntime', () => {
       };
       const outputFilePath = '/path/to/output.xml';
 
-      const response = await formatToolResponse(context, metrics, outputFilePath);
+      const response = await formatPackToolResponse(context, metrics, outputFilePath);
 
       expect(response).toHaveProperty('content');
-      expect(response.content).toHaveLength(6);
+      expect(response.content).toHaveLength(1);
       expect(response.content[0].type).toBe('text');
-      expect(response.content[1].type).toBe('text');
-      expect(response.content[1].text).toContain('"directory": "/path/to/dir"');
-      expect(response.content[1].text).toContain('"outputId": "abcdef1234567890"');
-      expect(response.content[1].text).toContain('"totalFiles": 10');
-      expect(response.content[1].text).toContain('"totalLines": 5');
+      // Check that the structured content contains the expected result JSON
+      const structuredContent = response.structuredContent;
+      expect(structuredContent).toHaveProperty('result');
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const resultJson = JSON.parse(structuredContent.result);
+      expect(resultJson.directory).toBe('/path/to/dir');
+      expect(resultJson.outputId).toBe('abcdef1234567890');
+      expect(resultJson.metrics.totalFiles).toBe(10);
+      expect(resultJson.metrics.totalLines).toBe(5);
+      expect(response).toHaveProperty('structuredContent');
+      expect(response.structuredContent).toHaveProperty('result');
+      expect(response.structuredContent).toHaveProperty('description');
+      expect(response.structuredContent).toHaveProperty('directoryStructure');
     });
 
     it('should format a tool response with repository context', async () => {
@@ -144,11 +165,20 @@ describe('mcpToolRuntime', () => {
       };
       const outputFilePath = '/path/to/output.xml';
 
-      const response = await formatToolResponse(context, metrics, outputFilePath);
+      const response = await formatPackToolResponse(context, metrics, outputFilePath);
 
-      expect(response.content[1].text).toContain('"repository": "user/repo"');
-      expect(response.content[1].text).not.toContain('"directory":');
-      expect(response.content[1].text).toContain('"totalLines": 5');
+      // Check that the structured content contains the expected result JSON
+      const structuredContent = response.structuredContent;
+      expect(structuredContent).toHaveProperty('result');
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const resultJson = JSON.parse(structuredContent.result);
+      expect(resultJson.repository).toBe('user/repo');
+      expect(resultJson.directory).toBeUndefined();
+      expect(resultJson.metrics.totalLines).toBe(5);
     });
 
     it('should limit the number of top files based on the parameter', async () => {
@@ -180,113 +210,129 @@ describe('mcpToolRuntime', () => {
       const outputFilePath = '/path/to/output.xml';
       const topFilesLen = 3;
 
-      const response = await formatToolResponse(context, metrics, outputFilePath, topFilesLen);
+      const response = await formatPackToolResponse(context, metrics, outputFilePath, topFilesLen);
 
-      const jsonContent = JSON.parse(response.content[1].text as string);
-      expect(jsonContent.metrics.topFiles).toHaveLength(3);
-      expect(jsonContent.metrics.topFiles[0].path).toBe('file1.js');
-      expect(jsonContent.metrics.topFiles[1].path).toBe('file2.js');
-      expect(jsonContent.metrics.topFiles[2].path).toBe('file3.js');
-      expect(jsonContent.metrics.totalLines).toBe(5);
+      // Check that the structured content contains the expected result JSON
+      const structuredContent = response.structuredContent;
+      expect(structuredContent).toHaveProperty('result');
+
+      if (!hasResult(structuredContent)) {
+        throw new Error('Expected structuredContent to have a result property of type string');
+      }
+
+      const result = JSON.parse(structuredContent.result);
+      expect(result.metrics.topFiles).toHaveLength(3);
+      expect(result.metrics.topFiles[0].path).toBe('file1.js');
+      expect(result.metrics.topFiles[1].path).toBe('file2.js');
+      expect(result.metrics.topFiles[2].path).toBe('file3.js');
+      expect(result.metrics.totalLines).toBe(5);
     });
   });
 
   describe('buildMcpToolSuccessResponse', () => {
-    it('should create a successful response with single message', () => {
-      const messages = ['Operation completed successfully'];
-      const response = buildMcpToolSuccessResponse(messages);
+    it('should create a successful response with structured content', () => {
+      const structuredContent = { description: 'Operation completed successfully' };
+      const response = buildMcpToolSuccessResponse(structuredContent);
 
       expect(response).toEqual({
         content: [
           {
             type: 'text',
-            text: 'Operation completed successfully',
+            text: JSON.stringify(structuredContent, null, 2),
           },
         ],
+        structuredContent: structuredContent,
       });
       expect(response.isError).toBeUndefined();
     });
 
-    it('should create a successful response with multiple messages', () => {
-      const messages = ['First message', 'Second message', 'Third message'];
-      const response = buildMcpToolSuccessResponse(messages);
+    it('should create a successful response with complex structured content', () => {
+      const structuredContent = {
+        description: 'Operation completed successfully',
+        results: ['First result', 'Second result', 'Third result'],
+        count: 3,
+      };
+      const response = buildMcpToolSuccessResponse(structuredContent);
 
       expect(response).toEqual({
         content: [
           {
             type: 'text',
-            text: 'First message',
-          },
-          {
-            type: 'text',
-            text: 'Second message',
-          },
-          {
-            type: 'text',
-            text: 'Third message',
+            text: JSON.stringify(structuredContent, null, 2),
           },
         ],
+        structuredContent: structuredContent,
       });
       expect(response.isError).toBeUndefined();
     });
 
-    it('should create a successful response with empty messages array', () => {
-      const messages: string[] = [];
-      const response = buildMcpToolSuccessResponse(messages);
+    it('should create a successful response with undefined structured content', () => {
+      const structuredContent = undefined;
+      const response = buildMcpToolSuccessResponse(structuredContent);
 
       expect(response).toEqual({
-        content: [],
+        content: [
+          {
+            type: 'text',
+            text: 'null',
+          },
+        ],
+        structuredContent: structuredContent,
       });
       expect(response.isError).toBeUndefined();
     });
   });
 
   describe('buildMcpToolErrorResponse', () => {
-    it('should create an error response with single message', () => {
-      const errorMessages = ['Something went wrong'];
-      const response = buildMcpToolErrorResponse(errorMessages);
+    it('should create an error response with structured content', () => {
+      const errorContent = { message: 'Something went wrong' };
+      const response = buildMcpToolErrorResponse(errorContent);
 
       expect(response).toEqual({
         isError: true,
         content: [
           {
             type: 'text',
-            text: 'Something went wrong',
+            text: JSON.stringify(errorContent, null, 2),
           },
         ],
+        structuredContent: errorContent,
       });
     });
 
-    it('should create an error response with multiple messages', () => {
-      const errorMessages = ['Error 1', 'Error 2', 'Error 3'];
-      const response = buildMcpToolErrorResponse(errorMessages);
+    it('should create an error response with complex structured content', () => {
+      const errorContent = {
+        message: 'Multiple errors occurred',
+        errors: ['Error 1', 'Error 2', 'Error 3'],
+        code: 'MULTIPLE_ERRORS',
+      };
+      const response = buildMcpToolErrorResponse(errorContent);
 
       expect(response).toEqual({
         isError: true,
         content: [
           {
             type: 'text',
-            text: 'Error 1',
-          },
-          {
-            type: 'text',
-            text: 'Error 2',
-          },
-          {
-            type: 'text',
-            text: 'Error 3',
+            text: JSON.stringify(errorContent, null, 2),
           },
         ],
+        structuredContent: errorContent,
       });
     });
 
-    it('should create an error response with empty messages array', () => {
-      const errorMessages: string[] = [];
-      const response = buildMcpToolErrorResponse(errorMessages);
+    it('should create an error response with undefined structured content', () => {
+      const errorContent = undefined;
+      const response = buildMcpToolErrorResponse(errorContent);
 
       expect(response).toEqual({
         isError: true,
-        content: [],
+        content: [
+          {
+            type: 'text',
+            text: 'null',
+          },
+        ],
+        structuredContent: errorContent,
       });
     });
   });

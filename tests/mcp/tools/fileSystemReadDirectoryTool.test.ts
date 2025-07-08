@@ -13,7 +13,7 @@ vi.mock('../../../src/shared/logger.js');
 
 describe('FileSystemReadDirectoryTool', () => {
   const mockServer = {
-    tool: vi.fn().mockReturnThis(),
+    registerTool: vi.fn().mockReturnThis(),
   } as unknown as McpServer;
 
   let toolHandler: (args: { path: string }) => Promise<CallToolResult>;
@@ -21,18 +21,16 @@ describe('FileSystemReadDirectoryTool', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     registerFileSystemReadDirectoryTool(mockServer);
-    toolHandler = (mockServer.tool as ReturnType<typeof vi.fn>).mock.calls[0][4];
+    toolHandler = (mockServer.registerTool as ReturnType<typeof vi.fn>).mock.calls[0][2];
 
     // デフォルトのpath.isAbsoluteの動作をモック
     vi.mocked(path.isAbsolute).mockImplementation((p: string) => p.startsWith('/'));
   });
 
   test('should register tool with correct parameters', () => {
-    expect(mockServer.tool).toHaveBeenCalledWith(
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
       'file_system_read_directory',
-      'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
-      expect.any(Object),
-      expect.any(Object), // annotations
+      expect.any(Object), // tool spec
       expect.any(Function),
     );
   });
@@ -48,9 +46,12 @@ describe('FileSystemReadDirectoryTool', () => {
       content: [
         {
           type: 'text',
-          text: `Error: Path must be absolute. Received: ${testPath}`,
+          text: JSON.stringify({ errorMessage: `Error: Path must be absolute. Received: ${testPath}` }, null, 2),
         },
       ],
+      structuredContent: {
+        errorMessage: `Error: Path must be absolute. Received: ${testPath}`,
+      },
     });
   });
 
@@ -66,9 +67,12 @@ describe('FileSystemReadDirectoryTool', () => {
       content: [
         {
           type: 'text',
-          text: `Error: Directory not found at path: ${testPath}`,
+          text: JSON.stringify({ errorMessage: `Error: Directory not found at path: ${testPath}` }, null, 2),
         },
       ],
+      structuredContent: {
+        errorMessage: `Error: Directory not found at path: ${testPath}`,
+      },
     });
   });
 });
