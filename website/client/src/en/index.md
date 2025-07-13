@@ -206,6 +206,16 @@ Create a `repomix.config.json` for persistent settings:
 }
 ```
 
+## Real-World Use Cases
+
+### [LLM Code Generation Workflow](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+A developer shares how they use Repomix to extract code context from existing codebases, then leverage that context with LLMs like Claude and Aider for incremental improvements, code reviews, and automated documentation generation.
+
+### [Creating Knowledge Datapacks for LLMs](https://lethain.com/competitive-advantage-author-llms/)
+
+Authors are using Repomix to package their written content—blogs, documentation, and books—into LLM-compatible formats, enabling readers to interact with their expertise through AI-powered Q&A systems.
+
 ## Power Users Guide
 
 Repomix offers powerful features for advanced use cases. Here are some essential guides for power users:

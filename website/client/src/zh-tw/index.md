@@ -208,6 +208,16 @@ repomix --style plain
 }
 ```
 
+## 真實世界使用案例
+
+### [LLM 程式碼生成工作流程](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+一位開發者分享了他們如何使用 Repomix 從現有程式碼庫中提取程式碼上下文，然後與 Claude 和 Aider 等 LLM 一起利用該上下文進行漸進式改進、程式碼審查和自動化文件生成。
+
+### [為 LLM 建立知識資料包](https://lethain.com/competitive-advantage-author-llms/)
+
+作者正在使用 Repomix 將他們的書面內容——部落格、文件和書籍——封裝為 LLM 相容格式，使讀者能夠透過 AI 驅動的問答系統與他們的專業知識進行互動。
+
 ## 進階使用者指南
 
 Repomix 為進階使用案例提供強大的功能。以下是進階使用者的一些重要指南：

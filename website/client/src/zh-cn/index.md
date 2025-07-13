@@ -208,6 +208,16 @@ repomix --style plain
 }
 ```
 
+## 真实世界使用案例
+
+### [LLM 代码生成工作流](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+一位开发者分享了他们如何使用 Repomix 从现有代码库中提取代码上下文，然后与 Claude 和 Aider 等 LLM 一起利用该上下文进行增量改进、代码审查和自动化文档生成。
+
+### [为 LLM 创建知识数据包](https://lethain.com/competitive-advantage-author-llms/)
+
+作者正在使用 Repomix 将他们的书面内容——博客、文档和书籍——打包为 LLM 兼容格式，使读者能够通过 AI 驱动的问答系统与他们的专业知识进行交互。
+
 ## 高级用户指南
 
 Repomix 为高级用例提供强大的功能。以下是高级用户的一些重要指南：

@@ -207,6 +207,16 @@ Tạo một `repomix.config.json` cho các cài đặt cố định:
 }
 ```
 
+## Các Trường Hợp Sử Dụng Thực Tế
+
+### [Quy Trình Sinh Mã LLM](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+Một nhà phát triển chia sẻ cách họ sử dụng Repomix để trích xuất ngữ cảnh mã từ các codebase hiện có, sau đó tận dụng ngữ cảnh đó với các LLM như Claude và Aider để cải tiến dần dần, đánh giá mã và tạo tài liệu tự động.
+
+### [Tạo Gói Dữ Liệu Kiến Thức cho LLM](https://lethain.com/competitive-advantage-author-llms/)
+
+Các tác giả đang sử dụng Repomix để đóng gói nội dung viết của họ—blog, tài liệu và sách—thành các định dạng tương thích với LLM, cho phép độc giả tương tác với chuyên môn của họ thông qua các hệ thống hỏi đáp được hỗ trợ bởi AI.
+
 ## Hướng Dẫn Người Dùng Chuyên Nghiệp
 
 Repomix cung cấp các tính năng mạnh mẽ cho các trường hợp sử dụng nâng cao. Dưới đây là một số hướng dẫn thiết yếu cho người dùng chuyên nghiệp:

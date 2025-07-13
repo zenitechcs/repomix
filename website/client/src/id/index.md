@@ -207,6 +207,16 @@ Buat `repomix.config.json` untuk pengaturan permanen:
 }
 ```
 
+## Kasus Penggunaan di Dunia Nyata
+
+### [Alur Kerja Pembuatan Kode LLM](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+Seorang developer membagikan bagaimana mereka menggunakan Repomix untuk mengekstrak konteks kode dari codebase yang ada, kemudian memanfaatkan konteks tersebut dengan LLM seperti Claude dan Aider untuk perbaikan bertahap, ulasan kode, dan pembuatan dokumentasi otomatis.
+
+### [Membuat Paket Data Pengetahuan untuk LLM](https://lethain.com/competitive-advantage-author-llms/)
+
+Para penulis menggunakan Repomix untuk mengemas konten tertulis mereka—blog, dokumentasi, dan buku—ke dalam format yang kompatibel dengan LLM, memungkinkan pembaca berinteraksi dengan keahlian mereka melalui sistem tanya jawab yang didukung AI.
+
 ## Panduan Pengguna Mahir
 
 Repomix menawarkan fitur-fitur canggih untuk kasus penggunaan lanjutan. Berikut adalah beberapa panduan penting untuk pengguna mahir:

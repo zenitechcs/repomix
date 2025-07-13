@@ -206,6 +206,16 @@ repomix --style plain
 }
 ```
 
+## 実際の活用事例
+
+### [LLMコード生成ワークフロー](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/)
+
+開発者がRepomixを使用して既存のコードベースからコードコンテキストを抽出し、ClaudeやAiderなどのLLMを活用してインクリメンタルな改善、コードレビュー、自動ドキュメント生成を行う方法を共有しています。
+
+### [LLM向け知識データパックの作成](https://lethain.com/competitive-advantage-author-llms/)
+
+著者たちはRepomixを使用して、ブログ、ドキュメント、書籍などの執筆コンテンツをLLM互換フォーマットにパッケージ化し、読者がAI駆動のQ&Aシステムを通じて専門知識と対話できるようにしています。
+
 ## パワーユーザーガイド
 
 Repomixは高度な用途向けの強力な機能を提供します。パワーユーザー向けの重要なガイドをご紹介します：
