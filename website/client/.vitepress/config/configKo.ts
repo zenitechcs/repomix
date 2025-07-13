@@ -50,6 +50,7 @@ export const configKo = defineConfig({
           text: '커뮤니티',
           items: [
             { text: 'Repomix에 기여하기', link: '/ko/guide/development/' },
+            { text: '후원자', link: '/ko/guide/sponsors' },
           ],
         },
       ],

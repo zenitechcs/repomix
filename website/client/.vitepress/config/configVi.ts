@@ -53,6 +53,7 @@ export const configVi = defineConfig({
           text: 'Cộng đồng',
           items: [
             { text: 'Đóng góp cho Repomix', link: '/vi/guide/development/' },
+            { text: 'Nhà tài trợ', link: '/vi/guide/sponsors' },
           ],
         },
       ],

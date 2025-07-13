@@ -53,6 +53,7 @@ export const configFr = defineConfig({
           text: 'Communauté',
           items: [
             { text: 'Contribuer à Repomix', link: '/fr/guide/development/' },
+            { text: 'Sponsors', link: '/fr/guide/sponsors' },
           ],
         },
       ],

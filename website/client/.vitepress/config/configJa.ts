@@ -48,6 +48,7 @@ export const configJa = defineConfig({
           text: 'コミュニティ',
           items: [
             { text: 'Repomixに貢献する', link: '/ja/guide/development/' },
+            { text: 'スポンサー', link: '/ja/guide/sponsors' },
           ],
         },
       ],

@@ -50,6 +50,7 @@ export const configDe = defineConfig({
           text: 'Gemeinschaft',
           items: [
             { text: 'Zu Repomix beitragen', link: '/de/guide/development/' },
+            { text: 'Sponsoren', link: '/de/guide/sponsors' },
           ],
         },
       ],

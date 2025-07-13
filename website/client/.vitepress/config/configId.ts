@@ -53,6 +53,7 @@ export const configId = defineConfig({
           text: 'Komunitas',
           items: [
             { text: 'Berkontribusi ke Repomix', link: '/id/guide/development/' },
+            { text: 'Sponsor', link: '/id/guide/sponsors' },
           ],
         },
       ],

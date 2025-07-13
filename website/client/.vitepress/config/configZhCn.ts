@@ -47,6 +47,7 @@ export const configZhCn = defineConfig({
           text: '社区',
           items: [
             { text: '为Repomix做贡献', link: '/zh-cn/guide/development/' },
+            { text: '赞助商', link: '/zh-cn/guide/sponsors' },
           ],
         },
       ],

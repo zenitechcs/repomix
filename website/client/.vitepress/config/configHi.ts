@@ -50,6 +50,7 @@ export const configHi = defineConfig({
           text: 'समुदाय',
           items: [
             { text: 'Repomix में योगदान', link: '/hi/guide/development/' },
+            { text: 'प्रायोजक', link: '/hi/guide/sponsors' },
           ],
         },
       ],
