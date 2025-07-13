@@ -31,7 +31,7 @@ export const configId = defineConfig({
             { text: 'Opsi Baris Perintah', link: '/id/guide/command-line-options' },
             { text: 'Konfigurasi', link: '/id/guide/configuration' },
             { text: 'Instruksi Khusus', link: '/id/guide/custom-instructions' },
-            { text: 'Pemrosesan Repositori Remote', link: '/id/guide/remote-repository-processing' },
+            { text: 'Pemrosesan Repositori GitHub', link: '/id/guide/remote-repository-processing' },
             { text: 'Penghapusan Komentar', link: '/id/guide/comment-removal' },
             { text: 'Kompresi Kode', link: '/id/guide/code-compress' },
             { text: 'Keamanan', link: '/id/guide/security' },

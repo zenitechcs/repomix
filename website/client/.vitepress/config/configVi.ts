@@ -31,7 +31,7 @@ export const configVi = defineConfig({
             { text: 'Tùy chọn dòng lệnh', link: '/vi/guide/command-line-options' },
             { text: 'Cấu hình', link: '/vi/guide/configuration' },
             { text: 'Hướng dẫn tùy chỉnh', link: '/vi/guide/custom-instructions' },
-            { text: 'Xử lý kho lưu trữ từ xa', link: '/vi/guide/remote-repository-processing' },
+            { text: 'Xử lý kho lưu trữ GitHub', link: '/vi/guide/remote-repository-processing' },
             { text: 'Xóa bình luận', link: '/vi/guide/comment-removal' },
             { text: 'Nén mã', link: '/vi/guide/code-compress' },
             { text: 'Bảo mật', link: '/vi/guide/security' },

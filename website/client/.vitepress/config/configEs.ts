@@ -31,7 +31,7 @@ export const configEs = defineConfig({
             { text: 'Opciones de Línea de Comandos', link: '/es/guide/command-line-options' },
             { text: 'Configuración', link: '/es/guide/configuration' },
             { text: 'Instrucciones Personalizadas', link: '/es/guide/custom-instructions' },
-            { text: 'Procesamiento de Repositorios Remotos', link: '/es/guide/remote-repository-processing' },
+            { text: 'Procesamiento de Repositorios de GitHub', link: '/es/guide/remote-repository-processing' },
             { text: 'Eliminación de Comentarios', link: '/es/guide/comment-removal' },
             { text: 'Compresión de Código', link: '/es/guide/code-compress' },
             { text: 'Seguridad', link: '/es/guide/security' },

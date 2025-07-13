@@ -31,7 +31,7 @@ export const configZhTw = defineConfig({
             { text: '命令行選項', link: '/zh-tw/guide/command-line-options' },
             { text: '配置', link: '/zh-tw/guide/configuration' },
             { text: '自定義指令', link: '/zh-tw/guide/custom-instructions' },
-            { text: '遠端倉庫處理', link: '/zh-tw/guide/remote-repository-processing' },
+            { text: 'GitHub倉庫處理', link: '/zh-tw/guide/remote-repository-processing' },
             { text: '註釋移除', link: '/zh-tw/guide/comment-removal' },
             { text: '程式碼壓縮', link: '/zh-tw/guide/code-compress' },
             { text: '安全性', link: '/zh-tw/guide/security' },

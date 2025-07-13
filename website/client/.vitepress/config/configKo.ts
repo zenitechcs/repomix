@@ -31,7 +31,7 @@ export const configKo = defineConfig({
             { text: '명령줄 옵션', link: '/ko/guide/command-line-options' },
             { text: '설정', link: '/ko/guide/configuration' },
             { text: '사용자 정의 지침', link: '/ko/guide/custom-instructions' },
-            { text: '원격 저장소 처리', link: '/ko/guide/remote-repository-processing' },
+            { text: 'GitHub 저장소 처리', link: '/ko/guide/remote-repository-processing' },
             { text: '주석 제거', link: '/ko/guide/comment-removal' },
             { text: '코드 압축', link: '/ko/guide/code-compress' },
             { text: '보안', link: '/ko/guide/security' },

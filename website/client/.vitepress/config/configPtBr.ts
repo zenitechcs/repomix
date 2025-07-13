@@ -31,7 +31,7 @@ export const configPtBr = defineConfig({
             { text: 'Opções de Linha de Comando', link: '/pt-br/guide/command-line-options' },
             { text: 'Configuração', link: '/pt-br/guide/configuration' },
             { text: 'Instruções Personalizadas', link: '/pt-br/guide/custom-instructions' },
-            { text: 'Processamento de Repositório Remoto', link: '/pt-br/guide/remote-repository-processing' },
+            { text: 'Processamento de Repositório GitHub', link: '/pt-br/guide/remote-repository-processing' },
             { text: 'Remoção de Comentários', link: '/pt-br/guide/comment-removal' },
             { text: 'Compressão de Código', link: '/pt-br/guide/code-compress' },
             { text: 'Segurança', link: '/pt-br/guide/security' },

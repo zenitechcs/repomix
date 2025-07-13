@@ -28,7 +28,7 @@ export const configZhCn = defineConfig({
             { text: '命令行选项', link: '/zh-cn/guide/command-line-options' },
             { text: '配置', link: '/zh-cn/guide/configuration' },
             { text: '自定义指令', link: '/zh-cn/guide/custom-instructions' },
-            { text: '远程仓库处理', link: '/zh-cn/guide/remote-repository-processing' },
+            { text: 'GitHub仓库处理', link: '/zh-cn/guide/remote-repository-processing' },
             { text: '注释移除', link: '/zh-cn/guide/comment-removal' },
             { text: '代码压缩', link: '/zh-cn/guide/code-compress' },
             { text: '安全性', link: '/zh-cn/guide/security' },

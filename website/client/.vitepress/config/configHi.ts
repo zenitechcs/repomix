@@ -31,7 +31,7 @@ export const configHi = defineConfig({
             { text: 'कमांड लाइन विकल्प', link: '/hi/guide/command-line-options' },
             { text: 'कॉन्फ़िगरेशन', link: '/hi/guide/configuration' },
             { text: 'कस्टम निर्देश', link: '/hi/guide/custom-instructions' },
-            { text: 'रिमोट रिपॉजिटरी प्रोसेसिंग', link: '/hi/guide/remote-repository-processing' },
+            { text: 'GitHub रिपॉजिटरी प्रोसेसिंग', link: '/hi/guide/remote-repository-processing' },
             { text: 'टिप्पणी हटाना', link: '/hi/guide/comment-removal' },
             { text: 'कोड कम्प्रेशन', link: '/hi/guide/code-compress' },
             { text: 'सुरक्षा', link: '/hi/guide/security' },

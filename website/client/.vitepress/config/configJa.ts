@@ -29,7 +29,7 @@ export const configJa = defineConfig({
             { text: 'コマンドラインオプション', link: '/ja/guide/command-line-options' },
             { text: '設定', link: '/ja/guide/configuration' },
             { text: 'カスタム指示', link: '/ja/guide/custom-instructions' },
-            { text: 'リモートリポジトリの処理', link: '/ja/guide/remote-repository-processing' },
+            { text: 'GitHubリポジトリの処理', link: '/ja/guide/remote-repository-processing' },
             { text: 'コメントの削除', link: '/ja/guide/comment-removal' },
             { text: 'コード圧縮', link: '/ja/guide/code-compress' },
             { text: 'セキュリティ', link: '/ja/guide/security' },
