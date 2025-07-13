@@ -19,6 +19,7 @@ export const configJa = defineConfig({
             { text: 'インストール', link: '/ja/guide/installation' },
             { text: '基本的な使い方', link: '/ja/guide/usage' },
             { text: 'プロンプト例', link: '/ja/guide/prompt-examples' },
+            { text: 'ユースケース', link: '/ja/guide/use-cases' },
           ],
         },
         {

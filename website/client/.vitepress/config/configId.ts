@@ -21,6 +21,7 @@ export const configId = defineConfig({
             { text: 'Instalasi', link: '/id/guide/installation' },
             { text: 'Penggunaan Dasar', link: '/id/guide/usage' },
             { text: 'Contoh Prompt', link: '/id/guide/prompt-examples' },
+            { text: 'Kasus Penggunaan', link: '/id/guide/use-cases' },
           ],
         },
         {

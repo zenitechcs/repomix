@@ -21,6 +21,7 @@ export const configDe = defineConfig({
             { text: 'Installation', link: '/de/guide/installation' },
             { text: 'Grundlegende Verwendung', link: '/de/guide/usage' },
             { text: 'Prompt-Beispiele', link: '/de/guide/prompt-examples' },
+            { text: 'Anwendungsfälle', link: '/de/guide/use-cases' },
           ],
         },
         {

@@ -21,6 +21,7 @@ export const configEnUs = defineConfig({
             { text: 'Installation', link: '/guide/installation' },
             { text: 'Basic Usage', link: '/guide/usage' },
             { text: 'Prompt Examples', link: '/guide/prompt-examples' },
+            { text: 'Use Cases', link: '/guide/use-cases' },
           ],
         },
         {
