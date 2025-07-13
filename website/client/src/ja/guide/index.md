@@ -6,7 +6,7 @@ import YouTubeVideo from '../../../components/YouTubeVideo.vue'
 import { VIDEO_IDS } from '../../../utils/videos'
 </script>
 
-Repomixは、リポジトリ全体をAIフレンドリーな単一ファイルにパッケージングするツールです。ChatGPT、DeepSeek、Perplexity、Gemini、Gemma、Llama、Grokなどの大規模言語モデル（LLM）にコードベースを提供するために設計されています。
+Repomixは、リポジトリ全体をAIフレンドリーな単一ファイルにパッケージングするツールです。ChatGPT、Claude、Gemini、Grok、DeepSeek、Perplexity、Gemma、Llamaなどの大規模言語モデル（LLM）にコードベースを提供するために設計されています。
 
 <YouTubeVideo :videoId="VIDEO_IDS.REPOMIX_DEMO" />
 
