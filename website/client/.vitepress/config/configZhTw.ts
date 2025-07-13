@@ -35,15 +35,20 @@ export const configZhTw = defineConfig({
             { text: '註釋移除', link: '/zh-tw/guide/comment-removal' },
             { text: '程式碼壓縮', link: '/zh-tw/guide/code-compress' },
             { text: '安全性', link: '/zh-tw/guide/security' },
-            { text: 'MCP 伺服器', link: '/zh-tw/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/zh-tw/guide/github-actions' },
           ],
         },
         {
           text: '高級',
           items: [
+            { text: 'MCP 伺服器', link: '/zh-tw/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/zh-tw/guide/github-actions' },
             { text: '作為庫使用 Repomix', link: '/zh-tw/guide/development/using-repomix-as-a-library' },
             { text: 'AI輔助開發技巧', link: '/zh-tw/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: '社群',
+          items: [
             { text: '為Repomix做貢獻', link: '/zh-tw/guide/development/' },
           ],
         },

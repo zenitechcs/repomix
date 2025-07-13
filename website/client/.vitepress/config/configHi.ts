@@ -35,15 +35,20 @@ export const configHi = defineConfig({
             { text: 'टिप्पणी हटाना', link: '/hi/guide/comment-removal' },
             { text: 'कोड कम्प्रेशन', link: '/hi/guide/code-compress' },
             { text: 'सुरक्षा', link: '/hi/guide/security' },
-            { text: 'MCP सर्वर', link: '/hi/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/hi/guide/github-actions' },
           ],
         },
         {
           text: 'उन्नत',
           items: [
+            { text: 'MCP सर्वर', link: '/hi/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/hi/guide/github-actions' },
             { text: 'Repomix को लाइब्रेरी के रूप में उपयोग', link: '/hi/guide/development/using-repomix-as-a-library' },
             { text: 'AI-सहायक विकास टिप्स', link: '/hi/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: 'समुदाय',
+          items: [
             { text: 'Repomix में योगदान', link: '/hi/guide/development/' },
           ],
         },

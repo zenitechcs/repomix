@@ -35,15 +35,20 @@ export const configDe = defineConfig({
             { text: 'Kommentare entfernen', link: '/de/guide/comment-removal' },
             { text: 'Code-Komprimierung', link: '/de/guide/code-compress' },
             { text: 'Sicherheit', link: '/de/guide/security' },
-            { text: 'MCP-Server', link: '/de/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/de/guide/github-actions' },
           ],
         },
         {
           text: 'Fortgeschritten',
           items: [
+            { text: 'MCP-Server', link: '/de/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/de/guide/github-actions' },
             { text: 'Repomix als Bibliothek verwenden', link: '/de/guide/development/using-repomix-as-a-library' },
             { text: 'KI-unterstützte Entwicklungstipps', link: '/de/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: 'Gemeinschaft',
+          items: [
             { text: 'Zu Repomix beitragen', link: '/de/guide/development/' },
           ],
         },

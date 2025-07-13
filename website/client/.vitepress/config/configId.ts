@@ -35,18 +35,23 @@ export const configId = defineConfig({
             { text: 'Penghapusan Komentar', link: '/id/guide/comment-removal' },
             { text: 'Kompresi Kode', link: '/id/guide/code-compress' },
             { text: 'Keamanan', link: '/id/guide/security' },
-            { text: 'Server MCP', link: '/id/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/id/guide/github-actions' },
           ],
         },
         {
           text: 'Lanjutan',
           items: [
+            { text: 'Server MCP', link: '/id/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/id/guide/github-actions' },
             {
               text: 'Menggunakan Repomix sebagai Library',
               link: '/id/guide/development/using-repomix-as-a-library',
             },
             { text: 'Tips Pengembangan dengan Bantuan AI', link: '/id/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: 'Komunitas',
+          items: [
             { text: 'Berkontribusi ke Repomix', link: '/id/guide/development/' },
           ],
         },

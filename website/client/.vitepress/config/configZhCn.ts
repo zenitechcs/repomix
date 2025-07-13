@@ -32,15 +32,20 @@ export const configZhCn = defineConfig({
             { text: '注释移除', link: '/zh-cn/guide/comment-removal' },
             { text: '代码压缩', link: '/zh-cn/guide/code-compress' },
             { text: '安全性', link: '/zh-cn/guide/security' },
-            { text: 'MCP 服务器', link: '/zh-cn/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/zh-cn/guide/github-actions' },
           ],
         },
         {
           text: '高级',
           items: [
+            { text: 'MCP 服务器', link: '/zh-cn/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/zh-cn/guide/github-actions' },
             { text: '作为库使用 Repomix', link: '/zh-cn/guide/development/using-repomix-as-a-library' },
             { text: 'AI辅助开发技巧', link: '/zh-cn/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: '社区',
+          items: [
             { text: '为Repomix做贡献', link: '/zh-cn/guide/development/' },
           ],
         },

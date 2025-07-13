@@ -35,18 +35,23 @@ export const configVi = defineConfig({
             { text: 'Xóa bình luận', link: '/vi/guide/comment-removal' },
             { text: 'Nén mã', link: '/vi/guide/code-compress' },
             { text: 'Bảo mật', link: '/vi/guide/security' },
-            { text: 'Máy chủ MCP', link: '/vi/guide/mcp-server' },
-            { text: 'GitHub Actions', link: '/vi/guide/github-actions' },
           ],
         },
         {
           text: 'Nâng cao',
           items: [
+            { text: 'Máy chủ MCP', link: '/vi/guide/mcp-server' },
+            { text: 'GitHub Actions', link: '/vi/guide/github-actions' },
             {
               text: 'Sử dụng Repomix như một thư viện',
               link: '/vi/guide/development/using-repomix-as-a-library',
             },
             { text: 'Mẹo phát triển hỗ trợ AI', link: '/vi/guide/tips/best-practices' },
+          ],
+        },
+        {
+          text: 'Cộng đồng',
+          items: [
             { text: 'Đóng góp cho Repomix', link: '/vi/guide/development/' },
           ],
         },
