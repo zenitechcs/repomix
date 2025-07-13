@@ -1,6 +1,6 @@
 # Kasus Penggunaan
 
-Kekuatan Repomix terletak pada kemampuannya untuk bekerja dengan layanan berlangganan apa pun tanpa khawatir tentang biaya, sambil menyediakan konteks kode base lengkap yang menghilangkan kebutuhan untuk eksplorasi file—membuat analisis lebih cepat dan seringkali lebih akurat.
+Kekuatan Repomix terletak pada kemampuannya untuk bekerja dengan layanan berlangganan seperti ChatGPT, Claude, Gemini, Grok tanpa khawatir tentang biaya, sambil menyediakan konteks kode base lengkap yang menghilangkan kebutuhan untuk eksplorasi file—membuat analisis lebih cepat dan seringkali lebih akurat.
 
 Dengan seluruh kode base tersedia sebagai konteks, Repomix memungkinkan berbagai aplikasi termasuk perencanaan implementasi, investigasi bug, pemeriksaan keamanan perpustakaan pihak ketiga, pembuatan dokumentasi, dan banyak lagi.
 

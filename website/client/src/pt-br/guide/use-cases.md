@@ -1,6 +1,6 @@
 # Casos de Uso
 
-A força do Repomix reside em sua capacidade de trabalhar com qualquer serviço de assinatura sem se preocupar com custos, enquanto fornece contexto completo da base de código que elimina a necessidade de exploração de arquivos—tornando a análise mais rápida e frequentemente mais precisa.
+A força do Repomix reside em sua capacidade de trabalhar com serviços de assinatura como ChatGPT, Claude, Gemini, Grok sem se preocupar com custos, enquanto fornece contexto completo da base de código que elimina a necessidade de exploração de arquivos—tornando a análise mais rápida e frequentemente mais precisa.
 
 Com toda a base de código disponível como contexto, o Repomix permite uma ampla gama de aplicações incluindo planejamento de implementação, investigação de bugs, verificações de segurança de bibliotecas de terceiros, geração de documentação e muito mais.
 

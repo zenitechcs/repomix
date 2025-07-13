@@ -1,6 +1,6 @@
 # Các Trường Hợp Sử Dụng
 
-Sức mạnh của Repomix nằm ở khả năng làm việc với bất kỳ dịch vụ đăng ký nào mà không cần lo lắng về chi phí, đồng thời cung cấp bối cảnh codebase đầy đủ giúp loại bỏ nhu cầu khám phá file—làm cho việc phân tích nhanh hơn và thường chính xác hơn.
+Sức mạnh của Repomix nằm ở khả năng làm việc với các dịch vụ đăng ký như ChatGPT, Claude, Gemini, Grok mà không cần lo lắng về chi phí, đồng thời cung cấp bối cảnh codebase đầy đủ giúp loại bỏ nhu cầu khám phá file—làm cho việc phân tích nhanh hơn và thường chính xác hơn.
 
 Với toàn bộ codebase có sẵn như bối cảnh, Repomix cho phép một loạt ứng dụng rộng rãi bao gồm lập kế hoạch triển khai, điều tra lỗi, kiểm tra bảo mật thư viện bên thứ ba, tạo tài liệu và nhiều hơn nữa.
 

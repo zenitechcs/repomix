@@ -63,6 +63,12 @@ Lors de la discussion de modifications spécifiques, l'IA peut vous aider à gé
 
 Bon codage ! 🚀
 
+## Pourquoi Repomix ?
+
+La force de Repomix réside dans sa capacité à fonctionner avec des services d'abonnement comme ChatGPT, Claude, Gemini, Grok sans se soucier des coûts, tout en fournissant un contexte complet de la base de code qui élimine le besoin d'exploration de fichiers, rendant l'analyse plus rapide et souvent plus précise.
+
+Avec l'ensemble de la base de code disponible comme contexte, Repomix permet une large gamme d'applications incluant la planification d'implémentation, l'investigation de bugs, les vérifications de sécurité de bibliothèques tierces, la génération de documentation et bien plus encore.
+
 ## Utilisation de l'outil CLI {#using-the-cli-tool}
 
 Repomix peut être utilisé comme un outil en ligne de commande, offrant des fonctionnalités puissantes et des options de personnalisation.

@@ -1,6 +1,6 @@
 # Anwendungsfälle
 
-Die Stärke von Repomix liegt in der Fähigkeit, mit jedem Abonnement-Service zu arbeiten, ohne sich um Kosten sorgen zu müssen, während es einen vollständigen Codebase-Kontext bereitstellt, der die Notwendigkeit der Dateierkundung eliminiert—was die Analyse schneller und oft genauer macht.
+Die Stärke von Repomix liegt in der Fähigkeit, mit Abonnement-Services wie ChatGPT, Claude, Gemini, Grok zu arbeiten, ohne sich um Kosten sorgen zu müssen, während es einen vollständigen Codebase-Kontext bereitstellt, der die Notwendigkeit der Dateierkundung eliminiert—was die Analyse schneller und oft genauer macht.
 
 Mit der gesamten Codebase als Kontext verfügbar, ermöglicht Repomix eine breite Palette von Anwendungen einschließlich Implementierungsplanung, Fehleruntersuchung, Sicherheitsprüfungen von Drittanbieterbibliotheken, Dokumentationsgenerierung und vieles mehr.
 

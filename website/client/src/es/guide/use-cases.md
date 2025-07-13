@@ -1,6 +1,6 @@
 # Casos de Uso
 
-La fortaleza de Repomix radica en su capacidad para trabajar con cualquier servicio de suscripción sin preocuparse por los costos, mientras proporciona un contexto completo del código base que elimina la necesidad de explorar archivos, haciendo que el análisis sea más rápido y a menudo más preciso.
+La fortaleza de Repomix radica en su capacidad para trabajar con servicios de suscripción como ChatGPT, Claude, Gemini, Grok sin preocuparse por los costos, mientras proporciona un contexto completo del código base que elimina la necesidad de explorar archivos, haciendo que el análisis sea más rápido y a menudo más preciso.
 
 Con toda la base de código disponible como contexto, Repomix permite una amplia gama de aplicaciones incluyendo planificación de implementación, investigación de errores, verificaciones de seguridad de bibliotecas de terceros, generación de documentación y mucho más.
 

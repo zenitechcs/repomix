@@ -41,6 +41,12 @@ When discussing specific changes, the AI can help generate code. With features l
 
 Happy coding! 🚀
 
+## Why Repomix?
+
+Repomix's strength lies in its ability to work with any subscription service like ChatGPT, Claude, Gemini, Grok without worrying about costs, while providing complete codebase context that eliminates the need for file exploration—making analysis faster and often more accurate.
+
+With the entire codebase available as context, Repomix enables a wide range of applications including implementation planning, bug investigation, third-party library security checks, documentation generation, and much more.
+
 ## Core Features
 
 - **AI-Optimized Output**: Formats your codebase for easy AI processing

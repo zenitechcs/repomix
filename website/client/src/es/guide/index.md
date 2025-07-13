@@ -41,6 +41,12 @@ Al discutir cambios específicos, la IA puede ayudar a generar código. Con func
 
 ¡Feliz programación! 🚀
 
+## ¿Por qué Repomix?
+
+La fortaleza de Repomix radica en su capacidad de trabajar con servicios de suscripción como ChatGPT, Claude, Gemini, Grok sin preocuparse por los costos, mientras proporciona un contexto completo de la base de código que elimina la necesidad de explorar archivos, haciendo el análisis más rápido y a menudo más preciso.
+
+Con toda la base de código disponible como contexto, Repomix permite una amplia gama de aplicaciones que incluyen planificación de implementación, investigación de errores, verificaciones de seguridad de bibliotecas de terceros, generación de documentación y mucho más.
+
 ## Características principales
 
 - **Salida optimizada para IA**: Formatea tu código para un fácil procesamiento por parte de la IA

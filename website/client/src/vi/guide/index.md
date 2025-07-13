@@ -41,6 +41,12 @@ Khi thảo luận về các thay đổi cụ thể, AI có thể giúp tạo mã
 
 Chúc bạn code vui vẻ! 🚀
 
+## Tại sao chọn Repomix?
+
+Sức mạnh của Repomix nằm ở khả năng làm việc với các dịch vụ đăng ký như ChatGPT, Claude, Gemini, Grok mà không lo lắng về chi phí, đồng thời cung cấp ngữ cảnh codebase hoàn chỉnh giúp loại bỏ nhu cầu khám phá tệp—làm cho việc phân tích nhanh hơn và thường chính xác hơn.
+
+Với toàn bộ codebase có sẵn làm ngữ cảnh, Repomix cho phép một loạt các ứng dụng bao gồm lập kế hoạch triển khai, điều tra lỗi, kiểm tra bảo mật thư viện bên thứ ba, tạo tài liệu và nhiều hơn nữa.
+
 ## Tính năng chính
 
 - **Đầu ra được tối ưu hóa cho AI**: Định dạng codebase của bạn để AI dễ dàng xử lý

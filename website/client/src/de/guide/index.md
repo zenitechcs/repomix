@@ -41,6 +41,12 @@ Bei der Diskussion spezifischer Änderungen kann die KI bei der Code-Generierung
 
 Viel Spaß beim Programmieren! 🚀
 
+## Warum Repomix?
+
+Repomix zeichnet sich durch seine Fähigkeit aus, mit Abonnement-Services wie ChatGPT, Claude, Gemini, Grok zu arbeiten, ohne sich um Kosten sorgen zu müssen, während es einen vollständigen Codebase-Kontext bereitstellt, der die Notwendigkeit zur Dateierkundung eliminiert – was die Analyse schneller und oft genauer macht.
+
+Mit der gesamten Codebase als verfügbarem Kontext ermöglicht Repomix eine breite Palette von Anwendungen, einschließlich Implementierungsplanung, Fehleruntersuchung, Sicherheitsprüfungen von Drittanbieter-Bibliotheken, Dokumentationsgenerierung und vieles mehr.
+
 ## Kernfunktionen
 
 - **KI-optimierte Ausgabe**: Formatiert Ihren Codebase für einfache KI-Verarbeitung
