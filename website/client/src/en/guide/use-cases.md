@@ -32,7 +32,7 @@ Learn how to combine Repomix with [Simon Willison's llm CLI tool](https://github
 <YouTubeVideo video-id="UZ-9U1W0e4o" :start="592" />
 
 ### LLM Code Generation Workflow
-A developer shares how they use Repomix to extract code context from existing codebases, then leverage that context with LLMs like Claude and Aider for incremental improvements, code reviews, and automated documentation generation.
+Learn how a developer uses Repomix to feed entire codebase context into tools like Claude and Aider. This enables AI-driven incremental development, smarter code reviews, and automated documentation, all while maintaining project-wide consistency.
 
 **Use Case**: Streamlined development workflow with AI assistance
 - Extract complete codebase context
