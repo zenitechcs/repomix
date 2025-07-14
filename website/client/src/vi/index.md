@@ -222,6 +222,8 @@ Một nhà phát triển chia sẻ cách họ sử dụng Repomix để trích x
 
 Các tác giả đang sử dụng Repomix để đóng gói nội dung viết của họ—blog, tài liệu và sách—thành các định dạng tương thích với LLM, cho phép độc giả tương tác với chuyên môn của họ thông qua các hệ thống hỏi đáp được hỗ trợ bởi AI.
 
+[Khám phá thêm các trường hợp sử dụng →](./guide/use-cases)
+
 ## Hướng Dẫn Người Dùng Chuyên Nghiệp
 
 Repomix cung cấp các tính năng mạnh mẽ cho các trường hợp sử dụng nâng cao. Dưới đây là một số hướng dẫn thiết yếu cho người dùng chuyên nghiệp:
