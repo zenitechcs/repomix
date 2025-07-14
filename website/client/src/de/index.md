@@ -220,6 +220,8 @@ Ein Entwickler teilt, wie er Repomix verwendet, um Code-Kontext aus bestehenden 
 
 Autoren verwenden Repomix, um ihre schriftlichen Inhalte – Blogs, Dokumentationen und Bücher – in LLM-kompatible Formate zu verpacken, wodurch Leser über KI-gestützte Q&A-Systeme mit ihrer Expertise interagieren können.
 
+[Weitere Anwendungsfälle entdecken →](./guide/use-cases)
+
 ## Power-User-Leitfaden
 
 Repomix bietet leistungsstarke Funktionen für fortgeschrittene Anwendungsfälle. Hier sind einige wichtige Leitfäden für Power-User:

@@ -222,6 +222,8 @@ A developer shares how they use Repomix to extract code context from existing co
 
 Authors are using Repomix to package their written content—blogs, documentation, and books—into LLM-compatible formats, enabling readers to interact with their expertise through AI-powered Q&A systems.
 
+[Discover more use cases →](/guide/use-cases)
+
 ## Power Users Guide
 
 Repomix offers powerful features for advanced use cases. Here are some essential guides for power users:

@@ -222,6 +222,8 @@ Un desarrollador comparte cómo usa Repomix para extraer contexto de código de 
 
 Los autores están usando Repomix para empaquetar su contenido escrito—blogs, documentación y libros—en formatos compatibles con LLM, permitiendo a los lectores interactuar con su experiencia a través de sistemas de preguntas y respuestas impulsados por IA.
 
+[Descubrir más casos de uso →](./guide/use-cases)
+
 ## Guía para Usuarios Avanzados
 
 Repomix ofrece características poderosas para casos de uso avanzados. Aquí tienes algunas guías esenciales para usuarios avanzados:

@@ -222,6 +222,8 @@ Seorang developer membagikan bagaimana mereka menggunakan Repomix untuk mengekst
 
 Para penulis menggunakan Repomix untuk mengemas konten tertulis mereka—blog, dokumentasi, dan buku—ke dalam format yang kompatibel dengan LLM, memungkinkan pembaca berinteraksi dengan keahlian mereka melalui sistem tanya jawab yang didukung AI.
 
+[Temukan lebih banyak kasus penggunaan →](./guide/use-cases)
+
 ## Panduan Pengguna Mahir
 
 Repomix menawarkan fitur-fitur canggih untuk kasus penggunaan lanjutan. Berikut adalah beberapa panduan penting untuk pengguna mahir:
