@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 1
 
       - name: Auto review PR
-        uses: anthropics/claude-code-action@86665d0984fd49d450080db71c55f8aafcf060c2 # ratchet:anthropics/claude-code-action@main
+        uses: anthropics/claude-code-action@b92e56a96bb2fce337ece11f6dcb03bab4826536 # ratchet:anthropics/claude-code-action@main
         with:
           direct_prompt: |
             Please review this PR. Look at the changes and provide thoughtful feedback on:
