@@ -18,6 +18,7 @@
     "topFilesLength": 5,
     "showLineNumbers": false,
     "includeEmptyDirectories": true,
+    "truncateBase64": true,
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
