@@ -268,6 +268,12 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
       removeEmptyLines: options.removeEmptyLines,
     };
   }
+  if (options.truncateBase64 !== undefined) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      truncateBase64: options.truncateBase64,
+    };
+  }
   if (options.headerText !== undefined) {
     cliConfig.output = { ...cliConfig.output, headerText: options.headerText };
   }

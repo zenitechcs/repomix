@@ -75,6 +75,7 @@ describe('configSchema', () => {
           compress: false,
           topFilesLength: 5,
           showLineNumbers: false,
+          truncateBase64: true,
           copyToClipboard: true,
           git: {
             sortByChanges: true,
@@ -169,6 +170,7 @@ describe('configSchema', () => {
           compress: false,
           topFilesLength: 10,
           showLineNumbers: true,
+          truncateBase64: true,
           copyToClipboard: false,
           git: {
             sortByChanges: true,

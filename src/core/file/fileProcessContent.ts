@@ -3,12 +3,14 @@ import { logger } from '../../shared/logger.js';
 import { parseFile } from '../treeSitter/parseFile.js';
 import { getFileManipulator } from './fileManipulate.js';
 import type { RawFile } from './fileTypes.js';
+import { truncateBase64Content } from './truncateBase64.js';
 
 /**
  * Process the content of a file according to the configuration
  * Applies various transformations based on the config:
  * - Remove comments
  * - Remove empty lines
+ * - Truncate base64 encoded data
  * - Compress content using Tree-sitter
  * - Add line numbers
  *
@@ -22,6 +24,10 @@ export const processContent = async (rawFile: RawFile, config: RepomixConfigMerg
   const manipulator = getFileManipulator(rawFile.path);
 
   logger.trace(`Processing file: ${rawFile.path}`);
+
+  if (config.output.truncateBase64) {
+    processedContent = truncateBase64Content(processedContent);
+  }
 
   if (manipulator && config.output.removeComments) {
     processedContent = manipulator.removeComments(processedContent);

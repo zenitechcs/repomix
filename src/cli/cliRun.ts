@@ -67,6 +67,7 @@ export const run = async () => {
       .option('--no-files', 'disable files content output (metadata-only mode)')
       .option('--remove-comments', 'remove comments')
       .option('--remove-empty-lines', 'remove empty lines')
+      .option('--no-truncate-base64', 'disable truncation of base64 data strings')
       .option('--header-text <text>', 'specify the header text')
       .option('--instruction-file-path <path>', 'path to a file containing detailed custom instructions')
       .option('--include-empty-directories', 'include empty directories in the output')

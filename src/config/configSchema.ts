@@ -35,6 +35,7 @@ export const repomixConfigBaseSchema = z.object({
       compress: z.boolean().optional(),
       topFilesLength: z.number().optional(),
       showLineNumbers: z.boolean().optional(),
+      truncateBase64: z.boolean().optional(),
       copyToClipboard: z.boolean().optional(),
       includeEmptyDirectories: z.boolean().optional(),
       git: z
@@ -92,6 +93,7 @@ export const repomixConfigDefaultSchema = z.object({
       compress: z.boolean().default(false),
       topFilesLength: z.number().int().min(0).default(5),
       showLineNumbers: z.boolean().default(false),
+      truncateBase64: z.boolean().default(true),
       copyToClipboard: z.boolean().default(false),
       includeEmptyDirectories: z.boolean().optional(),
       git: z

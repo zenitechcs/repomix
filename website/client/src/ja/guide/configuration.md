@@ -32,6 +32,7 @@ repomix --init --global
 | `output.removeComments`          | サポートされているファイルタイプからコメントを削除するかどうか。ノイズとトークン数を削減できます                          | `false`                |
 | `output.removeEmptyLines`        | 出力から空行を削除してトークン数を削減するかどうか                                                                          | `false`                |
 | `output.showLineNumbers`         | 各行に行番号を追加するかどうか。コードの特定の部分を参照するのに役立ちます                                                 | `false`                |
+| `output.truncateBase64`          | 長いbase64データ文字列（例：画像）を切り詰めてトークン数を削減するかどうか                                                | `true`                 |
 | `output.copyToClipboard`         | ファイルの保存に加えて、出力をシステムクリップボードにコピーするかどうか                                                   | `false`                |
 | `output.topFilesLength`          | 要約に表示するトップファイルの数。0に設定すると、要約は表示されません                                                       | `5`                    |
 | `output.includeEmptyDirectories` | リポジトリ構造に空のディレクトリを含めるかどうか                                                                           | `false`                |
@@ -90,6 +91,7 @@ repomix --init --global
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": true,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {
