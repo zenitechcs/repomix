@@ -32,6 +32,7 @@ repomix --init --global
 | `output.removeComments`          | 是否从支持的文件类型中删除注释。可以减少噪音和令牌数量                                                                    | `false`                |
 | `output.removeEmptyLines`        | 是否从输出中删除空行以减少令牌数量                                                                                         | `false`                |
 | `output.showLineNumbers`         | 是否为每行添加行号。有助于引用代码的特定部分                                                                               | `false`                |
+| `output.truncateBase64`          | 是否截断长的base64数据字符串（例如图像）以减少令牌数量                                                                      | `false`                |
 | `output.copyToClipboard`         | 是否除了保存文件外还将输出复制到系统剪贴板                                                                                 | `false`                |
 | `output.topFilesLength`          | 在摘要中显示的顶部文件数量。如果设置为0，则不显示摘要                                                                      | `5`                    |
 | `output.includeEmptyDirectories` | 是否在仓库结构中包含空目录                                                                                                 | `false`                |
@@ -90,6 +91,7 @@ repomix --init --global
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {

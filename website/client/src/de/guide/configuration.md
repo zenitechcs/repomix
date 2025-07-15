@@ -48,6 +48,7 @@ Dies bietet Autovervollständigung und Validierung in Editoren, die JSON-Schema 
 | `output.removeComments`          | Ob Kommentare aus unterstützten Dateitypen entfernt werden sollen. Kann Rauschen und Token-Anzahl reduzieren            | `false`                |
 | `output.removeEmptyLines`        | Ob leere Zeilen aus der Ausgabe entfernt werden sollen, um die Token-Anzahl zu reduzieren                                | `false`                |
 | `output.showLineNumbers`         | Ob Zeilennummern hinzugefügt werden sollen. Hilfreich für das Referenzieren bestimmter Codestellen                      | `false`                |
+| `output.truncateBase64`          | Ob lange base64-Datenstrings (z.B. Bilder) abgeschnitten werden sollen, um die Token-Anzahl zu reduzieren               | `false`                |
 | `output.copyToClipboard`         | Ob die Ausgabe zusätzlich zum Speichern in die Zwischenablage kopiert werden soll                                        | `false`                |
 | `output.topFilesLength`          | Anzahl der in der Zusammenfassung anzuzeigenden Top-Dateien. Bei 0 wird keine Zusammenfassung angezeigt                  | `5`                    |
 | `output.includeEmptyDirectories` | Ob leere Verzeichnisse in der Repository-Struktur enthalten sein sollen                                                   | `false`                |
@@ -90,6 +91,7 @@ Hier ist ein Beispiel einer vollständigen Konfigurationsdatei (`repomix.config.
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {

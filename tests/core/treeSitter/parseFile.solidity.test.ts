@@ -2,10 +2,11 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import { LanguageParser } from '../../../src/core/treeSitter/languageParser.js';
 import { parseFile } from '../../../src/core/treeSitter/parseFile.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 describe('Solidity File Parsing', () => {
   let parser: LanguageParser;
-  const defaultConfig: RepomixConfigMerged = {
+  const defaultConfig: RepomixConfigMerged = createMockConfig({
     cwd: process.cwd(),
     input: {
       maxFileSize: 50 * 1024 * 1024,
@@ -42,7 +43,7 @@ describe('Solidity File Parsing', () => {
     tokenCount: {
       encoding: 'o200k_base',
     },
-  };
+  });
 
   beforeAll(async () => {
     parser = new LanguageParser();

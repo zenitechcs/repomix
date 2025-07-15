@@ -9,6 +9,7 @@ import type { CliOptions } from '../../src/cli/types.js';
 import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
 import type { PackResult } from '../../src/core/packager.js';
 import { type RepomixLogLevel, logger, repomixLogLevels } from '../../src/shared/logger.js';
+import { createMockConfig } from '../testing/testUtils.js';
 
 let logLevel: RepomixLogLevel;
 
@@ -47,7 +48,7 @@ describe('cliRun', () => {
     vi.resetAllMocks();
 
     vi.mocked(defaultAction.runDefaultAction).mockResolvedValue({
-      config: {
+      config: createMockConfig({
         cwd: process.cwd(),
         input: {
           maxFileSize: 50 * 1024 * 1024,
@@ -84,7 +85,7 @@ describe('cliRun', () => {
         tokenCount: {
           encoding: 'o200k_base',
         },
-      } satisfies RepomixConfigMerged,
+      }),
       packResult: {
         totalFiles: 0,
         totalCharacters: 0,
@@ -100,7 +101,7 @@ describe('cliRun', () => {
     });
     vi.mocked(initAction.runInitAction).mockResolvedValue();
     vi.mocked(remoteAction.runRemoteAction).mockResolvedValue({
-      config: {
+      config: createMockConfig({
         cwd: process.cwd(),
         input: {
           maxFileSize: 50 * 1024 * 1024,
@@ -137,7 +138,7 @@ describe('cliRun', () => {
         tokenCount: {
           encoding: 'o200k_base',
         },
-      } satisfies RepomixConfigMerged,
+      }),
       packResult: {
         totalFiles: 0,
         totalCharacters: 0,

@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { runCli } from '../../../src/cli/cliRun.js';
 import { createToolWorkspace, formatPackToolResponse } from '../../../src/mcp/tools/mcpToolRuntime.js';
 import { registerPackCodebaseTool } from '../../../src/mcp/tools/packCodebaseTool.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('node:path');
 vi.mock('../../../src/cli/cliRun.js');
@@ -60,7 +61,7 @@ describe('PackCodebaseTool', () => {
     // runCliのデフォルト動作
     vi.mocked(runCli).mockImplementation(async (directories, cwd, opts = {}) => ({
       packResult: defaultPackResult,
-      config: {
+      config: createMockConfig({
         input: {
           maxFileSize: 50 * 1024 * 1024,
         },
@@ -98,7 +99,7 @@ describe('PackCodebaseTool', () => {
         tokenCount: {
           encoding: 'o200k_base' as const,
         },
-      },
+      }),
     }));
   });
 

@@ -14,6 +14,7 @@ import * as fileStdin from '../../../src/core/file/fileStdin.js';
 import * as packageJsonParser from '../../../src/core/file/packageJsonParse.js';
 import * as packager from '../../../src/core/packager.js';
 import type { PackResult } from '../../../src/core/packager.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 vi.mock('globby');
 vi.mock('../../../src/core/packager');
@@ -31,44 +32,46 @@ describe('defaultAction', () => {
     vi.mocked(configLoader.loadFileConfig).mockResolvedValue({});
     // Default globby mock
     vi.mocked(globby).mockResolvedValue([]);
-    vi.mocked(configLoader.mergeConfigs).mockReturnValue({
-      cwd: process.cwd(),
-      input: {
-        maxFileSize: 50 * 1024 * 1024,
-      },
-      output: {
-        filePath: 'output.txt',
-        style: 'plain',
-        parsableStyle: false,
-        fileSummary: true,
-        directoryStructure: true,
-        topFilesLength: 5,
-        showLineNumbers: false,
-        removeComments: false,
-        removeEmptyLines: false,
-        compress: false,
-        copyToClipboard: false,
-        stdout: false,
-        git: {
-          sortByChanges: true,
-          sortByChangesMaxCommits: 100,
-          includeDiffs: false,
+    vi.mocked(configLoader.mergeConfigs).mockReturnValue(
+      createMockConfig({
+        cwd: process.cwd(),
+        input: {
+          maxFileSize: 50 * 1024 * 1024,
         },
-        files: true,
-      },
-      ignore: {
-        useGitignore: true,
-        useDefaultPatterns: true,
-        customPatterns: [],
-      },
-      include: [],
-      security: {
-        enableSecurityCheck: true,
-      },
-      tokenCount: {
-        encoding: 'o200k_base',
-      },
-    });
+        output: {
+          filePath: 'output.txt',
+          style: 'plain',
+          parsableStyle: false,
+          fileSummary: true,
+          directoryStructure: true,
+          topFilesLength: 5,
+          showLineNumbers: false,
+          removeComments: false,
+          removeEmptyLines: false,
+          compress: false,
+          copyToClipboard: false,
+          stdout: false,
+          git: {
+            sortByChanges: true,
+            sortByChangesMaxCommits: 100,
+            includeDiffs: false,
+          },
+          files: true,
+        },
+        ignore: {
+          useGitignore: true,
+          useDefaultPatterns: true,
+          customPatterns: [],
+        },
+        include: [],
+        security: {
+          enableSecurityCheck: true,
+        },
+        tokenCount: {
+          encoding: 'o200k_base',
+        },
+      }),
+    );
     vi.mocked(packager.pack).mockResolvedValue({
       totalFiles: 10,
       totalCharacters: 1000,
@@ -591,7 +594,7 @@ describe('defaultAction', () => {
 
   describe('handleStdinProcessing', () => {
     const testCwd = path.resolve('/test/cwd');
-    const mockConfig = {
+    const mockConfig = createMockConfig({
       cwd: testCwd,
       input: { maxFileSize: 50 * 1024 * 1024 },
       output: {
@@ -614,7 +617,7 @@ describe('defaultAction', () => {
       include: [],
       security: { enableSecurityCheck: true },
       tokenCount: { encoding: 'cl100k_base' as const },
-    };
+    });
 
     const mockCliOptions: CliOptions = {
       verbose: false,
@@ -723,7 +726,7 @@ describe('defaultAction', () => {
 
   describe('handleDirectoryProcessing', () => {
     const testCwd = path.resolve('/test/cwd');
-    const mockConfig = {
+    const mockConfig = createMockConfig({
       cwd: testCwd,
       input: { maxFileSize: 50 * 1024 * 1024 },
       output: {
@@ -746,7 +749,7 @@ describe('defaultAction', () => {
       include: [],
       security: { enableSecurityCheck: true },
       tokenCount: { encoding: 'cl100k_base' as const },
-    };
+    });
 
     const mockCliOptions: CliOptions = {
       verbose: false,

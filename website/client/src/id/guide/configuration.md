@@ -24,6 +24,7 @@ Berikut adalah contoh file konfigurasi dengan semua opsi yang tersedia:
     "filePath": "repomix-output.xml",
     "removeComments": false,
     "showLineNumbers": true,
+    "truncateBase64": false,
     "topFilesLength": 10,
     "copyToClipboard": false
   },
@@ -52,6 +53,7 @@ Berikut adalah contoh file konfigurasi dengan semua opsi yang tersedia:
 | `filePath` | string | `"repomix-output.xml"` | Jalur file output |
 | `removeComments` | boolean | `false` | Apakah akan menghapus komentar dari kode sumber |
 | `showLineNumbers` | boolean | `true` | Apakah akan menampilkan nomor baris |
+| `truncateBase64` | boolean | `false` | Apakah akan memotong string data base64 yang panjang (misalnya, gambar) untuk mengurangi jumlah token |
 | `topFilesLength` | number | `10` | Jumlah file teratas yang akan ditampilkan di ringkasan |
 | `copyToClipboard` | boolean | `false` | Apakah akan menyalin output ke clipboard |
 

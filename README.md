@@ -519,6 +519,7 @@ Instruction
 - `--no-directory-structure`: Disable directory structure section output
 - `--remove-comments`: Remove comments from supported file types
 - `--remove-empty-lines`: Remove empty lines from the output
+- `--truncate-base64`: Enable truncation of base64 data strings
 - `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 - `--include-empty-directories`: Include empty directories in the output
@@ -873,6 +874,7 @@ Here's an explanation of the configuration options:
 | `output.removeComments`          | Whether to remove comments from supported file types                                                                         | `false`                |
 | `output.removeEmptyLines`        | Whether to remove empty lines from the output                                                                                | `false`                |
 | `output.showLineNumbers`         | Whether to add line numbers to each line in the output                                                                       | `false`                |
+| `output.truncateBase64`          | Whether to truncate long base64 data strings (e.g., images) to reduce token count                                            | `false`                |
 | `output.copyToClipboard`         | Whether to copy the output to system clipboard in addition to saving the file                                                | `false`                |
 | `output.topFilesLength`          | Number of top files to display in the summary. If set to 0, no summary will be displayed                                     | `5`                    |
 | `output.includeEmptyDirectories` | Whether to include empty directories in the repository structure                                                             | `false`                |
@@ -912,6 +914,7 @@ Example configuration:
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {

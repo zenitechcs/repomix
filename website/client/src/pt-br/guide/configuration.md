@@ -32,6 +32,7 @@ repomix --init --global
 | `output.removeComments`          | Indica se deve remover comentários dos tipos de arquivos suportados. Pode reduzir ruído e contagem de tokens             | `false`                |
 | `output.removeEmptyLines`        | Indica se deve remover linhas vazias da saída para reduzir a contagem de tokens                                          | `false`                |
 | `output.showLineNumbers`         | Indica se deve adicionar números de linha a cada linha. Útil para referenciar partes específicas do código               | `false`                |
+| `output.truncateBase64`          | Indica se deve truncar strings de dados base64 longas (por exemplo, imagens) para reduzir a contagem de tokens           | `false`                |
 | `output.copyToClipboard`         | Indica se deve copiar a saída para a área de transferência do sistema além de salvar o arquivo                           | `false`                |
 | `output.topFilesLength`          | Número de arquivos principais para exibir no resumo. Se definido como 0, nenhum resumo será exibido                      | `5`                    |
 | `output.includeEmptyDirectories` | Indica se deve incluir diretórios vazios na estrutura do repositório                                                     | `false`                |
@@ -90,6 +91,7 @@ Aqui está um exemplo de um arquivo de configuração completo (`repomix.config.
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {
