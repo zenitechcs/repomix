@@ -16,7 +16,7 @@ export const truncateBase64Content = (content: string): string => {
   // Pattern to match data URIs (e.g., data:image/png;base64,...)
   const dataUriPattern = new RegExp(
     `data:([a-zA-Z0-9\\/\\-\\+]+)(;[a-zA-Z0-9\\-=]+)*;base64,([A-Za-z0-9+/=]{${MIN_BASE64_LENGTH_DATA_URI},})`,
-    'g'
+    'g',
   );
 
   // Pattern to match standalone base64 strings
@@ -68,7 +68,7 @@ function isLikelyBase64(str: string): boolean {
   const hasUpperCase = /[A-Z]/.test(str);
   const hasLowerCase = /[a-z]/.test(str);
   const hasSpecialChars = /[+/]/.test(str);
-  
+
   const charTypeCount = [hasNumbers, hasUpperCase, hasLowerCase, hasSpecialChars].filter(Boolean).length;
 
   return charTypeCount >= MIN_CHAR_TYPE_COUNT;
