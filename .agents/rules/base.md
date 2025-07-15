@@ -1,5 +1,7 @@
 ---
 description: Core project guidelines for the Repomix codebase. Apply these rules when working on any code, documentation, or configuration files within the Repomix project.
+alwaysApply: true
+inclusion: always
 ---
 
 # Repomix Project Structure and Overview
@@ -90,7 +92,7 @@ repomix/
   - [ ] Run `npm run lint`
   ```
 - Include a clear summary of the changes at the top of the pull request description
-- Reference any related issues using the format `#issue-number` 
+- Reference any related issues using the format `#issue-number`
 
 ## PR Review Guidelines
 When reviewing pull requests, provide thoughtful feedback on:
