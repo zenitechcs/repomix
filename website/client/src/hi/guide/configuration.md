@@ -26,7 +26,8 @@ repomix --init
   },
   "processing": {
     "removeComments": false,
-    "compress": false
+    "compress": false,
+    "truncateBase64": false
   },
   "security": {
     "check": true
@@ -105,6 +106,18 @@ repomix --init
 {
   "processing": {
     "compress": true
+  }
+}
+```
+
+#### `processing.truncateBase64`
+
+यदि `true` है, तो लंबे base64 डेटा स्ट्रिंग्स (जैसे, इमेज) को ट्रंकेट किया जाएगा ताकि टोकन काउंट कम हो सके। डिफॉल्ट: `false`
+
+```json
+{
+  "processing": {
+    "truncateBase64": true
   }
 }
 ```

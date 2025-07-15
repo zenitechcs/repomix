@@ -32,6 +32,7 @@ repomix --init --global
 | `output.removeComments`          | 지원되는 파일 유형에서 주석을 제거할지 여부. 노이즈와 토큰 수를 줄일 수 있습니다                                         | `false`                |
 | `output.removeEmptyLines`        | 출력에서 빈 줄을 제거하여 토큰 수를 줄일지 여부                                                                            | `false`                |
 | `output.showLineNumbers`         | 각 줄에 줄 번호를 추가할지 여부. 코드의 특정 부분을 참조하는 데 도움이 됩니다                                            | `false`                |
+| `output.truncateBase64`          | 토큰 수를 줄이기 위해 긴 base64 데이터 문자열(예: 이미지)을 자를지 여부                                                  | `false`                |
 | `output.copyToClipboard`         | 파일 저장 외에도 출력을 시스템 클립보드에 복사할지 여부                                                                    | `false`                |
 | `output.topFilesLength`          | 요약에 표시할 상위 파일 수. 0으로 설정하면 요약이 표시되지 않습니다                                                        | `5`                    |
 | `output.includeEmptyDirectories` | 저장소 구조에 빈 디렉토리를 포함할지 여부                                                                                  | `false`                |
@@ -90,6 +91,7 @@ repomix --init --global
     "removeEmptyLines": false,
     "topFilesLength": 5,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "copyToClipboard": false,
     "includeEmptyDirectories": false,
     "git": {

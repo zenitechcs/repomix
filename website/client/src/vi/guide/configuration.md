@@ -33,6 +33,7 @@ Tệp cấu hình có cấu trúc sau:
     "filePath": "repomix-output.xml",
     "removeComments": false,
     "showLineNumbers": false,
+    "truncateBase64": false,
     "topFilesLength": 10
   },
   "ignore": {
