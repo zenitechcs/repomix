@@ -1,5 +1,7 @@
 ---
 description: Core project guidelines for the Repomix codebase. Apply these rules when working on any code, documentation, or configuration files within the Repomix project.
+alwaysApply: true
+inclusion: always
 ---
 
 # Repomix Project Structure and Overview
@@ -46,6 +48,7 @@ repomix/
 
 # Coding Guidelines
 - Follow the Airbnb JavaScript Style Guide.
+- Always maintain feature-based directory structure and avoid dependencies between features.
 - Split files into smaller, focused units when appropriate:
   - Aim to keep code files under 250 lines. If a file exceeds 250 lines, split it into multiple files based on functionality.
 - Add comments to clarify non-obvious logic. **Ensure all comments are written in English.**
@@ -90,7 +93,7 @@ repomix/
   - [ ] Run `npm run lint`
   ```
 - Include a clear summary of the changes at the top of the pull request description
-- Reference any related issues using the format `#issue-number` 
+- Reference any related issues using the format `#issue-number`
 
 ## PR Review Guidelines
 When reviewing pull requests, provide thoughtful feedback on:

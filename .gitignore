@@ -43,7 +43,6 @@ repomix-output.md
 .repomix/
 
 # Agent
-.cursor/rules/
 .mcp.json
 .agents/local/
 
