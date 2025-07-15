@@ -48,6 +48,7 @@ repomix/
 
 # Coding Guidelines
 - Follow the Airbnb JavaScript Style Guide.
+- Always maintain feature-based directory structure and avoid dependencies between features.
 - Split files into smaller, focused units when appropriate:
   - Aim to keep code files under 250 lines. If a file exceeds 250 lines, split it into multiple files based on functionality.
 - Add comments to clarify non-obvious logic. **Ensure all comments are written in English.**
