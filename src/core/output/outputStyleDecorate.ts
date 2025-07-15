@@ -166,7 +166,9 @@ export const generateSummaryNotes = (config: RepomixConfigMerged): string => {
     notes.push('- Content has been compressed - code blocks are separated by ⋮---- delimiter');
   }
   if (info.processing.truncatedBase64) {
-    notes.push('- Long base64 data strings (e.g., data:image/png;base64,...) have been truncated to reduce token count');
+    notes.push(
+      '- Long base64 data strings (e.g., data:image/png;base64,...) have been truncated to reduce token count',
+    );
   }
   if (!info.processing.securityCheckEnabled) {
     notes.push('- Security check has been disabled - content may contain sensitive information');
