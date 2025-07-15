@@ -3,6 +3,7 @@ import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { TokenCounter } from '../../../src/core/metrics/TokenCounter.js';
 import { calculateMetrics } from '../../../src/core/metrics/calculateMetrics.js';
+import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the TokenCounter
 vi.mock('../../../src/core/metrics/TokenCounter.js', () => ({
@@ -50,7 +51,7 @@ index 123..456 100644
     const output = 'Generated output with sample content';
 
     // Sample config with diffs enabled
-    const config: RepomixConfigMerged = {
+    const config: RepomixConfigMerged = createMockConfig({
       cwd: '/test',
       input: { maxFileSize: 1000000 },
       output: {
@@ -84,7 +85,7 @@ index 123..456 100644
       tokenCount: {
         encoding: 'o200k_base',
       },
-    };
+    });
 
     // Mock dependency functions
     const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
@@ -136,7 +137,7 @@ index 123..456 100644
     const output = 'Generated output without diffs';
 
     // Sample config with diffs disabled
-    const config: RepomixConfigMerged = {
+    const config: RepomixConfigMerged = createMockConfig({
       cwd: '/test',
       input: { maxFileSize: 1000000 },
       output: {
@@ -170,7 +171,7 @@ index 123..456 100644
       tokenCount: {
         encoding: 'o200k_base',
       },
-    };
+    });
 
     // Mock dependency functions
     const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
@@ -213,7 +214,7 @@ index 123..456 100644
     const output = 'Generated output with diffs enabled but no content';
 
     // Sample config with diffs enabled but no content
-    const config: RepomixConfigMerged = {
+    const config: RepomixConfigMerged = createMockConfig({
       cwd: '/test',
       input: { maxFileSize: 1000000 },
       output: {
@@ -248,7 +249,7 @@ index 123..456 100644
       tokenCount: {
         encoding: 'o200k_base',
       },
-    };
+    });
 
     // Mock dependency functions
     const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
