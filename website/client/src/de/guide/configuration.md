@@ -15,22 +15,6 @@ Dies erstellt eine `repomix.config.json`-Datei mit Standardeinstellungen. Sie k�
 repomix --init --global
 ```
 
-## Schema-Validierung
-
-Sie können die Schema-Validierung für Ihre Konfigurationsdatei aktivieren, indem Sie die Eigenschaft `$schema` hinzufügen:
-
-```json
-{
-  "$schema": "https://repomix.com/schemas/latest/schema.json",
-  "output": {
-    "filePath": "repomix-output.md",
-    "style": "markdown"
-  }
-}
-```
-
-Dies bietet Autovervollständigung und Validierung in Editoren, die JSON-Schema unterstützen.
-
 ## Konfigurationsoptionen
 
 | Option                           | Beschreibung                                                                                                                | Standardwert           |
@@ -67,6 +51,22 @@ Die Konfigurationsdatei unterstützt [JSON5](https://json5.org/)-Syntax, die Fol
 - Nachfolgende Kommas in Objekten und Arrays
 - Unquotierte Eigenschaftsnamen
 - Flexiblere String-Syntax
+
+## Schema-Validierung
+
+Sie können die Schema-Validierung für Ihre Konfigurationsdatei aktivieren, indem Sie die Eigenschaft `$schema` hinzufügen:
+
+```json
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown"
+  }
+}
+```
+
+Dies bietet Autovervollständigung und Validierung in Editoren, die JSON-Schema unterstützen.
 
 ## Beispiel-Konfigurationsdatei
 
