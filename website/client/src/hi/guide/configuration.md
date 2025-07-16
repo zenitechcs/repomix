@@ -72,7 +72,7 @@ repomix --init --global
 
 यहां एक पूर्ण कॉन्फिगरेशन फ़ाइल (`repomix.config.json`) का उदाहरण है:
 
-```json
+```json5
 {
   "$schema": "https://repomix.com/schemas/latest/schema.json",
   "input": {
