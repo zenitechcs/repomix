@@ -9,7 +9,7 @@ Kekuatan Repomix terletak pada kemampuannya untuk bekerja dengan layanan berlang
 Dengan seluruh codebase tersedia sebagai konteks, Repomix memungkinkan berbagai aplikasi termasuk perencanaan implementasi, investigasi bug, pemeriksaan keamanan perpustakaan pihak ketiga, pembuatan dokumentasi, dan banyak lagi.
 
 
-## Contoh Dunia Nyata
+## Kasus Penggunaan Dunia Nyata
 
 ### Menggunakan Repomix dengan AI Assistant (Contoh Grok)
 Video ini menunjukkan cara mengkonversi repositori GitHub ke format yang dapat dibaca AI menggunakan interface web Repomix, kemudian mengunggah ke AI assistant seperti Grok untuk perencanaan strategis dan analisis kode.

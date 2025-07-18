@@ -16,6 +16,7 @@
 - `--no-files`: Desabilita a saída de conteúdo de arquivos (modo somente metadados) (padrão: `true`)
 - `--remove-comments`: Remove comentários (padrão: `false`)
 - `--remove-empty-lines`: Remove linhas vazias (padrão: `false`)
+- `--truncate-base64`: Trunca strings de dados codificadas em base64 (padrão: `false`)
 - `--header-text <text>`: Texto personalizado para incluir no cabeçalho do arquivo
 - `--instruction-file-path <path>`: Caminho para um arquivo contendo instruções personalizadas detalhadas
 - `--include-empty-directories`: Inclui diretórios vazios na saída (padrão: `false`)

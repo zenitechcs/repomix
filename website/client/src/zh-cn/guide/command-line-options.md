@@ -16,6 +16,7 @@
 - `--no-files`: 禁用文件内容输出（仅元数据模式）（默认：`true`）
 - `--remove-comments`: 移除注释（默认：`false`）
 - `--remove-empty-lines`: 移除空行（默认：`false`）
+- `--truncate-base64`: 截断 base64 编码的数据字符串（默认：`false`）
 - `--header-text <text>`: 文件头部包含的自定义文本
 - `--instruction-file-path <path>`: 包含详细自定义指令的文件路径
 - `--include-empty-directories`: 在输出中包含空目录（默认：`false`）

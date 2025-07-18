@@ -16,6 +16,7 @@
 - `--no-files`: 파일 내용 출력 비활성화 (메타데이터 전용 모드) (기본값: `true`)
 - `--remove-comments`: 주석 제거 (기본값: `false`)
 - `--remove-empty-lines`: 빈 줄 제거 (기본값: `false`)
+- `--truncate-base64`: Base64 인코딩된 데이터 문자열 자르기 (기본값: `false`)
 - `--header-text <text>`: 파일 헤더에 포함할 사용자 정의 텍스트
 - `--instruction-file-path <path>`: 상세한 사용자 정의 지침이 포함된 파일 경로
 - `--include-empty-directories`: 출력에 빈 디렉토리 포함 (기본값: `false`)

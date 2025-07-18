@@ -16,6 +16,7 @@
 - `--no-files`: Disable files content output (metadata-only mode) (default: `true`)
 - `--remove-comments`: Remove comments (default: `false`)
 - `--remove-empty-lines`: Remove empty lines (default: `false`)
+- `--truncate-base64`: Truncate base64 encoded data strings (default: `false`)
 - `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 - `--include-empty-directories`: Include empty directories in the output (default: `false`)

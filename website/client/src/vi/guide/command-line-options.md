@@ -28,6 +28,7 @@ Repomix cung cấp nhiều tùy chọn dòng lệnh để tùy chỉnh hành vi 
 | `--output-file <path>`, `-o <path>` | Chỉ định tên tệp đầu ra |
 | `--style <style>` | Định dạng đầu ra (xml, markdown, plain) |
 | `--remove-comments` | Xóa bình luận khỏi mã nguồn |
+| `--truncate-base64` | Cắt bớt chuỗi dữ liệu được mã hóa base64 |
 | `--show-line-numbers` | Hiển thị số dòng trong đầu ra |
 | `--top-files-length <number>` | Số lượng tệp hàng đầu để hiển thị trong tóm tắt |
 

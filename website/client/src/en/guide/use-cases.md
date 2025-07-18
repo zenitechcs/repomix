@@ -9,7 +9,7 @@ Repomix's strength lies in its ability to work with any subscription service lik
 With the entire codebase available as context, Repomix enables a wide range of applications including implementation planning, bug investigation, third-party library security checks, documentation generation, and much more.
 
 
-## Real-World Examples
+## Real-World Use Cases
 
 ### Using Repomix with AI Assistants (Grok Example)
 This video shows how to convert GitHub repositories into AI-readable formats using Repomix's web interface, then upload to AI assistants like Grok for strategic planning and code analysis.
