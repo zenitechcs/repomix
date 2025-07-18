@@ -16,6 +16,7 @@
 - `--no-files`: Deaktiviert die Ausgabe des Dateiinhalts (Nur-Metadaten-Modus) (Standard: `true`)
 - `--remove-comments`: Entfernt Kommentare (Standard: `false`)
 - `--remove-empty-lines`: Entfernt leere Zeilen (Standard: `false`)
+- `--truncate-base64`: Schneidet Base64-kodierte Datenstrings ab (Standard: `false`)
 - `--header-text <text>`: Benutzerdefinierter Text für den Dateikopf
 - `--instruction-file-path <path>`: Pfad zu einer Datei mit detaillierten benutzerdefinierten Anweisungen
 - `--include-empty-directories`: Leere Verzeichnisse in die Ausgabe einbeziehen (Standard: `false`)

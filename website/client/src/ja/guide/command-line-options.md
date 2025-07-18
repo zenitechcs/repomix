@@ -16,6 +16,7 @@
 - `--no-files`: ファイル内容の出力を無効化（メタデータのみモード）（デフォルト: `true`）
 - `--remove-comments`: コメントを削除（デフォルト: `false`）
 - `--remove-empty-lines`: 空行を削除（デフォルト: `false`）
+- `--truncate-base64`: Base64エンコードされたデータ文字列を切り捨て（デフォルト: `false`）
 - `--header-text <text>`: ファイルヘッダーに含めるカスタムテキスト
 - `--instruction-file-path <path>`: 詳細なカスタム指示を含むファイルのパス
 - `--include-empty-directories`: 空のディレクトリを出力に含める（デフォルト: `false`）

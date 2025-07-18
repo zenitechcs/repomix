@@ -19,6 +19,7 @@ Repomix menyediakan berbagai opsi baris perintah untuk menyesuaikan perilakunya.
 | `--style`, `-s` | Menentukan format output (`xml`, `markdown`, `plain`) |
 | `--no-line-numbers` | Menonaktifkan nomor baris |
 | `--remove-comments` | Menghapus komentar dari kode sumber |
+| `--truncate-base64` | Memotong string data yang dikodekan base64 |
 | `--top-files` | Menentukan jumlah file teratas yang akan ditampilkan di ringkasan |
 | `--copy-to-clipboard` | Menyalin output ke clipboard |
 
