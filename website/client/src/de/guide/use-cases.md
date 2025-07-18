@@ -9,7 +9,7 @@ Die Stärke von Repomix liegt in der Fähigkeit, mit verschiedenen Abonnement-Se
 Mit der gesamten Codebase als Kontext verfügbar, ermöglicht Repomix eine breite Palette von Anwendungen einschließlich Implementierungsplanung, Fehleruntersuchung, Sicherheitsprüfungen von Drittanbieterbibliotheken, Dokumentationsgenerierung und vieles mehr.
 
 
-## Realitätsnahe Beispiele
+## Realitätsnahe Anwendungsfälle
 
 ### Repomix mit KI-Assistenten verwenden (Grok-Beispiel)
 Dieses Video zeigt, wie man GitHub-Repositories mit der Web-Oberfläche von Repomix in KI-lesbare Formate konvertiert und dann zu KI-Assistenten wie Grok für strategische Planung und Code-Analyse hochlädt.

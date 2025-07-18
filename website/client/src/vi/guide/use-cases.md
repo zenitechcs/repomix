@@ -9,7 +9,7 @@ Sức mạnh của Repomix nằm ở khả năng làm việc với bất kỳ d�
 Với toàn bộ codebase có sẵn như bối cảnh, Repomix cho phép một loạt ứng dụng rộng rãi bao gồm lập kế hoạch triển khai, điều tra lỗi, kiểm tra bảo mật thư viện bên thứ ba, tạo tài liệu và nhiều hơn nữa.
 
 
-## Ví Dụ Thực Tế
+## Các Trường Hợp Sử Dụng Thực Tế
 
 ### Sử Dụng Repomix với AI Assistant (Ví dụ Grok)
 Video này cho thấy cách chuyển đổi các repository GitHub thành định dạng có thể đọc được bởi AI bằng cách sử dụng giao diện web của Repomix, sau đó upload lên AI assistant như Grok để lập kế hoạch chiến lược và phân tích code.

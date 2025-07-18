@@ -9,7 +9,7 @@ Repomix的优势在于能够与ChatGPT、Claude、Gemini、Grok等各种订阅�
 有了整个代码库作为上下文，Repomix能够支持广泛的应用，包括实施规划、错误调查、第三方库安全检查、文档生成等等。
 
 
-## 实际示例
+## 实际使用场景
 
 ### 使用Repomix和AI助手（Grok示例）
 此视频展示了如何使用Repomix的Web界面将GitHub仓库转换为AI可读格式，然后上传到Grok等AI助手进行战略规划和代码分析。

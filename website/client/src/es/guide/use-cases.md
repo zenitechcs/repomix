@@ -9,7 +9,7 @@ La fortaleza de Repomix radica en su capacidad para trabajar con varios servicio
 Con toda la base de código disponible como contexto, Repomix permite una amplia gama de aplicaciones incluyendo planificación de implementación, investigación de errores, verificaciones de seguridad de bibliotecas de terceros, generación de documentación y mucho más.
 
 
-## Ejemplos del Mundo Real
+## Casos de Uso del Mundo Real
 
 ### Usar Repomix con Asistentes de IA (Ejemplo de Grok)
 Este video muestra cómo convertir repositorios de GitHub en formatos legibles por IA usando la interfaz web de Repomix, y luego subirlos a asistentes de IA como Grok para planificación estratégica y análisis de código.
