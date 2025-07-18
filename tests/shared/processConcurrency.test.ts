@@ -35,7 +35,7 @@ describe('processConcurrency', () => {
       const { minThreads, maxThreads } = getWorkerThreadCount(1000);
 
       expect(minThreads).toBe(1);
-      expect(maxThreads).toBe(8); // Limited by CPU count
+      expect(maxThreads).toBe(8); // Limited by CPU count: Math.min(8, 1000/100) = 8
     });
 
     it('should scale max threads based on task count', () => {
@@ -49,7 +49,7 @@ describe('processConcurrency', () => {
       const { minThreads, maxThreads } = getWorkerThreadCount(10000);
 
       expect(minThreads).toBe(1);
-      expect(maxThreads).toBe(8); // Limited by CPU count
+      expect(maxThreads).toBe(8); // Limited by CPU count: Math.min(8, 10000/100) = 8
     });
 
     it('should handle zero tasks', () => {
@@ -73,7 +73,7 @@ describe('processConcurrency', () => {
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,
         minThreads: 1,
-        maxThreads: 4,
+        maxThreads: 4, // Math.min(4, 500/100) = 4
         idleTimeout: 5000,
         env: expect.objectContaining({
           ...process.env,
