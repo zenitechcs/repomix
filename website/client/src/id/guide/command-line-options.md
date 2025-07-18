@@ -1,123 +1,87 @@
 # Opsi Baris Perintah
 
-
-Repomix menyediakan berbagai opsi baris perintah untuk menyesuaikan perilakunya. Berikut adalah daftar lengkap opsi yang tersedia.
-
 ## Opsi Dasar
-
-| Opsi | Deskripsi |
-|------|-----------|
-| `--help`, `-h` | Menampilkan bantuan |
-| `--version`, `-v` | Menampilkan versi |
-| `--init` | Membuat file konfigurasi baru (`repomix.config.json`) |
+- `-v, --version`: Menampilkan versi tool
 
 ## Opsi Output
+- `-o, --output <file>`: Nama file output (default: `repomix-output.txt`)
+- `--stdout`: Output ke stdout daripada menulis ke file (tidak dapat digunakan dengan opsi `--output`)
+- `--style <type>`: Gaya output (`plain`, `xml`, `markdown`) (default: `xml`)
+- `--parsable-style`: Mengaktifkan output yang dapat diparsing berdasarkan skema gaya yang dipilih (default: `false`)
+- `--compress`: Melakukan ekstraksi kode cerdas, berfokus pada signature fungsi dan class penting sambil menghapus detail implementasi. Untuk detail dan contoh lebih lanjut, lihat [Panduan Kompresi Kode](code-compress).
+- `--output-show-line-numbers`: Menambahkan nomor baris (default: `false`)
+- `--copy`: Salin ke clipboard (default: `false`)
+- `--no-file-summary`: Menonaktifkan ringkasan file (default: `true`)
+- `--no-directory-structure`: Menonaktifkan struktur direktori (default: `true`)
+- `--no-files`: Menonaktifkan output konten file (mode metadata saja) (default: `true`)
+- `--remove-comments`: Menghapus komentar (default: `false`)
+- `--remove-empty-lines`: Menghapus baris kosong (default: `false`)
+- `--truncate-base64`: Memotong string data yang dikodekan base64 (default: `false`)
+- `--header-text <text>`: Teks kustom untuk disertakan dalam header file
+- `--instruction-file-path <path>`: Jalur ke file yang berisi instruksi kustom rinci
+- `--include-empty-directories`: Sertakan direktori kosong dalam output (default: `false`)
+- `--include-diffs`: Sertakan diff git dalam output (termasuk perubahan work tree dan staged secara terpisah) (default: `false`)
+- `--no-git-sort-by-changes`: Menonaktifkan pengurutan file berdasarkan jumlah perubahan git (default: `true`)
 
-| Opsi | Deskripsi |
-|------|-----------|
-| `--output`, `-o` | Menentukan jalur file output |
-| `--style`, `-s` | Menentukan format output (`xml`, `markdown`, `plain`) |
-| `--no-line-numbers` | Menonaktifkan nomor baris |
-| `--remove-comments` | Menghapus komentar dari kode sumber |
-| `--truncate-base64` | Memotong string data yang dikodekan base64 |
-| `--top-files` | Menentukan jumlah file teratas yang akan ditampilkan di ringkasan |
-| `--copy-to-clipboard` | Menyalin output ke clipboard |
+## Opsi Filter
+- `--include <patterns>`: Pola untuk disertakan (dipisahkan koma)
+- `-i, --ignore <patterns>`: Pola untuk diabaikan (dipisahkan koma)
+- `--stdin`: Membaca jalur file dari stdin daripada menemukan file secara otomatis
+- `--no-gitignore`: Menonaktifkan penggunaan file .gitignore
+- `--no-default-patterns`: Menonaktifkan pola default
 
-## Opsi Pengabaian
+## Opsi Repositori Remote
+- `--remote <url>`: Proses repositori remote
+- `--remote-branch <name>`: Tentukan nama branch remote, tag, atau commit hash (default ke branch default repositori)
 
-| Opsi | Deskripsi |
-|------|-----------|
-| `--include` | Pola glob untuk menyertakan file tertentu |
-| `--ignore` | Pola glob untuk mengabaikan file tertentu |
-| `--stdin` | Membaca jalur file dari stdin alih-alih menemukan file secara otomatis |
-| `--no-gitignore` | Mengabaikan file `.gitignore` |
+## Opsi Konfigurasi
+- `-c, --config <path>`: Jalur file konfigurasi kustom
+- `--init`: Buat file konfigurasi
+- `--global`: Gunakan konfigurasi global
 
 ## Opsi Keamanan
+- `--no-security-check`: Menonaktifkan pemeriksaan keamanan (default: `true`)
 
-| Opsi | Deskripsi |
-|------|-----------|
-| `--no-security` | Menonaktifkan pemeriksaan keamanan |
+## Opsi Penghitungan Token
+- `--token-count-encoding <encoding>`: Tentukan encoding penghitungan token (misal, `o200k_base`, `cl100k_base`) (default: `o200k_base`)
 
-## Opsi Repositori Jarak Jauh
+## Opsi Lainnya
+- `--top-files-len <number>`: Jumlah file teratas yang ditampilkan (default: `5`)
+- `--verbose`: Mengaktifkan logging verbose
+- `--quiet`: Menonaktifkan semua output ke stdout
 
-| Opsi | Deskripsi |
-|------|-----------|
-| `--remote`, `-r` | Mengemas repositori GitHub publik |
-
-## Opsi Diff
-
-| Opsi | Deskripsi |
-|------|-----------|
-| `--diffs` | Mengaktifkan mode diff |
-| `--base-branch` | Menentukan cabang dasar untuk perbandingan diff |
-
-## Opsi MCP Server
-
-| Opsi | Deskripsi |
-|------|-----------|
-| `--mcp` | Memulai server MCP |
-| `--mcp-port` | Menentukan port untuk server MCP |
-
-## Contoh Penggunaan
-
-### Mengemas Seluruh Repositori
+## Contoh
 
 ```bash
+# Penggunaan dasar
 repomix
-```
 
-### Mengemas dengan Format Markdown
+# Output kustom
+repomix -o output.xml --style xml
 
-```bash
-repomix --style markdown
-```
+# Output ke stdout
+repomix --stdout > custom-output.txt
 
-### Mengemas Direktori Tertentu
+# Kirim output ke stdout, lalu pipe ke perintah lain (misalnya, simonw/llm)
+repomix --stdout | llm "Tolong jelaskan apa yang dilakukan kode ini."
 
-```bash
-repomix path/to/directory
-```
+# Output kustom dengan kompresi
+repomix --compress
 
-### Mengemas File Tertentu
+# Proses file tertentu
+repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
 
-```bash
-repomix --include "src/**/*.ts,**/*.md"
-```
+# Repositori remote dengan branch
+repomix --remote https://github.com/user/repo/tree/main
 
-### Mengecualikan File Tertentu
+# Repositori remote dengan commit
+repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
 
-```bash
-repomix --ignore "**/*.log,tmp/"
-```
+# Repositori remote dengan format singkat
+repomix --remote user/repo
 
-### Mengemas Repositori Jarak Jauh
-
-```bash
-repomix --remote yamadashy/repomix
-```
-
-### Mengaktifkan Mode Diff
-
-```bash
-repomix --diffs --base-branch main
-```
-
-### Memulai Server MCP
-
-```bash
-repomix --mcp
-```
-
-### Menggunakan stdin untuk Daftar File
-
-```bash
+# Menggunakan stdin untuk daftar file
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 ```
-
-## Menggunakan Opsi dengan File Konfigurasi
-
-Semua opsi baris perintah dapat juga ditentukan dalam file konfigurasi. Opsi baris perintah akan mengganti pengaturan dalam file konfigurasi.
-
-Untuk informasi lebih lanjut tentang file konfigurasi, lihat [Panduan Konfigurasi](configuration.md).
