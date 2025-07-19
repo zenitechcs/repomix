@@ -97,8 +97,8 @@ export const setLogLevel = (level: RepomixLogLevel) => {
  * This is used in worker threads where configuration is passed via workerData.
  */
 export const setLogLevelByWorkerData = () => {
-  if (workerData?.logLevel !== undefined) {
-    const logLevel = workerData.logLevel;
+  if (Array.isArray(workerData) && workerData.length > 1 && workerData[1]?.logLevel !== undefined) {
+    const logLevel = workerData[1].logLevel;
     if (
       logLevel === repomixLogLevels.SILENT ||
       logLevel === repomixLogLevels.ERROR ||
