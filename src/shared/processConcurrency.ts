@@ -30,7 +30,9 @@ export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => 
     `Initializing worker pool with min=${minThreads}, max=${maxThreads} threads. Worker path: ${workerPath}`,
   );
 
-  return new Tinypool({
+  const startTime = process.hrtime.bigint();
+
+  const pool = new Tinypool({
     filename: workerPath,
     minThreads,
     maxThreads,
@@ -40,4 +42,11 @@ export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => 
       REPOMIX_LOGLEVEL: logger.getLogLevel().toString(),
     },
   });
+
+  const endTime = process.hrtime.bigint();
+  const initTime = Number(endTime - startTime) / 1e6; // Convert to milliseconds
+
+  logger.debug(`Tinypool initialization took ${initTime.toFixed(2)}ms`);
+
+  return pool;
 };
