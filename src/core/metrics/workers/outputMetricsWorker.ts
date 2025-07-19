@@ -1,6 +1,6 @@
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
-import { TokenCounter } from '../TokenCounter.js';
+import { freeTokenCounter, getTokenCounter } from '../tokenCounterFactory.js';
 
 // Initialize logger configuration from workerData at module load time
 // This must be called before any logging operations in the worker
@@ -11,16 +11,6 @@ export interface OutputMetricsTask {
   encoding: TiktokenEncoding;
   path?: string;
 }
-
-// Worker-level singleton for TokenCounter
-let tokenCounter: TokenCounter | null = null;
-
-const getTokenCounter = (encoding: TiktokenEncoding): TokenCounter => {
-  if (!tokenCounter) {
-    tokenCounter = new TokenCounter(encoding);
-  }
-  return tokenCounter;
-};
 
 export default async ({ content, encoding, path }: OutputMetricsTask): Promise<number> => {
   const processStartAt = process.hrtime.bigint();
@@ -37,8 +27,5 @@ export default async ({ content, encoding, path }: OutputMetricsTask): Promise<n
 
 // Cleanup when worker is terminated
 process.on('exit', () => {
-  if (tokenCounter) {
-    tokenCounter.free();
-    tokenCounter = null;
-  }
+  freeTokenCounter();
 });
