@@ -1,4 +1,5 @@
 import util from 'node:util';
+import { workerData } from 'node:worker_threads';
 import pc from 'picocolors';
 
 export const repomixLogLevels = {
@@ -92,18 +93,20 @@ export const setLogLevel = (level: RepomixLogLevel) => {
 };
 
 /**
- * Set logger log level from REPOMIX_LOGLEVEL environment variable if valid.
+ * Set logger log level from workerData if valid.
+ * This is used in worker threads where configuration is passed via workerData.
  */
-export const setLogLevelByEnv = () => {
-  const logLevelStr = process.env.REPOMIX_LOGLEVEL;
-  const logLevelNum = Number(logLevelStr);
-  if (
-    logLevelNum === repomixLogLevels.SILENT ||
-    logLevelNum === repomixLogLevels.ERROR ||
-    logLevelNum === repomixLogLevels.WARN ||
-    logLevelNum === repomixLogLevels.INFO ||
-    logLevelNum === repomixLogLevels.DEBUG
-  ) {
-    setLogLevel(logLevelNum);
+export const setLogLevelByWorkerData = () => {
+  if (workerData?.logLevel !== undefined) {
+    const logLevel = workerData.logLevel;
+    if (
+      logLevel === repomixLogLevels.SILENT ||
+      logLevel === repomixLogLevels.ERROR ||
+      logLevel === repomixLogLevels.WARN ||
+      logLevel === repomixLogLevels.INFO ||
+      logLevel === repomixLogLevels.DEBUG
+    ) {
+      setLogLevel(logLevel);
+    }
   }
 };

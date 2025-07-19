@@ -37,9 +37,8 @@ export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => 
     minThreads,
     maxThreads,
     idleTimeout: 5000,
-    env: {
-      ...process.env,
-      REPOMIX_LOGLEVEL: logger.getLogLevel().toString(),
+    workerData: {
+      logLevel: logger.getLogLevel(),
     },
   });
 

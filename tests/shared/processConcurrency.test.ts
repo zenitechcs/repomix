@@ -75,10 +75,9 @@ describe('processConcurrency', () => {
         minThreads: 1,
         maxThreads: 4, // Math.min(4, 500/100) = 4
         idleTimeout: 5000,
-        env: expect.objectContaining({
-          ...process.env,
-          REPOMIX_LOGLEVEL: '2',
-        }),
+        workerData: {
+          logLevel: 2,
+        },
       });
       expect(tinypool).toBeDefined();
     });

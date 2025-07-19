@@ -1,5 +1,5 @@
 import type { TiktokenEncoding } from 'tiktoken';
-import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
+import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 import { TokenCounter } from '../TokenCounter.js';
 
 export interface OutputMetricsTask {
@@ -18,8 +18,8 @@ const getTokenCounter = (encoding: TiktokenEncoding): TokenCounter => {
   return tokenCounter;
 };
 
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
+// Set logger log level from workerData if provided
+setLogLevelByWorkerData();
 
 export default async ({ content, encoding, path }: OutputMetricsTask): Promise<number> => {
   const processStartAt = process.hrtime.bigint();

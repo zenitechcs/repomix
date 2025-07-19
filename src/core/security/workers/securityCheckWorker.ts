@@ -1,7 +1,7 @@
 import { lintSource } from '@secretlint/core';
 import { creator } from '@secretlint/secretlint-rule-preset-recommend';
 import type { SecretLintCoreConfig } from '@secretlint/types';
-import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
+import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 
 // Security check type to distinguish between regular files and git diffs
 export type SecurityCheckType = 'file' | 'gitDiff';
@@ -18,8 +18,8 @@ export interface SuspiciousFileResult {
   type: SecurityCheckType;
 }
 
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
+// Set logger log level from workerData if provided
+setLogLevelByWorkerData();
 
 export default async ({ filePath, content, type }: SecurityCheckTask) => {
   const config = createSecretLintConfig();
