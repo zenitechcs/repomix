@@ -4,6 +4,10 @@ import type { ProcessedFile } from '../../file/fileTypes.js';
 import { TokenCounter } from '../TokenCounter.js';
 import type { FileMetrics } from './types.js';
 
+// Initialize logger configuration from workerData at module load time
+// This must be called before any logging operations in the worker
+setLogLevelByWorkerData();
+
 export interface FileMetricsTask {
   file: ProcessedFile;
   index: number;
@@ -20,9 +24,6 @@ const getTokenCounter = (encoding: TiktokenEncoding): TokenCounter => {
   }
   return tokenCounter;
 };
-
-// Set logger log level from workerData if provided
-setLogLevelByWorkerData();
 
 export default async ({ file, encoding }: FileMetricsTask): Promise<FileMetrics> => {
   const processStartAt = process.hrtime.bigint();
