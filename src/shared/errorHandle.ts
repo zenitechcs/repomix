@@ -26,10 +26,10 @@ export const handleError = (error: unknown): void => {
       logger.note('For detailed debug information, use the --verbose flag');
     }
     // If expected error, show stack trace for debugging
-    logger.note('Stack trace:', error.stack);
+    logger.debug('Stack trace:', error.stack);
     // Show cause if available
     if (error.cause) {
-      logger.note('Caused by:', error.cause);
+      logger.debug('Caused by:', error.cause);
     }
   } else if (error instanceof Error) {
     logger.error(`✖ Unexpected error: ${error.message}`);
