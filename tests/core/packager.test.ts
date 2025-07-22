@@ -50,7 +50,7 @@ describe('packager', () => {
         suspiciousFilesResults: [],
       }),
       generateOutput: vi.fn().mockResolvedValue(mockOutput),
-      handleOutput: vi.fn().mockResolvedValue(undefined),
+      writeOutputToDisk: vi.fn().mockResolvedValue(undefined),
       copyToClipboardIfEnabled: vi.fn().mockResolvedValue(undefined),
       calculateMetrics: vi.fn().mockResolvedValue({
         totalFiles: 2,
@@ -75,7 +75,7 @@ describe('packager', () => {
     expect(mockDeps.collectFiles).toHaveBeenCalledWith(mockFilePaths, 'root', mockConfig, progressCallback);
     expect(mockDeps.validateFileSafety).toHaveBeenCalled();
     expect(mockDeps.processFiles).toHaveBeenCalled();
-    expect(mockDeps.handleOutput).toHaveBeenCalled();
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalled();
     expect(mockDeps.generateOutput).toHaveBeenCalled();
     expect(mockDeps.calculateMetrics).toHaveBeenCalled();
 
@@ -88,7 +88,7 @@ describe('packager', () => {
       mockFilePaths,
       undefined,
     );
-    expect(mockDeps.handleOutput).toHaveBeenCalledWith(mockOutput, mockConfig);
+    expect(mockDeps.writeOutputToDisk).toHaveBeenCalledWith(mockOutput, mockConfig);
     expect(mockDeps.copyToClipboardIfEnabled).toHaveBeenCalledWith(mockOutput, progressCallback, mockConfig);
     expect(mockDeps.calculateMetrics).toHaveBeenCalledWith(
       mockProcessedFiles,
