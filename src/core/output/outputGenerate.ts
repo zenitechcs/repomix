@@ -121,7 +121,7 @@ const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContex
   } catch (error) {
     if (error instanceof RangeError && error.message === 'Invalid string length') {
       throw new RepomixError(
-        'Output size exceeds JavaScript string limit (~512MB). Consider using --include to process specific directories or files.',
+        'Output size exceeds JavaScript string limit (~512MB). Consider using --include to process specific directories or --ignore to exclude unnecessary files.',
         { cause: error },
       );
     }
