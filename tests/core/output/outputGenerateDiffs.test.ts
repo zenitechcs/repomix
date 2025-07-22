@@ -70,7 +70,7 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function to check for diffs in the template
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext, processedFiles) => {
       // Verify that the renderContext has the gitDiffs property
       expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
@@ -129,7 +129,7 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function for markdown
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext, processedFiles) => {
       // Verify that the renderContext has the gitDiffs property
       expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
@@ -156,7 +156,7 @@ describe('Output Generation with Diffs', () => {
     mockConfig.output.parsableStyle = false;
 
     // Mock the Handlebars output function for plain text
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext, processedFiles) => {
       expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
 
       // Simulate the plain text output
@@ -191,7 +191,7 @@ describe('Output Generation with Diffs', () => {
     }));
 
     // Mock the Handlebars output function
-    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext) => {
+    mockDeps.generateHandlebarOutput.mockImplementation((config, renderContext: RenderContext, processedFiles) => {
       // Verify that the renderContext does not have the gitDiffs property
       expect(renderContext.gitDiffWorkTree).toBeUndefined();
 

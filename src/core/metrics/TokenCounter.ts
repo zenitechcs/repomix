@@ -5,8 +5,15 @@ export class TokenCounter {
   private encoding: Tiktoken;
 
   constructor(encodingName: TiktokenEncoding) {
+    const startTime = process.hrtime.bigint();
+
     // Setup encoding with the specified model
     this.encoding = get_encoding(encodingName);
+
+    const endTime = process.hrtime.bigint();
+    const initTime = Number(endTime - startTime) / 1e6; // Convert to milliseconds
+
+    logger.debug(`TokenCounter initialization took ${initTime.toFixed(2)}ms`);
   }
 
   public countTokens(content: string, filePath?: string): number {

@@ -1,8 +1,12 @@
 import type { TiktokenEncoding } from 'tiktoken';
-import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
+import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 import type { ProcessedFile } from '../../file/fileTypes.js';
-import { TokenCounter } from '../TokenCounter.js';
+import { freeTokenCounter, getTokenCounter } from '../tokenCounterFactory.js';
 import type { FileMetrics } from './types.js';
+
+// Initialize logger configuration from workerData at module load time
+// This must be called before any logging operations in the worker
+setLogLevelByWorkerData();
 
 export interface FileMetricsTask {
   file: ProcessedFile;
@@ -10,19 +14,6 @@ export interface FileMetricsTask {
   totalFiles: number;
   encoding: TiktokenEncoding;
 }
-
-// Worker-level singleton for TokenCounter
-let tokenCounter: TokenCounter | null = null;
-
-const getTokenCounter = (encoding: TiktokenEncoding): TokenCounter => {
-  if (!tokenCounter) {
-    tokenCounter = new TokenCounter(encoding);
-  }
-  return tokenCounter;
-};
-
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
 
 export default async ({ file, encoding }: FileMetricsTask): Promise<FileMetrics> => {
   const processStartAt = process.hrtime.bigint();
@@ -48,8 +39,5 @@ export const calculateIndividualFileMetrics = async (
 
 // Cleanup when worker is terminated
 process.on('exit', () => {
-  if (tokenCounter) {
-    tokenCounter.free();
-    tokenCounter = null;
-  }
+  freeTokenCounter();
 });

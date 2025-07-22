@@ -112,7 +112,7 @@ describe.runIf(!isWindows)('packager integration', () => {
             filterOutUntrustedFiles,
           });
         },
-        handleOutput: writeOutputToDisk,
+        writeOutputToDisk,
         copyToClipboardIfEnabled,
         calculateMetrics: async (processedFiles, output, progressCallback, config, gitDiffResult) => {
           return {

@@ -35,7 +35,7 @@ vi.mock('../../src/shared/logger', () => ({
     }),
     getLogLevel: vi.fn(() => logLevel),
   },
-  setLogLevelByEnv: vi.fn(),
+  setLogLevelByWorkerData: vi.fn(),
 }));
 
 vi.mock('../../src/cli/actions/defaultAction');

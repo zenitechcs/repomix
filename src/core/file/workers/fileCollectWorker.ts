@@ -1,15 +1,16 @@
 import path from 'node:path';
-import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
+import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 import { readRawFile } from '../fileRead.js';
+
+// Initialize logger configuration from workerData at module load time
+// This must be called before any logging operations in the worker
+setLogLevelByWorkerData();
 
 export interface FileCollectTask {
   filePath: string;
   rootDir: string;
   maxFileSize: number;
 }
-
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
 
 export default async ({ filePath, rootDir, maxFileSize }: FileCollectTask) => {
   const fullPath = path.resolve(rootDir, filePath);

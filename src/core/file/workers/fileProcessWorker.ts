@@ -1,15 +1,16 @@
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
-import { logger, setLogLevelByEnv } from '../../../shared/logger.js';
+import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 import { processContent } from '../fileProcessContent.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
+
+// Initialize logger configuration from workerData at module load time
+// This must be called before any logging operations in the worker
+setLogLevelByWorkerData();
 
 export interface FileProcessTask {
   rawFile: RawFile;
   config: RepomixConfigMerged;
 }
-
-// Set logger log level from environment variable if provided
-setLogLevelByEnv();
 
 export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFile> => {
   const processedContent = await processContent(rawFile, config);

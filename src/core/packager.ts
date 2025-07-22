@@ -1,4 +1,5 @@
 import type { RepomixConfigMerged } from '../config/configSchema.js';
+import { RepomixError } from '../shared/errorHandle.js';
 import type { RepomixProgressCallback } from '../shared/types.js';
 import { collectFiles } from './file/fileCollect.js';
 import { sortPaths } from './file/filePathSort.js';
@@ -32,7 +33,7 @@ const defaultDeps = {
   processFiles,
   generateOutput,
   validateFileSafety,
-  handleOutput: writeOutputToDisk,
+  writeOutputToDisk,
   copyToClipboardIfEnabled,
   calculateMetrics,
   sortPaths,
@@ -97,7 +98,7 @@ export const pack = async (
   const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult);
 
   progressCallback('Writing output file...');
-  await deps.handleOutput(output, config);
+  await deps.writeOutputToDisk(output, config);
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
