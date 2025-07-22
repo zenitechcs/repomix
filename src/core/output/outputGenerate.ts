@@ -99,7 +99,11 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
   }
 };
 
-const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContext: RenderContext): Promise<string> => {
+const generateHandlebarOutput = async (
+  config: RepomixConfigMerged,
+  renderContext: RenderContext,
+  processedFiles?: ProcessedFile[],
+): Promise<string> => {
   let template: string;
   switch (config.output.style) {
     case 'xml':
@@ -120,12 +124,22 @@ const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContex
     return `${compiledTemplate(renderContext).trim()}\n`;
   } catch (error) {
     if (error instanceof RangeError && error.message === 'Invalid string length') {
+      let largeFilesInfo = '';
+      if (processedFiles && processedFiles.length > 0) {
+        const topFiles = processedFiles
+          .sort((a, b) => b.content.length - a.content.length)
+          .slice(0, 5)
+          .map((f) => `  - ${f.path} (${(f.content.length / 1024 / 1024).toFixed(1)} MB)`)
+          .join('\n');
+        largeFilesInfo = `\n\nLargest files in this repository:\n${topFiles}`;
+      }
+
       throw new RepomixError(
-        'Output size exceeds JavaScript string limit. The repository contains files that are too large to process.\n' +
-          'Please try:\n' +
-          '  - Use --ignore to exclude large files (e.g., --ignore "docs/**" or --ignore "*.html")\n' +
-          '  - Use --include to process only specific files\n' +
-          '  - Process smaller portions of the repository at a time',
+        `Output size exceeds JavaScript string limit. The repository contains files that are too large to process.
+Please try:
+  - Use --ignore to exclude large files (e.g., --ignore "docs/**" or --ignore "*.html")
+  - Use --include to process only specific files
+  - Process smaller portions of the repository at a time${largeFilesInfo}`,
         { cause: error },
       );
     }
@@ -161,14 +175,14 @@ export const generateOutput = async (
   );
   const renderContext = createRenderContext(outputGeneratorContext);
 
-  if (!config.output.parsableStyle) return deps.generateHandlebarOutput(config, renderContext);
+  if (!config.output.parsableStyle) return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
   switch (config.output.style) {
     case 'xml':
       return deps.generateParsableXmlOutput(renderContext);
     case 'markdown':
-      return deps.generateHandlebarOutput(config, renderContext);
+      return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
     default:
-      return deps.generateHandlebarOutput(config, renderContext);
+      return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
   }
 };
 
