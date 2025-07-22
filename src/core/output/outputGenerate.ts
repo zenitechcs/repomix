@@ -94,6 +94,7 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
   } catch (error) {
     throw new RepomixError(
       `Failed to generate XML output: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      error instanceof Error ? { cause: error } : undefined,
     );
   }
 };
@@ -118,7 +119,16 @@ const generateHandlebarOutput = async (config: RepomixConfigMerged, renderContex
     const compiledTemplate = Handlebars.compile(template);
     return `${compiledTemplate(renderContext).trim()}\n`;
   } catch (error) {
-    throw new RepomixError(`Failed to compile template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (error instanceof RangeError && error.message === 'Invalid string length') {
+      throw new RepomixError(
+        'Output size exceeds JavaScript string limit (~512MB). Consider using --include to process specific directories or files.',
+        { cause: error },
+      );
+    }
+    throw new RepomixError(
+      `Failed to compile template: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      error instanceof Error ? { cause: error } : undefined,
+    );
   }
 };
 
