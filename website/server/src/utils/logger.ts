@@ -1,6 +1,7 @@
 import { LoggingWinston } from '@google-cloud/logging-winston';
 import type { Context, Next } from 'hono';
 import winston from 'winston';
+import { formatMemoryUsage, getMemoryMetrics, getMemoryUsage } from './memory.js';
 import { getClientIP } from './network.js';
 import { calculateLatency, formatLatencyForDisplay } from './time.js';
 
@@ -164,6 +165,20 @@ export function logError(message: string, error?: Error, context?: Record<string
           stack: error.stack,
         }
       : undefined,
+    ...context,
+  });
+}
+
+/**
+ * Log current memory usage with optional context
+ */
+export function logMemoryUsage(message: string, context?: Record<string, unknown>): void {
+  const memoryUsage = getMemoryUsage();
+  const memoryMetrics = getMemoryMetrics();
+  
+  logger.info({
+    message: `${message} - Memory: ${formatMemoryUsage(memoryUsage)}`,
+    memory: memoryMetrics,
     ...context,
   });
 }
