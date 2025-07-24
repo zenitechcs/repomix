@@ -1,14 +1,17 @@
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import { initWorker } from '../../shared/processConcurrency.js';
+import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from './fileTypes.js';
 import type { FileCollectTask } from './workers/fileCollectWorker.js';
 
 const initTaskRunner = (numOfTasks: number) => {
   const pool = initWorker(numOfTasks, new URL('./workers/fileCollectWorker.js', import.meta.url).href);
-  return (task: FileCollectTask) => pool.run(task);
+  return {
+    run: (task: FileCollectTask) => pool.run(task),
+    cleanup: () => cleanupWorkerPool(pool),
+  };
 };
 
 export const collectFiles = async (
@@ -20,7 +23,7 @@ export const collectFiles = async (
     initTaskRunner,
   },
 ): Promise<RawFile[]> => {
-  const runTask = deps.initTaskRunner(filePaths.length);
+  const taskRunner = deps.initTaskRunner(filePaths.length);
   const tasks = filePaths.map(
     (filePath) =>
       ({
@@ -39,7 +42,7 @@ export const collectFiles = async (
 
     const results = await Promise.all(
       tasks.map((task) =>
-        runTask(task).then((result) => {
+        taskRunner.run(task).then((result) => {
           completedTasks++;
           progressCallback(`Collect file... (${completedTasks}/${totalTasks}) ${pc.dim(task.filePath)}`);
           logger.trace(`Collect files... (${completedTasks}/${totalTasks}) ${task.filePath}`);
@@ -56,5 +59,8 @@ export const collectFiles = async (
   } catch (error) {
     logger.error('Error during file collection:', error);
     throw error;
+  } finally {
+    // Always cleanup worker pool
+    await taskRunner.cleanup();
   }
 };

@@ -25,8 +25,13 @@ const inputsDir = path.join(fixturesDir, 'inputs');
 const outputsDir = path.join(fixturesDir, 'outputs');
 
 const mockCollectFileInitTaskRunner = () => {
-  return async (task: FileCollectTask) => {
-    return await fileCollectWorker(task);
+  return {
+    run: async (task: FileCollectTask) => {
+      return await fileCollectWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 

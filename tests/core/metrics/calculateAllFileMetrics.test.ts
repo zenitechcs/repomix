@@ -13,8 +13,13 @@ vi.mock('../../shared/processConcurrency', () => ({
 }));
 
 const mockInitTaskRunner = (numOfTasks: number) => {
-  return async (task: FileMetricsTask) => {
-    return await fileMetricsWorker(task);
+  return {
+    run: async (task: FileMetricsTask) => {
+      return await fileMetricsWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 

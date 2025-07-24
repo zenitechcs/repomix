@@ -20,8 +20,13 @@ const mockGetFileManipulator = (filePath: string): FileManipulator | null => {
 };
 
 const mockInitTaskRunner = (numOfTasks: number) => {
-  return async (task: FileProcessTask) => {
-    return await fileProcessWorker(task);
+  return {
+    run: async (task: FileProcessTask) => {
+      return await fileProcessWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 

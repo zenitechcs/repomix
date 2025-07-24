@@ -22,8 +22,13 @@ vi.mock('iconv-lite');
 vi.mock('../../../src/shared/logger');
 
 const mockInitTaskRunner = () => {
-  return async (task: FileCollectTask) => {
-    return await fileCollectWorker(task);
+  return {
+    run: async (task: FileCollectTask) => {
+      return await fileCollectWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 

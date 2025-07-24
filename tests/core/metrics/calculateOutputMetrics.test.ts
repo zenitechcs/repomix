@@ -7,8 +7,13 @@ import { logger } from '../../../src/shared/logger.js';
 vi.mock('../../../src/shared/logger');
 
 const mockInitTaskRunner = () => {
-  return async (task: OutputMetricsTask) => {
-    return await outputMetricsWorker(task);
+  return {
+    run: async (task: OutputMetricsTask) => {
+      return await outputMetricsWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 
@@ -42,8 +47,13 @@ describe('calculateOutputMetrics', () => {
     const mockError = new Error('Worker error');
 
     const mockErrorTaskRunner = () => {
-      return async () => {
-        throw mockError;
+      return {
+        run: async () => {
+          throw mockError;
+        },
+        cleanup: async () => {
+          // Mock cleanup - no-op for tests
+        },
       };
     };
 
@@ -87,10 +97,15 @@ describe('calculateOutputMetrics', () => {
 
     let chunksProcessed = 0;
     const mockParallelTaskRunner = () => {
-      return async (task: OutputMetricsTask) => {
-        chunksProcessed++;
-        // Return a fixed token count for each chunk
-        return 100;
+      return {
+        run: async (task: OutputMetricsTask) => {
+          chunksProcessed++;
+          // Return a fixed token count for each chunk
+          return 100;
+        },
+        cleanup: async () => {
+          // Mock cleanup - no-op for tests
+        },
       };
     };
 
@@ -108,8 +123,13 @@ describe('calculateOutputMetrics', () => {
     const mockError = new Error('Parallel processing error');
 
     const mockErrorTaskRunner = () => {
-      return async () => {
-        throw mockError;
+      return {
+        run: async () => {
+          throw mockError;
+        },
+        cleanup: async () => {
+          // Mock cleanup - no-op for tests
+        },
       };
     };
 
@@ -128,9 +148,14 @@ describe('calculateOutputMetrics', () => {
     const processedChunks: string[] = [];
 
     const mockChunkTrackingTaskRunner = () => {
-      return async (task: OutputMetricsTask) => {
-        processedChunks.push(task.content);
-        return task.content.length;
+      return {
+        run: async (task: OutputMetricsTask) => {
+          processedChunks.push(task.content);
+          return task.content.length;
+        },
+        cleanup: async () => {
+          // Mock cleanup - no-op for tests
+        },
       };
     };
 

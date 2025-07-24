@@ -1,7 +1,7 @@
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import { initWorker } from '../../shared/processConcurrency.js';
+import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import { type FileManipulator, getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';
@@ -11,7 +11,10 @@ type GetFileManipulator = (filePath: string) => FileManipulator | null;
 
 const initTaskRunner = (numOfTasks: number) => {
   const pool = initWorker(numOfTasks, new URL('./workers/fileProcessWorker.js', import.meta.url).href);
-  return (task: FileProcessTask) => pool.run(task);
+  return {
+    run: (task: FileProcessTask) => pool.run(task),
+    cleanup: () => cleanupWorkerPool(pool),
+  };
 };
 
 export const processFiles = async (
@@ -26,7 +29,7 @@ export const processFiles = async (
     getFileManipulator,
   },
 ): Promise<ProcessedFile[]> => {
-  const runTask = deps.initTaskRunner(rawFiles.length);
+  const taskRunner = deps.initTaskRunner(rawFiles.length);
   const tasks = rawFiles.map(
     (rawFile, index) =>
       ({
@@ -44,7 +47,7 @@ export const processFiles = async (
 
     const results = await Promise.all(
       tasks.map((task) =>
-        runTask(task).then((result) => {
+        taskRunner.run(task).then((result) => {
           completedTasks++;
           progressCallback(`Processing file... (${completedTasks}/${totalTasks}) ${pc.dim(task.rawFile.path)}`);
           logger.trace(`Processing file... (${completedTasks}/${totalTasks}) ${task.rawFile.path}`);
@@ -61,5 +64,8 @@ export const processFiles = async (
   } catch (error) {
     logger.error('Error during file processing:', error);
     throw error;
+  } finally {
+    // Always cleanup worker pool
+    await taskRunner.cleanup();
   }
 };

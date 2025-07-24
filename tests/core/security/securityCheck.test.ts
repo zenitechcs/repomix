@@ -17,6 +17,7 @@ vi.mock('../../../src/shared/processConcurrency', () => ({
       return await securityCheckWorker(task);
     }),
   })),
+  cleanupWorkerPool: vi.fn(),
 }));
 
 const mockFiles: RawFile[] = [
@@ -33,8 +34,13 @@ const mockFiles: RawFile[] = [
 ];
 
 const mockInitTaskRunner = () => {
-  return async (task: SecurityCheckTask) => {
-    return await securityCheckWorker(task);
+  return {
+    run: async (task: SecurityCheckTask) => {
+      return await securityCheckWorker(task);
+    },
+    cleanup: async () => {
+      // Mock cleanup - no-op for tests
+    },
   };
 };
 
@@ -65,8 +71,13 @@ describe('runSecurityCheck', () => {
   it('should handle worker errors gracefully', async () => {
     const mockError = new Error('Worker error');
     const mockErrorTaskRunner = () => {
-      return async () => {
-        throw mockError;
+      return {
+        run: async () => {
+          throw mockError;
+        },
+        cleanup: async () => {
+          // Mock cleanup - no-op for tests
+        },
       };
     };
 

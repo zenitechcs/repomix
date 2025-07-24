@@ -1,6 +1,6 @@
 import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
-import { initWorker } from '../../shared/processConcurrency.js';
+import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
@@ -14,7 +14,10 @@ export interface SuspiciousFileResult {
 
 const initTaskRunner = (numOfTasks: number) => {
   const pool = initWorker(numOfTasks, new URL('./workers/securityCheckWorker.js', import.meta.url).href);
-  return (task: SecurityCheckTask) => pool.run(task);
+  return {
+    run: (task: SecurityCheckTask) => pool.run(task),
+    cleanup: () => cleanupWorkerPool(pool),
+  };
 };
 
 export const runSecurityCheck = async (
@@ -46,7 +49,7 @@ export const runSecurityCheck = async (
     }
   }
 
-  const runTask = deps.initTaskRunner(rawFiles.length + gitDiffTasks.length);
+  const taskRunner = deps.initTaskRunner(rawFiles.length + gitDiffTasks.length);
   const fileTasks = rawFiles.map(
     (file) =>
       ({
@@ -68,7 +71,7 @@ export const runSecurityCheck = async (
 
     const results = await Promise.all(
       tasks.map((task) =>
-        runTask(task).then((result) => {
+        taskRunner.run(task).then((result) => {
           completedTasks++;
           progressCallback(`Running security check... (${completedTasks}/${totalTasks}) ${pc.dim(task.filePath)}`);
           logger.trace(`Running security check... (${completedTasks}/${totalTasks}) ${task.filePath}`);
@@ -85,5 +88,8 @@ export const runSecurityCheck = async (
   } catch (error) {
     logger.error('Error during security check:', error);
     throw error;
+  } finally {
+    // Always cleanup worker pool
+    await taskRunner.cleanup();
   }
 };

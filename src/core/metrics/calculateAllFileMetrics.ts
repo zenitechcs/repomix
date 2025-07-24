@@ -1,7 +1,7 @@
 import pc from 'picocolors';
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger } from '../../shared/logger.js';
-import { initWorker } from '../../shared/processConcurrency.js';
+import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { FileMetricsTask } from './workers/fileMetricsWorker.js';
@@ -9,7 +9,10 @@ import type { FileMetrics } from './workers/types.js';
 
 const initTaskRunner = (numOfTasks: number) => {
   const pool = initWorker(numOfTasks, new URL('./workers/fileMetricsWorker.js', import.meta.url).href);
-  return (task: FileMetricsTask) => pool.run(task);
+  return {
+    run: (task: FileMetricsTask) => pool.run(task),
+    cleanup: () => cleanupWorkerPool(pool),
+  };
 };
 
 export const calculateAllFileMetrics = async (
@@ -20,7 +23,7 @@ export const calculateAllFileMetrics = async (
     initTaskRunner,
   },
 ): Promise<FileMetrics[]> => {
-  const runTask = deps.initTaskRunner(processedFiles.length);
+  const taskRunner = deps.initTaskRunner(processedFiles.length);
   const tasks = processedFiles.map(
     (file, index) =>
       ({
@@ -38,7 +41,7 @@ export const calculateAllFileMetrics = async (
     let completedTasks = 0;
     const results = await Promise.all(
       tasks.map((task) =>
-        runTask(task).then((result) => {
+        taskRunner.run(task).then((result) => {
           completedTasks++;
           progressCallback(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${pc.dim(task.file.path)}`);
           logger.trace(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${task.file.path}`);
@@ -55,6 +58,9 @@ export const calculateAllFileMetrics = async (
   } catch (error) {
     logger.error('Error during metrics calculation:', error);
     throw error;
+  } finally {
+    // Always cleanup worker pool
+    await taskRunner.cleanup();
   }
 };
 
@@ -74,7 +80,7 @@ export const calculateSelectiveFileMetrics = async (
     return [];
   }
 
-  const runTask = deps.initTaskRunner(filesToProcess.length);
+  const taskRunner = deps.initTaskRunner(filesToProcess.length);
   const tasks = filesToProcess.map(
     (file, index) =>
       ({
@@ -92,7 +98,7 @@ export const calculateSelectiveFileMetrics = async (
     let completedTasks = 0;
     const results = await Promise.all(
       tasks.map((task) =>
-        runTask(task).then((result) => {
+        taskRunner.run(task).then((result) => {
           completedTasks++;
           progressCallback(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${pc.dim(task.file.path)}`);
           logger.trace(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${task.file.path}`);
@@ -109,5 +115,8 @@ export const calculateSelectiveFileMetrics = async (
   } catch (error) {
     logger.error('Error during selective metrics calculation:', error);
     throw error;
+  } finally {
+    // Always cleanup worker pool
+    await taskRunner.cleanup();
   }
 };

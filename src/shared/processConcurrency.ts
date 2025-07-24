@@ -49,3 +49,15 @@ export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => 
 
   return pool;
 };
+
+export const cleanupWorkerPool = async (pool: Tinypool): Promise<void> => {
+  try {
+    logger.debug('Cleaning up worker pool...');
+
+    // Terminate pool which should trigger worker cleanup
+    await pool.destroy();
+    logger.debug('Worker pool cleaned up successfully');
+  } catch (error) {
+    logger.debug(`Error during worker pool cleanup: ${error}`);
+  }
+};
