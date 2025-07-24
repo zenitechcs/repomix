@@ -54,11 +54,20 @@ export const cleanupWorkerPool = async (pool: Tinypool): Promise<void> => {
   try {
     logger.debug('Cleaning up worker pool...');
 
-    // Terminate pool which should trigger worker cleanup
-    await pool.destroy();
+    // Check if running in Bun runtime
+    const isBun = typeof process !== 'undefined' && process.versions?.bun;
+
+    if (isBun) {
+      // If running in Bun, we cannot use Tinypool's destroy method
+      logger.debug('Running in Bun environment, skipping Tinypool destroy method');
+    } else {
+      // Standard Node.js cleanup
+      await pool.destroy();
+    }
+
     logger.debug('Worker pool cleaned up successfully');
   } catch (error) {
-    logger.debug(`Error during worker pool cleanup: ${error}`);
+    logger.debug('Error during worker pool cleanup:', error);
   }
 };
 
