@@ -1,4 +1,3 @@
-import { parentPort } from 'node:worker_threads';
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 import type { ProcessedFile } from '../../file/fileTypes.js';
