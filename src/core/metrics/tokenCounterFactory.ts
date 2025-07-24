@@ -23,9 +23,9 @@ export const getTokenCounter = (encoding: TiktokenEncoding): TokenCounter => {
  * This should be called when the worker is terminating.
  */
 export const freeTokenCounters = (): void => {
-  for (const tokenCounter of tokenCounters.values()) {
+  for (const [encoding, tokenCounter] of tokenCounters.entries()) {
     tokenCounter.free();
-    logger.debug('Freed TokenCounter resources for encoding.');
+    logger.debug(`Freed TokenCounter resources for encoding: ${encoding}`);
   }
   tokenCounters.clear();
 };
