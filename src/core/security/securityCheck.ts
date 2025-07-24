@@ -1,6 +1,6 @@
 import pc from 'picocolors';
 import { logger } from '../../shared/logger.js';
-import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
+import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
@@ -11,14 +11,6 @@ export interface SuspiciousFileResult {
   messages: string[];
   type: SecurityCheckType;
 }
-
-const initTaskRunner = (numOfTasks: number) => {
-  const pool = initWorker(numOfTasks, new URL('./workers/securityCheckWorker.js', import.meta.url).href);
-  return {
-    run: (task: SecurityCheckTask) => pool.run(task),
-    cleanup: () => cleanupWorkerPool(pool),
-  };
-};
 
 export const runSecurityCheck = async (
   rawFiles: RawFile[],
@@ -49,7 +41,10 @@ export const runSecurityCheck = async (
     }
   }
 
-  const taskRunner = deps.initTaskRunner(rawFiles.length + gitDiffTasks.length);
+  const taskRunner = deps.initTaskRunner<SecurityCheckTask, SuspiciousFileResult | null>(
+    rawFiles.length + gitDiffTasks.length,
+    new URL('./workers/securityCheckWorker.js', import.meta.url).href,
+  );
   const fileTasks = rawFiles.map(
     (file) =>
       ({

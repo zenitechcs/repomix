@@ -23,7 +23,7 @@ export const getWorkerThreadCount = (numOfTasks: number): { minThreads: number; 
   };
 };
 
-export const initWorker = (numOfTasks: number, workerPath: string): Tinypool => {
+export const createWorkerPool = (numOfTasks: number, workerPath: string): Tinypool => {
   const { minThreads, maxThreads } = getWorkerThreadCount(numOfTasks);
 
   logger.trace(
@@ -60,4 +60,17 @@ export const cleanupWorkerPool = async (pool: Tinypool): Promise<void> => {
   } catch (error) {
     logger.debug(`Error during worker pool cleanup: ${error}`);
   }
+};
+
+export interface TaskRunner<T, R> {
+  run: (task: T) => Promise<R>;
+  cleanup: () => Promise<void>;
+}
+
+export const initTaskRunner = <T, R>(numOfTasks: number, workerPath: string): TaskRunner<T, R> => {
+  const pool = createWorkerPool(numOfTasks, workerPath);
+  return {
+    run: (task: T) => pool.run(task),
+    cleanup: () => cleanupWorkerPool(pool),
+  };
 };

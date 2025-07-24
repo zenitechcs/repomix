@@ -1,18 +1,10 @@
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
+import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from './fileTypes.js';
 import type { FileCollectTask } from './workers/fileCollectWorker.js';
-
-const initTaskRunner = (numOfTasks: number) => {
-  const pool = initWorker(numOfTasks, new URL('./workers/fileCollectWorker.js', import.meta.url).href);
-  return {
-    run: (task: FileCollectTask) => pool.run(task),
-    cleanup: () => cleanupWorkerPool(pool),
-  };
-};
 
 export const collectFiles = async (
   filePaths: string[],
@@ -23,7 +15,10 @@ export const collectFiles = async (
     initTaskRunner,
   },
 ): Promise<RawFile[]> => {
-  const taskRunner = deps.initTaskRunner(filePaths.length);
+  const taskRunner = deps.initTaskRunner<FileCollectTask, RawFile | null>(
+    filePaths.length,
+    new URL('./workers/fileCollectWorker.js', import.meta.url).href,
+  );
   const tasks = filePaths.map(
     (filePath) =>
       ({

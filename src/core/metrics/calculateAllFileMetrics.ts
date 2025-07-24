@@ -1,19 +1,11 @@
 import pc from 'picocolors';
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger } from '../../shared/logger.js';
-import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
+import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { FileMetricsTask } from './workers/fileMetricsWorker.js';
 import type { FileMetrics } from './workers/types.js';
-
-const initTaskRunner = (numOfTasks: number) => {
-  const pool = initWorker(numOfTasks, new URL('./workers/fileMetricsWorker.js', import.meta.url).href);
-  return {
-    run: (task: FileMetricsTask) => pool.run(task),
-    cleanup: () => cleanupWorkerPool(pool),
-  };
-};
 
 export const calculateAllFileMetrics = async (
   processedFiles: ProcessedFile[],
@@ -23,7 +15,10 @@ export const calculateAllFileMetrics = async (
     initTaskRunner,
   },
 ): Promise<FileMetrics[]> => {
-  const taskRunner = deps.initTaskRunner(processedFiles.length);
+  const taskRunner = deps.initTaskRunner<FileMetricsTask, FileMetrics>(
+    processedFiles.length,
+    new URL('./workers/fileMetricsWorker.js', import.meta.url).href,
+  );
   const tasks = processedFiles.map(
     (file, index) =>
       ({
@@ -80,7 +75,10 @@ export const calculateSelectiveFileMetrics = async (
     return [];
   }
 
-  const taskRunner = deps.initTaskRunner(filesToProcess.length);
+  const taskRunner = deps.initTaskRunner<FileMetricsTask, FileMetrics>(
+    filesToProcess.length,
+    new URL('./workers/fileMetricsWorker.js', import.meta.url).href,
+  );
   const tasks = filesToProcess.map(
     (file, index) =>
       ({

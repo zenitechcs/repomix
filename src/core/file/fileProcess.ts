@@ -1,21 +1,13 @@
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
+import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import { type FileManipulator, getFileManipulator } from './fileManipulate.js';
 import type { ProcessedFile, RawFile } from './fileTypes.js';
 import type { FileProcessTask } from './workers/fileProcessWorker.js';
 
 type GetFileManipulator = (filePath: string) => FileManipulator | null;
-
-const initTaskRunner = (numOfTasks: number) => {
-  const pool = initWorker(numOfTasks, new URL('./workers/fileProcessWorker.js', import.meta.url).href);
-  return {
-    run: (task: FileProcessTask) => pool.run(task),
-    cleanup: () => cleanupWorkerPool(pool),
-  };
-};
 
 export const processFiles = async (
   rawFiles: RawFile[],
@@ -29,7 +21,10 @@ export const processFiles = async (
     getFileManipulator,
   },
 ): Promise<ProcessedFile[]> => {
-  const taskRunner = deps.initTaskRunner(rawFiles.length);
+  const taskRunner = deps.initTaskRunner<FileProcessTask, ProcessedFile>(
+    rawFiles.length,
+    new URL('./workers/fileProcessWorker.js', import.meta.url).href,
+  );
   const tasks = rawFiles.map(
     (rawFile, index) =>
       ({

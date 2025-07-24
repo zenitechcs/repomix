@@ -12,10 +12,10 @@ vi.mock('../../shared/processConcurrency', () => ({
   getProcessConcurrency: () => 1,
 }));
 
-const mockInitTaskRunner = (numOfTasks: number) => {
+const mockInitTaskRunner = <T, R>(numOfTasks: number, workerPath: string) => {
   return {
-    run: async (task: FileMetricsTask) => {
-      return await fileMetricsWorker(task);
+    run: async (task: T) => {
+      return (await fileMetricsWorker(task as FileMetricsTask)) as R;
     },
     cleanup: async () => {
       // Mock cleanup - no-op for tests

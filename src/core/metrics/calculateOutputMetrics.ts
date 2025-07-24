@@ -1,18 +1,10 @@
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger } from '../../shared/logger.js';
-import { cleanupWorkerPool, initWorker } from '../../shared/processConcurrency.js';
+import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { OutputMetricsTask } from './workers/outputMetricsWorker.js';
 
 const CHUNK_SIZE = 1000;
 const MIN_CONTENT_LENGTH_FOR_PARALLEL = 1_000_000; // 1000KB
-
-const initTaskRunner = (numOfTasks: number) => {
-  const pool = initWorker(numOfTasks, new URL('./workers/outputMetricsWorker.js', import.meta.url).href);
-  return {
-    run: (task: OutputMetricsTask) => pool.run(task),
-    cleanup: () => cleanupWorkerPool(pool),
-  };
-};
 
 export const calculateOutputMetrics = async (
   content: string,
@@ -24,7 +16,10 @@ export const calculateOutputMetrics = async (
 ): Promise<number> => {
   const shouldRunInParallel = content.length > MIN_CONTENT_LENGTH_FOR_PARALLEL;
   const numOfTasks = shouldRunInParallel ? CHUNK_SIZE : 1;
-  const taskRunner = deps.initTaskRunner(numOfTasks);
+  const taskRunner = deps.initTaskRunner<OutputMetricsTask, number>(
+    numOfTasks,
+    new URL('./workers/outputMetricsWorker.js', import.meta.url).href,
+  );
 
   try {
     logger.trace(`Starting output token count for ${path || 'output'}`);
