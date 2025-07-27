@@ -86,15 +86,15 @@ async function runTest(): Promise<void> {
     const heapGrowth = (((finalMemory.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed) * 100).toFixed(1);
     const rssGrowth = (((finalMemory.rss - initialMemory.rss) / initialMemory.rss) * 100).toFixed(1);
 
-    console.log(`\n📊 Final Results:`);
+    console.log('\n📊 Final Results:');
     console.log(`   Initial: Heap ${initialMemory.heapUsed}MB, RSS ${initialMemory.rss}MB`);
     console.log(`   Final:   Heap ${finalMemory.heapUsed}MB, RSS ${finalMemory.rss}MB`);
     console.log(`   Growth:  Heap +${heapGrowth}%, RSS +${rssGrowth}%`);
 
     if (Number.parseFloat(heapGrowth) > 100 || Number.parseFloat(rssGrowth) > 100) {
-      console.log(`⚠️  WARNING: Significant memory growth detected!`);
+      console.log('⚠️  WARNING: Significant memory growth detected!');
     } else {
-      console.log(`✅ Memory usage appears stable`);
+      console.log('✅ Memory usage appears stable');
     }
   }
 }

@@ -65,10 +65,10 @@ const memoryHistory: MemoryHistory[] = [];
 const iterations = Number.parseInt(process.argv[2]) || DEFAULT_ITERATIONS;
 const delay = Number.parseInt(process.argv[3]) || DEFAULT_DELAY;
 
-console.log(`🧪 Comprehensive Memory Leak Test`);
+console.log('🧪 Comprehensive Memory Leak Test');
 console.log(`📋 Configuration: ${iterations} iterations, ${delay}ms delay`);
 console.log(`🎯 Test Configurations: ${TEST_CONFIGS.length} different configs`);
-console.log(`🛑 Press Ctrl+C to stop\n`);
+console.log('🛑 Press Ctrl+C to stop\n');
 
 function getMemoryUsage(): MemoryUsage {
   const usage = process.memoryUsage();
@@ -122,8 +122,8 @@ async function cleanupFiles(): Promise<void> {
   for (const file of filesToClean) {
     try {
       await fs.unlink(file);
-    } catch (error: any) {
-      if (error.code !== 'ENOENT') {
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code !== 'ENOENT') {
         console.warn(`Failed to cleanup ${file}:`, error.message);
       }
     }
@@ -197,7 +197,7 @@ async function runMemoryLeakTest(): Promise<void> {
 
     try {
       // Run the CLI with current configuration
-      await runCli(config.args, config.cwd, config.options as any);
+      await runCli(config.args, config.cwd, config.options);
 
       // Clean up output files after each run
       await cleanupFiles();
@@ -266,12 +266,12 @@ process.on('uncaughtException', async (error) => {
 });
 
 // Validate arguments
-if (isNaN(iterations) || iterations <= 0) {
+if (Number.isNaN(iterations) || iterations <= 0) {
   console.error('❌ Invalid iterations count. Must be a positive number.');
   process.exit(1);
 }
 
-if (isNaN(delay) || delay < 0) {
+if (Number.isNaN(delay) || delay < 0) {
   console.error('❌ Invalid delay. Must be a non-negative number.');
   process.exit(1);
 }
