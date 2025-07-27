@@ -46,7 +46,7 @@ export function getMemoryStats(): MemoryStats {
 export function logMemoryUsage(context: string): void {
   const stats = getMemoryStats();
   logger.trace(
-    `Memory [${context}]: Heap ${stats.heapUsed}MB/${stats.heapTotal}MB (${stats.heapUsagePercent}%), RSS ${stats.rss}MB, External ${stats.external}MB`,
+    `Memory [${context}] | Heap: ${stats.heapUsed}/${stats.heapTotal}MB (${stats.heapUsagePercent}%) | RSS: ${stats.rss}MB | Ext: ${stats.external}MB`,
   );
 }
 
@@ -58,10 +58,10 @@ export function logMemoryDifference(context: string, before: MemoryStats, after:
   const rssDiff = after.rss - before.rss;
   const externalDiff = after.external - before.external;
 
+  const formatDiff = (diff: number) => `${diff >= 0 ? '+' : ''}${diff.toFixed(2)}`;
+
   logger.trace(
-    `Memory [${context} - Delta]: Heap ${heapDiff >= 0 ? '+' : ''}${heapDiff.toFixed(2)}MB, ` +
-      `RSS ${rssDiff >= 0 ? '+' : ''}${rssDiff.toFixed(2)}MB, ` +
-      `External ${externalDiff >= 0 ? '+' : ''}${externalDiff.toFixed(2)}MB`,
+    `Memory [${context} - Delta] | Heap: ${formatDiff(heapDiff)}MB | RSS: ${formatDiff(rssDiff)}MB | Ext: ${formatDiff(externalDiff)}MB`,
   );
 }
 

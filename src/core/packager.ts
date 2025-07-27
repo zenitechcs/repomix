@@ -68,7 +68,7 @@ export const pack = async (
   // Sort file paths
   progressCallback('Sorting files...');
   const allFilePaths = filePathsByDir.flatMap(({ filePaths }) => filePaths);
-  const sortedFilePaths = await withMemoryLogging('Sort Paths', async () => deps.sortPaths(allFilePaths));
+  const sortedFilePaths = deps.sortPaths(allFilePaths);
 
   // Regroup sorted file paths by rootDir
   const sortedFilePathsByDir = rootDirs.map((rootDir) => ({
@@ -91,7 +91,7 @@ export const pack = async (
 
   // Get git diffs if enabled - run this before security check
   progressCallback('Getting git diffs...');
-  const gitDiffResult = await withMemoryLogging('Git Diffs', () => deps.getGitDiffs(rootDirs, config));
+  const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
 
   // Run security check and get filtered safe files
   const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await withMemoryLogging(
@@ -113,7 +113,7 @@ export const pack = async (
   progressCallback('Writing output file...');
   await withMemoryLogging('Write Output', () => deps.writeOutputToDisk(output, config));
 
-  await withMemoryLogging('Copy to Clipboard', () => deps.copyToClipboardIfEnabled(output, progressCallback, config));
+  await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
   const metrics = await withMemoryLogging('Calculate Metrics', () =>
     deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult),

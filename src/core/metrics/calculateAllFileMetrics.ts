@@ -45,6 +45,8 @@ export const calculateAllFileMetrics = async (
       ),
     );
 
+    await taskRunner.cleanup();
+
     const endTime = process.hrtime.bigint();
     const duration = Number(endTime - startTime) / 1e6;
     logger.trace(`Metrics calculation completed in ${duration.toFixed(2)}ms`);
@@ -104,6 +106,8 @@ export const calculateSelectiveFileMetrics = async (
         }),
       ),
     );
+
+    await taskRunner.cleanup();
 
     const endTime = process.hrtime.bigint();
     const duration = Number(endTime - startTime) / 1e6;

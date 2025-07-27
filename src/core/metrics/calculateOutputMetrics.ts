@@ -54,6 +54,8 @@ export const calculateOutputMetrics = async (
       result = await taskRunner.run({ content, encoding, path });
     }
 
+    await taskRunner.cleanup();
+
     const endTime = process.hrtime.bigint();
     const duration = Number(endTime - startTime) / 1e6;
     logger.trace(`Output token count completed in ${duration.toFixed(2)}ms`);

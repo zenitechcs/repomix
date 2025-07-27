@@ -34,6 +34,8 @@ export const createWorkerPool = (numOfTasks: number, workerPath: string): Tinypo
 
   const pool = new Tinypool({
     filename: workerPath,
+    // Use child_process for better memory management
+    runtime: 'child_process',
     minThreads,
     maxThreads,
     idleTimeout: 5000,
