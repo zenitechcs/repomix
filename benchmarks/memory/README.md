@@ -21,9 +21,6 @@ npm test
 
 # Continuous monitoring (runs until stopped)
 npm run test:continuous
-
-# Real-time memory monitor with graphs
-npm run monitor
 ```
 
 ### Comprehensive Benchmarks
@@ -45,9 +42,6 @@ npm run benchmark:long
 # Simple memory test with custom parameters
 node --expose-gc simple-memory-test.js [iterations] [delay_ms]
 
-# Continuous monitoring with custom parameters
-node --expose-gc continuous-memory-monitor.js [delay_ms] [log_interval]
-
 # Comprehensive benchmark
 node --expose-gc memory-leak-test.js [iterations] [delay_ms]
 ```
@@ -59,13 +53,6 @@ Basic memory leak detection with fixed iterations or continuous mode.
 - Tracks heap and RSS memory usage
 - Supports continuous mode with `-c` or `continuous` flag
 - Logs memory growth percentages
-
-### `continuous-memory-monitor.js`
-Real-time memory monitoring with visual graphs.
-- ASCII graphs showing memory trends
-- Peak memory tracking
-- Iteration rate monitoring
-- Saves detailed history on exit
 
 ### `memory-leak-test.js`
 Comprehensive benchmark with multiple test configurations.

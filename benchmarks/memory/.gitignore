@@ -3,7 +3,7 @@ node_modules/
 
 # Test outputs
 memory-test-output.txt
-memory-monitor-output.txt
+test-output-*.txt
 
 # Test results
 memory-history-*.json
