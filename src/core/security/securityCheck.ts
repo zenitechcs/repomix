@@ -75,8 +75,6 @@ export const runSecurityCheck = async (
       ),
     );
 
-    await taskRunner.cleanup();
-
     const endTime = process.hrtime.bigint();
     const duration = Number(endTime - startTime) / 1e6;
     logger.trace(`Security check completed in ${duration.toFixed(2)}ms`);

@@ -57,7 +57,7 @@ export const cleanupWorkerPool = async (pool: Tinypool): Promise<void> => {
     logger.debug('Cleaning up worker pool...');
 
     // Check if running in Bun runtime
-    const isBun = typeof process !== 'undefined' && process.versions?.bun;
+    const isBun = process.versions?.bun;
 
     if (isBun) {
       // If running in Bun, we cannot use Tinypool's destroy method

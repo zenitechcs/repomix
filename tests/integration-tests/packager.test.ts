@@ -2,12 +2,18 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+
+// Mock globby worker for integration tests to avoid worker file loading issues
+vi.mock('../../src/core/file/globbyExecute.js', () => ({
+  executeGlobbyInWorker: vi.fn(),
+}));
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
 import type { RepomixConfigFile, RepomixConfigMerged, RepomixOutputStyle } from '../../src/config/configSchema.js';
 import { collectFiles } from '../../src/core/file/fileCollect.js';
 import { searchFiles } from '../../src/core/file/fileSearch.js';
 import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
+import { executeGlobbyInWorker } from '../../src/core/file/globbyExecute.js';
 import type { FileCollectTask } from '../../src/core/file/workers/fileCollectWorker.js';
 import fileCollectWorker from '../../src/core/file/workers/fileCollectWorker.js';
 import fileProcessWorker from '../../src/core/file/workers/fileProcessWorker.js';
@@ -68,6 +74,12 @@ describe.runIf(!isWindows)('packager integration', () => {
   beforeEach(async () => {
     // Create a temporary directory for each test
     tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repomix-test-'));
+
+    // Mock executeGlobbyInWorker to return the actual files in the test directory
+    vi.mocked(executeGlobbyInWorker).mockImplementation(async (patterns, options) => {
+      const { globby } = await import('globby');
+      return globby(patterns, options);
+    });
   });
 
   afterEach(async () => {
