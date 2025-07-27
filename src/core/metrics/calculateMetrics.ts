@@ -14,7 +14,7 @@ export interface CalculateMetricsResult {
   gitDiffTokenCount: number;
 }
 
-import { TokenCounter } from './TokenCounter.js';
+import { calculateGitDiffMetrics } from './calculateGitDiffMetrics.js';
 
 export const calculateMetrics = async (
   processedFiles: ProcessedFile[],
@@ -26,26 +26,10 @@ export const calculateMetrics = async (
     calculateAllFileMetrics,
     calculateSelectiveFileMetrics,
     calculateOutputMetrics,
+    calculateGitDiffMetrics,
   },
 ): Promise<CalculateMetricsResult> => {
   progressCallback('Calculating metrics...');
-
-  // Calculate token count for git diffs if included
-  let gitDiffTokenCount = 0;
-  if (config.output.git?.includeDiffs && gitDiffResult) {
-    const tokenCounter = new TokenCounter(config.tokenCount.encoding);
-
-    const countPromises = [];
-    if (gitDiffResult.workTreeDiffContent) {
-      countPromises.push(Promise.resolve().then(() => tokenCounter.countTokens(gitDiffResult.workTreeDiffContent)));
-    }
-    if (gitDiffResult.stagedDiffContent) {
-      countPromises.push(Promise.resolve().then(() => tokenCounter.countTokens(gitDiffResult.stagedDiffContent)));
-    }
-
-    gitDiffTokenCount = (await Promise.all(countPromises)).reduce((sum, count) => sum + count, 0);
-    tokenCounter.free();
-  }
 
   // For top files display optimization: calculate token counts only for top files by character count
   const topFilesLength = config.output.topFilesLength;
@@ -58,9 +42,10 @@ export const calculateMetrics = async (
 
   const topFilePaths = topFilesByChar.map((file) => file.path);
 
-  const [selectiveFileMetrics, totalTokens] = await Promise.all([
+  const [selectiveFileMetrics, totalTokens, gitDiffTokenCount] = await Promise.all([
     deps.calculateSelectiveFileMetrics(processedFiles, topFilePaths, config.tokenCount.encoding, progressCallback),
     deps.calculateOutputMetrics(output, config.tokenCount.encoding, config.output.filePath),
+    deps.calculateGitDiffMetrics(config, gitDiffResult),
   ]);
 
   const totalFiles = processedFiles.length;

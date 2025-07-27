@@ -9,7 +9,7 @@ import { processZipFile } from './processZipFile.js';
 import { processRemoteRepo } from './remoteRepo.js';
 import type { PackResult } from './types.js';
 import { handlePackError } from './utils/errorHandler.js';
-import { cloudLogger, createErrorResponse, logError, logInfo } from './utils/logger.js';
+import { cloudLogger, createErrorResponse, logError, logInfo, logMemoryUsage } from './utils/logger.js';
 import { getProcessConcurrency } from './utils/processConcurrency.js';
 import { calculateLatency, formatLatencyForDisplay } from './utils/time.js';
 
@@ -18,6 +18,11 @@ logInfo('Server starting', {
   metrics: {
     processConcurrency: getProcessConcurrency(),
   },
+});
+
+// Log initial memory usage
+logMemoryUsage('Server startup', {
+  processConcurrency: getProcessConcurrency(),
 });
 
 const app = new Hono();
@@ -109,7 +114,7 @@ app.post(
         result = await processRemoteRepo(url, format, options, clientIp);
       }
 
-      // Log operation result
+      // Log operation result with memory usage
       logInfo('Pack operation completed', {
         requestId,
         format,
@@ -121,6 +126,14 @@ app.post(
           totalCharacters: result.metadata.summary?.totalCharacters,
           totalTokens: result.metadata.summary?.totalTokens,
         },
+      });
+
+      // Log memory usage after processing
+      logMemoryUsage('Pack operation memory usage', {
+        requestId,
+        repository: result.metadata.repository,
+        totalFiles: result.metadata.summary?.totalFiles,
+        totalCharacters: result.metadata.summary?.totalCharacters,
       });
 
       return c.json(result);

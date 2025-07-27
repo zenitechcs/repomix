@@ -5,6 +5,7 @@ import { packRequestSchema } from './schemas/request.js';
 import type { PackOptions, PackResult } from './types.js';
 import { generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
+import { logMemoryUsage } from './utils/logger.js';
 import { cache, rateLimiter } from './utils/sharedInstance.js';
 import { sanitizePattern, validateRequest } from './utils/validation.js';
 
@@ -66,6 +67,12 @@ export async function processRemoteRepo(
   } as CliOptions;
 
   try {
+    // Log memory usage before processing
+    logMemoryUsage('Remote repository processing started', {
+      repository: repoUrl,
+      format: validatedData.format,
+    });
+
     // Execute remote action
     const result = await runCli(['.'], process.cwd(), cliOptions);
     if (!result) {
@@ -101,6 +108,14 @@ export async function processRemoteRepo(
 
     // Save the result to cache
     await cache.set(cacheKey, packResultData);
+
+    // Log memory usage after processing
+    logMemoryUsage('Remote repository processing completed', {
+      repository: repoUrl,
+      totalFiles: packResult.totalFiles,
+      totalCharacters: packResult.totalCharacters,
+      totalTokens: packResult.totalTokens,
+    });
 
     return packResultData;
   } catch (error) {

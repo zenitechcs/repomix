@@ -1,5 +1,6 @@
 import type { RepomixConfigMerged } from '../config/configSchema.js';
 import { RepomixError } from '../shared/errorHandle.js';
+import { logMemoryUsage, withMemoryLogging } from '../shared/memoryUtils.js';
 import type { RepomixProgressCallback } from '../shared/types.js';
 import { collectFiles } from './file/fileCollect.js';
 import { sortPaths } from './file/filePathSort.js';
@@ -52,57 +53,71 @@ export const pack = async (
     ...overrideDeps,
   };
 
+  logMemoryUsage('Pack - Start');
+
   progressCallback('Searching for files...');
-  const filePathsByDir = await Promise.all(
-    rootDirs.map(async (rootDir) => ({
-      rootDir,
-      filePaths: (await deps.searchFiles(rootDir, config, explicitFiles)).filePaths,
-    })),
+  const filePathsByDir = await withMemoryLogging('Search Files', async () =>
+    Promise.all(
+      rootDirs.map(async (rootDir) => ({
+        rootDir,
+        filePaths: (await deps.searchFiles(rootDir, config, explicitFiles)).filePaths,
+      })),
+    ),
   );
 
   // Sort file paths
   progressCallback('Sorting files...');
   const allFilePaths = filePathsByDir.flatMap(({ filePaths }) => filePaths);
-  const sortedFilePaths = await deps.sortPaths(allFilePaths);
+  const sortedFilePaths = deps.sortPaths(allFilePaths);
 
   // Regroup sorted file paths by rootDir
   const sortedFilePathsByDir = rootDirs.map((rootDir) => ({
     rootDir,
-    filePaths: sortedFilePaths.filter((filePath) =>
+    filePaths: sortedFilePaths.filter((filePath: string) =>
       filePathsByDir.find((item) => item.rootDir === rootDir)?.filePaths.includes(filePath),
     ),
   }));
 
   progressCallback('Collecting files...');
-  const rawFiles = (
-    await Promise.all(
-      sortedFilePathsByDir.map(({ rootDir, filePaths }) =>
-        deps.collectFiles(filePaths, rootDir, config, progressCallback),
-      ),
-    )
-  ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []);
+  const rawFiles = await withMemoryLogging('Collect Files', async () =>
+    (
+      await Promise.all(
+        sortedFilePathsByDir.map(({ rootDir, filePaths }) =>
+          deps.collectFiles(filePaths, rootDir, config, progressCallback),
+        ),
+      )
+    ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []),
+  );
 
   // Get git diffs if enabled - run this before security check
   progressCallback('Getting git diffs...');
   const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
 
   // Run security check and get filtered safe files
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } =
-    await deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult);
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await withMemoryLogging(
+    'Security Check',
+    () => deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult),
+  );
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
-  const processedFiles = await deps.processFiles(safeRawFiles, config, progressCallback);
+  const processedFiles = await withMemoryLogging('Process Files', () =>
+    deps.processFiles(safeRawFiles, config, progressCallback),
+  );
 
   progressCallback('Generating output...');
-  const output = await deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult);
+  const output = await withMemoryLogging('Generate Output', () =>
+    deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult),
+  );
 
   progressCallback('Writing output file...');
-  await deps.writeOutputToDisk(output, config);
+  await withMemoryLogging('Write Output', () => deps.writeOutputToDisk(output, config));
 
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
-  const metrics = await deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult);
+  const metrics = await withMemoryLogging('Calculate Metrics', () =>
+    deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult),
+  );
 
   // Create a result object that includes metrics and security results
   const result = {
@@ -112,6 +127,8 @@ export const pack = async (
     processedFiles,
     safeFilePaths,
   };
+
+  logMemoryUsage('Pack - End');
 
   return result;
 };

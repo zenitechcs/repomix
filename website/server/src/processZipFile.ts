@@ -8,6 +8,7 @@ import type { PackOptions, PackResult } from './types.js';
 import { generateCacheKey } from './utils/cache.js';
 import { AppError } from './utils/errorHandler.js';
 import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from './utils/fileUtils.js';
+import { logMemoryUsage } from './utils/logger.js';
 import { cache, rateLimiter } from './utils/sharedInstance.js';
 import { sanitizePattern, validateRequest } from './utils/validation.js';
 
@@ -88,6 +89,13 @@ export async function processZipFile(
   const tempDirPath = await createTempDirectory();
 
   try {
+    // Log memory usage before processing
+    logMemoryUsage('ZIP file processing started', {
+      fileName: file.name,
+      fileSize: file.size,
+      format: validatedData.format,
+    });
+
     // Extract the ZIP file to the temporary directory with enhanced security checks
     await extractZipWithSecurity(file, tempDirPath);
 
@@ -124,6 +132,14 @@ export async function processZipFile(
 
     // Save the result to cache
     await cache.set(cacheKey, packResultData);
+
+    // Log memory usage after processing
+    logMemoryUsage('ZIP file processing completed', {
+      fileName: file.name,
+      totalFiles: packResult.totalFiles,
+      totalCharacters: packResult.totalCharacters,
+      totalTokens: packResult.totalTokens,
+    });
 
     return packResultData;
   } catch (error) {

@@ -1,7 +1,12 @@
 import os from 'node:os';
 import { Tinypool } from 'tinypool';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getProcessConcurrency, getWorkerThreadCount, initWorker } from '../../src/shared/processConcurrency.js';
+import {
+  createWorkerPool,
+  getProcessConcurrency,
+  getWorkerThreadCount,
+  initTaskRunner,
+} from '../../src/shared/processConcurrency.js';
 
 vi.mock('node:os');
 vi.mock('tinypool');
@@ -68,10 +73,11 @@ describe('processConcurrency', () => {
 
     it('should initialize Tinypool with correct configuration', () => {
       const workerPath = '/path/to/worker.js';
-      const tinypool = initWorker(500, workerPath);
+      const tinypool = createWorkerPool(500, workerPath);
 
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,
+        runtime: 'child_process',
         minThreads: 1,
         maxThreads: 4, // Math.min(4, 500/100) = 4
         idleTimeout: 5000,
@@ -80,6 +86,29 @@ describe('processConcurrency', () => {
         },
       });
       expect(tinypool).toBeDefined();
+    });
+  });
+
+  describe('initTaskRunner', () => {
+    beforeEach(() => {
+      vi.mocked(os).availableParallelism = vi.fn().mockReturnValue(4);
+      vi.mocked(Tinypool).mockImplementation(
+        () =>
+          ({
+            run: vi.fn(),
+            destroy: vi.fn(),
+          }) as unknown as Tinypool,
+      );
+    });
+
+    it('should return a TaskRunner with run and cleanup methods', () => {
+      const workerPath = '/path/to/worker.js';
+      const taskRunner = initTaskRunner(100, workerPath);
+
+      expect(taskRunner).toHaveProperty('run');
+      expect(taskRunner).toHaveProperty('cleanup');
+      expect(typeof taskRunner.run).toBe('function');
+      expect(typeof taskRunner.cleanup).toBe('function');
     });
   });
 });

@@ -17,10 +17,14 @@ import { PermissionError } from '../../../src/core/file/permissionCheck.js';
 import { RepomixError } from '../../../src/shared/errorHandle.js';
 import { createMockConfig, isWindows } from '../../testing/testUtils.js';
 
+import { executeGlobbyInWorker } from '../../../src/core/file/globbyExecute.js';
 import { checkDirectoryPermissions } from '../../../src/core/file/permissionCheck.js';
 
 vi.mock('fs/promises');
 vi.mock('globby');
+vi.mock('../../../src/core/file/globbyExecute.js', () => ({
+  executeGlobbyInWorker: vi.fn(),
+}));
 vi.mock('../../../src/core/file/permissionCheck.js', () => ({
   checkDirectoryPermissions: vi.fn(),
   PermissionError: class extends Error {
@@ -48,6 +52,8 @@ describe('fileSearch', () => {
       hasAllPermission: true,
       details: { read: true, write: true, execute: true },
     });
+    // Default mock for executeGlobbyInWorker
+    vi.mocked(executeGlobbyInWorker).mockResolvedValue([]);
   });
 
   describe('getIgnoreFilePaths', () => {
@@ -87,7 +93,7 @@ describe('fileSearch', () => {
       const mockFilePaths = ['src/file1.js', 'src/file2.js'];
       const mockEmptyDirs = ['src/empty', 'empty-root'];
 
-      vi.mocked(globby).mockImplementation(async (_, options) => {
+      vi.mocked(executeGlobbyInWorker).mockImplementation(async (_, options) => {
         if (options?.onlyDirectories) {
           return mockEmptyDirs;
         }
@@ -111,7 +117,7 @@ describe('fileSearch', () => {
 
       const mockFilePaths = ['src/file1.js', 'src/file2.js'];
 
-      vi.mocked(globby).mockImplementation(async (_, options) => {
+      vi.mocked(executeGlobbyInWorker).mockImplementation(async (_, options) => {
         if (options?.onlyDirectories) {
           throw new Error('Should not search for directories when disabled');
         }
@@ -122,7 +128,7 @@ describe('fileSearch', () => {
 
       expect(result.filePaths).toEqual(mockFilePaths);
       expect(result.emptyDirPaths).toEqual([]);
-      expect(globby).toHaveBeenCalledTimes(1);
+      expect(executeGlobbyInWorker).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -252,12 +258,12 @@ node_modules
         },
       });
 
-      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['file1.js', 'file2.js']);
       vi.mocked(fs.access).mockResolvedValue(undefined);
 
       await searchFiles('/mock/root', mockConfig);
 
-      expect(globby).toHaveBeenCalledWith(
+      expect(executeGlobbyInWorker).toHaveBeenCalledWith(
         ['**/*.js'],
         expect.objectContaining({
           cwd: '/mock/root',
@@ -293,7 +299,7 @@ node_modules
         '/mock/root/subdir/.gitignore': 'ignored.js',
       };
 
-      vi.mocked(globby).mockImplementation(async () => {
+      vi.mocked(executeGlobbyInWorker).mockImplementation(async () => {
         // Simulate filtering files based on .gitignore
         return mockFileStructure.filter((file) => {
           const relativePath = file.replace('root/', '');
@@ -334,7 +340,7 @@ node_modules
         'root/subdir/ignored.js',
       ];
 
-      vi.mocked(globby).mockResolvedValue(mockFileStructure);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(mockFileStructure);
 
       const result = await searchFiles('/mock/root', mockConfig);
 
@@ -366,7 +372,7 @@ node_modules
       });
 
       // Mock globby to return some test files
-      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['file1.js', 'file2.js']);
 
       const mockConfig = createMockConfig({
         ignore: {
@@ -379,8 +385,8 @@ node_modules
       const result = await searchFiles('/test/dir', mockConfig);
 
       // Check that globby was called with correct ignore patterns
-      const globbyCall = vi.mocked(globby).mock.calls[0];
-      const ignorePatterns = globbyCall[1]?.ignore as string[];
+      const executeGlobbyCall = vi.mocked(executeGlobbyInWorker).mock.calls[0];
+      const ignorePatterns = executeGlobbyCall[1]?.ignore as string[];
 
       // Verify .git file (not directory) is in ignore patterns
       expect(ignorePatterns).toContain('.git');
@@ -410,7 +416,7 @@ node_modules
       });
 
       // Mock globby to return some test files
-      vi.mocked(globby).mockResolvedValue(['file1.js', 'file2.js']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['file1.js', 'file2.js']);
 
       const mockConfig = createMockConfig({
         ignore: {
@@ -423,8 +429,8 @@ node_modules
       const result = await searchFiles('/test/dir', mockConfig);
 
       // Check that globby was called with correct ignore patterns
-      const globbyCall = vi.mocked(globby).mock.calls[0];
-      const ignorePatterns = globbyCall[1]?.ignore as string[];
+      const executeGlobbyCall = vi.mocked(executeGlobbyInWorker).mock.calls[0];
+      const ignorePatterns = executeGlobbyCall[1]?.ignore as string[];
 
       // Verify .git/** is in ignore patterns for regular git repos
       expect(ignorePatterns).toContain('.git/**');
@@ -553,7 +559,7 @@ node_modules
     });
 
     test('should succeed when target path is a valid directory', async () => {
-      vi.mocked(globby).mockResolvedValue(['test.js']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['test.js']);
 
       const mockConfig = createMockConfig();
 
@@ -581,7 +587,7 @@ node_modules
       ];
 
       // Mock globby to return the expected filtered files
-      vi.mocked(globby).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['src/file1.ts', 'src/file3.ts']);
 
       const result = await searchFiles('/test', mockConfig, explicitFiles);
 
@@ -602,7 +608,7 @@ node_modules
       const explicitFiles = ['/test/src/main.ts', '/test/tests/unit.test.ts', '/test/lib/utils.ts'];
 
       // Mock globby to return the expected filtered files
-      vi.mocked(globby).mockResolvedValue(['src/main.ts', 'lib/utils.ts']);
+      vi.mocked(executeGlobbyInWorker).mockResolvedValue(['src/main.ts', 'lib/utils.ts']);
 
       const result = await searchFiles('/test', mockConfig, explicitFiles);
 
