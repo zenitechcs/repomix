@@ -6,18 +6,18 @@
  * Runs continuously until stopped with Ctrl+C
  */
 
-import { runCli } from 'repomix';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { runCli } from 'repomix';
 import type { MemoryUsage } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
 
 const CONTINUOUS = process.argv[2] === 'continuous' || process.argv[2] === '-c';
-const ITERATIONS = CONTINUOUS ? Infinity : (parseInt(process.argv[2]) || 100);
-const DELAY = parseInt(process.argv[3]) || 200;
+const ITERATIONS = CONTINUOUS ? Number.POSITIVE_INFINITY : Number.parseInt(process.argv[2]) || 100;
+const DELAY = Number.parseInt(process.argv[3]) || 200;
 
 if (CONTINUOUS) {
   console.log(`🧪 Continuous Memory Test: Running until stopped (Ctrl+C), ${DELAY}ms delay`);
@@ -28,8 +28,8 @@ if (CONTINUOUS) {
 function getMemoryMB(): Pick<MemoryUsage, 'heapUsed' | 'rss'> {
   const usage = process.memoryUsage();
   return {
-    heapUsed: Math.round(usage.heapUsed / 1024 / 1024 * 100) / 100,
-    rss: Math.round(usage.rss / 1024 / 1024 * 100) / 100,
+    heapUsed: Math.round((usage.heapUsed / 1024 / 1024) * 100) / 100,
+    rss: Math.round((usage.rss / 1024 / 1024) * 100) / 100,
   };
 }
 
@@ -61,10 +61,12 @@ async function runTest(): Promise<void> {
       // Log memory every 5 iterations
       if (i % 5 === 0) {
         const current = getMemoryMB();
-        const heapGrowth = ((current.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed * 100).toFixed(1);
-        const rssGrowth = ((current.rss - initialMemory.rss) / initialMemory.rss * 100).toFixed(1);
+        const heapGrowth = (((current.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed) * 100).toFixed(1);
+        const rssGrowth = (((current.rss - initialMemory.rss) / initialMemory.rss) * 100).toFixed(1);
 
-        console.log(`✅ Iteration ${i}: Heap ${current.heapUsed}MB (+${heapGrowth}%), RSS ${current.rss}MB (+${rssGrowth}%)`);
+        console.log(
+          `✅ Iteration ${i}: Heap ${current.heapUsed}MB (+${heapGrowth}%), RSS ${current.rss}MB (+${rssGrowth}%)`,
+        );
 
         // Force garbage collection if available
         if (global.gc) {
@@ -73,8 +75,7 @@ async function runTest(): Promise<void> {
       }
 
       // Delay between iterations
-      await new Promise(resolve => setTimeout(resolve, DELAY));
-
+      await new Promise((resolve) => setTimeout(resolve, DELAY));
     } catch (error) {
       console.error(`❌ Iteration ${i} failed:`, error instanceof Error ? error.message : String(error));
     }
@@ -82,15 +83,15 @@ async function runTest(): Promise<void> {
 
   if (!CONTINUOUS) {
     const finalMemory = getMemoryMB();
-    const heapGrowth = ((finalMemory.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed * 100).toFixed(1);
-    const rssGrowth = ((finalMemory.rss - initialMemory.rss) / initialMemory.rss * 100).toFixed(1);
+    const heapGrowth = (((finalMemory.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed) * 100).toFixed(1);
+    const rssGrowth = (((finalMemory.rss - initialMemory.rss) / initialMemory.rss) * 100).toFixed(1);
 
     console.log(`\n📊 Final Results:`);
     console.log(`   Initial: Heap ${initialMemory.heapUsed}MB, RSS ${initialMemory.rss}MB`);
     console.log(`   Final:   Heap ${finalMemory.heapUsed}MB, RSS ${finalMemory.rss}MB`);
     console.log(`   Growth:  Heap +${heapGrowth}%, RSS +${rssGrowth}%`);
 
-    if (parseFloat(heapGrowth) > 100 || parseFloat(rssGrowth) > 100) {
+    if (Number.parseFloat(heapGrowth) > 100 || Number.parseFloat(rssGrowth) > 100) {
       console.log(`⚠️  WARNING: Significant memory growth detected!`);
     } else {
       console.log(`✅ Memory usage appears stable`);

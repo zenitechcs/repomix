@@ -175,7 +175,7 @@ export function logError(message: string, error?: Error, context?: Record<string
 export function logMemoryUsage(message: string, context?: Record<string, unknown>): void {
   const memoryUsage = getMemoryUsage();
   const memoryMetrics = getMemoryMetrics();
-  
+
   logger.info({
     message: `${message} - Memory: ${formatMemoryUsage(memoryUsage)}`,
     memory: memoryMetrics,

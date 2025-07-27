@@ -13,17 +13,24 @@ export interface MemoryStats {
 }
 
 /**
+ * Convert bytes to MB with 2 decimal precision
+ */
+function bytesToMB(bytes: number): number {
+  return Math.round((bytes / 1024 / 1024) * 100) / 100;
+}
+
+/**
  * Get current memory usage statistics in MB
  */
 export function getMemoryStats(): MemoryStats {
   const usage = process.memoryUsage();
-  
-  const heapUsed = Math.round(usage.heapUsed / 1024 / 1024 * 100) / 100;
-  const heapTotal = Math.round(usage.heapTotal / 1024 / 1024 * 100) / 100;
-  const external = Math.round(usage.external / 1024 / 1024 * 100) / 100;
-  const rss = Math.round(usage.rss / 1024 / 1024 * 100) / 100;
-  const heapUsagePercent = Math.round((heapUsed / heapTotal) * 100 * 100) / 100;
-  
+
+  const heapUsed = bytesToMB(usage.heapUsed);
+  const heapTotal = bytesToMB(usage.heapTotal);
+  const external = bytesToMB(usage.external);
+  const rss = bytesToMB(usage.rss);
+  const heapUsagePercent = Math.round((heapUsed / heapTotal) * 10000) / 100;
+
   return {
     heapUsed,
     heapTotal,
@@ -39,7 +46,7 @@ export function getMemoryStats(): MemoryStats {
 export function logMemoryUsage(context: string): void {
   const stats = getMemoryStats();
   logger.trace(
-    `Memory [${context}]: Heap ${stats.heapUsed}MB/${stats.heapTotal}MB (${stats.heapUsagePercent}%), RSS ${stats.rss}MB, External ${stats.external}MB`
+    `Memory [${context}]: Heap ${stats.heapUsed}MB/${stats.heapTotal}MB (${stats.heapUsagePercent}%), RSS ${stats.rss}MB, External ${stats.external}MB`,
   );
 }
 
@@ -50,24 +57,21 @@ export function logMemoryDifference(context: string, before: MemoryStats, after:
   const heapDiff = after.heapUsed - before.heapUsed;
   const rssDiff = after.rss - before.rss;
   const externalDiff = after.external - before.external;
-  
+
   logger.trace(
     `Memory [${context} - Delta]: Heap ${heapDiff >= 0 ? '+' : ''}${heapDiff.toFixed(2)}MB, ` +
-    `RSS ${rssDiff >= 0 ? '+' : ''}${rssDiff.toFixed(2)}MB, ` +
-    `External ${externalDiff >= 0 ? '+' : ''}${externalDiff.toFixed(2)}MB`
+      `RSS ${rssDiff >= 0 ? '+' : ''}${rssDiff.toFixed(2)}MB, ` +
+      `External ${externalDiff >= 0 ? '+' : ''}${externalDiff.toFixed(2)}MB`,
   );
 }
 
 /**
  * Execute a function and log memory usage before and after
  */
-export async function withMemoryLogging<T>(
-  context: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function withMemoryLogging<T>(context: string, fn: () => Promise<T>): Promise<T> {
   const before = getMemoryStats();
   logMemoryUsage(`${context} - Before`);
-  
+
   try {
     const result = await fn();
     const after = getMemoryStats();

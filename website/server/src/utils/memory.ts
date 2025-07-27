@@ -20,15 +20,15 @@ export interface MemoryUsage {
  */
 export function getMemoryUsage(): MemoryUsage {
   const memoryUsage = process.memoryUsage();
-  
+
   // Convert bytes to MB
-  const heapUsed = Math.round(memoryUsage.heapUsed / 1024 / 1024 * 100) / 100;
-  const heapTotal = Math.round(memoryUsage.heapTotal / 1024 / 1024 * 100) / 100;
-  const external = Math.round(memoryUsage.external / 1024 / 1024 * 100) / 100;
-  const rss = Math.round(memoryUsage.rss / 1024 / 1024 * 100) / 100;
-  
+  const heapUsed = Math.round((memoryUsage.heapUsed / 1024 / 1024) * 100) / 100;
+  const heapTotal = Math.round((memoryUsage.heapTotal / 1024 / 1024) * 100) / 100;
+  const external = Math.round((memoryUsage.external / 1024 / 1024) * 100) / 100;
+  const rss = Math.round((memoryUsage.rss / 1024 / 1024) * 100) / 100;
+
   const heapUsagePercent = Math.round((heapUsed / heapTotal) * 100 * 100) / 100;
-  
+
   return {
     heapUsed,
     heapTotal,

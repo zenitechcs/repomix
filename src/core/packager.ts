@@ -62,7 +62,7 @@ export const pack = async (
         rootDir,
         filePaths: (await deps.searchFiles(rootDir, config, explicitFiles)).filePaths,
       })),
-    )
+    ),
   );
 
   // Sort file paths
@@ -86,7 +86,7 @@ export const pack = async (
           deps.collectFiles(filePaths, rootDir, config, progressCallback),
         ),
       )
-    ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), [])
+    ).reduce((acc: RawFile[], curr: RawFile[]) => acc.concat(...curr), []),
   );
 
   // Get git diffs if enabled - run this before security check
@@ -94,31 +94,29 @@ export const pack = async (
   const gitDiffResult = await withMemoryLogging('Git Diffs', () => deps.getGitDiffs(rootDirs, config));
 
   // Run security check and get filtered safe files
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } =
-    await withMemoryLogging('Security Check', () => 
-      deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult)
-    );
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await withMemoryLogging(
+    'Security Check',
+    () => deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult),
+  );
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
   const processedFiles = await withMemoryLogging('Process Files', () =>
-    deps.processFiles(safeRawFiles, config, progressCallback)
+    deps.processFiles(safeRawFiles, config, progressCallback),
   );
 
   progressCallback('Generating output...');
   const output = await withMemoryLogging('Generate Output', () =>
-    deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult)
+    deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult),
   );
 
   progressCallback('Writing output file...');
   await withMemoryLogging('Write Output', () => deps.writeOutputToDisk(output, config));
 
-  await withMemoryLogging('Copy to Clipboard', () => 
-    deps.copyToClipboardIfEnabled(output, progressCallback, config)
-  );
+  await withMemoryLogging('Copy to Clipboard', () => deps.copyToClipboardIfEnabled(output, progressCallback, config));
 
   const metrics = await withMemoryLogging('Calculate Metrics', () =>
-    deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult)
+    deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult),
   );
 
   // Create a result object that includes metrics and security results
