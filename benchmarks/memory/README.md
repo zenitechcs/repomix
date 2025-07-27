@@ -13,27 +13,33 @@ npm install
 
 ## Available Scripts
 
-### Quick Tests
+All scripts use `--expose-gc` flag for manual garbage collection control.
+
+### Memory Leak Detection (`simple-memory-test.js`)
+
+Simple and fast memory leak detection:
 
 ```bash
-# Basic memory test (20 iterations)
-npm test
+# Quick leak check (20 iterations)
+npm run leak:quick
 
-# Continuous monitoring (runs until stopped)
-npm run test:continuous
+# Watch mode - continuous monitoring (runs until stopped with Ctrl+C)
+npm run leak:watch
 ```
 
-### Comprehensive Benchmarks
+### Detailed Memory Analysis (`memory-leak-test.js`)
+
+Comprehensive analysis with multiple test configurations:
 
 ```bash
-# Standard benchmark (default settings)
-npm run benchmark
+# Full analysis with multiple configurations and JSON report
+npm run leak:analyze
 
-# Quick benchmark (20 iterations, 100ms delay)
-npm run benchmark:quick
+# Quick analysis (20 iterations, 100ms delay)
+npm run leak:analyze:quick
 
-# Long-running benchmark (200 iterations, 500ms delay)
-npm run benchmark:long
+# Long-running analysis (200 iterations, 500ms delay)
+npm run leak:analyze:long
 ```
 
 ### Direct Script Usage
