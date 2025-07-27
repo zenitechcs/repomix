@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Test outputs
+memory-test-output.txt
+memory-monitor-output.txt
+
+# Test results
+memory-history-*.json
+memory-test-results-*.json
+
+# npm
+package-lock.json
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
