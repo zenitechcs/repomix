@@ -62,6 +62,7 @@ describe('calculateMetrics', () => {
       calculateAllFileMetrics,
       calculateSelectiveFileMetrics,
       calculateOutputMetrics: () => Promise.resolve(30),
+      calculateGitDiffMetrics: () => Promise.resolve(0),
     });
 
     expect(progressCallback).toHaveBeenCalledWith('Calculating metrics...');

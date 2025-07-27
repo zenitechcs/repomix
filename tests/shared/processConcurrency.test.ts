@@ -77,6 +77,7 @@ describe('processConcurrency', () => {
 
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,
+        runtime: 'child_process',
         minThreads: 1,
         maxThreads: 4, // Math.min(4, 500/100) = 4
         idleTimeout: 5000,

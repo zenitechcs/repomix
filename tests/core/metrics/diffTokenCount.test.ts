@@ -111,17 +111,15 @@ index 123..456 100644
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
+        calculateGitDiffMetrics: vi.fn().mockResolvedValue(25),
       },
     );
-
-    // Check TokenCounter was instantiated with the correct encoding
-    expect(TokenCounter).toHaveBeenCalledWith('o200k_base');
 
     // Check token counting was called with the diff content
     expect(result).toHaveProperty('gitDiffTokenCount');
 
-    // Our mock counts words as tokens - the sample diff should have multiple tokens
-    expect(result.gitDiffTokenCount).toBeGreaterThan(0);
+    // Mock returns 25 tokens for git diff content
+    expect(result.gitDiffTokenCount).toBe(25);
   });
 
   test('should not calculate diff token count when diffs are disabled', async () => {
@@ -194,10 +192,11 @@ index 123..456 100644
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
+        calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
       },
     );
 
-    // TokenCounter should not be called for diff content
+    // Git diff should return 0 when disabled
     expect(result.gitDiffTokenCount).toBe(0);
   });
 
@@ -272,10 +271,11 @@ index 123..456 100644
         calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
+        calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
       },
     );
 
-    // gitDiffTokenCount should not be set
+    // Git diff should return 0 when content is undefined
     expect(result.gitDiffTokenCount).toBe(0);
   });
 });
