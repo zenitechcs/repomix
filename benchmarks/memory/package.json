@@ -6,9 +6,12 @@
   "description": "Memory usage benchmarks and leak detection for repomix",
   "scripts": {
     "build": "tsc",
+    "build:repomix": "cd ../.. && node --run build",
+    "build:all": "node --run build:repomix && node --run build",
     "clean": "rm -rf dist",
-    "memory:watch": "npm run build && node --expose-gc dist/simple-memory-test.js continuous",
-    "memory:analyze": "npm run build && node --expose-gc dist/memory-leak-test.js  200 500"
+    "memory:check": "node --run build:all && node --expose-gc dist/simple-memory-test.js",
+    "memory:watch": "node --run build:all && node --expose-gc dist/simple-memory-test.js continuous",
+    "memory:analyze": "node --run build:all && node --expose-gc dist/memory-leak-test.js 200 500"
   },
   "dependencies": {
     "repomix": "file:../.."

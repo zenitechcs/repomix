@@ -13,10 +13,10 @@ import { fileURLToPath } from 'node:url';
 import type { MemoryUsage } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '../../..');
+const projectRoot = path.resolve(__dirname, '..');
 
 const CONTINUOUS = process.argv[2] === 'continuous' || process.argv[2] === '-c';
-const ITERATIONS = CONTINUOUS ? Infinity : (parseInt(process.argv[2]) || 20);
+const ITERATIONS = CONTINUOUS ? Infinity : (parseInt(process.argv[2]) || 100);
 const DELAY = parseInt(process.argv[3]) || 200;
 
 if (CONTINUOUS) {
@@ -63,9 +63,9 @@ async function runTest(): Promise<void> {
         const current = getMemoryMB();
         const heapGrowth = ((current.heapUsed - initialMemory.heapUsed) / initialMemory.heapUsed * 100).toFixed(1);
         const rssGrowth = ((current.rss - initialMemory.rss) / initialMemory.rss * 100).toFixed(1);
-        
+
         console.log(`✅ Iteration ${i}: Heap ${current.heapUsed}MB (+${heapGrowth}%), RSS ${current.rss}MB (+${rssGrowth}%)`);
-        
+
         // Force garbage collection if available
         if (global.gc) {
           global.gc();
