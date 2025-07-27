@@ -9,9 +9,10 @@ import { runCli } from 'repomix';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { MemoryUsage, MemoryHistory, TestConfig, MemoryTestSummary } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '../..');
+const projectRoot = path.resolve(__dirname, '../../..');
 
 // Configuration
 const DEFAULT_ITERATIONS = 100;
@@ -20,14 +21,14 @@ const MEMORY_LOG_INTERVAL = 10;
 const FORCE_GC_INTERVAL = 20;
 
 // Test configurations
-const TEST_CONFIGS = [
+const TEST_CONFIGS: TestConfig[] = [
   {
     name: 'Local Directory (src/)',
     args: ['.'],
     cwd: projectRoot,
     options: {
       include: 'src/**/*.ts',
-      output: path.join(__dirname, 'test-output-1.txt'),
+      output: path.join(__dirname, '../test-output-1.txt'),
       style: 'plain',
       quiet: true,
     }
@@ -38,7 +39,7 @@ const TEST_CONFIGS = [
     cwd: projectRoot,
     options: {
       include: 'src/**/*.ts',
-      output: path.join(__dirname, 'test-output-2.txt'),
+      output: path.join(__dirname, '../test-output-2.txt'),
       style: 'xml',
       compress: true,
       quiet: true,
@@ -51,7 +52,7 @@ const TEST_CONFIGS = [
     options: {
       include: 'src/**/*.{ts,js}',
       ignore: '**/*.test.ts,**/*.d.ts',
-      output: path.join(__dirname, 'test-output-3.txt'),
+      output: path.join(__dirname, '../test-output-3.txt'),
       style: 'markdown',
       quiet: true,
     }
@@ -59,7 +60,7 @@ const TEST_CONFIGS = [
 ];
 
 // Memory tracking
-const memoryHistory = [];
+const memoryHistory: MemoryHistory[] = [];
 
 const iterations = parseInt(process.argv[2]) || DEFAULT_ITERATIONS;
 const delay = parseInt(process.argv[3]) || DEFAULT_DELAY;
@@ -69,28 +70,41 @@ console.log(`📋 Configuration: ${iterations} iterations, ${delay}ms delay`);
 console.log(`🎯 Test Configurations: ${TEST_CONFIGS.length} different configs`);
 console.log(`🛑 Press Ctrl+C to stop\n`);
 
-function getMemoryUsage() {
+function getMemoryUsage(): MemoryUsage {
   const usage = process.memoryUsage();
+  const heapUsed = Math.round(usage.heapUsed / 1024 / 1024 * 100) / 100;
+  const heapTotal = Math.round(usage.heapTotal / 1024 / 1024 * 100) / 100;
+  const external = Math.round(usage.external / 1024 / 1024 * 100) / 100;
+  const rss = Math.round(usage.rss / 1024 / 1024 * 100) / 100;
+  const heapUsagePercent = Math.round((usage.heapUsed / usage.heapTotal) * 100 * 100) / 100;
+  
   return {
-    timestamp: new Date().toISOString(),
-    heapUsed: Math.round(usage.heapUsed / 1024 / 1024 * 100) / 100,
-    heapTotal: Math.round(usage.heapTotal / 1024 / 1024 * 100) / 100,
-    external: Math.round(usage.external / 1024 / 1024 * 100) / 100,
-    rss: Math.round(usage.rss / 1024 / 1024 * 100) / 100,
-    heapUsagePercent: Math.round((usage.heapUsed / usage.heapTotal) * 100 * 100) / 100,
+    heapUsed,
+    heapTotal,
+    external,
+    rss,
+    heapUsagePercent,
   };
 }
 
-function forceGC() {
+function forceGC(): void {
   if (global.gc) {
     global.gc();
     console.log('🗑️  Forced garbage collection');
   }
 }
 
-function logMemoryUsage(iteration, configName, error = null) {
+function logMemoryUsage(iteration: number, configName: string, error: Error | null = null): void {
   const usage = getMemoryUsage();
-  memoryHistory.push({ iteration, configName, ...usage, error: !!error });
+  const timestamp = new Date().toISOString();
+  
+  memoryHistory.push({ 
+    iteration, 
+    configName, 
+    timestamp,
+    ...usage, 
+    error: !!error 
+  });
   
   const statusIcon = error ? '❌' : '✅';
   const errorText = error ? ` (ERROR: ${error.message})` : '';
@@ -102,13 +116,13 @@ function logMemoryUsage(iteration, configName, error = null) {
   );
 }
 
-async function cleanupFiles() {
+async function cleanupFiles(): Promise<void> {
   const filesToClean = TEST_CONFIGS.map(config => config.options.output);
   
   for (const file of filesToClean) {
     try {
       await fs.unlink(file);
-    } catch (error) {
+    } catch (error: any) {
       if (error.code !== 'ENOENT') {
         console.warn(`Failed to cleanup ${file}:`, error.message);
       }
@@ -116,7 +130,7 @@ async function cleanupFiles() {
   }
 }
 
-function analyzeMemoryTrends() {
+function analyzeMemoryTrends(): void {
   if (memoryHistory.length < 10) return;
   
   const recent = memoryHistory.slice(-10);
@@ -139,16 +153,16 @@ function analyzeMemoryTrends() {
   }
 }
 
-async function saveMemoryHistory() {
+async function saveMemoryHistory(): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = path.join(__dirname, `memory-test-results-${timestamp}.json`);
+  const filename = path.join(__dirname, '..', `memory-test-results-${timestamp}.json`);
   
-  const summary = {
+  const summary: MemoryTestSummary = {
     testInfo: {
       iterations: memoryHistory.length,
       configurations: TEST_CONFIGS.length,
-      startTime: memoryHistory[0]?.timestamp,
-      endTime: memoryHistory[memoryHistory.length - 1]?.timestamp,
+      startTime: memoryHistory[0]?.timestamp || '',
+      endTime: memoryHistory[memoryHistory.length - 1]?.timestamp || '',
     },
     memoryHistory,
     analysis: {
@@ -164,11 +178,11 @@ async function saveMemoryHistory() {
     await fs.writeFile(filename, JSON.stringify(summary, null, 2));
     console.log(`\n💾 Memory test results saved to: ${filename}`);
   } catch (error) {
-    console.error('Failed to save memory history:', error.message);
+    console.error('Failed to save memory history:', error instanceof Error ? error.message : String(error));
   }
 }
 
-async function runMemoryLeakTest() {
+async function runMemoryLeakTest(): Promise<void> {
   // Log initial memory usage
   console.log('📊 Initial Memory Usage:');
   logMemoryUsage(0, 'Initial', null);
@@ -177,17 +191,17 @@ async function runMemoryLeakTest() {
   
   for (let i = 1; i <= iterations; i++) {
     const config = TEST_CONFIGS[(i - 1) % TEST_CONFIGS.length];
-    let error = null;
+    let error: Error | null = null;
     
     try {
       // Run the CLI with current configuration
-      await runCli(config.args, config.cwd, config.options);
+      await runCli(config.args, config.cwd, config.options as any);
       
       // Clean up output files after each run
       await cleanupFiles();
       
     } catch (err) {
-      error = err;
+      error = err instanceof Error ? err : new Error(String(err));
     }
     
     // Log memory usage at specified intervals or on error
@@ -218,9 +232,11 @@ async function runMemoryLeakTest() {
   const finalUsage = getMemoryUsage();
   const initialUsage = memoryHistory[0];
   
-  console.log(`Initial: Heap ${initialUsage.heapUsed}MB, RSS ${initialUsage.rss}MB`);
-  console.log(`Final:   Heap ${finalUsage.heapUsed}MB, RSS ${finalUsage.rss}MB`);
-  console.log(`Growth:  Heap ${((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed * 100).toFixed(2)}%, RSS ${((finalUsage.rss - initialUsage.rss) / initialUsage.rss * 100).toFixed(2)}%`);
+  if (initialUsage) {
+    console.log(`Initial: Heap ${initialUsage.heapUsed}MB, RSS ${initialUsage.rss}MB`);
+    console.log(`Final:   Heap ${finalUsage.heapUsed}MB, RSS ${finalUsage.rss}MB`);
+    console.log(`Growth:  Heap ${((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed * 100).toFixed(2)}%, RSS ${((finalUsage.rss - initialUsage.rss) / initialUsage.rss * 100).toFixed(2)}%`);
+  }
   
   // Save results
   await saveMemoryHistory();

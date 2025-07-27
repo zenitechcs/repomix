@@ -5,14 +5,20 @@
   "type": "module",
   "description": "Memory usage benchmarks and leak detection for repomix",
   "scripts": {
-    "leak:quick": "node --expose-gc simple-memory-test.js",
-    "leak:watch": "node --expose-gc simple-memory-test.js continuous",
-    "leak:analyze": "node --expose-gc memory-leak-test.js",
-    "leak:analyze:quick": "node --expose-gc memory-leak-test.js 20 100",
-    "leak:analyze:long": "node --expose-gc memory-leak-test.js 200 500"
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "leak:quick": "npm run build && node --expose-gc dist/simple-memory-test.js",
+    "leak:watch": "npm run build && node --expose-gc dist/simple-memory-test.js continuous",
+    "leak:analyze": "npm run build && node --expose-gc dist/memory-leak-test.js",
+    "leak:analyze:quick": "npm run build && node --expose-gc dist/memory-leak-test.js 20 100",
+    "leak:analyze:long": "npm run build && node --expose-gc dist/memory-leak-test.js 200 500"
   },
   "dependencies": {
     "repomix": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
   },
   "engines": {
     "node": ">=18.0.0"

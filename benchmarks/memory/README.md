@@ -1,6 +1,6 @@
 # Memory Benchmarks
 
-This directory contains memory usage benchmarks and leak detection tools for repomix.
+This directory contains memory usage benchmarks and leak detection tools for repomix, written in TypeScript for better type safety and maintainability.
 
 ## Setup
 
@@ -11,11 +11,13 @@ cd benchmarks/memory
 npm install
 ```
 
+The TypeScript source files are automatically compiled when running the scripts.
+
 ## Available Scripts
 
 All scripts use `--expose-gc` flag for manual garbage collection control.
 
-### Memory Leak Detection (`simple-memory-test.js`)
+### Memory Leak Detection (`simple-memory-test.ts`)
 
 Simple and fast memory leak detection:
 
@@ -27,7 +29,7 @@ npm run leak:quick
 npm run leak:watch
 ```
 
-### Detailed Memory Analysis (`memory-leak-test.js`)
+### Detailed Memory Analysis (`memory-leak-test.ts`)
 
 Comprehensive analysis with multiple test configurations:
 
@@ -42,30 +44,33 @@ npm run leak:analyze:quick
 npm run leak:analyze:long
 ```
 
-### Direct Script Usage
+### Manual Build and Run
 
 ```bash
-# Simple memory test with custom parameters
-node --expose-gc simple-memory-test.js [iterations] [delay_ms]
+# Build TypeScript files
+npm run build
 
-# Comprehensive benchmark
-node --expose-gc memory-leak-test.js [iterations] [delay_ms]
+# Run compiled JavaScript directly
+node --expose-gc dist/simple-memory-test.js [iterations] [delay_ms]
+node --expose-gc dist/memory-leak-test.js [iterations] [delay_ms]
 ```
 
 ## Scripts Description
 
-### `simple-memory-test.js`
+### `simple-memory-test.ts`
 Basic memory leak detection with fixed iterations or continuous mode.
 - Tracks heap and RSS memory usage
 - Supports continuous mode with `-c` or `continuous` flag
 - Logs memory growth percentages
+- Type-safe implementation
 
-### `memory-leak-test.js`
+### `memory-leak-test.ts`
 Comprehensive benchmark with multiple test configurations.
 - Tests different repomix configurations
 - Detailed memory analysis
 - Automatic report generation
 - Multiple test scenarios
+- Strong typing for better reliability
 
 ## Understanding the Results
 
@@ -105,6 +110,13 @@ Based on initial tests:
 - `memory-test-results-*.json`: Comprehensive test results
 - `memory-test-output.txt`: Temporary output file (auto-cleaned)
 
+## TypeScript Benefits
+
+- **Type Safety**: Prevents runtime errors with compile-time checks
+- **Better IDE Support**: Enhanced autocomplete and error detection
+- **Maintainability**: Self-documenting code with type annotations
+- **Structured Data**: Well-defined interfaces for memory metrics and test results
+
 ## Tips
 
 1. Always use `--expose-gc` flag for manual garbage collection
@@ -112,3 +124,4 @@ Based on initial tests:
 3. Monitor system resources during long-running tests
 4. Allow warm-up period before measuring growth
 5. Run multiple test iterations for reliable results
+6. TypeScript compilation happens automatically with npm scripts

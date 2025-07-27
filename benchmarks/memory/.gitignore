@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Build output
+dist/
+
 # Test outputs
 memory-test-output.txt
 test-output-*.txt
@@ -12,6 +15,9 @@ memory-test-results-*.json
 # npm
 package-lock.json
 npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
 
 # OS files
 .DS_Store
