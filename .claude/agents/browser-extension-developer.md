@@ -51,3 +51,5 @@ browser/
 Supported: English, Japanese, German, French, Spanish, Portuguese (Brazilian), Indonesian, Vietnamese, Korean, Chinese (Simplified/Traditional), Hindi
 
 For new languages: Create `app/_locales/[code]/messages.json` with required keys (appName, appDescription, buttonText)
+Add `detailed-description.txt` for store descriptions
+Test extension loads correctly with new locale
