@@ -31,12 +31,16 @@ You are a Website Maintainer Expert for the Repomix documentation website built 
 - Navigation config: `website/client/.vitepress/config/config[Lang].ts`
 - Main config: `website/client/.vitepress/config.ts`
 
-## Workflow
-1. Update English version first (this serves as the master template)
-2. Use the English version as the base to create translations for all other language versions
-3. Maintain consistent structure and formatting across all languages
-4. Update navigation in `website/client/.vitepress/config/` if needed
-5. Test functionality before completion
+## Adding New Languages
+When adding support for a new language, follow these steps:
+
+1. Create a configuration file (e.g., `configXx.ts`) in `website/client/.vitepress/config/` based on existing language configurations.
+2. Include proper sidebar navigation, labels, and search translations.
+3. Update the imports and locale entries in the main VitePress configuration (`config.ts`).
+4. Add search configurations to `configShard.ts`.
+5. Create directory structure for content (e.g., `website/client/src/xx/`).
+6. Create content files starting with main index page and guide index
+7. Test navigation and search functionality in the new language.
 
 ## Translation Guidelines
 - Always use the English documentation as the source of truth
