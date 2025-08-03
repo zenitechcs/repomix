@@ -51,10 +51,6 @@
 ## トークンカウントオプション
 - `--token-count-encoding <encoding>`: OpenAIの[tiktoken](https://github.com/openai/tiktoken)トークナイザーで使用されるトークンカウントエンコーディングを指定（例：GPT-4o用`o200k_base`、GPT-4/3.5用`cl100k_base`）。エンコーディングの詳細については[tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24)を参照してください。
 
-## その他のオプション
-- `--top-files-len <number>`: 表示するトップファイルの数（デフォルト: `5`）
-- `--verbose`: 詳細なログを有効化
-- `--quiet`: 標準出力へのすべての出力を無効化
 
 ## 使用例
 

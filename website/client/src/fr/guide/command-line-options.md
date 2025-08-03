@@ -51,10 +51,6 @@
 ## Options de comptage de jetons
 - `--token-count-encoding <encoding>`: Spécifier l'encodage de comptage de jetons utilisé par le tokenizer [tiktoken](https://github.com/openai/tiktoken) d'OpenAI (par exemple, `o200k_base` pour GPT-4o, `cl100k_base` pour GPT-4/3.5). Voir [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) pour les détails d'encodage.
 
-## Autres options
-- `--top-files-len <number>`: Nombre de fichiers principaux à afficher (par défaut : `5`)
-- `--verbose`: Activer la journalisation détaillée
-- `--quiet`: Désactiver toute sortie vers stdout
 
 ## Exemples
 

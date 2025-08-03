@@ -50,12 +50,6 @@
 
 ## Token Count Options
 - `--token-count-encoding <encoding>`: Specify token count encoding used by OpenAI's [tiktoken](https://github.com/openai/tiktoken) tokenizer (e.g., `o200k_base` for GPT-4o, `cl100k_base` for GPT-4/3.5). See [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) for encoding details.
-
-## Other Options
-- `--top-files-len <number>`: Number of top files to show (default: `5`)
-- `--verbose`: Enable verbose logging
-- `--quiet`: Disable all output to stdout
-
 ## Examples
 
 ```bash

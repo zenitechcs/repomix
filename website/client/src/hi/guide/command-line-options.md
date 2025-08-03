@@ -51,10 +51,6 @@
 ## टोकन गिनती विकल्प
 - `--token-count-encoding <encoding>`: OpenAI के [tiktoken](https://github.com/openai/tiktoken) टोकनाइज़र द्वारा उपयोग की जाने वाली टोकन गिनती एन्कोडिंग निर्दिष्ट करें (जैसे, GPT-4o के लिए `o200k_base`, GPT-4/3.5 के लिए `cl100k_base`)। एन्कोडिंग विवरण के लिए [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) देखें।
 
-## अन्य विकल्प
-- `--top-files-len <number>`: दिखाने वाली शीर्ष फ़ाइलों की संख्या (डिफ़ॉल्ट: `5`)
-- `--verbose`: विस्तृत लॉगिंग सक्षम करें
-- `--quiet`: stdout पर सभी आउटपुट अक्षम करें
 
 ## उदाहरण
 

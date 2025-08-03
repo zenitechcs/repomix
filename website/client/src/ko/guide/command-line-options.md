@@ -51,10 +51,6 @@
 ## 토큰 수 옵션
 - `--token-count-encoding <encoding>`: OpenAI의 [tiktoken](https://github.com/openai/tiktoken) 토크나이저에서 사용하는 토큰 수 인코딩 지정 (예: GPT-4o용 `o200k_base`, GPT-4/3.5용 `cl100k_base`). 인코딩 세부사항은 [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24)를 참조하세요.
 
-## 기타 옵션
-- `--top-files-len <number>`: 표시할 상위 파일 수 (기본값: `5`)
-- `--verbose`: 자세한 로깅 활성화
-- `--quiet`: 표준 출력으로의 모든 출력 비활성화
 
 ## 예시
 

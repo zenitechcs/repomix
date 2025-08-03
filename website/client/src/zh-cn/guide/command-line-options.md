@@ -51,10 +51,6 @@
 ## 令牌计数选项
 - `--token-count-encoding <encoding>`: 指定OpenAI的[tiktoken](https://github.com/openai/tiktoken)分词器使用的令牌计数编码（例如，GPT-4o使用`o200k_base`，GPT-4/3.5使用`cl100k_base`）。有关编码详细信息，请参阅[tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24)。
 
-## 其他选项
-- `--top-files-len <number>`: 要显示的顶级文件数（默认：`5`）
-- `--verbose`: 启用详细日志记录
-- `--quiet`: 禁用所有输出到标准输出
 
 ## 示例
 

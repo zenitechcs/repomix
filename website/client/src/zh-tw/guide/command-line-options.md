@@ -51,10 +51,6 @@
 ## 權杖計數選項
 - `--token-count-encoding <encoding>`: 指定OpenAI的[tiktoken](https://github.com/openai/tiktoken)分詞器使用的權杖計數編碼（例如，GPT-4o使用`o200k_base`，GPT-4/3.5使用`cl100k_base`）。有關編碼詳細資訊，請參閱[tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24)。
 
-## 其他選項
-- `--top-files-len <number>`: 要顯示的頂級檔案數（預設：`5`）
-- `--verbose`: 啟用詳細日誌記錄
-- `--quiet`: 停用所有輸出到標準輸出
 
 ## 範例
 

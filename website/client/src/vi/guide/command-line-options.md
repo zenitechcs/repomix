@@ -51,10 +51,6 @@
 ## Tùy chọn Số lượng Token
 - `--token-count-encoding <encoding>`: Chỉ định mã hóa số lượng token được sử dụng bởi tokenizer [tiktoken](https://github.com/openai/tiktoken) của OpenAI (ví dụ, `o200k_base` cho GPT-4o, `cl100k_base` cho GPT-4/3.5). Xem [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) để biết chi tiết mã hóa.
 
-## Tùy chọn Khác
-- `--top-files-len <number>`: Số lượng tệp hàng đầu để hiển thị (mặc định: `5`)
-- `--verbose`: Bật ghi nhật ký chi tiết
-- `--quiet`: Tắt tất cả đầu ra sang stdout
 
 ## Ví dụ
 

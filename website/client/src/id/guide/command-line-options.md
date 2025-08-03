@@ -51,10 +51,6 @@
 ## Opsi Jumlah Token
 - `--token-count-encoding <encoding>`: Menentukan encoding jumlah token yang digunakan oleh tokenizer [tiktoken](https://github.com/openai/tiktoken) OpenAI (mis., `o200k_base` untuk GPT-4o, `cl100k_base` untuk GPT-4/3.5). Lihat [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) untuk detail encoding.
 
-## Opsi Lainnya
-- `--top-files-len <number>`: Jumlah file teratas untuk ditampilkan (default: `5`)
-- `--verbose`: Mengaktifkan pencatatan verbose
-- `--quiet`: Menonaktifkan semua output ke stdout
 
 ## Contoh
 

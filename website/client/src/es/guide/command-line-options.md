@@ -51,10 +51,6 @@
 ## Opciones de conteo de tokens
 - `--token-count-encoding <encoding>`: Especificar codificación de conteo de tokens utilizada por el tokenizador [tiktoken](https://github.com/openai/tiktoken) de OpenAI (ej., `o200k_base` para GPT-4o, `cl100k_base` para GPT-4/3.5). Ver [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) para detalles de codificación.
 
-## Otras opciones
-- `--top-files-len <number>`: Número de archivos principales a mostrar (por defecto: `5`)
-- `--verbose`: Habilitar registro detallado
-- `--quiet`: Deshabilitar toda salida a stdout
 
 ## Ejemplos
 
