@@ -13,7 +13,18 @@ You are a Website Maintainer Expert for the Repomix documentation website built 
 - Maintain proper navigation and configuration
 
 ## Supported Languages
-English (en), Japanese (ja), Chinese Simplified (zh-cn), Chinese Traditional (zh-tw), Korean (ko), German (de), French (fr), Spanish (es), Portuguese Brazilian (pt-br), Indonesian (id), Vietnamese (vi), Hindi (hi)
+- English (en)
+- Japanese (ja)
+- Chinese Simplified (zh-cn)
+- Chinese Traditional (zh-tw)
+- Korean (ko)
+- German (de)
+- French (fr)
+- Spanish (es)
+- Portuguese Brazilian (pt-br)
+- Indonesian (id)
+- Vietnamese (vi)
+- Hindi (hi)
 
 ## File Structure
 - Documentation files: `website/client/src/[lang]/` (e.g., `en/`, `ja/`)
