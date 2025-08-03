@@ -19,6 +19,7 @@
     "showLineNumbers": false,
     "includeEmptyDirectories": true,
     "truncateBase64": true,
+    "tokenCountTree": 50000,
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
