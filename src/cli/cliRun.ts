@@ -2,7 +2,7 @@ import process from 'node:process';
 import { Command, Option, program } from 'commander';
 import pc from 'picocolors';
 import { getVersion } from '../core/file/packageJsonParse.js';
-import { handleError } from '../shared/errorHandle.js';
+import { RepomixError, handleError } from '../shared/errorHandle.js';
 import { logger, repomixLogLevels } from '../shared/logger.js';
 import { runDefaultAction } from './actions/defaultAction.js';
 import { runInitAction } from './actions/initAction.js';
@@ -63,6 +63,16 @@ export const run = async () => {
       .option(
         '--token-count-tree [threshold]',
         'display file tree with token count summaries (optional: minimum token count threshold)',
+        (value: string | boolean) => {
+          if (typeof value === 'string') {
+            const parsed = Number.parseInt(value, 0);
+            if (Number.isNaN(parsed)) {
+              throw new RepomixError(`Invalid token count threshold: '${value}'. Must be a valid number.`);
+            }
+            return parsed;
+          }
+          return value;
+        },
       )
       .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
       // Repomix Output Options

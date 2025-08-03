@@ -134,7 +134,7 @@ describe('defaultAction with tokenCountTree', () => {
 
   test('should pass threshold parameter when provided', async () => {
     const cliOptions: CliOptions = {
-      tokenCountTree: '50',
+      tokenCountTree: 50,
     };
 
     // Mock config to have tokenCountTree enabled with threshold
