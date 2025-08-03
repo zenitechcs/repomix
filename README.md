@@ -513,7 +513,7 @@ Instruction
 - `--stdout`: Output to stdout instead of writing to a file (cannot be used with `--output` option)
 - `--stdin`: Read file paths from stdin instead of discovering files automatically
 - `--copy`: Additionally copy generated output to system clipboard
-- `--token-count-tree [threshold]`: Display file tree with token count summaries (optional: minimum token count threshold)
+- `--token-count-tree [threshold]`: Display file tree with token count summaries (optional: minimum token count threshold). Useful for identifying large files and optimizing token usage for AI context limits
 - `--top-files-len <number>`: Number of top files to display in the summary
 
 #### Repomix Output Options
@@ -558,9 +558,7 @@ Instruction
 #### MCP
 - `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server
 
-#### Other Options
-
-Examples:
+#### Examples
 
 ```bash
 # Basic usage
@@ -701,6 +699,40 @@ interface Item {
 
 > [!NOTE]
 > This is an experimental feature that we'll be actively improving based on user feedback and real-world usage
+
+### Token Count Optimization
+
+Understanding your codebase's token distribution is crucial for optimizing AI interactions. Use the `--token-count-tree` option to visualize token usage across your project:
+
+```bash
+repomix --token-count-tree
+```
+
+This displays a hierarchical view of your codebase with token counts:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+You can also set a minimum token threshold to focus on larger files:
+
+```bash
+repomix --token-count-tree 1000  # Only show files/directories with 1000+ tokens
+```
+
+This helps you:
+- **Identify token-heavy files** that might exceed AI context limits
+- **Optimize file selection** using `--include` and `--ignore` patterns  
+- **Plan compression strategies** by targeting the largest contributors
+- **Balance content vs. context** when preparing code for AI analysis
 
 ### MCP Server Integration
 
