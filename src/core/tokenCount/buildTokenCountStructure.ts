@@ -16,6 +16,9 @@ export const buildTokenCountTree = (filesWithTokens: FileWithTokens[]): TreeNode
 
   for (const file of filesWithTokens) {
     // The file.path is already relative to the root directory
+    if (!file.path || typeof file.path !== 'string') {
+      continue;
+    }
     // Always use forward slash for consistency across platforms
     const parts = file.path.split('/');
     const fileName = parts.pop();

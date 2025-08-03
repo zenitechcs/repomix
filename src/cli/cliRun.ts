@@ -65,7 +65,7 @@ export const run = async () => {
         'display file tree with token count summaries (optional: minimum token count threshold)',
         (value: string | boolean) => {
           if (typeof value === 'string') {
-            const parsed = Number.parseInt(value, 0);
+            const parsed = Number.parseInt(value, 10);
             if (Number.isNaN(parsed)) {
               throw new RepomixError(`Invalid token count threshold: '${value}'. Must be a valid number.`);
             }
