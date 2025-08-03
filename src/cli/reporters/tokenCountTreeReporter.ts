@@ -75,7 +75,7 @@ const displayNode = (
   files.forEach((file, index) => {
     const isLastFile = index === files.length - 1 && entries.length === 0;
     const connector = isLastFile ? '└── ' : '├── ';
-    const tokenInfo = `(${file.tokens} tokens)`;
+    const tokenInfo = pc.dim(`(${file.tokens.toLocaleString()} tokens)`);
 
     if (isRoot && prefix === '') {
       logger.log(`${connector}${file.name} ${tokenInfo}`);
@@ -89,7 +89,7 @@ const displayNode = (
     const isLastEntry = index === entries.length - 1;
     const connector = isLastEntry ? '└── ' : '├── ';
     const tokenSum = (childNode as TreeNode)._tokenSum || 0;
-    const tokenInfo = `(${tokenSum} tokens)`;
+    const tokenInfo = pc.dim(`(${tokenSum.toLocaleString()} tokens)`);
 
     if (isRoot && prefix === '') {
       logger.log(`${connector}${name}/ ${tokenInfo}`);
