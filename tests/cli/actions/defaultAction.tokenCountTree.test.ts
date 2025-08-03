@@ -1,13 +1,13 @@
 import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
 import { runDefaultAction } from '../../../src/cli/actions/defaultAction.js';
-import * as cliPrint from '../../../src/cli/cliPrint.js';
+import * as cliReport from '../../../src/cli/cliReport.js';
 import type { CliOptions } from '../../../src/cli/types.js';
 import * as configLoad from '../../../src/config/configLoad.js';
 import * as packager from '../../../src/core/packager.js';
 
 vi.mock('../../../src/config/configLoad.js');
 vi.mock('../../../src/core/packager.js');
-vi.mock('../../../src/cli/cliPrint.js');
+vi.mock('../../../src/cli/cliReport.js');
 vi.mock('../../../src/cli/actions/migrationAction.js', () => ({
   runMigrationAction: vi.fn(),
 }));
@@ -16,7 +16,7 @@ describe('defaultAction with tokenCountTree', () => {
   const mockLoadFileConfig = configLoad.loadFileConfig as Mock;
   const mockMergeConfigs = configLoad.mergeConfigs as Mock;
   const mockPack = packager.pack as Mock;
-  const mockPrintTokenCountTree = cliPrint.printTokenCountTree as Mock;
+  const mockReportResults = cliReport.reportResults as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -69,12 +69,15 @@ describe('defaultAction with tokenCountTree', () => {
 
     await runDefaultAction(['.'], '/test', cliOptions);
 
-    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
-      [
-        { path: '/test/file1.js', content: 'content1' },
-        { path: '/test/file2.js', content: 'content2' },
-      ],
-      {},
+    expect(mockReportResults).toHaveBeenCalledWith(
+      '/test',
+      expect.objectContaining({
+        processedFiles: [
+          { path: '/test/file1.js', content: 'content1' },
+          { path: '/test/file2.js', content: 'content2' },
+        ],
+        fileTokenCounts: {},
+      }),
       expect.objectContaining({
         output: expect.objectContaining({
           tokenCountTree: true,
@@ -88,7 +91,15 @@ describe('defaultAction with tokenCountTree', () => {
 
     await runDefaultAction(['.'], '/test', cliOptions);
 
-    expect(mockPrintTokenCountTree).not.toHaveBeenCalled();
+    expect(mockReportResults).toHaveBeenCalledWith(
+      '/test',
+      expect.any(Object),
+      expect.objectContaining({
+        output: expect.objectContaining({
+          tokenCountTree: false,
+        }),
+      }),
+    );
   });
 
   test('should display token count tree for multiple directories', async () => {
@@ -110,20 +121,20 @@ describe('defaultAction with tokenCountTree', () => {
 
     await runDefaultAction(['src', 'tests'], '/project', cliOptions);
 
-    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
-      expect.any(Array), 
-      expect.any(Object), 
+    expect(mockReportResults).toHaveBeenCalledWith(
+      '/project',
+      expect.any(Object),
       expect.objectContaining({
         output: expect.objectContaining({
           tokenCountTree: true,
         }),
-      })
+      }),
     );
   });
 
   test('should pass threshold parameter when provided', async () => {
     const cliOptions: CliOptions = {
-      tokenCountTree: 50,
+      tokenCountTree: '50',
     };
 
     // Mock config to have tokenCountTree enabled with threshold
@@ -140,14 +151,14 @@ describe('defaultAction with tokenCountTree', () => {
 
     await runDefaultAction(['.'], '/test', cliOptions);
 
-    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
-      expect.any(Array), 
-      expect.any(Object), 
+    expect(mockReportResults).toHaveBeenCalledWith(
+      '/test',
+      expect.any(Object),
       expect.objectContaining({
         output: expect.objectContaining({
           tokenCountTree: 50,
         }),
-      })
+      }),
     );
   });
 });

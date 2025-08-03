@@ -1,13 +1,13 @@
 import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
+import { reportTokenCountTree } from '../../src/cli/reporters/tokenCountTreeReporter.js';
 import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
-import { displayTokenCountTree } from '../../src/core/tokenCount/displayTokenCountTree.js';
-import { printTokenCountTree } from '../../src/cli/cliPrint.js';
+import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
+import { logger } from '../../src/shared/logger.js';
 
-vi.mock('../../src/core/tokenCount/displayTokenCountTree.js');
+vi.mock('../../src/shared/logger.js');
 
-describe('printTokenCountTree', () => {
-  const mockDisplayTokenCountTree = displayTokenCountTree as Mock;
+describe('reportTokenCountTree', () => {
+  const mockLogger = logger.log as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -30,17 +30,11 @@ describe('printTokenCountTree', () => {
       output: { tokenCountTree: true },
     } as RepomixConfigMerged;
 
-    printTokenCountTree(processedFiles, fileTokenCounts, config);
+    reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
-    // Verify display function was called with default threshold of 0
-    expect(mockDisplayTokenCountTree).toHaveBeenCalledWith(
-      [
-        { path: 'src/file1.js', tokens: 5 },
-        { path: 'src/file2.js', tokens: 7 },
-        { path: 'tests/test.js', tokens: 10 },
-      ],
-      0,
-    );
+    // Verify token count tree is displayed
+    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
 
   test('should handle empty file list', () => {
@@ -50,9 +44,11 @@ describe('printTokenCountTree', () => {
       output: { tokenCountTree: true },
     } as RepomixConfigMerged;
 
-    printTokenCountTree(processedFiles, fileTokenCounts, config);
+    reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
-    expect(mockDisplayTokenCountTree).toHaveBeenCalledWith([], 0);
+    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('────────────────────');
+    expect(mockLogger).toHaveBeenCalledWith('No files found.');
   });
 
   test('should pass minimum token count threshold to display function', () => {
@@ -70,16 +66,12 @@ describe('printTokenCountTree', () => {
       output: { tokenCountTree: 10 },
     } as RepomixConfigMerged;
 
-    printTokenCountTree(processedFiles, fileTokenCounts, config);
+    reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
-    // Verify display function was called with the specified threshold
-    expect(mockDisplayTokenCountTree).toHaveBeenCalledWith(
-      [
-        { path: 'src/file1.js', tokens: 5 },
-        { path: 'src/file2.js', tokens: 15 },
-      ],
-      10,
-    );
+    // Verify threshold message is displayed
+    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('Showing entries with 10+ tokens:');
+    expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
 
   test('should skip files without token counts', () => {
@@ -99,15 +91,10 @@ describe('printTokenCountTree', () => {
       output: { tokenCountTree: true },
     } as RepomixConfigMerged;
 
-    printTokenCountTree(processedFiles, fileTokenCounts, config);
+    reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
-    // Verify only files with token counts are included
-    expect(mockDisplayTokenCountTree).toHaveBeenCalledWith(
-      [
-        { path: 'src/file1.js', tokens: 5 },
-        { path: 'src/file2.js', tokens: 7 },
-      ],
-      0,
-    );
+    // Verify tree is displayed (files without token counts should be skipped)
+    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
 });

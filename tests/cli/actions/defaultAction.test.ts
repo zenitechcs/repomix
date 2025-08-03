@@ -38,7 +38,7 @@ const mockSpinner = {
 vi.mock('../../../src/cli/cliSpinner', () => ({
   Spinner: vi.fn().mockImplementation(() => mockSpinner),
 }));
-vi.mock('../../../src/cli/cliPrint');
+vi.mock('../../../src/cli/cliReport');
 
 describe('defaultAction', () => {
   beforeEach(() => {

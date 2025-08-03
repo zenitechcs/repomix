@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { displayTokenCountTree } from '../../../src/cli/reporters/tokenCountTreeReporter.js';
 import type { FileWithTokens } from '../../../src/core/tokenCount/buildTokenCountStructure.js';
-import { displayTokenCountTree } from '../../../src/core/tokenCount/displayTokenCountTree.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger.js');
@@ -15,8 +15,8 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
     expect(logger.log).toHaveBeenCalledWith('└── tests/ (3 tokens)');
     expect(logger.log).toHaveBeenCalledWith('    └── test.txt (3 tokens)');
   });
@@ -32,8 +32,8 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
 
     // Should show README.md first (root file)
     expect(logger.log).toHaveBeenCalledWith('├── README.md (10 tokens)');
@@ -53,8 +53,8 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
     expect(logger.log).toHaveBeenCalledWith('└── src/ (25 tokens)');
     expect(logger.log).toHaveBeenCalledWith('    ├── file1.js (10 tokens)');
     expect(logger.log).toHaveBeenCalledWith('    └── file2.js (15 tokens)');
@@ -65,8 +65,8 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
     expect(logger.log).toHaveBeenCalledWith('No files found.');
   });
 
@@ -103,9 +103,9 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files, 10);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
     expect(logger.log).toHaveBeenCalledWith('Showing entries with 10+ tokens:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
 
     // Should show medium.txt and large.txt, but not small.txt
     expect(logger.log).toHaveBeenCalledWith('├── large.txt (50 tokens)');
@@ -128,9 +128,9 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files, 10);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
     expect(logger.log).toHaveBeenCalledWith('Showing entries with 10+ tokens:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
 
     // Should show large-dir (50 tokens total) and mixed-dir (28 tokens total)
     expect(logger.log).toHaveBeenCalledWith('├── large-dir/ (50 tokens)');
@@ -156,9 +156,9 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files, 10);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
     expect(logger.log).toHaveBeenCalledWith('Showing entries with 10+ tokens:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
     expect(logger.log).toHaveBeenCalledWith('No files or directories found with 10+ tokens.');
   });
 
@@ -167,8 +167,8 @@ describe('displayTokenCountTree', () => {
 
     displayTokenCountTree(files, 0);
 
-    expect(logger.log).toHaveBeenCalledWith('\n📊 Token Count Summary:');
-    expect(logger.log).toHaveBeenCalledWith('────────────────────────');
+    expect(logger.log).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(logger.log).toHaveBeenCalledWith('────────────────────');
 
     const mockedLogger = vi.mocked(logger);
     const calls = mockedLogger.log.mock.calls.map((call: unknown[]) => call[0] as string);

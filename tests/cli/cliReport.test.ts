@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../../src/cli/cliPrint.js';
+import { reportCompletion, reportSecurityCheck, reportSummary, reportTopFiles } from '../../src/cli/cliReport.js';
 import type { SuspiciousFileResult } from '../../src/core/security/securityCheck.js';
 import type { PackResult } from '../../src/index.js';
 import { logger } from '../../src/shared/logger.js';
@@ -19,12 +19,12 @@ vi.mock('picocolors', () => ({
   },
 }));
 
-describe('cliPrint', () => {
+describe('cliReport', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  describe('printSummary', () => {
+  describe('reportSummary', () => {
     test('should print summary with suspicious files and security check enabled', () => {
       const config = createMockConfig({
         security: { enableSecurityCheck: true },
@@ -46,7 +46,7 @@ describe('cliPrint', () => {
         gitDiffTokenCount: 0,
       };
 
-      printSummary(packResult, config);
+      reportSummary(packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 suspicious file(s) detected and excluded'));
     });
@@ -69,19 +69,19 @@ describe('cliPrint', () => {
         gitDiffTokenCount: 0,
       };
 
-      printSummary(packResult, config);
+      reportSummary(packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Security check disabled'));
     });
   });
 
-  describe('printSecurityCheck', () => {
+  describe('reportSecurityCheck', () => {
     test('should skip printing when security check is disabled', () => {
       const config = createMockConfig({
         security: { enableSecurityCheck: false },
       });
 
-      printSecurityCheck('/root', [], [], config);
+      reportSecurityCheck('/root', [], [], config);
       expect(logger.log).not.toHaveBeenCalled();
     });
 
@@ -90,7 +90,7 @@ describe('cliPrint', () => {
         security: { enableSecurityCheck: true },
       });
 
-      printSecurityCheck('/root', [], [], config);
+      reportSecurityCheck('/root', [], [], config);
 
       expect(logger.log).toHaveBeenCalledWith('WHITE:🔎 Security Check:');
       expect(logger.log).toHaveBeenCalledWith('DIM:──────────────────');
@@ -110,7 +110,7 @@ describe('cliPrint', () => {
         },
       ];
 
-      printSecurityCheck('/root', suspiciousFiles, [], config);
+      reportSecurityCheck('/root', suspiciousFiles, [], config);
 
       expect(logger.log).toHaveBeenCalledWith('YELLOW:1 suspicious file(s) detected and excluded from the output:');
       expect(logger.log).toHaveBeenCalledWith(`WHITE:1. WHITE:${configRelativePath}`);
@@ -121,7 +121,7 @@ describe('cliPrint', () => {
     });
   });
 
-  describe('printTopFiles', () => {
+  describe('reportTopFiles', () => {
     test('should print top files sorted by character count', () => {
       const fileCharCounts = {
         'src/index.ts': 1000,
@@ -134,7 +134,7 @@ describe('cliPrint', () => {
         'README.md': 400,
       };
 
-      printTopFiles(fileCharCounts, fileTokenCounts, 2, 60);
+      reportTopFiles(fileCharCounts, fileTokenCounts, 2, 60);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Top 2 Files'));
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('README.md'));
@@ -143,15 +143,15 @@ describe('cliPrint', () => {
     });
 
     test('should handle empty file list', () => {
-      printTopFiles({}, {}, 5, 0);
+      reportTopFiles({}, {}, 5, 0);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Top 5 Files'));
     });
   });
 
-  describe('printCompletion', () => {
+  describe('reportCompletion', () => {
     test('should print completion message', () => {
-      printCompletion();
+      reportCompletion();
 
       expect(logger.log).toHaveBeenCalledWith('GREEN:🎉 All Done!');
       expect(logger.log).toHaveBeenCalledWith('WHITE:Your repository has been successfully packed.');

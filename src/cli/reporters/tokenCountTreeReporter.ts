@@ -1,5 +1,8 @@
+import pc from 'picocolors';
+import type { RepomixConfigMerged } from '../../config/configSchema.js';
+import type { ProcessedFile } from '../../core/file/fileTypes.js';
+import { type FileWithTokens, buildTokenCountTree } from '../../core/tokenCount/buildTokenCountStructure.js';
 import { logger } from '../../shared/logger.js';
-import { type FileWithTokens, buildTokenCountTree } from './buildTokenCountStructure.js';
 
 interface TreeNode {
   _files?: Array<{ name: string; tokens: number }>;
@@ -7,19 +10,47 @@ interface TreeNode {
   [key: string]: TreeNode | Array<{ name: string; tokens: number }> | number | undefined;
 }
 
-export const displayTokenCountTree = (filesWithTokens: FileWithTokens[], minTokenCount = 0): void => {
-  const tree = buildTokenCountTree(filesWithTokens);
+export const reportTokenCountTree = (
+  processedFiles: ProcessedFile[],
+  fileTokenCounts: Record<string, number>,
+  config: RepomixConfigMerged,
+) => {
+  const minTokenCount = typeof config.output.tokenCountTree === 'number' ? config.output.tokenCountTree : 0;
 
+  const filesWithTokens: FileWithTokens[] = [];
+  for (const file of processedFiles) {
+    const tokens = fileTokenCounts[file.path];
+    if (tokens !== undefined) {
+      filesWithTokens.push({
+        path: file.path,
+        tokens,
+      });
+    }
+  }
+
+  // Display the token count tree
+  displayTokenCountTree(filesWithTokens, minTokenCount);
+};
+
+export const displayTokenCountTree = (filesWithTokens: FileWithTokens[], minTokenCount = 0): void => {
   logger.log('\n🔢 Token Count Tree:');
+  logger.log(pc.dim('────────────────────'));
+
   if (minTokenCount > 0) {
     logger.log(`Showing entries with ${minTokenCount}+ tokens:`);
   }
-  logger.log('────────────────────────');
 
+  const tree = buildTokenCountTree(filesWithTokens);
   displayNode(tree, '', true, true, minTokenCount);
 };
 
-const displayNode = (node: TreeNode, prefix: string, isLast: boolean, isRoot: boolean, minTokenCount: number): void => {
+const displayNode = (
+  node: TreeNode,
+  prefix: string,
+  _isLast: boolean,
+  isRoot: boolean,
+  minTokenCount: number,
+): void => {
   // Get all directory entries (excluding _files and _tokenSum)
   const allEntries = Object.entries(node).filter(
     ([key, value]) => !key.startsWith('_') && value && typeof value === 'object' && !Array.isArray(value),

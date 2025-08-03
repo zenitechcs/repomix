@@ -1,8 +1,51 @@
 import { describe, expect, test } from 'vitest';
-import {
-  type FileWithTokens,
-  buildTokenCountStructure,
-} from '../../../src/core/tokenCount/buildTokenCountStructure.js';
+import { type FileWithTokens, buildTokenCountTree } from '../../../src/core/tokenCount/buildTokenCountStructure.js';
+import type { DirectoryTokenInfo, FileTokenInfo, TokenCountOutput } from '../../../src/core/tokenCount/types.js';
+
+interface TreeNode {
+  _files?: FileTokenInfo[];
+  _tokenSum?: number;
+  [key: string]: TreeNode | FileTokenInfo[] | number | undefined;
+}
+
+const convertToOutput = (node: TreeNode, isRoot = true): TokenCountOutput => {
+  const result: DirectoryTokenInfo[] = [];
+
+  // Handle directories
+  for (const [key, value] of Object.entries(node)) {
+    if (key.startsWith('_')) continue;
+
+    const dirInfo: DirectoryTokenInfo = {
+      name: key,
+      files: (value as TreeNode)._files || [],
+    };
+
+    // Check for subdirectories
+    const subdirs = convertToOutput(value as TreeNode, false);
+    if (subdirs.length > 0) {
+      dirInfo.directories = subdirs;
+    }
+
+    result.push(dirInfo);
+  }
+
+  // Handle root-level files (only at the actual root level)
+  if (isRoot && node._files) {
+    for (const file of node._files) {
+      result.push({
+        name: file.name,
+        files: [file],
+      });
+    }
+  }
+
+  return result;
+};
+
+const buildTokenCountStructure = (filesWithTokens: FileWithTokens[], _rootDirs: string[]): TokenCountOutput => {
+  const root = buildTokenCountTree(filesWithTokens);
+  return convertToOutput(root);
+};
 
 describe('buildTokenCountStructure', () => {
   test('should build a simple directory structure', () => {

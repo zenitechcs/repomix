@@ -13,7 +13,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { splitPatterns } from '../../shared/patternUtils.js';
-import { printCompletion, printSecurityCheck, printSummary, printTokenCountTree, printTopFiles } from '../cliPrint.js';
+import { reportResults } from '../cliReport.js';
 import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
@@ -57,7 +57,7 @@ export const runDefaultAction = async (
 
   const packResult = result.packResult;
 
-  printResults(cwd, packResult, config);
+  reportResults(cwd, packResult, config);
 
   return {
     packResult,
@@ -134,37 +134,6 @@ export const handleDirectoryProcessing = async (
     packResult,
     config,
   };
-};
-
-
-/**
- * Prints the results of packing operation including top files, security check, summary, and completion.
- */
-const printResults = (cwd: string, packResult: PackResult, config: RepomixConfigMerged): void => {
-  logger.log('');
-
-  if (config.output.topFilesLength > 0) {
-    printTopFiles(
-      packResult.fileCharCounts,
-      packResult.fileTokenCounts,
-      config.output.topFilesLength,
-      packResult.totalTokens,
-    );
-    logger.log('');
-  }
-
-  if (config.output.tokenCountTree) {
-    printTokenCountTree(packResult.processedFiles, packResult.fileTokenCounts, config);
-    logger.log('');
-  }
-
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
-  logger.log('');
-
-  printSummary(packResult, config);
-  logger.log('');
-
-  printCompletion();
 };
 
 /**
@@ -323,9 +292,10 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.tokenCountTree !== undefined) {
     cliConfig.output = {
       ...cliConfig.output,
-      tokenCountTree: typeof options.tokenCountTree === 'string'
-        ? Number.parseInt(options.tokenCountTree, 0)
-        : options.tokenCountTree,
+      tokenCountTree:
+        typeof options.tokenCountTree === 'string'
+          ? Number.parseInt(options.tokenCountTree, 0)
+          : options.tokenCountTree,
     };
   }
 
