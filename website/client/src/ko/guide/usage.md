@@ -93,6 +93,40 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### 토큰 수 최적화
+
+코드베이스의 토큰 분포를 이해하는 것은 AI 상호 작용을 최적화하는 데 중요합니다. `--token-count-tree` 옵션을 사용하여 프로젝트 전체의 토큰 사용량을 시각화하세요:
+
+```bash
+repomix --token-count-tree
+```
+
+이렇게 하면 토큰 수와 함께 코드베이스의 계층 뷰가 표시됩니다:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+최소 토큰 임계값을 설정하여 큰 파일에 집중할 수도 있습니다:
+
+```bash
+repomix --token-count-tree 1000  # 1000개 이상의 토큰을 가진 파일/디렉토리만 표시
+```
+
+이를 통해 다음을 수행할 수 있습니다:
+- **토큰이 많은 파일 식별** - AI 컨텍스트 제한을 초과할 수 있는 파일 발견
+- **파일 선택 최적화** - `--include` 및 `--ignore` 패턴 사용
+- **압축 전략 계획** - 가장 큰 기여자를 대상으로 하는 전략
+- **콘텐츠와 컨텍스트의 균형** - AI 분석을 위한 코드 준비 시 균형 조정
+
 ## 출력 형식
 
 ### XML (기본값)

@@ -93,6 +93,40 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Optimización del conteo de tokens
+
+Entender la distribución de tokens de tu base de código es crucial para optimizar las interacciones con IA. Usa la opción `--token-count-tree` para visualizar el uso de tokens en todo tu proyecto:
+
+```bash
+repomix --token-count-tree
+```
+
+Esto muestra una vista jerárquica de tu base de código con conteos de tokens:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+También puedes establecer un umbral mínimo de tokens para enfocarte en archivos más grandes:
+
+```bash
+repomix --token-count-tree 1000  # Solo mostrar archivos/directorios con 1000+ tokens
+```
+
+Esto te ayuda a:
+- **Identificar archivos pesados en tokens** - que podrían exceder los límites de contexto de IA
+- **Optimizar la selección de archivos** - usando patrones `--include` e `--ignore`
+- **Planificar estrategias de compresión** - dirigiéndose a los mayores contribuyentes
+- **Equilibrar contenido vs contexto** - al preparar código para análisis de IA
+
 ## Formatos de salida
 
 ### XML (predeterminado)

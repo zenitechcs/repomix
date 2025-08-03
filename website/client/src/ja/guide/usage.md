@@ -85,12 +85,47 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 > `--stdin`を使用する場合、ファイルパスは相対パスまたは絶対パスのどちらでも指定でき、Repomixが自動的にパス解決と重複除去を処理します。
 
 ### コード圧縮
+
 ```bash
 repomix --compress
 
 # リモートリポジトリでも使用可能：
-repomix --remote user/repo --compress
+repomix --remote yamadashy/repomix --compress
 ```
+
+### トークン数最適化
+
+コードベースのトークン分布を理解することは、AIとの対話を最適化するために重要です。`--token-count-tree`オプションを使用して、プロジェクト全体のトークン使用量を視覚化できます：
+
+```bash
+repomix --token-count-tree
+```
+
+これにより、コードベースの階層ビューがトークン数とともに表示されます：
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+最小トークン閾値を設定して、大きなファイルに焦点を当てることもできます：
+
+```bash
+repomix --token-count-tree 1000  # 1000以上のトークンを持つファイル/ディレクトリのみを表示
+```
+
+これにより以下のことが可能になります：
+- **トークンの多いファイルを特定** - AIのコンテキスト制限を超える可能性があるファイルを発見
+- **ファイル選択を最適化** - `--include`と`--ignore`パターンを使用した最適化
+- **圧縮戦略を計画** - 最大の要因をターゲットにした戦略立案
+- **コンテンツとコンテキストのバランス** - AI分析用のコード準備時のバランス調整
 
 ## 出力形式
 

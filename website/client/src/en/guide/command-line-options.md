@@ -3,30 +3,36 @@
 ## Basic Options
 - `-v, --version`: Show tool version
 
-## Output Options
-- `-o, --output <file>`: Output file name (default: `repomix-output.txt`)
+## CLI Input/Output Options
+- `--verbose`: Enable verbose logging
+- `--quiet`: Disable all output to stdout
 - `--stdout`: Output to stdout instead of writing to a file (cannot be used with `--output` option)
-- `--style <type>`: Output style (`plain`, `xml`, `markdown`) (default: `xml`)
-- `--parsable-style`: Enable parsable output based on the chosen style schema (default: `false`)
-- `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures while removing implementation details. For more details and examples, see [Code Compression Guide](code-compress).
-- `--output-show-line-numbers`: Add line numbers (default: `false`)
-- `--copy`: Copy to clipboard (default: `false`)
-- `--no-file-summary`: Disable file summary (default: `true`)
-- `--no-directory-structure`: Disable directory structure (default: `true`)
-- `--no-files`: Disable files content output (metadata-only mode) (default: `true`)
-- `--remove-comments`: Remove comments (default: `false`)
-- `--remove-empty-lines`: Remove empty lines (default: `false`)
-- `--truncate-base64`: Truncate base64 encoded data strings (default: `false`)
+- `--stdin`: Read file paths from stdin instead of discovering files automatically
+- `--copy`: Additionally copy generated output to system clipboard
+- `--token-count-tree [threshold]`: Display file tree with token count summaries (optional: minimum token count threshold). Useful for identifying large files and optimizing token usage for AI context limits
+- `--top-files-len <number>`: Number of top files to display in the summary
+
+## Repomix Output Options
+- `-o, --output <file>`: Specify the output file name
+- `--style <style>`: Specify the output style (`xml`, `markdown`, `plain`)
+- `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
+- `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures to reduce token count
+- `--output-show-line-numbers`: Show line numbers in the output
+- `--no-file-summary`: Disable file summary section output
+- `--no-directory-structure`: Disable directory structure section output
+- `--no-files`: Disable files content output (metadata-only mode)
+- `--remove-comments`: Remove comments from supported file types
+- `--remove-empty-lines`: Remove empty lines from the output
+- `--truncate-base64`: Enable truncation of base64 data strings
 - `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
-- `--include-empty-directories`: Include empty directories in the output (default: `false`)
-- `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately) (default: `false`)
-- `--no-git-sort-by-changes`: Disable sorting files by git change count (default: `true`)
+- `--include-empty-directories`: Include empty directories in the output
+- `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately)
+- `--no-git-sort-by-changes`: Disable sorting files by git change count (enabled by default)
 
-## Filter Options
-- `--include <patterns>`: Include patterns (comma-separated)
-- `-i, --ignore <patterns>`: Ignore patterns (comma-separated)
-- `--stdin`: Read file paths from stdin instead of discovering files automatically
+## File Selection Options
+- `--include <patterns>`: List of include patterns (comma-separated)
+- `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
 - `--no-gitignore`: Disable .gitignore file usage
 - `--no-default-patterns`: Disable default patterns
 
@@ -43,13 +49,7 @@
 - `--no-security-check`: Disable security check (default: `true`)
 
 ## Token Count Options
-- `--token-count-encoding <encoding>`: Specify token count encoding (e.g., `o200k_base`, `cl100k_base`) (default: `o200k_base`)
-
-## Other Options
-- `--top-files-len <number>`: Number of top files to show (default: `5`)
-- `--verbose`: Enable verbose logging
-- `--quiet`: Disable all output to stdout
-
+- `--token-count-encoding <encoding>`: Specify token count encoding used by OpenAI's [tiktoken](https://github.com/openai/tiktoken) tokenizer (e.g., `o200k_base` for GPT-4o, `cl100k_base` for GPT-4/3.5). See [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) for encoding details.
 ## Examples
 
 ```bash
@@ -84,4 +84,9 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Token count analysis
+repomix --token-count-tree
+repomix --token-count-tree 1000  # Only show files/directories with 1000+ tokens
 ```
+

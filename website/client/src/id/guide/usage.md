@@ -99,6 +99,49 @@ Saat menggunakan `--stdin`, file yang ditentukan secara efektif ditambahkan ke p
 > [!NOTE]
 > Saat menggunakan `--stdin`, jalur file dapat berupa jalur relatif atau absolut, dan Repomix akan menangani resolusi jalur dan deduplikasi secara otomatis.
 
+### Kompresi Kode
+
+```bash
+repomix --compress
+
+# Anda juga dapat menggunakannya dengan repositori jarak jauh:
+repomix --remote yamadashy/repomix --compress
+```
+
+### Optimisasi Jumlah Token
+
+Memahami distribusi token dari basis kode Anda sangat penting untuk mengoptimalkan interaksi AI. Gunakan opsi `--token-count-tree` untuk memvisualisasikan penggunaan token di seluruh proyek Anda:
+
+```bash
+repomix --token-count-tree
+```
+
+Ini menampilkan tampilan hierarkis dari basis kode Anda dengan jumlah token:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+Anda juga dapat menetapkan ambang batas minimum token untuk fokus pada file yang lebih besar:
+
+```bash
+repomix --token-count-tree 1000  # Hanya tampilkan file/direktori dengan 1000+ token
+```
+
+Ini membantu Anda:
+- **Mengidentifikasi file yang berat token** - yang mungkin melebihi batas konteks AI
+- **Mengoptimalkan pemilihan file** - menggunakan pola `--include` dan `--ignore`
+- **Merencanakan strategi kompresi** - menargetkan kontributor terbesar
+- **Menyeimbangkan konten vs konteks** - saat mempersiapkan kode untuk analisis AI
+
 ## Format Output
 
 Pilih format output yang Anda inginkan:

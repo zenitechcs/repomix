@@ -163,11 +163,46 @@ Bạn cũng có thể tạo một tệp `.repomixignore` trong thư mục gốc 
 
 ### Nén mã
 
-Để nén mã bằng cách chỉ bao gồm chữ ký hàm và loại bỏ phần thân:
+```bash
+repomix --compress
+
+# Bạn cũng có thể sử dụng nó với kho lưu trữ từ xa:
+repomix --remote yamadashy/repomix --compress
+```
+
+### Tối ưu hóa số lượng token
+
+Hiểu được phân phối token của codebase là rất quan trọng để tối ưu hóa tương tác AI. Sử dụng tùy chọn `--token-count-tree` để trực quan hóa việc sử dụng token trong toàn bộ dự án của bạn:
 
 ```bash
-repomix --compress-code
+repomix --token-count-tree
 ```
+
+Điều này hiển thị một chế độ xem phân cấp codebase của bạn với số lượng token:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+Bạn cũng có thể đặt ngưỡng token tối thiểu để tập trung vào các tệp lớn hơn:
+
+```bash
+repomix --token-count-tree 1000  # Chỉ hiển thị tệp/thư mục có 1000+ token
+```
+
+Điều này giúp bạn:
+- **Xác định các tệp nặng token** - có thể vượt quá giới hạn ngữ cảnh AI
+- **Tối ưu hóa lựa chọn tệp** - sử dụng các mẫu `--include` và `--ignore`
+- **Lập kế hoạch chiến lược nén** - nhắm mục tiêu những đóng góp lớn nhất
+- **Cân bằng nội dung vs ngữ cảnh** - khi chuẩn bị mã cho phân tích AI
 
 ### Kiểm tra bảo mật
 
