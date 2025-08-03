@@ -89,10 +89,10 @@ repomix --remote user/repo
 # 使用stdin的檔案清單
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # 權杖計數分析
 repomix --token-count-tree
 repomix --token-count-tree 1000  # 僅顯示擁有1000+權杖的檔案/目錄
 ```
+

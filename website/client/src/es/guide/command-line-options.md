@@ -89,10 +89,10 @@ repomix --remote user/repo
 # Lista de archivos usando stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # Análisis de conteo de tokens
 repomix --token-count-tree
 repomix --token-count-tree 1000  # Solo mostrar archivos/directorios con 1000+ tokens
 ```
+

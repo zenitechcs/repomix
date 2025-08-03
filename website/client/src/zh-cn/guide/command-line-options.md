@@ -89,10 +89,10 @@ repomix --remote user/repo
 # 使用stdin的文件列表
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # 令牌计数分析
 repomix --token-count-tree
 repomix --token-count-tree 1000  # 仅显示拥有1000+令牌的文件/目录
 ```
+

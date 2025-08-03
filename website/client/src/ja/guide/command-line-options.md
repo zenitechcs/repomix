@@ -89,10 +89,10 @@ repomix --remote user/repo
 # stdinを使用したファイルリスト
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # トークン数分析
 repomix --token-count-tree
 repomix --token-count-tree 1000  # 1000以上のトークンを持つファイル/ディレクトリのみを表示
 ```
+

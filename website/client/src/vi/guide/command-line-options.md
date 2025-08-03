@@ -89,10 +89,10 @@ repomix --remote user/repo
 # Danh sách tệp sử dụng stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # Phân tích số lượng token
 repomix --token-count-tree
 repomix --token-count-tree 1000  # Chỉ hiển thị tệp/thư mục với 1000+ token
 ```
+

@@ -89,10 +89,10 @@ repomix --remote user/repo
 # Daftar file menggunakan stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # Analisis jumlah token
 repomix --token-count-tree
 repomix --token-count-tree 1000  # Hanya tampilkan file/direktori dengan 1000+ token
 ```
+

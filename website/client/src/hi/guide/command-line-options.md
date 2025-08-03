@@ -89,10 +89,10 @@ repomix --remote user/repo
 # stdin का उपयोग करके फ़ाइल सूची
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts
-src/utils.ts" | repomix --stdin
+echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 
 # टोकन गिनती विश्लेषण
 repomix --token-count-tree
 repomix --token-count-tree 1000  # केवल 1000+ टोकन वाली फ़ाइलें/डायरेक्टरियां दिखाएं
 ```
+
