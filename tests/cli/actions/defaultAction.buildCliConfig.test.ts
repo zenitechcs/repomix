@@ -15,9 +15,9 @@ describe('buildCliConfig', () => {
       expect(result.output?.tokenCountTree).toBe(true);
     });
 
-    it('should handle numeric tokenCountTree', () => {
+    it('should handle numeric tokenCountTree as string', () => {
       const options: CliOptions = {
-        tokenCountTree: 100,
+        tokenCountTree: '100',
       };
 
       const result = buildCliConfig(options);
@@ -41,7 +41,9 @@ describe('buildCliConfig', () => {
       };
 
       expect(() => buildCliConfig(options)).toThrow(RepomixError);
-      expect(() => buildCliConfig(options)).toThrow("Invalid token count threshold: 'invalid'. Must be a valid number.");
+      expect(() => buildCliConfig(options)).toThrow(
+        "Invalid token count threshold: 'invalid'. Must be a valid number.",
+      );
     });
 
     it('should throw error for empty string tokenCountTree', () => {
