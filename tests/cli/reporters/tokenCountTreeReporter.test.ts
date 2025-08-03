@@ -4,7 +4,7 @@ import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { logger } from '../../../src/shared/logger.js';
 
-vi.mock('../../../src/shared/logger.js');
+vi.mock('../../../src/shared/logger');
 
 describe('reportTokenCountTree', () => {
   const mockLogger = logger.log as Mock;
