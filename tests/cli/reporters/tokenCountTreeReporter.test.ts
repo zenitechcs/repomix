@@ -35,6 +35,14 @@ describe('reportTokenCountTree', () => {
     // Verify token count tree is displayed
     expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
+    
+    // Verify tree structure is displayed
+    const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
+    expect(calls.some(call => call.includes('src/'))).toBe(true);
+    expect(calls.some(call => call.includes('tests/'))).toBe(true);
+    expect(calls.some(call => call.includes('file1.js'))).toBe(true);
+    expect(calls.some(call => call.includes('file2.js'))).toBe(true);
+    expect(calls.some(call => call.includes('test.js'))).toBe(true);
   });
 
   test('should handle empty file list', () => {
@@ -96,5 +104,11 @@ describe('reportTokenCountTree', () => {
     // Verify tree is displayed (files without token counts should be skipped)
     expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
+    
+    // Verify that only files with token counts are displayed
+    const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
+    expect(calls.some(call => call.includes('file1.js'))).toBe(true);
+    expect(calls.some(call => call.includes('file2.js'))).toBe(true);
+    expect(calls.some(call => call.includes('file3.js'))).toBe(false); // Should be skipped
   });
 });
