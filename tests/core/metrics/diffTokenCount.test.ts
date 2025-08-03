@@ -88,13 +88,6 @@ index 123..456 100644
     });
 
     // Mock dependency functions
-    const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
-      {
-        path: 'test.js',
-        charCount: 20,
-        tokenCount: 5,
-      },
-    ]);
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
@@ -108,7 +101,6 @@ index 123..456 100644
         stagedDiffContent: '',
       },
       {
-        calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(25),
@@ -172,13 +164,6 @@ index 123..456 100644
     });
 
     // Mock dependency functions
-    const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
-      {
-        path: 'test.js',
-        charCount: 20,
-        tokenCount: 5,
-      },
-    ]);
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
@@ -189,7 +174,6 @@ index 123..456 100644
       config,
       undefined, // No diff content
       {
-        calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
@@ -251,13 +235,6 @@ index 123..456 100644
     });
 
     // Mock dependency functions
-    const mockCalculateAllFileMetrics = vi.fn().mockResolvedValue([
-      {
-        path: 'test.js',
-        charCount: 20,
-        tokenCount: 5,
-      },
-    ]);
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
@@ -268,7 +245,6 @@ index 123..456 100644
       config,
       undefined, // No diff content
       {
-        calculateAllFileMetrics: mockCalculateAllFileMetrics,
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
