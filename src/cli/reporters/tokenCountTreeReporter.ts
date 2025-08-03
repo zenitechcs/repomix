@@ -34,7 +34,7 @@ export const reportTokenCountTree = (
   }
 
   // Display the token count tree
-  logger.log('\n🔢 Token Count Tree:');
+  logger.log('🔢 Token Count Tree:');
   logger.log(pc.dim('────────────────────'));
 
   if (minTokenCount > 0) {

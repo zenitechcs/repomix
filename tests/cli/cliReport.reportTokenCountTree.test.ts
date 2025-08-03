@@ -33,7 +33,7 @@ describe('reportTokenCountTree', () => {
     reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
     // Verify token count tree is displayed
-    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
 
@@ -46,7 +46,7 @@ describe('reportTokenCountTree', () => {
 
     reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
-    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
     expect(mockLogger).toHaveBeenCalledWith('No files found.');
   });
@@ -69,7 +69,7 @@ describe('reportTokenCountTree', () => {
     reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
     // Verify threshold message is displayed
-    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('Showing entries with 10+ tokens:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
@@ -94,7 +94,7 @@ describe('reportTokenCountTree', () => {
     reportTokenCountTree(processedFiles, fileTokenCounts, config);
 
     // Verify tree is displayed (files without token counts should be skipped)
-    expect(mockLogger).toHaveBeenCalledWith('\n🔢 Token Count Tree:');
+    expect(mockLogger).toHaveBeenCalledWith('🔢 Token Count Tree:');
     expect(mockLogger).toHaveBeenCalledWith('────────────────────');
   });
 });
