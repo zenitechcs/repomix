@@ -290,12 +290,19 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   }
 
   if (options.tokenCountTree !== undefined) {
+    let tokenCountTree: boolean | number | string = options.tokenCountTree;
+
+    if (typeof options.tokenCountTree === 'string') {
+      const parsed = Number.parseInt(options.tokenCountTree, 10);
+      if (Number.isNaN(parsed)) {
+        throw new RepomixError(`Invalid token count threshold: '${options.tokenCountTree}'. Must be a valid number.`);
+      }
+      tokenCountTree = parsed;
+    }
+
     cliConfig.output = {
       ...cliConfig.output,
-      tokenCountTree:
-        typeof options.tokenCountTree === 'string'
-          ? Number.parseInt(options.tokenCountTree, 0)
-          : options.tokenCountTree,
+      tokenCountTree,
     };
   }
 

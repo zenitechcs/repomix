@@ -5,7 +5,7 @@ export interface FileWithTokens {
   tokens: number;
 }
 
-interface TreeNode {
+export interface TreeNode {
   _files?: FileTokenInfo[];
   _tokenSum?: number;
   [key: string]: TreeNode | FileTokenInfo[] | number | undefined;

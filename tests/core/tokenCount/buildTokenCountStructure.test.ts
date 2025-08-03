@@ -42,7 +42,7 @@ const convertToOutput = (node: TreeNode, isRoot = true): TokenCountOutput => {
   return result;
 };
 
-const buildTokenCountStructure = (filesWithTokens: FileWithTokens[], _rootDirs: string[]): TokenCountOutput => {
+const buildTokenCountStructure = (filesWithTokens: FileWithTokens[]): TokenCountOutput => {
   const root = buildTokenCountTree(filesWithTokens);
   return convertToOutput(root);
 };
@@ -50,9 +50,8 @@ const buildTokenCountStructure = (filesWithTokens: FileWithTokens[], _rootDirs: 
 describe('buildTokenCountStructure', () => {
   test('should build a simple directory structure', () => {
     const files: FileWithTokens[] = [{ path: 'tests/test.txt', tokens: 3 }];
-    const rootDirs = ['/project'];
 
-    const result = buildTokenCountStructure(files, rootDirs);
+    const result = buildTokenCountStructure(files);
 
     expect(result).toEqual([
       {
@@ -69,9 +68,8 @@ describe('buildTokenCountStructure', () => {
       { path: 'src/utils/format.js', tokens: 50 },
       { path: 'README.md', tokens: 30 },
     ];
-    const rootDirs = ['/project'];
 
-    const result = buildTokenCountStructure(files, rootDirs);
+    const result = buildTokenCountStructure(files);
 
     expect(result).toEqual([
       {
@@ -103,9 +101,8 @@ describe('buildTokenCountStructure', () => {
       { path: 'file1.js', tokens: 10 },
       { path: 'file2.js', tokens: 20 },
     ];
-    const rootDirs = ['/workspace/project1', '/workspace/project2'];
 
-    const result = buildTokenCountStructure(files, rootDirs);
+    const result = buildTokenCountStructure(files);
 
     expect(result).toEqual([
       {
@@ -121,9 +118,8 @@ describe('buildTokenCountStructure', () => {
 
   test('should handle empty file list', () => {
     const files: FileWithTokens[] = [];
-    const rootDirs = ['/project'];
 
-    const result = buildTokenCountStructure(files, rootDirs);
+    const result = buildTokenCountStructure(files);
 
     expect(result).toEqual([]);
   });
@@ -133,9 +129,8 @@ describe('buildTokenCountStructure', () => {
       { path: 'src/index.js', tokens: 100 },
       { path: 'tests/index.js', tokens: 50 },
     ];
-    const rootDirs = ['/project'];
 
-    const result = buildTokenCountStructure(files, rootDirs);
+    const result = buildTokenCountStructure(files);
 
     expect(result).toEqual([
       {

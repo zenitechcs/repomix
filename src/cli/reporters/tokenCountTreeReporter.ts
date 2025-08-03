@@ -1,26 +1,19 @@
 import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
-import { type FileWithTokens, buildTokenCountTree } from '../../core/tokenCount/buildTokenCountStructure.js';
+import {
+  type FileWithTokens,
+  type TreeNode,
+  buildTokenCountTree,
+} from '../../core/tokenCount/buildTokenCountStructure.js';
 import { logger } from '../../shared/logger.js';
-
-interface TreeNode {
-  _files?: Array<{ name: string; tokens: number }>;
-  _tokenSum?: number;
-  [key: string]: TreeNode | Array<{ name: string; tokens: number }> | number | undefined;
-}
 
 export const reportTokenCountTree = (
   processedFiles: ProcessedFile[],
   fileTokenCounts: Record<string, number>,
   config: RepomixConfigMerged,
 ) => {
-  const minTokenCount =
-    typeof config.output.tokenCountTree === 'number'
-      ? config.output.tokenCountTree
-      : typeof config.output.tokenCountTree === 'string'
-        ? Number.parseInt(config.output.tokenCountTree, 10)
-        : 0;
+  const minTokenCount = typeof config.output.tokenCountTree === 'number' ? config.output.tokenCountTree : 0;
 
   const filesWithTokens: FileWithTokens[] = [];
   for (const file of processedFiles) {
@@ -42,16 +35,10 @@ export const reportTokenCountTree = (
   }
 
   const tree = buildTokenCountTree(filesWithTokens);
-  displayNode(tree, '', true, true, minTokenCount);
+  displayNode(tree, '', true, minTokenCount);
 };
 
-const displayNode = (
-  node: TreeNode,
-  prefix: string,
-  _isLast: boolean,
-  isRoot: boolean,
-  minTokenCount: number,
-): void => {
+const displayNode = (node: TreeNode, prefix: string, isRoot: boolean, minTokenCount: number): void => {
   // Get all directory entries (excluding _files and _tokenSum)
   const allEntries = Object.entries(node).filter(
     ([key, value]) => !key.startsWith('_') && value && typeof value === 'object' && !Array.isArray(value),
@@ -101,7 +88,7 @@ const displayNode = (
     const childPrefix =
       isRoot && prefix === '' ? (isLastEntry ? '    ' : '│   ') : prefix + (isLastEntry ? '    ' : '│   ');
 
-    displayNode(childNode as TreeNode, childPrefix, isLastEntry, false, minTokenCount);
+    displayNode(childNode as TreeNode, childPrefix, false, minTokenCount);
   });
 
   // If this is the root and it's empty, show a message
