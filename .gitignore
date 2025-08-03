@@ -46,6 +46,9 @@ repomix-output.md
 .mcp.json
 .agents/local/
 
+# serena
+.serena/
+
 # private files
 .private/
 .env
