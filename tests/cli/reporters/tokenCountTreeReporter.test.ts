@@ -1,10 +1,10 @@
 import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
-import { reportTokenCountTree } from '../../src/cli/reporters/tokenCountTreeReporter.js';
-import type { RepomixConfigMerged } from '../../src/config/configSchema.js';
-import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
-import { logger } from '../../src/shared/logger.js';
+import { reportTokenCountTree } from '../../../src/cli/reporters/tokenCountTreeReporter.js';
+import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
+import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
+import { logger } from '../../../src/shared/logger.js';
 
-vi.mock('../../src/shared/logger.js');
+vi.mock('../../../src/shared/logger.js');
 
 describe('reportTokenCountTree', () => {
   const mockLogger = logger.log as Mock;
