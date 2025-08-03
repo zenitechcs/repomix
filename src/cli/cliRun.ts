@@ -2,7 +2,7 @@ import process from 'node:process';
 import { Command, Option, program } from 'commander';
 import pc from 'picocolors';
 import { getVersion } from '../core/file/packageJsonParse.js';
-import { handleError } from '../shared/errorHandle.js';
+import { RepomixError, handleError } from '../shared/errorHandle.js';
 import { logger, repomixLogLevels } from '../shared/logger.js';
 import { runDefaultAction } from './actions/defaultAction.js';
 import { runInitAction } from './actions/initAction.js';
@@ -53,15 +53,35 @@ export const run = async () => {
       // Basic Options
       .optionsGroup('Basic Options')
       .option('-v, --version', 'show version information')
-      // Output Options
-      .optionsGroup('Output Options')
-      .option('-o, --output <file>', 'specify the output file name')
+      // CLI Input/Output Options
+      .optionsGroup('CLI Input/Output Options')
+      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
+      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .addOption(new Option('--stdout', 'output to stdout instead of writing to a file').conflicts('output'))
+      .option('--stdin', 'read file list from stdin')
+      .option('--copy', 'copy generated output to system clipboard')
+      .option(
+        '--token-count-tree [threshold]',
+        'display file tree with token count summaries (optional: minimum token count threshold)',
+        (value: string | boolean) => {
+          if (typeof value === 'string') {
+            const parsed = Number.parseInt(value, 10);
+            if (Number.isNaN(parsed)) {
+              throw new RepomixError(`Invalid token count threshold: '${value}'. Must be a valid number.`);
+            }
+            return parsed;
+          }
+          return value;
+        },
+      )
+      .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
+      // Repomix Output Options
+      .optionsGroup('Repomix Output Options')
+      .option('-o, --output <file>', 'specify the output file name')
       .option('--style <type>', 'specify the output style (xml, markdown, plain)')
       .option('--parsable-style', 'by escaping and formatting, ensure the output is parsable as a document of its type')
       .option('--compress', 'perform code compression to reduce token count')
       .option('--output-show-line-numbers', 'add line numbers to each line in the output')
-      .option('--copy', 'copy generated output to system clipboard')
       .option('--no-file-summary', 'disable file summary section output')
       .option('--no-directory-structure', 'disable directory structure section output')
       .option('--no-files', 'disable files content output (metadata-only mode)')
@@ -76,13 +96,12 @@ export const run = async () => {
         '--include-diffs',
         'include git diffs in the output (includes both work tree and staged changes separately)',
       )
-      // Filter Options
-      .optionsGroup('Filter Options')
+      // File Selection Options
+      .optionsGroup('File Selection Options')
       .option('--include <patterns>', 'list of include patterns (comma-separated)')
       .option('-i, --ignore <patterns>', 'additional ignore patterns (comma-separated)')
       .option('--no-gitignore', 'disable .gitignore file usage')
       .option('--no-default-patterns', 'disable default patterns')
-      .option('--stdin', 'read file list from stdin')
       // Remote Repository Options
       .optionsGroup('Remote Repository Options')
       .option('--remote <url>', 'process a remote Git repository')
@@ -104,11 +123,6 @@ export const run = async () => {
       // MCP
       .optionsGroup('MCP')
       .option('--mcp', 'run as a MCP server')
-      // Other Options
-      .optionsGroup('Other Options')
-      .option('--top-files-len <number>', 'specify the number of top files to display', Number.parseInt)
-      .addOption(new Option('--verbose', 'enable verbose logging for detailed output').conflicts('quiet'))
-      .addOption(new Option('--quiet', 'disable all output to stdout').conflicts('verbose'))
       .action(commanderActionEndpoint);
 
     // Custom error handling function

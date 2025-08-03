@@ -30,18 +30,27 @@ export const calculateMetrics = async (
   progressCallback('Calculating metrics...');
 
   // For top files display optimization: calculate token counts only for top files by character count
+  // However, if tokenCountTree is enabled, calculate for all files to avoid double calculation
   const topFilesLength = config.output.topFilesLength;
-  const candidateFilesCount = Math.min(processedFiles.length, Math.max(topFilesLength * 10, topFilesLength));
+  const shouldCalculateAllFiles = !!config.output.tokenCountTree;
 
-  // Get top files by character count first
-  const topFilesByChar = [...processedFiles]
-    .sort((a, b) => b.content.length - a.content.length)
-    .slice(0, candidateFilesCount);
-
-  const topFilePaths = topFilesByChar.map((file) => file.path);
+  // Determine which files to calculate token counts for:
+  // - If tokenCountTree is enabled: calculate for all files to avoid double calculation
+  // - Otherwise: calculate only for top files by character count for optimization
+  const metricsTargetPaths = shouldCalculateAllFiles
+    ? processedFiles.map((file) => file.path)
+    : [...processedFiles]
+        .sort((a, b) => b.content.length - a.content.length)
+        .slice(0, Math.min(processedFiles.length, Math.max(topFilesLength * 10, topFilesLength)))
+        .map((file) => file.path);
 
   const [selectiveFileMetrics, totalTokens, gitDiffTokenCount] = await Promise.all([
-    deps.calculateSelectiveFileMetrics(processedFiles, topFilePaths, config.tokenCount.encoding, progressCallback),
+    deps.calculateSelectiveFileMetrics(
+      processedFiles,
+      metricsTargetPaths,
+      config.tokenCount.encoding,
+      progressCallback,
+    ),
     deps.calculateOutputMetrics(output, config.tokenCount.encoding, config.output.filePath),
     deps.calculateGitDiffMetrics(config, gitDiffResult),
   ]);

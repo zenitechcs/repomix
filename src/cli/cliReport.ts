@@ -4,8 +4,39 @@ import type { RepomixConfigMerged } from '../config/configSchema.js';
 import type { PackResult } from '../core/packager.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheck.js';
 import { logger } from '../shared/logger.js';
+import { reportTokenCountTree } from './reporters/tokenCountTreeReporter.js';
 
-export const printSummary = (packResult: PackResult, config: RepomixConfigMerged) => {
+/**
+ * Reports the results of packing operation including top files, security check, summary, and completion.
+ */
+export const reportResults = (cwd: string, packResult: PackResult, config: RepomixConfigMerged): void => {
+  logger.log('');
+
+  if (config.output.topFilesLength > 0) {
+    reportTopFiles(
+      packResult.fileCharCounts,
+      packResult.fileTokenCounts,
+      config.output.topFilesLength,
+      packResult.totalTokens,
+    );
+    logger.log('');
+  }
+
+  if (config.output.tokenCountTree) {
+    reportTokenCountTree(packResult.processedFiles, packResult.fileTokenCounts, config);
+    logger.log('');
+  }
+
+  reportSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
+  logger.log('');
+
+  reportSummary(packResult, config);
+  logger.log('');
+
+  reportCompletion();
+};
+
+export const reportSummary = (packResult: PackResult, config: RepomixConfigMerged) => {
   let securityCheckMessage = '';
   if (config.security.enableSecurityCheck) {
     if (packResult.suspiciousFilesResults.length > 0) {
@@ -40,7 +71,7 @@ export const printSummary = (packResult: PackResult, config: RepomixConfigMerged
   }
 };
 
-export const printSecurityCheck = (
+export const reportSecurityCheck = (
   rootDir: string,
   suspiciousFilesResults: SuspiciousFileResult[],
   suspiciousGitDiffResults: SuspiciousFileResult[],
@@ -53,7 +84,7 @@ export const printSecurityCheck = (
   logger.log(pc.white('🔎 Security Check:'));
   logger.log(pc.dim('──────────────────'));
 
-  // Print results for files
+  // Report results for files
   if (suspiciousFilesResults.length === 0) {
     logger.log(`${pc.green('✔')} ${pc.white('No suspicious files detected.')}`);
   } else {
@@ -69,7 +100,7 @@ export const printSecurityCheck = (
     logger.log(pc.yellow('Please review these files for potential sensitive information.'));
   }
 
-  // Print results for git diffs
+  // Report results for git diffs
   if (suspiciousGitDiffResults.length > 0) {
     logger.log('');
     logger.log(pc.yellow(`${suspiciousGitDiffResults.length} security issue(s) found in Git diffs:`));
@@ -84,7 +115,7 @@ export const printSecurityCheck = (
   }
 };
 
-export const printTopFiles = (
+export const reportTopFiles = (
   fileCharCounts: Record<string, number>,
   fileTokenCounts: Record<string, number>,
   topFilesLength: number,
@@ -92,7 +123,7 @@ export const printTopFiles = (
 ) => {
   const topFilesLengthStrLen = topFilesLength.toString().length;
   logger.log(pc.white(`📈 Top ${topFilesLength} Files by Token Count:`));
-  logger.log(pc.dim(`─────────────────────────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
+  logger.log(pc.dim(`─────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
 
   // Filter files that have token counts (top candidates by char count)
   const filesWithTokenCounts = Object.entries(fileTokenCounts)
@@ -112,7 +143,7 @@ export const printTopFiles = (
   });
 };
 
-export const printCompletion = () => {
+export const reportCompletion = () => {
   logger.log(pc.green('🎉 All Done!'));
   logger.log(pc.white('Your repository has been successfully packed.'));
 

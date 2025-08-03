@@ -13,7 +13,7 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { splitPatterns } from '../../shared/patternUtils.js';
-import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
+import { reportResults } from '../cliReport.js';
 import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
@@ -43,15 +43,26 @@ export const runDefaultAction = async (
 
   // Merge default, file, and CLI configs
   const config: RepomixConfigMerged = mergeConfigs(cwd, fileConfig, cliConfig);
-
   logger.trace('Merged config:', config);
 
-  // Route to appropriate processing workflow
-  if (cliOptions.stdin) {
-    return handleStdinProcessing(directories, cwd, config, cliOptions);
-  }
+  // Initialize spinner that can be shared across operations
+  const spinner = new Spinner('Initializing...', cliOptions);
+  spinner.start();
 
-  return handleDirectoryProcessing(directories, cwd, config, cliOptions);
+  const result = cliOptions.stdin
+    ? await handleStdinProcessing(directories, cwd, config, spinner)
+    : await handleDirectoryProcessing(directories, cwd, config, spinner);
+
+  spinner.succeed('Packing completed successfully!');
+
+  const packResult = result.packResult;
+
+  reportResults(cwd, packResult, config);
+
+  return {
+    packResult,
+    config,
+  };
 };
 
 /**
@@ -61,7 +72,7 @@ export const handleStdinProcessing = async (
   directories: string[],
   cwd: string,
   config: RepomixConfigMerged,
-  cliOptions: CliOptions,
+  spinner: Spinner,
 ): Promise<DefaultActionRunnerResult> => {
   // Validate directory arguments for stdin mode
   const firstDir = directories[0] ?? '.';
@@ -71,15 +82,10 @@ export const handleStdinProcessing = async (
     );
   }
 
-  const spinner = new Spinner('Reading file paths from stdin...', cliOptions);
-
   let packResult: PackResult;
 
   try {
     const stdinResult = await readFilePathsFromStdin(cwd);
-
-    spinner.start();
-    spinner.update('Packing files...');
 
     // Use pack with predefined files from stdin
     packResult = await pack(
@@ -96,10 +102,6 @@ export const handleStdinProcessing = async (
     throw error;
   }
 
-  spinner.succeed('Packing completed successfully!');
-
-  printResults(cwd, packResult, config);
-
   return {
     packResult,
     config,
@@ -113,12 +115,9 @@ export const handleDirectoryProcessing = async (
   directories: string[],
   cwd: string,
   config: RepomixConfigMerged,
-  cliOptions: CliOptions,
+  spinner: Spinner,
 ): Promise<DefaultActionRunnerResult> => {
   const targetPaths = directories.map((directory) => path.resolve(cwd, directory));
-
-  const spinner = new Spinner('Packing files...', cliOptions);
-  spinner.start();
 
   let packResult: PackResult;
 
@@ -131,39 +130,10 @@ export const handleDirectoryProcessing = async (
     throw error;
   }
 
-  spinner.succeed('Packing completed successfully!');
-
-  printResults(cwd, packResult, config);
-
   return {
     packResult,
     config,
   };
-};
-
-/**
- * Prints the results of packing operation including top files, security check, summary, and completion.
- */
-const printResults = (cwd: string, packResult: PackResult, config: RepomixConfigMerged): void => {
-  logger.log('');
-
-  if (config.output.topFilesLength > 0) {
-    printTopFiles(
-      packResult.fileCharCounts,
-      packResult.fileTokenCounts,
-      config.output.topFilesLength,
-      packResult.totalTokens,
-    );
-    logger.log('');
-  }
-
-  printSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
-  logger.log('');
-
-  printSummary(packResult, config);
-  logger.log('');
-
-  printCompletion();
 };
 
 /**
@@ -316,6 +286,13 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
         ...cliConfig.output?.git,
         includeDiffs: true,
       },
+    };
+  }
+
+  if (options.tokenCountTree !== undefined) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      tokenCountTree: options.tokenCountTree,
     };
   }
 
