@@ -1,5 +1,4 @@
 import path from 'node:path';
-import type { TiktokenEncoding } from 'tiktoken';
 import { loadFileConfig, mergeConfigs } from '../../config/configLoad.js';
 import {
   type RepomixConfigCli,
@@ -10,12 +9,11 @@ import {
 } from '../../config/configSchema.js';
 import { readFilePathsFromStdin } from '../../core/file/fileStdin.js';
 import { type PackResult, pack } from '../../core/packager.js';
-import { summarizeTokenCounts } from '../../core/tokenCount/saveTokenCounts.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { splitPatterns } from '../../shared/patternUtils.js';
-import { printCompletion, printSecurityCheck, printSummary, printTopFiles } from '../cliPrint.js';
+import { printCompletion, printSecurityCheck, printSummary, printTokenCountTree, printTopFiles } from '../cliPrint.js';
 import { Spinner } from '../cliSpinner.js';
 import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
@@ -58,8 +56,6 @@ export const runDefaultAction = async (
   spinner.succeed('Packing completed successfully!');
 
   const packResult = result.packResult;
-
-  await handleTokenCountSummary(packResult, config, cliOptions, spinner);
 
   printResults(cwd, packResult, config);
 
@@ -140,28 +136,6 @@ export const handleDirectoryProcessing = async (
   };
 };
 
-/**
- * Handles token count summary processing if requested by CLI options.
- */
-const handleTokenCountSummary = async (
-  packResult: PackResult,
-  config: RepomixConfigMerged,
-  cliOptions: CliOptions,
-  spinner: Spinner,
-): Promise<void> => {
-  if (cliOptions.summarizeTokenCounts) {
-    const threshold =
-      typeof cliOptions.summarizeTokenCounts === 'string' ? Number.parseInt(cliOptions.summarizeTokenCounts, 10) : 0;
-    await summarizeTokenCounts(
-      packResult.processedFiles,
-      config.tokenCount.encoding as TiktokenEncoding,
-      (message) => {
-        spinner.update(message);
-      },
-      threshold,
-    );
-  }
-};
 
 /**
  * Prints the results of packing operation including top files, security check, summary, and completion.
@@ -176,6 +150,11 @@ const printResults = (cwd: string, packResult: PackResult, config: RepomixConfig
       config.output.topFilesLength,
       packResult.totalTokens,
     );
+    logger.log('');
+  }
+
+  if (config.output.tokenCountTree) {
+    printTokenCountTree(packResult.processedFiles, packResult.fileTokenCounts, config);
     logger.log('');
   }
 
@@ -338,6 +317,15 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
         ...cliConfig.output?.git,
         includeDiffs: true,
       },
+    };
+  }
+
+  if (options.tokenCountTree !== undefined) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      tokenCountTree: typeof options.tokenCountTree === 'string'
+        ? Number.parseInt(options.tokenCountTree, 0)
+        : options.tokenCountTree,
     };
   }
 

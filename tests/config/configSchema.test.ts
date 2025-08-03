@@ -21,6 +21,41 @@ describe('configSchema', () => {
     });
   });
 
+  describe('tokenCountTree option', () => {
+    it('should accept boolean values for tokenCountTree', () => {
+      const configWithBooleanTrue = {
+        output: {
+          tokenCountTree: true,
+        },
+      };
+      const configWithBooleanFalse = {
+        output: {
+          tokenCountTree: false,
+        },
+      };
+      expect(repomixConfigBaseSchema.parse(configWithBooleanTrue)).toEqual(configWithBooleanTrue);
+      expect(repomixConfigBaseSchema.parse(configWithBooleanFalse)).toEqual(configWithBooleanFalse);
+    });
+
+    it('should accept string values for tokenCountTree', () => {
+      const configWithString = {
+        output: {
+          tokenCountTree: '100',
+        },
+      };
+      expect(repomixConfigBaseSchema.parse(configWithString)).toEqual(configWithString);
+    });
+
+    it('should reject invalid types for tokenCountTree', () => {
+      const configWithNumber = {
+        output: {
+          tokenCountTree: 123, // Should be boolean or string
+        },
+      };
+      expect(() => repomixConfigBaseSchema.parse(configWithNumber)).toThrow(z.ZodError);
+    });
+  });
+
   describe('repomixConfigBaseSchema', () => {
     it('should accept valid base config', () => {
       const validConfig = {
@@ -28,6 +63,7 @@ describe('configSchema', () => {
           filePath: 'output.txt',
           style: 'plain',
           removeComments: true,
+          tokenCountTree: true,
         },
         include: ['**/*.js'],
         ignore: {
@@ -77,6 +113,7 @@ describe('configSchema', () => {
           showLineNumbers: false,
           truncateBase64: true,
           copyToClipboard: true,
+          tokenCountTree: '100',
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,
@@ -172,6 +209,7 @@ describe('configSchema', () => {
           showLineNumbers: true,
           truncateBase64: true,
           copyToClipboard: false,
+          tokenCountTree: false,
           git: {
             sortByChanges: true,
             sortByChangesMaxCommits: 100,

@@ -10,7 +10,7 @@ interface TreeNode {
 export const displayTokenCountTree = (filesWithTokens: FileWithTokens[], minTokenCount = 0): void => {
   const tree = buildTokenCountTree(filesWithTokens);
 
-  logger.log('\n📊 Token Count Summary:');
+  logger.log('\n🔢 Token Count Tree:');
   if (minTokenCount > 0) {
     logger.log(`Showing entries with ${minTokenCount}+ tokens:`);
   }

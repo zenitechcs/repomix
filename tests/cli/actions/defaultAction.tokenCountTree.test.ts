@@ -4,21 +4,19 @@ import * as cliPrint from '../../../src/cli/cliPrint.js';
 import type { CliOptions } from '../../../src/cli/types.js';
 import * as configLoad from '../../../src/config/configLoad.js';
 import * as packager from '../../../src/core/packager.js';
-import { summarizeTokenCounts } from '../../../src/core/tokenCount/saveTokenCounts.js';
 
 vi.mock('../../../src/config/configLoad.js');
 vi.mock('../../../src/core/packager.js');
 vi.mock('../../../src/cli/cliPrint.js');
-vi.mock('../../../src/core/tokenCount/saveTokenCounts.js');
 vi.mock('../../../src/cli/actions/migrationAction.js', () => ({
   runMigrationAction: vi.fn(),
 }));
 
-describe('defaultAction with summarizeTokenCounts', () => {
+describe('defaultAction with tokenCountTree', () => {
   const mockLoadFileConfig = configLoad.loadFileConfig as Mock;
   const mockMergeConfigs = configLoad.mergeConfigs as Mock;
   const mockPack = packager.pack as Mock;
-  const mockSummarizeTokenCounts = summarizeTokenCounts as Mock;
+  const mockPrintTokenCountTree = cliPrint.printTokenCountTree as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -29,6 +27,7 @@ describe('defaultAction with summarizeTokenCounts', () => {
       output: {
         filePath: 'output.xml',
         topFilesLength: 5,
+        tokenCountTree: false,
       },
       tokenCount: {
         encoding: 'o200k_base',
@@ -51,70 +50,104 @@ describe('defaultAction with summarizeTokenCounts', () => {
     });
   });
 
-  test('should summarize token counts when --summarize-token-counts option is provided', async () => {
+  test('should display token count tree when --token-count-tree option is provided', async () => {
     const cliOptions: CliOptions = {
-      summarizeTokenCounts: true,
+      tokenCountTree: true,
     };
 
-    await runDefaultAction(['.'], '/test', cliOptions);
-
-    expect(mockSummarizeTokenCounts).toHaveBeenCalledWith(
-      [
-        { path: '/test/file1.js', content: 'content1' },
-        { path: '/test/file2.js', content: 'content2' },
-      ],
-      'o200k_base',
-      expect.any(Function),
-      0,
-    );
-  });
-
-  test('should not summarize token counts when option is not provided', async () => {
-    const cliOptions: CliOptions = {};
-
-    await runDefaultAction(['.'], '/test', cliOptions);
-
-    expect(mockSummarizeTokenCounts).not.toHaveBeenCalled();
-  });
-
-  test('should summarize token counts for multiple directories', async () => {
-    const cliOptions: CliOptions = {
-      summarizeTokenCounts: true,
-    };
-
-    await runDefaultAction(['src', 'tests'], '/project', cliOptions);
-
-    expect(mockSummarizeTokenCounts).toHaveBeenCalledWith(expect.any(Array), 'o200k_base', expect.any(Function), 0);
-  });
-
-  test('should use custom token encoding if specified', async () => {
-    const cliOptions: CliOptions = {
-      summarizeTokenCounts: true,
-      tokenCountEncoding: 'cl100k_base',
-    };
-
+    // Mock config to have tokenCountTree enabled
     mockMergeConfigs.mockReturnValue({
       output: {
         filePath: 'output.xml',
         topFilesLength: 5,
+        tokenCountTree: true,
       },
       tokenCount: {
-        encoding: 'cl100k_base',
+        encoding: 'o200k_base',
       },
     });
 
     await runDefaultAction(['.'], '/test', cliOptions);
 
-    expect(mockSummarizeTokenCounts).toHaveBeenCalledWith(expect.any(Array), 'cl100k_base', expect.any(Function), 0);
+    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
+      [
+        { path: '/test/file1.js', content: 'content1' },
+        { path: '/test/file2.js', content: 'content2' },
+      ],
+      {},
+      expect.objectContaining({
+        output: expect.objectContaining({
+          tokenCountTree: true,
+        }),
+      }),
+    );
+  });
+
+  test('should not display token count tree when option is not provided', async () => {
+    const cliOptions: CliOptions = {};
+
+    await runDefaultAction(['.'], '/test', cliOptions);
+
+    expect(mockPrintTokenCountTree).not.toHaveBeenCalled();
+  });
+
+  test('should display token count tree for multiple directories', async () => {
+    const cliOptions: CliOptions = {
+      tokenCountTree: true,
+    };
+
+    // Mock config to have tokenCountTree enabled
+    mockMergeConfigs.mockReturnValue({
+      output: {
+        filePath: 'output.xml',
+        topFilesLength: 5,
+        tokenCountTree: true,
+      },
+      tokenCount: {
+        encoding: 'o200k_base',
+      },
+    });
+
+    await runDefaultAction(['src', 'tests'], '/project', cliOptions);
+
+    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
+      expect.any(Array), 
+      expect.any(Object), 
+      expect.objectContaining({
+        output: expect.objectContaining({
+          tokenCountTree: true,
+        }),
+      })
+    );
   });
 
   test('should pass threshold parameter when provided', async () => {
     const cliOptions: CliOptions = {
-      summarizeTokenCounts: '50',
+      tokenCountTree: 50,
     };
+
+    // Mock config to have tokenCountTree enabled with threshold
+    mockMergeConfigs.mockReturnValue({
+      output: {
+        filePath: 'output.xml',
+        topFilesLength: 5,
+        tokenCountTree: 50,
+      },
+      tokenCount: {
+        encoding: 'o200k_base',
+      },
+    });
 
     await runDefaultAction(['.'], '/test', cliOptions);
 
-    expect(mockSummarizeTokenCounts).toHaveBeenCalledWith(expect.any(Array), 'o200k_base', expect.any(Function), 50);
+    expect(mockPrintTokenCountTree).toHaveBeenCalledWith(
+      expect.any(Array), 
+      expect.any(Object), 
+      expect.objectContaining({
+        output: expect.objectContaining({
+          tokenCountTree: 50,
+        }),
+      })
+    );
   });
 });

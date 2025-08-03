@@ -3,6 +3,9 @@ import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../config/configSchema.js';
 import type { PackResult } from '../core/packager.js';
 import type { SuspiciousFileResult } from '../core/security/securityCheck.js';
+import type { ProcessedFile } from '../core/file/fileTypes.js';
+import type { FileWithTokens } from '../core/tokenCount/buildTokenCountStructure.js';
+import { displayTokenCountTree } from '../core/tokenCount/displayTokenCountTree.js';
 import { logger } from '../shared/logger.js';
 
 export const printSummary = (packResult: PackResult, config: RepomixConfigMerged) => {
@@ -92,7 +95,7 @@ export const printTopFiles = (
 ) => {
   const topFilesLengthStrLen = topFilesLength.toString().length;
   logger.log(pc.white(`📈 Top ${topFilesLength} Files by Token Count:`));
-  logger.log(pc.dim(`─────────────────────────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
+  logger.log(pc.dim(`─────────────────────────────${'─'.repeat(topFilesLengthStrLen)}`));
 
   // Filter files that have token counts (top candidates by char count)
   const filesWithTokenCounts = Object.entries(fileTokenCounts)
@@ -110,6 +113,28 @@ export const printTopFiles = (
       `${pc.white(`${indexString}`)} ${pc.white(filePath)} ${pc.dim(`(${tokenCount.toLocaleString()} tokens, ${charCount.toLocaleString()} chars, ${percentageOfTotal}%)`)}`,
     );
   });
+};
+
+export const printTokenCountTree = (
+  processedFiles: ProcessedFile[],
+  fileTokenCounts: Record<string, number>,
+  config: RepomixConfigMerged,
+) => {
+  const minTokenCount = typeof config.output.tokenCountTree === 'number' ? config.output.tokenCountTree : 0;
+
+  const filesWithTokens: FileWithTokens[] = [];
+  for (const file of processedFiles) {
+    const tokens = fileTokenCounts[file.path];
+    if (tokens !== undefined) {
+      filesWithTokens.push({
+        path: file.path,
+        tokens,
+      });
+    }
+  }
+
+  // Display the token count tree
+  displayTokenCountTree(filesWithTokens, minTokenCount);
 };
 
 export const printCompletion = () => {

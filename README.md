@@ -507,29 +507,36 @@ Instruction
 #### Basic Options
 - `-v, --version`: Show tool version
 
-#### Output Options
-- `-o, --output <file>`: Specify the output file name
+#### CLI Input/Output Options
+- `--verbose`: Enable verbose logging
+- `--quiet`: Disable all output to stdout
 - `--stdout`: Output to stdout instead of writing to a file (cannot be used with `--output` option)
+- `--stdin`: Read file paths from stdin instead of discovering files automatically
+- `--copy`: Additionally copy generated output to system clipboard
+- `--token-count-tree [threshold]`: Display file tree with token count summaries (optional: minimum token count threshold)
+- `--top-files-len <number>`: Number of top files to display in the summary
+
+#### Repomix Output Options
+- `-o, --output <file>`: Specify the output file name
 - `--style <style>`: Specify the output style (`xml`, `markdown`, `plain`)
 - `--parsable-style`: Enable parsable output based on the chosen style schema. Note that this can increase token count.
 - `--compress`: Perform intelligent code extraction, focusing on essential function and class signatures to reduce token count
 - `--output-show-line-numbers`: Show line numbers in the output
-- `--copy`: Additionally copy generated output to system clipboard
 - `--no-file-summary`: Disable file summary section output
 - `--no-directory-structure`: Disable directory structure section output
+- `--no-files`: Disable files content output (metadata-only mode)
 - `--remove-comments`: Remove comments from supported file types
 - `--remove-empty-lines`: Remove empty lines from the output
 - `--truncate-base64`: Enable truncation of base64 data strings
 - `--header-text <text>`: Custom text to include in the file header
 - `--instruction-file-path <path>`: Path to a file containing detailed custom instructions
 - `--include-empty-directories`: Include empty directories in the output
-- `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately)
 - `--no-git-sort-by-changes`: Disable sorting files by git change count (enabled by default)
+- `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately)
 
-#### Filter Options
+#### File Selection Options
 - `--include <patterns>`: List of include patterns (comma-separated)
 - `-i, --ignore <patterns>`: Additional ignore patterns (comma-separated)
-- `--stdin`: Read file paths from stdin instead of discovering files automatically
 - `--no-gitignore`: Disable .gitignore file usage
 - `--no-default-patterns`: Disable default patterns
 
@@ -552,9 +559,6 @@ Instruction
 - `--mcp`: Run as a [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server
 
 #### Other Options
-- `--top-files-len <number>`: Number of top files to display in the summary
-- `--verbose`: Enable verbose logging
-- `--quiet`: Disable all output to stdout
 
 Examples:
 
@@ -877,6 +881,7 @@ Here's an explanation of the configuration options:
 | `output.truncateBase64`          | Whether to truncate long base64 data strings (e.g., images) to reduce token count                                            | `false`                |
 | `output.copyToClipboard`         | Whether to copy the output to system clipboard in addition to saving the file                                                | `false`                |
 | `output.topFilesLength`          | Number of top files to display in the summary. If set to 0, no summary will be displayed                                     | `5`                    |
+| `output.tokenCountTree`          | Whether to display file tree with token count summaries. Can be boolean or number (minimum token count threshold)           | `false`                |
 | `output.includeEmptyDirectories` | Whether to include empty directories in the repository structure                                                             | `false`                |
 | `output.git.sortByChanges`       | Whether to sort files by git change count (files with more changes appear at the bottom)                                     | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Maximum number of commits to analyze for git changes                                                                     | `100`                  |
@@ -913,6 +918,7 @@ Example configuration:
     "removeComments": false,
     "removeEmptyLines": false,
     "topFilesLength": 5,
+    "tokenCountTree": false, // or true, or a number like 10 for minimum token threshold
     "showLineNumbers": false,
     "truncateBase64": false,
     "copyToClipboard": false,
