@@ -47,12 +47,12 @@ describe('configSchema', () => {
     });
 
     it('should reject invalid types for tokenCountTree', () => {
-      const configWithNumber = {
+      const configWithInvalidType = {
         output: {
-          tokenCountTree: 123, // Should be boolean or string
+          tokenCountTree: [], // Should be boolean, number, or string
         },
       };
-      expect(() => repomixConfigBaseSchema.parse(configWithNumber)).toThrow(z.ZodError);
+      expect(() => repomixConfigBaseSchema.parse(configWithInvalidType)).toThrow(z.ZodError);
     });
   });
 

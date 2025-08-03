@@ -15,7 +15,12 @@ export const reportTokenCountTree = (
   fileTokenCounts: Record<string, number>,
   config: RepomixConfigMerged,
 ) => {
-  const minTokenCount = typeof config.output.tokenCountTree === 'number' ? config.output.tokenCountTree : 0;
+  const minTokenCount =
+    typeof config.output.tokenCountTree === 'number'
+      ? config.output.tokenCountTree
+      : typeof config.output.tokenCountTree === 'string'
+        ? Number.parseInt(config.output.tokenCountTree, 10)
+        : 0;
 
   const filesWithTokens: FileWithTokens[] = [];
   for (const file of processedFiles) {
@@ -29,10 +34,6 @@ export const reportTokenCountTree = (
   }
 
   // Display the token count tree
-  displayTokenCountTree(filesWithTokens, minTokenCount);
-};
-
-export const displayTokenCountTree = (filesWithTokens: FileWithTokens[], minTokenCount = 0): void => {
   logger.log('\n🔢 Token Count Tree:');
   logger.log(pc.dim('────────────────────'));
 
