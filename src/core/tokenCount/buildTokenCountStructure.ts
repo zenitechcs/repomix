@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { FileTokenInfo } from './types.js';
 
 export interface FileWithTokens {
@@ -17,7 +16,8 @@ export const buildTokenCountTree = (filesWithTokens: FileWithTokens[]): TreeNode
 
   for (const file of filesWithTokens) {
     // The file.path is already relative to the root directory
-    const parts = file.path.split(path.sep);
+    // Always use forward slash for consistency across platforms
+    const parts = file.path.split('/');
     const fileName = parts.pop();
     if (!fileName) continue;
 
