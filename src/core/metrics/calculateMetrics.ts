@@ -2,8 +2,9 @@ import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
-import { calculateAllFileMetrics, calculateSelectiveFileMetrics } from './calculateAllFileMetrics.js';
+import { calculateGitDiffMetrics } from './calculateGitDiffMetrics.js';
 import { calculateOutputMetrics } from './calculateOutputMetrics.js';
+import { calculateSelectiveFileMetrics } from './calculateSelectiveFileMetrics.js';
 
 export interface CalculateMetricsResult {
   totalFiles: number;
@@ -14,8 +15,6 @@ export interface CalculateMetricsResult {
   gitDiffTokenCount: number;
 }
 
-import { calculateGitDiffMetrics } from './calculateGitDiffMetrics.js';
-
 export const calculateMetrics = async (
   processedFiles: ProcessedFile[],
   output: string,
@@ -23,7 +22,6 @@ export const calculateMetrics = async (
   config: RepomixConfigMerged,
   gitDiffResult: GitDiffResult | undefined,
   deps = {
-    calculateAllFileMetrics,
     calculateSelectiveFileMetrics,
     calculateOutputMetrics,
     calculateGitDiffMetrics,

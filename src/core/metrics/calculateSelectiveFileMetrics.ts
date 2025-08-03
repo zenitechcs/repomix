@@ -7,58 +7,6 @@ import type { ProcessedFile } from '../file/fileTypes.js';
 import type { FileMetricsTask } from './workers/fileMetricsWorker.js';
 import type { FileMetrics } from './workers/types.js';
 
-export const calculateAllFileMetrics = async (
-  processedFiles: ProcessedFile[],
-  tokenCounterEncoding: TiktokenEncoding,
-  progressCallback: RepomixProgressCallback,
-  deps = {
-    initTaskRunner,
-  },
-): Promise<FileMetrics[]> => {
-  const taskRunner = deps.initTaskRunner<FileMetricsTask, FileMetrics>(
-    processedFiles.length,
-    new URL('./workers/fileMetricsWorker.js', import.meta.url).href,
-  );
-  const tasks = processedFiles.map(
-    (file, index) =>
-      ({
-        file,
-        index,
-        totalFiles: processedFiles.length,
-        encoding: tokenCounterEncoding,
-      }) satisfies FileMetricsTask,
-  );
-
-  try {
-    const startTime = process.hrtime.bigint();
-    logger.trace(`Starting metrics calculation for ${processedFiles.length} files using worker pool`);
-
-    let completedTasks = 0;
-    const results = await Promise.all(
-      tasks.map((task) =>
-        taskRunner.run(task).then((result) => {
-          completedTasks++;
-          progressCallback(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${pc.dim(task.file.path)}`);
-          logger.trace(`Calculating metrics... (${completedTasks}/${task.totalFiles}) ${task.file.path}`);
-          return result;
-        }),
-      ),
-    );
-
-    const endTime = process.hrtime.bigint();
-    const duration = Number(endTime - startTime) / 1e6;
-    logger.trace(`Metrics calculation completed in ${duration.toFixed(2)}ms`);
-
-    return results;
-  } catch (error) {
-    logger.error('Error during metrics calculation:', error);
-    throw error;
-  } finally {
-    // Always cleanup worker pool
-    await taskRunner.cleanup();
-  }
-};
-
 export const calculateSelectiveFileMetrics = async (
   processedFiles: ProcessedFile[],
   targetFilePaths: string[],
