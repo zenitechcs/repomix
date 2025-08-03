@@ -135,10 +135,3 @@ When writing release notes, please follow these guidelines:
   This helps ensure accuracy in release note descriptions.
 
 Please retrieve and reference the latest release notes from `.github/releases/` as they contain past release examples.
-
-## Other Project-Specific Rules
-
-For specialized areas of the codebase, please also refer to:
-
-- **[browser-extension.md](.agents/rules/browser-extension.md)** - Guidelines for browser extension development (Chrome/Firefox/Edge compatibility, manifest files, content scripts)
-- **[website.md](.agents/rules/website.md)** - Guidelines for documentation website (multi-language support, VitePress configuration, translation workflows)
