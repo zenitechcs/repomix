@@ -5,6 +5,17 @@ import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');
+vi.mock('picocolors', () => ({
+  default: {
+    white: (str: string) => `WHITE:${str}`,
+    dim: (str: string) => `DIM:${str}`,
+    green: (str: string) => `GREEN:${str}`,
+    yellow: (str: string) => `YELLOW:${str}`,
+    red: (str: string) => `RED:${str}`,
+    cyan: (str: string) => `CYAN:${str}`,
+    underline: (str: string) => `UNDERLINE:${str}`,
+  },
+}));
 
 describe('reportTokenCountTree', () => {
   const mockLogger = logger.log as Mock;
@@ -35,7 +46,7 @@ describe('reportTokenCountTree', () => {
     // Verify token count tree is displayed
     const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
     expect(calls.some(call => call.includes('🔢 Token Count Tree:'))).toBe(true);
-    expect(calls.some(call => call.includes('────────────────────'))).toBe(true);
+    expect(calls.some(call => call.includes('DIM:────────────────────'))).toBe(true);
     expect(calls.some(call => call.includes('src/'))).toBe(true);
     expect(calls.some(call => call.includes('file1.js'))).toBe(true);
     expect(calls.some(call => call.includes('file2.js'))).toBe(true);
@@ -52,7 +63,7 @@ describe('reportTokenCountTree', () => {
 
     const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
     expect(calls.some(call => call.includes('🔢 Token Count Tree:'))).toBe(true);
-    expect(calls.some(call => call.includes('────────────────────'))).toBe(true);
+    expect(calls.some(call => call.includes('DIM:────────────────────'))).toBe(true);
     expect(calls.some(call => call.includes('No files found.'))).toBe(true);
   });
 
@@ -77,7 +88,7 @@ describe('reportTokenCountTree', () => {
     const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
     expect(calls.some(call => call.includes('🔢 Token Count Tree:'))).toBe(true);
     expect(calls.some(call => call.includes('Showing entries with 10+ tokens:'))).toBe(true);
-    expect(calls.some(call => call.includes('────────────────────'))).toBe(true);
+    expect(calls.some(call => call.includes('DIM:────────────────────'))).toBe(true);
   });
 
   test('should skip files without token counts', () => {
@@ -102,7 +113,7 @@ describe('reportTokenCountTree', () => {
     // Verify tree is displayed (files without token counts should be skipped)
     const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
     expect(calls.some(call => call.includes('🔢 Token Count Tree:'))).toBe(true);
-    expect(calls.some(call => call.includes('────────────────────'))).toBe(true);
+    expect(calls.some(call => call.includes('DIM:────────────────────'))).toBe(true);
     expect(calls.some(call => call.includes('file1.js'))).toBe(true);
     expect(calls.some(call => call.includes('file2.js'))).toBe(true);
     expect(calls.some(call => call.includes('file3.js'))).toBe(false); // Should be skipped
