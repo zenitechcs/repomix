@@ -1,53 +1,59 @@
 # Opsi Baris Perintah
 
 ## Opsi Dasar
-- `-v, --version`: Menampilkan versi tool
+- `-v, --version`: Menampilkan versi alat
 
-## Opsi Output
-- `-o, --output <file>`: Nama file output (default: `repomix-output.txt`)
-- `--stdout`: Output ke stdout daripada menulis ke file (tidak dapat digunakan dengan opsi `--output`)
-- `--style <type>`: Gaya output (`plain`, `xml`, `markdown`) (default: `xml`)
-- `--parsable-style`: Mengaktifkan output yang dapat diparsing berdasarkan skema gaya yang dipilih (default: `false`)
-- `--compress`: Melakukan ekstraksi kode cerdas, berfokus pada signature fungsi dan class penting sambil menghapus detail implementasi. Untuk detail dan contoh lebih lanjut, lihat [Panduan Kompresi Kode](code-compress).
-- `--output-show-line-numbers`: Menambahkan nomor baris (default: `false`)
-- `--copy`: Salin ke clipboard (default: `false`)
-- `--no-file-summary`: Menonaktifkan ringkasan file (default: `true`)
-- `--no-directory-structure`: Menonaktifkan struktur direktori (default: `true`)
-- `--no-files`: Menonaktifkan output konten file (mode metadata saja) (default: `true`)
-- `--remove-comments`: Menghapus komentar (default: `false`)
-- `--remove-empty-lines`: Menghapus baris kosong (default: `false`)
-- `--truncate-base64`: Memotong string data yang dikodekan base64 (default: `false`)
+## Opsi Input/Output CLI
+- `--verbose`: Mengaktifkan pencatatan verbose
+- `--quiet`: Menonaktifkan semua output ke stdout
+- `--stdout`: Output ke stdout alih-alih menulis ke file (tidak dapat digunakan dengan opsi `--output`)
+- `--stdin`: Membaca jalur file dari stdin alih-alih menemukan file secara otomatis
+- `--copy`: Menyalin output yang dihasilkan ke clipboard sistem
+- `--token-count-tree [threshold]`: Menampilkan pohon file dengan ringkasan jumlah token (opsional: ambang batas jumlah token minimum). Berguna untuk mengidentifikasi file besar dan mengoptimalkan penggunaan token untuk batas konteks AI
+- `--top-files-len <number>`: Jumlah file teratas untuk ditampilkan dalam ringkasan
+
+## Opsi Output Repomix
+- `-o, --output <file>`: Menentukan nama file output
+- `--style <style>`: Menentukan gaya output (`xml`, `markdown`, `plain`)
+- `--parsable-style`: Mengaktifkan output yang dapat diurai berdasarkan skema gaya yang dipilih. Perhatikan bahwa ini dapat meningkatkan jumlah token.
+- `--compress`: Melakukan ekstraksi kode cerdas, fokus pada tanda tangan fungsi dan kelas penting untuk mengurangi jumlah token
+- `--output-show-line-numbers`: Menampilkan nomor baris dalam output
+- `--no-file-summary`: Menonaktifkan output bagian ringkasan file
+- `--no-directory-structure`: Menonaktifkan output bagian struktur direktori
+- `--no-files`: Menonaktifkan output konten file (mode hanya metadata)
+- `--remove-comments`: Menghapus komentar dari jenis file yang didukung
+- `--remove-empty-lines`: Menghapus baris kosong dari output
+- `--truncate-base64`: Mengaktifkan pemotongan string data base64
 - `--header-text <text>`: Teks kustom untuk disertakan dalam header file
-- `--instruction-file-path <path>`: Jalur ke file yang berisi instruksi kustom rinci
-- `--include-empty-directories`: Sertakan direktori kosong dalam output (default: `false`)
-- `--include-diffs`: Sertakan diff git dalam output (termasuk perubahan work tree dan staged secara terpisah) (default: `false`)
-- `--no-git-sort-by-changes`: Menonaktifkan pengurutan file berdasarkan jumlah perubahan git (default: `true`)
+- `--instruction-file-path <path>`: Jalur ke file yang berisi instruksi kustom terperinci
+- `--include-empty-directories`: Menyertakan direktori kosong dalam output
+- `--include-diffs`: Menyertakan diff git dalam output (menyertakan perubahan pohon kerja dan perubahan staged secara terpisah)
+- `--no-git-sort-by-changes`: Menonaktifkan pengurutan file berdasarkan jumlah perubahan git (diaktifkan secara default)
 
-## Opsi Filter
-- `--include <patterns>`: Pola untuk disertakan (dipisahkan koma)
-- `-i, --ignore <patterns>`: Pola untuk diabaikan (dipisahkan koma)
-- `--stdin`: Membaca jalur file dari stdin daripada menemukan file secara otomatis
+## Opsi Seleksi File
+- `--include <patterns>`: Daftar pola penyertaan (dipisahkan koma)
+- `-i, --ignore <patterns>`: Pola pengabaian tambahan (dipisahkan koma)
 - `--no-gitignore`: Menonaktifkan penggunaan file .gitignore
 - `--no-default-patterns`: Menonaktifkan pola default
 
 ## Opsi Repositori Remote
-- `--remote <url>`: Proses repositori remote
-- `--remote-branch <name>`: Tentukan nama branch remote, tag, atau commit hash (default ke branch default repositori)
+- `--remote <url>`: Memproses repositori remote
+- `--remote-branch <name>`: Menentukan nama branch remote, tag, atau hash commit (default ke branch default repositori)
 
 ## Opsi Konfigurasi
 - `-c, --config <path>`: Jalur file konfigurasi kustom
-- `--init`: Buat file konfigurasi
-- `--global`: Gunakan konfigurasi global
+- `--init`: Membuat file konfigurasi
+- `--global`: Menggunakan konfigurasi global
 
 ## Opsi Keamanan
 - `--no-security-check`: Menonaktifkan pemeriksaan keamanan (default: `true`)
 
-## Opsi Penghitungan Token
-- `--token-count-encoding <encoding>`: Tentukan encoding penghitungan token (misal, `o200k_base`, `cl100k_base`) (default: `o200k_base`)
+## Opsi Jumlah Token
+- `--token-count-encoding <encoding>`: Menentukan encoding jumlah token yang digunakan oleh tokenizer [tiktoken](https://github.com/openai/tiktoken) OpenAI (mis., `o200k_base` untuk GPT-4o, `cl100k_base` untuk GPT-4/3.5). Lihat [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) untuk detail encoding.
 
 ## Opsi Lainnya
-- `--top-files-len <number>`: Jumlah file teratas yang ditampilkan (default: `5`)
-- `--verbose`: Mengaktifkan logging verbose
+- `--top-files-len <number>`: Jumlah file teratas untuk ditampilkan (default: `5`)
+- `--verbose`: Mengaktifkan pencatatan verbose
 - `--quiet`: Menonaktifkan semua output ke stdout
 
 ## Contoh
@@ -62,13 +68,13 @@ repomix -o output.xml --style xml
 # Output ke stdout
 repomix --stdout > custom-output.txt
 
-# Kirim output ke stdout, lalu pipe ke perintah lain (misalnya, simonw/llm)
+# Output ke stdout, kemudian pipe ke perintah lain (mis., simonw/llm)
 repomix --stdout | llm "Tolong jelaskan apa yang dilakukan kode ini."
 
 # Output kustom dengan kompresi
 repomix --compress
 
-# Proses file tertentu
+# Memproses file tertentu
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
 
 # Repositori remote dengan branch
@@ -77,11 +83,16 @@ repomix --remote https://github.com/user/repo/tree/main
 # Repositori remote dengan commit
 repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
 
-# Repositori remote dengan format singkat
+# Repositori remote dengan bentuk singkat
 repomix --remote user/repo
 
-# Menggunakan stdin untuk daftar file
+# Daftar file menggunakan stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+echo -e "src/index.ts
+src/utils.ts" | repomix --stdin
+
+# Analisis jumlah token
+repomix --token-count-tree
+repomix --token-count-tree 1000  # Hanya tampilkan file/direktori dengan 1000+ token
 ```

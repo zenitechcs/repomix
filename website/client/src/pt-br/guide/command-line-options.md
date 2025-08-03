@@ -1,54 +1,60 @@
 # Opções de Linha de Comando
 
 ## Opções Básicas
-- `-v, --version`: Mostra a versão
+- `-v, --version`: Mostrar versão da ferramenta
 
-## Opções de Saída
-- `-o, --output <file>`: Nome do arquivo de saída (padrão: `repomix-output.txt`)
-- `--stdout`: Saída para a saída padrão em vez de escrever em um arquivo (não pode ser usado com a opção `--output`)
-- `--style <type>`: Estilo de saída (`plain`, `xml`, `markdown`) (padrão: `xml`)
-- `--parsable-style`: Habilita saída analisável baseada no esquema do estilo escolhido (padrão: `false`)
-- `--compress`: Realiza extração inteligente de código, focando nas assinaturas de funções e classes enquanto remove detalhes de implementação. Para mais detalhes e exemplos, consulte o [Guia de Compressão de Código](code-compress)
-- `--output-show-line-numbers`: Adiciona números de linha (padrão: `false`)
-- `--copy`: Copia para a área de transferência (padrão: `false`)
-- `--no-file-summary`: Desabilita o resumo de arquivos (padrão: `true`)
-- `--no-directory-structure`: Desabilita a estrutura de diretórios (padrão: `true`)
-- `--no-files`: Desabilita a saída de conteúdo de arquivos (modo somente metadados) (padrão: `true`)
-- `--remove-comments`: Remove comentários (padrão: `false`)
-- `--remove-empty-lines`: Remove linhas vazias (padrão: `false`)
-- `--truncate-base64`: Trunca strings de dados codificadas em base64 (padrão: `false`)
+## Opções de Entrada/Saída CLI
+- `--verbose`: Habilitar registro detalhado
+- `--quiet`: Desabilitar toda saída para stdout
+- `--stdout`: Saída para stdout em vez de escrever para um arquivo (não pode ser usado com a opção `--output`)
+- `--stdin`: Ler caminhos de arquivos do stdin em vez de descobrir arquivos automaticamente
+- `--copy`: Copiar adicionalmente a saída gerada para a área de transferência do sistema
+- `--token-count-tree [threshold]`: Exibir árvore de arquivos com resumos de contagem de tokens (opcional: limite mínimo de contagem de tokens). Útil para identificar arquivos grandes e otimizar o uso de tokens para limites de contexto de IA
+- `--top-files-len <number>`: Número de arquivos principais para exibir no resumo
+
+## Opções de Saída do Repomix
+- `-o, --output <file>`: Especificar nome do arquivo de saída
+- `--style <style>`: Especificar estilo de saída (`xml`, `markdown`, `plain`)
+- `--parsable-style`: Habilitar saída analisável baseada no esquema de estilo escolhido. Note que isso pode aumentar a contagem de tokens.
+- `--compress`: Realizar extração inteligente de código, focando em assinaturas essenciais de funções e classes para reduzir a contagem de tokens
+- `--output-show-line-numbers`: Mostrar números de linha na saída
+- `--no-file-summary`: Desabilitar saída da seção de resumo de arquivos
+- `--no-directory-structure`: Desabilitar saída da seção de estrutura de diretórios
+- `--no-files`: Desabilitar saída de conteúdo de arquivos (modo somente metadados)
+- `--remove-comments`: Remover comentários de tipos de arquivos suportados
+- `--remove-empty-lines`: Remover linhas vazias da saída
+- `--truncate-base64`: Habilitar truncamento de strings de dados base64
 - `--header-text <text>`: Texto personalizado para incluir no cabeçalho do arquivo
 - `--instruction-file-path <path>`: Caminho para um arquivo contendo instruções personalizadas detalhadas
-- `--include-empty-directories`: Inclui diretórios vazios na saída (padrão: `false`)
-- `--include-diffs`: Inclui diferenças do git na saída (inclui separadamente as alterações da árvore de trabalho e as alterações preparadas) (padrão: `false`)
-- `--no-git-sort-by-changes`: Desabilita a ordenação de arquivos por contagem de alterações do git (padrão: `true`)
+- `--include-empty-directories`: Incluir diretórios vazios na saída
+- `--include-diffs`: Incluir diffs do git na saída (inclui mudanças da árvore de trabalho e mudanças em stage separadamente)
+- `--no-git-sort-by-changes`: Desabilitar ordenação de arquivos por contagem de mudanças do git (habilitado por padrão)
 
-## Opções de Filtro
-- `--include <patterns>`: Padrões para incluir (separados por vírgula)
-- `-i, --ignore <patterns>`: Padrões para ignorar (separados por vírgula)
-- `--stdin`: Lê caminhos de arquivos do stdin em vez de descobrir arquivos automaticamente
-- `--no-gitignore`: Desabilita o uso do arquivo .gitignore
-- `--no-default-patterns`: Desabilita padrões padrão
+## Opções de Seleção de Arquivos
+- `--include <patterns>`: Lista de padrões de inclusão (separados por vírgula)
+- `-i, --ignore <patterns>`: Padrões de ignorar adicionais (separados por vírgula)
+- `--no-gitignore`: Desabilitar uso do arquivo .gitignore
+- `--no-default-patterns`: Desabilitar padrões padrão
 
 ## Opções de Repositório Remoto
-- `--remote <url>`: Processa repositório remoto
-- `--remote-branch <name>`: Especifica o nome do branch remoto, tag ou hash do commit (padrão é o branch padrão do repositório)
+- `--remote <url>`: Processar repositório remoto
+- `--remote-branch <name>`: Especificar nome do branch remoto, tag ou hash do commit (padrão para o branch padrão do repositório)
 
 ## Opções de Configuração
 - `-c, --config <path>`: Caminho do arquivo de configuração personalizado
-- `--init`: Cria arquivo de configuração
-- `--global`: Usa configuração global
+- `--init`: Criar arquivo de configuração
+- `--global`: Usar configuração global
 
 ## Opções de Segurança
-- `--no-security-check`: Desabilita verificação de segurança (padrão: `true`)
+- `--no-security-check`: Desabilitar verificação de segurança (padrão: `true`)
 
 ## Opções de Contagem de Tokens
-- `--token-count-encoding <encoding>`: Especifica a codificação para contagem de tokens (ex: `o200k_base`, `cl100k_base`) (padrão: `o200k_base`)
+- `--token-count-encoding <encoding>`: Especificar codificação de contagem de tokens usada pelo tokenizador [tiktoken](https://github.com/openai/tiktoken) da OpenAI (ex., `o200k_base` para GPT-4o, `cl100k_base` para GPT-4/3.5). Veja [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) para detalhes de codificação.
 
 ## Outras Opções
 - `--top-files-len <number>`: Número de arquivos principais para mostrar (padrão: `5`)
-- `--verbose`: Habilita log detalhado
-- `--quiet`: Desabilita toda saída para stdout
+- `--verbose`: Habilitar registro detalhado
+- `--quiet`: Desabilitar toda saída para stdout
 
 ## Exemplos
 
@@ -59,11 +65,11 @@ repomix
 # Saída personalizada
 repomix -o output.xml --style xml
 
-# Saída para a saída padrão
+# Saída para stdout
 repomix --stdout > custom-output.txt
 
-# Enviar saída para a saída padrão, depois canalizar para outro comando (por exemplo, simonw/llm)
-repomix --stdout | llm "Por favor, explique o que este código faz"
+# Saída para stdout, depois pipe para outro comando (ex., simonw/llm)
+repomix --stdout | llm "Por favor explique o que este código faz."
 
 # Saída personalizada com compressão
 repomix --compress
@@ -77,11 +83,16 @@ repomix --remote https://github.com/user/repo/tree/main
 # Repositório remoto com commit
 repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb28655d85712680f1
 
-# Repositório remoto com formato curto
+# Repositório remoto com forma abreviada
 repomix --remote user/repo
 
-# Usando stdin para lista de arquivos
+# Lista de arquivos usando stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+echo -e "src/index.ts
+src/utils.ts" | repomix --stdin
+
+# Análise de contagem de tokens
+repomix --token-count-tree
+repomix --token-count-tree 1000  # Mostrar apenas arquivos/diretórios com 1000+ tokens
 ```

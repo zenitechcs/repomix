@@ -1,32 +1,38 @@
 # コマンドラインオプション
 
 ## 基本オプション
-- `-v, --version`: バージョンを表示
+- `-v, --version`: ツールのバージョンを表示
 
-## 出力オプション
-- `-o, --output <file>`: 出力ファイル名（デフォルト: `repomix-output.txt`）
+## CLI入出力オプション
+- `--verbose`: 詳細なログを有効化
+- `--quiet`: 標準出力へのすべての出力を無効化
 - `--stdout`: ファイルに書き込む代わりに標準出力に出力（`--output`オプションと併用不可）
-- `--style <type>`: 出力形式（`plain`、`xml`、`markdown`）（デフォルト: `xml`）
-- `--parsable-style`: 選択した形式のスキーマに基づいて解析可能な出力を有効化（デフォルト: `false`）
-- `--compress`: 関数やクラスのシグネチャなどの重要な構造を保持しながら、実装の詳細を削除するインテリジェントなコード抽出を実行します。詳細と例については、[コード圧縮ガイド](code-compress)を参照してください。
-- `--output-show-line-numbers`: 行番号を追加（デフォルト: `false`）
-- `--copy`: クリップボードにコピー（デフォルト: `false`）
-- `--no-file-summary`: ファイルサマリーを無効化（デフォルト: `true`）
-- `--no-directory-structure`: ディレクトリ構造を無効化（デフォルト: `true`）
-- `--no-files`: ファイル内容の出力を無効化（メタデータのみモード）（デフォルト: `true`）
-- `--remove-comments`: コメントを削除（デフォルト: `false`）
-- `--remove-empty-lines`: 空行を削除（デフォルト: `false`）
-- `--truncate-base64`: Base64エンコードされたデータ文字列を切り捨て（デフォルト: `false`）
+- `--stdin`: ファイルを自動的に検出する代わりに、stdinからファイルパスを読み取る
+- `--copy`: 生成された出力をシステムクリップボードにも追加でコピー
+- `--token-count-tree [threshold]`: トークン数のサマリーでファイルツリーを表示（オプション：最小トークン数のしきい値）。大きなファイルを特定し、AIコンテキスト制限に向けたトークン使用量を最適化するのに有用
+- `--top-files-len <number>`: サマリーに表示するトップファイルの数
+
+## Repomix出力オプション
+- `-o, --output <file>`: 出力ファイル名を指定
+- `--style <style>`: 出力スタイルを指定（`xml`、`markdown`、`plain`）
+- `--parsable-style`: 選択した形式のスキーマに基づいて解析可能な出力を有効化。これによりトークン数が増加する可能性があります。
+- `--compress`: 関数やクラスのシグネチャなどの重要な構造に焦点を当てたインテリジェントなコード抽出を実行し、トークン数を削減
+- `--output-show-line-numbers`: 出力に行番号を表示
+- `--no-file-summary`: ファイルサマリーセクションの出力を無効化
+- `--no-directory-structure`: ディレクトリ構造セクションの出力を無効化
+- `--no-files`: ファイル内容の出力を無効化（メタデータのみモード）
+- `--remove-comments`: サポートされているファイルタイプからコメントを削除
+- `--remove-empty-lines`: 出力から空行を削除
+- `--truncate-base64`: Base64データ文字列の切り捨てを有効化
 - `--header-text <text>`: ファイルヘッダーに含めるカスタムテキスト
 - `--instruction-file-path <path>`: 詳細なカスタム指示を含むファイルのパス
-- `--include-empty-directories`: 空のディレクトリを出力に含める（デフォルト: `false`）
-- `--include-diffs`: Gitの差分を出力に含める（ワークツリーとステージングされた変更が別々に含まれます）（デフォルト: `false`）
-- `--no-git-sort-by-changes`: Gitの変更回数によるファイルのソートを無効化（デフォルト: `true`）
+- `--include-empty-directories`: 空のディレクトリを出力に含める
+- `--include-diffs`: Git差分を出力に含める（ワークツリーとステージングされた変更を別々に含む）
+- `--no-git-sort-by-changes`: Gitの変更回数によるファイルのソートを無効化（デフォルトで有効）
 
-## フィルターオプション
-- `--include <patterns>`: 含めるパターン（カンマ区切り）
-- `-i, --ignore <patterns>`: 除外パターン（カンマ区切り）
-- `--stdin`: ファイルを自動的に検出する代わりに、stdinからファイルパスを読み取る
+## ファイル選択オプション
+- `--include <patterns>`: 含めるパターンのリスト（カンマ区切り）
+- `-i, --ignore <patterns>`: 追加の除外パターン（カンマ区切り）
 - `--no-gitignore`: .gitignoreファイルの使用を無効化
 - `--no-default-patterns`: デフォルトパターンを無効化
 
@@ -43,7 +49,7 @@
 - `--no-security-check`: セキュリティチェックを無効化（デフォルト: `true`）
 
 ## トークンカウントオプション
-- `--token-count-encoding <encoding>`: トークンカウントのエンコーディングを指定（例: `o200k_base`、`cl100k_base`）（デフォルト: `o200k_base`）
+- `--token-count-encoding <encoding>`: OpenAIの[tiktoken](https://github.com/openai/tiktoken)トークナイザーで使用されるトークンカウントエンコーディングを指定（例：GPT-4o用`o200k_base`、GPT-4/3.5用`cl100k_base`）。エンコーディングの詳細については[tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24)を参照してください。
 
 ## その他のオプション
 - `--top-files-len <number>`: 表示するトップファイルの数（デフォルト: `5`）
@@ -83,5 +89,10 @@ repomix --remote user/repo
 # stdinを使用したファイルリスト
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+echo -e "src/index.ts
+src/utils.ts" | repomix --stdin
+
+# トークン数分析
+repomix --token-count-tree
+repomix --token-count-tree 1000  # 1000以上のトークンを持つファイル/ディレクトリのみを表示
 ```

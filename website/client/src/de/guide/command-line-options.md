@@ -1,73 +1,80 @@
-# Kommandozeilenoptionen
+# Befehlszeilenoptionen
 
 ## Grundlegende Optionen
-- `-v, --version`: Zeigt die Version an
+- `-v, --version`: Tool-Version anzeigen
 
-## Ausgabeoptionen
-- `-o, --output <file>`: Ausgabedateiname (Standard: `repomix-output.txt`)
-- `--stdout`: Ausgabe an die Standardausgabe anstatt in eine Datei (kann nicht mit der Option `--output` verwendet werden)
-- `--style <type>`: Ausgabeformat (`plain`, `xml`, `markdown`) (Standard: `xml`)
-- `--parsable-style`: Aktiviert parsbare Ausgabe basierend auf dem gewählten Formatschema (Standard: `false`)
-- `--compress`: Führt eine intelligente Code-Extraktion durch, die sich auf Funktions- und Klassensignaturen konzentriert und Implementierungsdetails entfernt. Weitere Details und Beispiele finden Sie im [Code-Komprimierungsleitfaden](code-compress)
-- `--output-show-line-numbers`: Fügt Zeilennummern hinzu (Standard: `false`)
-- `--copy`: In die Zwischenablage kopieren (Standard: `false`)
-- `--no-file-summary`: Deaktiviert die Dateizusammenfassung (Standard: `true`)
-- `--no-directory-structure`: Deaktiviert die Verzeichnisstruktur (Standard: `true`)
-- `--no-files`: Deaktiviert die Ausgabe des Dateiinhalts (Nur-Metadaten-Modus) (Standard: `true`)
-- `--remove-comments`: Entfernt Kommentare (Standard: `false`)
-- `--remove-empty-lines`: Entfernt leere Zeilen (Standard: `false`)
-- `--truncate-base64`: Schneidet Base64-kodierte Datenstrings ab (Standard: `false`)
-- `--header-text <text>`: Benutzerdefinierter Text für den Dateikopf
+## CLI Ein-/Ausgabeoptionen
+- `--verbose`: Ausführliche Protokollierung aktivieren
+- `--quiet`: Alle Ausgaben an stdout deaktivieren
+- `--stdout`: Ausgabe an stdout statt in eine Datei (kann nicht mit `--output` Option verwendet werden)
+- `--stdin`: Dateipfade von stdin lesen statt Dateien automatisch zu entdecken
+- `--copy`: Generierte Ausgabe zusätzlich in die Systemzwischenablage kopieren
+- `--token-count-tree [threshold]`: Dateibaum mit Token-Anzahl-Zusammenfassungen anzeigen (optional: minimale Token-Anzahl-Schwelle). Nützlich zur Identifizierung großer Dateien und Optimierung der Token-Nutzung für KI-Kontextlimits
+- `--top-files-len <number>`: Anzahl der Top-Dateien in der Zusammenfassung
+
+## Repomix-Ausgabeoptionen
+- `-o, --output <file>`: Ausgabedateiname angeben
+- `--style <style>`: Ausgabestil angeben (`xml`, `markdown`, `plain`)
+- `--parsable-style`: Parsbare Ausgabe basierend auf dem gewählten Stil-Schema aktivieren. Beachten Sie, dass dies die Token-Anzahl erhöhen kann.
+- `--compress`: Intelligente Code-Extraktion durchführen, die sich auf wesentliche Funktions- und Klassensignaturen konzentriert, um die Token-Anzahl zu reduzieren
+- `--output-show-line-numbers`: Zeilennummern in der Ausgabe anzeigen
+- `--no-file-summary`: Datei-Zusammenfassungsbereich-Ausgabe deaktivieren
+- `--no-directory-structure`: Verzeichnisstruktur-Bereich-Ausgabe deaktivieren
+- `--no-files`: Dateiinhalt-Ausgabe deaktivieren (nur Metadaten-Modus)
+- `--remove-comments`: Kommentare aus unterstützten Dateitypen entfernen
+- `--remove-empty-lines`: Leere Zeilen aus der Ausgabe entfernen
+- `--truncate-base64`: Kürzung von Base64-Datenstrings aktivieren
+- `--header-text <text>`: Benutzerdefinierten Text im Dateikopf einschließen
 - `--instruction-file-path <path>`: Pfad zu einer Datei mit detaillierten benutzerdefinierten Anweisungen
-- `--include-empty-directories`: Leere Verzeichnisse in die Ausgabe einbeziehen (Standard: `false`)
-- `--include-diffs`: Git-Unterschiede in die Ausgabe einbeziehen (enthält sowohl Arbeitsbaum- als auch gestaged Änderungen separat) (Standard: `false`)
+- `--include-empty-directories`: Leere Verzeichnisse in die Ausgabe einschließen
+- `--include-diffs`: Git-Diffs in die Ausgabe einschließen (beinhaltet Arbeitsbaum- und gestufte Änderungen separat)
+- `--no-git-sort-by-changes`: Sortierung der Dateien nach Git-Änderungsanzahl deaktivieren (standardmäßig aktiviert)
 
-## Filteroptionen
-- `--include <patterns>`: Einzuschließende Muster (durch Komma getrennt)
-- `-i, --ignore <patterns>`: Zu ignorierende Muster (durch Komma getrennt)
-- `--stdin`: Dateipfade von stdin lesen anstatt Dateien automatisch zu erkennen
-- `--no-gitignore`: Deaktiviert die Verwendung der .gitignore-Datei
-- `--no-default-patterns`: Deaktiviert Standardmuster
+## Dateiauswahloptionen
+- `--include <patterns>`: Liste der Einschlussmuster (kommagetrennt)
+- `-i, --ignore <patterns>`: Zusätzliche Ignoriermuster (kommagetrennt)
+- `--no-gitignore`: .gitignore-Datei-Nutzung deaktivieren
+- `--no-default-patterns`: Standardmuster deaktivieren
 
 ## Remote-Repository-Optionen
 - `--remote <url>`: Remote-Repository verarbeiten
-- `--remote-branch <name>`: Remote-Branch-Name, Tag oder Commit-Hash angeben (Standard ist der Standard-Branch des Repositories)
+- `--remote-branch <name>`: Remote-Branch-Name, Tag oder Commit-Hash angeben (Standard ist Repository-Standard-Branch)
 
 ## Konfigurationsoptionen
-- `-c, --config <path>`: Pfad zur benutzerdefinierten Konfigurationsdatei
+- `-c, --config <path>`: Benutzerdefinierten Konfigurationsdateipfad
 - `--init`: Konfigurationsdatei erstellen
 - `--global`: Globale Konfiguration verwenden
 
 ## Sicherheitsoptionen
-- `--no-security-check`: Deaktiviert die Sicherheitsprüfung (Standard: `true`)
+- `--no-security-check`: Sicherheitsprüfung deaktivieren (Standard: `true`)
 
-## Token-Zähloptionen
-- `--token-count-encoding <encoding>`: Token-Zählkodierung festlegen (z.B. `o200k_base`, `cl100k_base`) (Standard: `o200k_base`)
+## Token-Anzahl-Optionen
+- `--token-count-encoding <encoding>`: Token-Anzahl-Kodierung angeben, die von OpenAIs [tiktoken](https://github.com/openai/tiktoken) Tokenizer verwendet wird (z.B. `o200k_base` für GPT-4o, `cl100k_base` für GPT-4/3.5). Siehe [tiktoken model.py](https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L24) für Kodierungsdetails.
 
 ## Weitere Optionen
 - `--top-files-len <number>`: Anzahl der anzuzeigenden Top-Dateien (Standard: `5`)
 - `--verbose`: Ausführliche Protokollierung aktivieren
-- `--quiet`: Deaktiviert alle Ausgaben an stdout
+- `--quiet`: Alle Ausgaben an stdout deaktivieren
 
 ## Beispiele
 
 ```bash
-# Grundlegende Verwendung
+# Grundlegende Nutzung
 repomix
 
 # Benutzerdefinierte Ausgabe
 repomix -o output.xml --style xml
 
-# Ausgabe an die Standardausgabe
+# Ausgabe an stdout
 repomix --stdout > custom-output.txt
 
-# Ausgabe an die Standardausgabe senden, dann in einen anderen Befehl weiterleiten (zum Beispiel: simonw/llm)
-repomix --stdout | llm "Bitte erkläre, was dieser Code macht"
+# Ausgabe an stdout, dann an anderen Befehl weiterleiten (z.B. simonw/llm)
+repomix --stdout | llm "Bitte erklären Sie, was dieser Code macht."
 
 # Benutzerdefinierte Ausgabe mit Komprimierung
 repomix --compress
 
-# Bestimmte Dateien verarbeiten
+# Spezifische Dateien verarbeiten
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"
 
 # Remote-Repository mit Branch
@@ -82,5 +89,10 @@ repomix --remote user/repo
 # Dateiliste mit stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
-echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+echo -e "src/index.ts
+src/utils.ts" | repomix --stdin
+
+# Token-Anzahl-Analyse
+repomix --token-count-tree
+repomix --token-count-tree 1000  # Nur Dateien/Verzeichnisse mit 1000+ Tokens anzeigen
 ```

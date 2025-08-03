@@ -93,6 +93,40 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Token-Anzahl-Optimierung
+
+Das Verständnis der Token-Verteilung Ihrer Codebasis ist entscheidend für die Optimierung von KI-Interaktionen. Verwenden Sie die `--token-count-tree`-Option, um die Token-Nutzung in Ihrem gesamten Projekt zu visualisieren:
+
+```bash
+repomix --token-count-tree
+```
+
+Dies zeigt eine hierarchische Ansicht Ihrer Codebasis mit Token-Anzahlen:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+Sie können auch eine minimale Token-Schwelle setzen, um sich auf größere Dateien zu konzentrieren:
+
+```bash
+repomix --token-count-tree 1000  # Nur Dateien/Verzeichnisse mit 1000+ Tokens anzeigen
+```
+
+Dies hilft Ihnen dabei:
+- **Token-schwere Dateien identifizieren** - Dateien, die KI-Kontextlimits überschreiten könnten
+- **Dateiauswahl optimieren** - Verwendung von `--include` und `--ignore` Mustern
+- **Komprimierungsstrategien planen** - Zielgerichtete Strategien für die größten Beitragenden
+- **Inhalte vs. Kontext ausbalancieren** - Beim Vorbereiten von Code für KI-Analysen
+
 ## Ausgabeformate
 
 ### XML (Standard)

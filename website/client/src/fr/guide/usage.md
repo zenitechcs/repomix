@@ -92,9 +92,44 @@ Lorsque vous utilisez `--stdin`, les fichiers spécifiés sont effectivement ajo
 
 ```bash
 repomix --compress
+
 # Vous pouvez également l'utiliser avec des dépôts distants:
 repomix --remote yamadashy/repomix --compress
 ```
+
+### Optimisation du nombre de jetons
+
+Comprendre la distribution des jetons de votre base de code est crucial pour optimiser les interactions IA. Utilisez l'option `--token-count-tree` pour visualiser l'utilisation des jetons dans votre projet entier:
+
+```bash
+repomix --token-count-tree
+```
+
+Cela affiche une vue hiérarchique de votre base de code avec les comptes de jetons:
+
+```
+🔢 Token Count Tree:
+────────────────────
+└── src/ (70,925 tokens)
+    ├── cli/ (12,714 tokens)
+    │   ├── actions/ (7,546 tokens)
+    │   └── reporters/ (990 tokens)
+    └── core/ (41,600 tokens)
+        ├── file/ (10,098 tokens)
+        └── output/ (5,808 tokens)
+```
+
+Vous pouvez également définir un seuil minimum de jetons pour vous concentrer sur les fichiers plus volumineux:
+
+```bash
+repomix --token-count-tree 1000  # Afficher uniquement les fichiers/répertoires avec 1000+ jetons
+```
+
+Cela vous aide à:
+- **Identifier les fichiers lourds en jetons** - qui pourraient dépasser les limites de contexte IA
+- **Optimiser la sélection de fichiers** - en utilisant les motifs `--include` et `--ignore`
+- **Planifier les stratégies de compression** - en ciblant les plus gros contributeurs
+- **Équilibrer contenu vs contexte** - lors de la préparation du code pour l'analyse IA
 
 ## Formats de sortie
 
