@@ -93,7 +93,7 @@ export const execLsRemote = async (
   validateGitUrl(url);
 
   try {
-    const result = await deps.execFileAsync('git', ['ls-remote', '--heads', '--tags', url]);
+    const result = await deps.execFileAsync('git', ['ls-remote', '--heads', '--tags', '--', url]);
     return result.stdout || '';
   } catch (error) {
     logger.trace('Failed to execute git ls-remote:', (error as Error).message);
@@ -113,7 +113,7 @@ export const execGitShallowClone = async (
 
   if (remoteBranch) {
     await deps.execFileAsync('git', ['-C', directory, 'init']);
-    await deps.execFileAsync('git', ['-C', directory, 'remote', 'add', 'origin', url]);
+    await deps.execFileAsync('git', ['-C', directory, 'remote', 'add', 'origin', '--', url]);
     try {
       await deps.execFileAsync('git', ['-C', directory, 'fetch', '--depth', '1', 'origin', remoteBranch]);
       await deps.execFileAsync('git', ['-C', directory, 'checkout', 'FETCH_HEAD']);
@@ -143,7 +143,7 @@ export const execGitShallowClone = async (
       await deps.execFileAsync('git', ['-C', directory, 'checkout', remoteBranch]);
     }
   } else {
-    await deps.execFileAsync('git', ['clone', '--depth', '1', url, directory]);
+    await deps.execFileAsync('git', ['clone', '--depth', '1', '--', url, directory]);
   }
 
   // Clean up .git directory
