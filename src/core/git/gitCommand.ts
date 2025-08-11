@@ -113,7 +113,7 @@ export const execGitShallowClone = async (
 
   if (remoteBranch) {
     await deps.execFileAsync('git', ['-C', directory, 'init']);
-    await deps.execFileAsync('git', ['-C', directory, 'remote', 'add', 'origin', '--', url]);
+    await deps.execFileAsync('git', ['-C', directory, 'remote', 'add', '--', 'origin', url]);
     try {
       await deps.execFileAsync('git', ['-C', directory, 'fetch', '--depth', '1', 'origin', remoteBranch]);
       await deps.execFileAsync('git', ['-C', directory, 'checkout', 'FETCH_HEAD']);
