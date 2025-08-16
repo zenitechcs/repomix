@@ -121,7 +121,7 @@ file2.ts
 
       await execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync });
 
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', url, directory]);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', '--', url, directory]);
     });
 
     test('should throw error when git clone fails', async () => {
@@ -134,7 +134,7 @@ file2.ts
         execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
       ).rejects.toThrow('Authentication failed');
 
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', url, directory]);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', '--', url, directory]);
     });
 
     test('should execute commands correctly when branch is specified', async () => {
@@ -148,7 +148,15 @@ file2.ts
 
       expect(mockFileExecAsync).toHaveBeenCalledTimes(4);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', ['-C', directory, 'init']);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'remote', 'add', 'origin', url]);
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', [
+        '-C',
+        directory,
+        'remote',
+        'add',
+        '--',
+        'origin',
+        url,
+      ]);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(3, 'git', [
         '-C',
         directory,
@@ -177,7 +185,15 @@ file2.ts
       ).rejects.toThrow('Authentication failed');
       expect(mockFileExecAsync).toHaveBeenCalledTimes(3);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', ['-C', directory, 'init']);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'remote', 'add', 'origin', url]);
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', [
+        '-C',
+        directory,
+        'remote',
+        'add',
+        '--',
+        'origin',
+        url,
+      ]);
       expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', [
         '-C',
         directory,
@@ -207,7 +223,15 @@ file2.ts
 
       expect(mockFileExecAsync).toHaveBeenCalledTimes(5);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', ['-C', directory, 'init']);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'remote', 'add', 'origin', url]);
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', [
+        '-C',
+        directory,
+        'remote',
+        'add',
+        '--',
+        'origin',
+        url,
+      ]);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(3, 'git', [
         '-C',
         directory,
@@ -238,7 +262,15 @@ file2.ts
       ).rejects.toThrow(errMessage);
       expect(mockFileExecAsync).toHaveBeenCalledTimes(3);
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(1, 'git', ['-C', directory, 'init']);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', ['-C', directory, 'remote', 'add', 'origin', url]);
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(2, 'git', [
+        '-C',
+        directory,
+        'remote',
+        'add',
+        '--',
+        'origin',
+        url,
+      ]);
       expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', [
         '-C',
         directory,
@@ -281,6 +313,7 @@ c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8\trefs/tags/v1.0.0
         'ls-remote',
         '--heads',
         '--tags',
+        '--',
         'https://github.com/user/repo.git',
       ]);
     });
