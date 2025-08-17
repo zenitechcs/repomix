@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
 import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
 import { isValidRemoteValue } from '../utils/validation';
@@ -142,11 +142,6 @@ const {
 
 // Check if reset button should be shown
 const shouldShowReset = computed(() => {
-  // Don't show if pack hasn't been executed yet
-  if (!hasExecuted.value) {
-    return false;
-  }
-
   // Use utility function to check for non-default values
   return hasNonDefaultValues(
     inputUrl.value,
@@ -155,8 +150,8 @@ const shouldShowReset = computed(() => {
   );
 });
 
-async function handleSubmit() {
-  // Update URL parameters before submitting
+// Function to update URL parameters based on current state
+function updateUrlFromCurrentState() {
   const urlParamsToUpdate: Record<string, unknown> = {};
 
   // Add repository URL if it exists and is valid
@@ -178,7 +173,9 @@ async function handleSubmit() {
   }
 
   updateUrlParameters(urlParamsToUpdate);
+}
 
+async function handleSubmit() {
   await submitRequest();
 }
 
@@ -195,6 +192,11 @@ function handleReset() {
   // Clear URL parameters
   updateUrlParameters({});
 }
+
+// Watch for changes in packOptions and inputUrl to update URL in real-time
+watch([packOptions, inputUrl], () => {
+  updateUrlFromCurrentState();
+}, { deep: true });
 
 // Handle URL parameters when component mounts
 onMounted(() => {
