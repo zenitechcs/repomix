@@ -27,14 +27,14 @@ function getUrlParamKey(internalKey: string): string {
 }
 
 // Helper function to validate URL parameter values
-export function validateUrlParameters(params: Record<string, any>): { isValid: boolean; errors: string[] } {
+export function validateUrlParameters(params: Record<string, unknown>): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Validate format parameter
   if (params.format && !VALID_FORMATS.includes(params.format)) {
     errors.push(`Invalid format: ${params.format}. Must be one of: ${VALID_FORMATS.join(', ')}`);
   }
-  
+
   // Validate URL length to prevent browser limit issues
   const urlSearchParams = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -42,23 +42,25 @@ export function validateUrlParameters(params: Record<string, any>): { isValid: b
       urlSearchParams.set(key, String(value));
     }
   }
-  
+
   const maxUrlLength = 2000; // Conservative limit for browser compatibility
   if (urlSearchParams.toString().length > maxUrlLength) {
-    errors.push(`URL parameters too long (${urlSearchParams.toString().length} chars). Maximum allowed: ${maxUrlLength}`);
+    errors.push(
+      `URL parameters too long (${urlSearchParams.toString().length} chars). Maximum allowed: ${maxUrlLength}`,
+    );
   }
-  
+
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
 // Helper function to check if any options differ from defaults
 export function hasNonDefaultValues(
   inputUrl: string,
-  packOptions: Record<string, any>,
-  defaultOptions: Record<string, any>
+  packOptions: Record<string, unknown>,
+  defaultOptions: Record<string, unknown>,
 ): boolean {
   // Check if there's input URL
   if (inputUrl && inputUrl.trim() !== '') {
@@ -96,13 +98,13 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
 
   // Format parameter
   const format = urlParams.get('format');
-  if (format && VALID_FORMATS.includes(format as any)) {
+  if (format && (VALID_FORMATS as readonly string[]).includes(format)) {
     params.format = format as (typeof VALID_FORMATS)[number];
   }
 
   // Style parameter (alternative to format for backward compatibility)
   const style = urlParams.get('style');
-  if (style && VALID_FORMATS.includes(style as any)) {
+  if (style && (VALID_FORMATS as readonly string[]).includes(style)) {
     params.format = style as (typeof VALID_FORMATS)[number];
   }
 
@@ -130,7 +132,10 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   return params;
 }
 
-export function updateUrlParameters(options: Partial<PackOptions & { repo?: string }>): { success: boolean; error?: string } {
+export function updateUrlParameters(options: Partial<PackOptions & { repo?: string }>): {
+  success: boolean;
+  error?: string;
+} {
   if (typeof window === 'undefined') {
     return { success: false, error: 'Window object not available (SSR environment)' };
   }

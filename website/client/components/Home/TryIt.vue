@@ -103,7 +103,7 @@
 import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
-import { parseUrlParameters, updateUrlParameters, hasNonDefaultValues } from '../../utils/urlParams';
+import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
 import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
@@ -148,7 +148,11 @@ const shouldShowReset = computed(() => {
   }
 
   // Use utility function to check for non-default values
-  return hasNonDefaultValues(inputUrl.value, packOptions, DEFAULT_PACK_OPTIONS);
+  return hasNonDefaultValues(
+    inputUrl.value,
+    packOptions as unknown as Record<string, unknown>,
+    DEFAULT_PACK_OPTIONS as unknown as Record<string, unknown>,
+  );
 });
 
 async function handleSubmit() {
@@ -360,8 +364,8 @@ onMounted(() => {
   transform: translateX(-50%);
   margin-bottom: 8px;
   padding: 8px 12px;
-  background: var(--vp-c-bg-soft, #333);
-  color: var(--vp-c-text-1, white);
+  background: #333;
+  color: white;
   font-size: 0.875rem;
   white-space: nowrap;
   border-radius: 4px;
