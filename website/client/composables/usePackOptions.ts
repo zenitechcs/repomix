@@ -33,11 +33,12 @@ export function usePackOptions() {
   const initialOptions = { ...DEFAULT_PACK_OPTIONS };
 
   // Apply URL parameters to initial options
-  for (const key of Object.keys(initialOptions)) {
-    if (key in urlParams && urlParams[key as keyof PackOptions] !== undefined) {
-      (initialOptions as Record<string, unknown>)[key] = urlParams[key as keyof PackOptions];
+  (Object.keys(initialOptions) as Array<keyof PackOptions>).forEach((key) => {
+    if (key in urlParams && urlParams[key] !== undefined) {
+      // Type-safe assignment: only assign if the key is a valid PackOptions key
+      initialOptions[key] = urlParams[key] as PackOptions[typeof key];
     }
-  }
+  });
 
   const packOptions = reactive<PackOptions>(initialOptions);
 

@@ -147,7 +147,6 @@ const shouldShowReset = computed(() => {
     return false;
   }
 
-
   // Show if there's input URL
   if (inputUrl.value && inputUrl.value.trim() !== '') {
     return true;
@@ -156,21 +155,17 @@ const shouldShowReset = computed(() => {
   // Show if any pack option differs from default
   for (const [key, value] of Object.entries(packOptions)) {
     const defaultValue = DEFAULT_PACK_OPTIONS[key as keyof typeof DEFAULT_PACK_OPTIONS];
-    if (value !== defaultValue) {
-      // For string values, also check if they're not empty
-      if (typeof value === 'string' && typeof defaultValue === 'string') {
-        if (value.trim() !== defaultValue.trim()) {
-          return true;
-        }
-      } else if (value !== defaultValue) {
+    if (typeof value === 'string' && typeof defaultValue === 'string') {
+      if (value.trim() !== defaultValue.trim()) {
         return true;
       }
+    } else if (value !== defaultValue) {
+      return true;
     }
   }
 
   return false;
 });
-
 
 async function handleSubmit() {
   // Update URL parameters before submitting
@@ -189,7 +184,7 @@ async function handleSubmit() {
       if (typeof value === 'string' && value.trim() === '' && defaultValue === '') {
         continue; // Skip empty strings that match default empty strings
       }
-      
+
       // Map internal option names to URL parameter names
       let urlParamKey = key;
       if (key === 'includePatterns') {
@@ -197,7 +192,7 @@ async function handleSubmit() {
       } else if (key === 'ignorePatterns') {
         urlParamKey = 'ignore';
       }
-      
+
       urlParamsToUpdate[urlParamKey] = value;
     }
   }
@@ -385,8 +380,8 @@ onMounted(() => {
   transform: translateX(-50%);
   margin-bottom: 8px;
   padding: 8px 12px;
-  background: #333;
-  color: white;
+  background: var(--vp-c-bg-soft, #333);
+  color: var(--vp-c-text-1, white);
   font-size: 0.875rem;
   white-space: nowrap;
   border-radius: 4px;
