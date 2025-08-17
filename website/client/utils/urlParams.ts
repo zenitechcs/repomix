@@ -1,5 +1,85 @@
 import type { PackOptions } from '../composables/usePackOptions';
 
+// URL parameter constants
+const BOOLEAN_PARAMS = [
+  'removeComments',
+  'removeEmptyLines',
+  'showLineNumbers',
+  'fileSummary',
+  'directoryStructure',
+  'outputParsable',
+  'compress',
+] as const;
+
+const VALID_FORMATS = ['xml', 'markdown', 'plain'] as const;
+
+const URL_PARAM_KEYS = ['repo', 'format', 'style', 'include', 'ignore', ...BOOLEAN_PARAMS] as const;
+
+// Key mapping for internal names to URL parameter names
+const KEY_MAPPING: Record<string, string> = {
+  includePatterns: 'include',
+  ignorePatterns: 'ignore',
+};
+
+// Helper function to get URL parameter key from internal key
+function getUrlParamKey(internalKey: string): string {
+  return KEY_MAPPING[internalKey] || internalKey;
+}
+
+// Helper function to validate URL parameter values
+export function validateUrlParameters(params: Record<string, any>): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  // Validate format parameter
+  if (params.format && !VALID_FORMATS.includes(params.format)) {
+    errors.push(`Invalid format: ${params.format}. Must be one of: ${VALID_FORMATS.join(', ')}`);
+  }
+  
+  // Validate URL length to prevent browser limit issues
+  const urlSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) {
+      urlSearchParams.set(key, String(value));
+    }
+  }
+  
+  const maxUrlLength = 2000; // Conservative limit for browser compatibility
+  if (urlSearchParams.toString().length > maxUrlLength) {
+    errors.push(`URL parameters too long (${urlSearchParams.toString().length} chars). Maximum allowed: ${maxUrlLength}`);
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+// Helper function to check if any options differ from defaults
+export function hasNonDefaultValues(
+  inputUrl: string,
+  packOptions: Record<string, any>,
+  defaultOptions: Record<string, any>
+): boolean {
+  // Check if there's input URL
+  if (inputUrl && inputUrl.trim() !== '') {
+    return true;
+  }
+
+  // Check if any pack option differs from default
+  for (const [key, value] of Object.entries(packOptions)) {
+    const defaultValue = defaultOptions[key];
+    if (typeof value === 'string' && typeof defaultValue === 'string') {
+      if (value.trim() !== defaultValue.trim()) {
+        return true;
+      }
+    } else if (value !== defaultValue) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   if (typeof window === 'undefined') {
     return {};
@@ -16,14 +96,14 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
 
   // Format parameter
   const format = urlParams.get('format');
-  if (format && ['xml', 'markdown', 'plain'].includes(format)) {
-    params.format = format as 'xml' | 'markdown' | 'plain';
+  if (format && VALID_FORMATS.includes(format as any)) {
+    params.format = format as (typeof VALID_FORMATS)[number];
   }
 
   // Style parameter (alternative to format for backward compatibility)
   const style = urlParams.get('style');
-  if (style && ['xml', 'markdown', 'plain'].includes(style)) {
-    params.format = style as 'xml' | 'markdown' | 'plain';
+  if (style && VALID_FORMATS.includes(style as any)) {
+    params.format = style as (typeof VALID_FORMATS)[number];
   }
 
   // Include patterns
@@ -39,17 +119,7 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   }
 
   // Boolean parameters
-  const booleanParams = [
-    'removeComments',
-    'removeEmptyLines',
-    'showLineNumbers',
-    'fileSummary',
-    'directoryStructure',
-    'outputParsable',
-    'compress',
-  ] as const;
-
-  for (const param of booleanParams) {
+  for (const param of BOOLEAN_PARAMS) {
     const value = urlParams.get(param);
     if (value !== null) {
       // Accept various truthy values: true, 1, yes, on
@@ -60,45 +130,45 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   return params;
 }
 
-export function updateUrlParameters(options: Partial<PackOptions & { repo?: string }>): void {
+export function updateUrlParameters(options: Partial<PackOptions & { repo?: string }>): { success: boolean; error?: string } {
   if (typeof window === 'undefined') {
-    return;
+    return { success: false, error: 'Window object not available (SSR environment)' };
   }
 
-  const url = new URL(window.location.href);
-  const params = url.searchParams;
+  try {
+    // Validate parameters before updating URL
+    const validation = validateUrlParameters(options);
+    if (!validation.isValid) {
+      console.warn('URL parameter validation failed:', validation.errors);
+      // Continue with update but log warnings
+    }
 
-  // Clear existing repomix-related parameters
-  const keysToRemove = [
-    'repo',
-    'format',
-    'style',
-    'include',
-    'ignore',
-    'removeComments',
-    'removeEmptyLines',
-    'showLineNumbers',
-    'fileSummary',
-    'directoryStructure',
-    'outputParsable',
-    'compress',
-  ];
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
 
-  for (const key of keysToRemove) {
-    params.delete(key);
-  }
+    // Clear existing repomix-related parameters
+    for (const key of URL_PARAM_KEYS) {
+      params.delete(key);
+    }
 
-  // Add new parameters
-  for (const [key, value] of Object.entries(options)) {
-    if (value !== undefined && value !== null) {
-      if (typeof value === 'boolean') {
-        params.set(key, value.toString());
-      } else if (typeof value === 'string' && value.trim() !== '') {
-        params.set(key, value.trim());
+    // Add new parameters
+    for (const [key, value] of Object.entries(options)) {
+      if (value !== undefined && value !== null) {
+        const urlParamKey = getUrlParamKey(key);
+        if (typeof value === 'boolean') {
+          params.set(urlParamKey, value.toString());
+        } else if (typeof value === 'string' && value.trim() !== '') {
+          params.set(urlParamKey, value.trim());
+        }
       }
     }
-  }
 
-  // Update URL without reloading the page
-  window.history.replaceState({}, '', url.toString());
+    // Update URL without reloading the page
+    window.history.replaceState({}, '', url.toString());
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred while updating URL';
+    console.error('Failed to update URL parameters:', errorMessage);
+    return { success: false, error: errorMessage };
+  }
 }

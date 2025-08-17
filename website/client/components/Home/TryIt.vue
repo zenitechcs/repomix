@@ -103,7 +103,7 @@
 import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
-import { parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
+import { parseUrlParameters, updateUrlParameters, hasNonDefaultValues } from '../../utils/urlParams';
 import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
@@ -147,24 +147,8 @@ const shouldShowReset = computed(() => {
     return false;
   }
 
-  // Show if there's input URL
-  if (inputUrl.value && inputUrl.value.trim() !== '') {
-    return true;
-  }
-
-  // Show if any pack option differs from default
-  for (const [key, value] of Object.entries(packOptions)) {
-    const defaultValue = DEFAULT_PACK_OPTIONS[key as keyof typeof DEFAULT_PACK_OPTIONS];
-    if (typeof value === 'string' && typeof defaultValue === 'string') {
-      if (value.trim() !== defaultValue.trim()) {
-        return true;
-      }
-    } else if (value !== defaultValue) {
-      return true;
-    }
-  }
-
-  return false;
+  // Use utility function to check for non-default values
+  return hasNonDefaultValues(inputUrl.value, packOptions, DEFAULT_PACK_OPTIONS);
 });
 
 async function handleSubmit() {
@@ -185,15 +169,7 @@ async function handleSubmit() {
         continue; // Skip empty strings that match default empty strings
       }
 
-      // Map internal option names to URL parameter names
-      let urlParamKey = key;
-      if (key === 'includePatterns') {
-        urlParamKey = 'include';
-      } else if (key === 'ignorePatterns') {
-        urlParamKey = 'ignore';
-      }
-
-      urlParamsToUpdate[urlParamKey] = value;
+      urlParamsToUpdate[key] = value;
     }
   }
 
@@ -223,8 +199,12 @@ onMounted(() => {
   // If repository parameter exists and is valid, trigger packing automatically
   if (urlParams.repo && isValidRemoteValue(urlParams.repo.trim())) {
     // Use nextTick to ensure all reactive values are properly initialized
-    nextTick(() => {
-      handleSubmit();
+    nextTick(async () => {
+      try {
+        await handleSubmit();
+      } catch (error) {
+        console.error('Auto-execution failed:', error);
+      }
     });
   }
 });
