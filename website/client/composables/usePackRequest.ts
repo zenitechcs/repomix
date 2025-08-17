@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { PackResult } from '../components/api/client';
 import { handlePackRequest } from '../components/utils/requestHandlers';
 import { isValidRemoteValue } from '../components/utils/validation';
@@ -11,11 +11,8 @@ export function usePackRequest() {
   const packOptionsComposable = usePackOptions();
   const { packOptions, getPackRequestOptions, resetOptions, DEFAULT_PACK_OPTIONS } = packOptionsComposable;
 
-  // Initialize with URL parameters if available
-  const urlParams = parseUrlParameters();
-
   // Input states
-  const inputUrl = ref(urlParams.repo || '');
+  const inputUrl = ref('');
   const inputRepositoryUrl = ref('');
   const mode = ref<InputMode>('url');
   const uploadedFile = ref<File | null>(null);
@@ -108,6 +105,14 @@ export function usePackRequest() {
     }
     loading.value = false;
   }
+
+  // Apply URL parameters after component mounts
+  onMounted(() => {
+    const urlParams = parseUrlParameters();
+    if (urlParams.repo) {
+      inputUrl.value = urlParams.repo;
+    }
+  });
 
   return {
     // Pack options (re-exported for convenience)
