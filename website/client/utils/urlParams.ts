@@ -31,7 +31,7 @@ export function validateUrlParameters(params: Record<string, unknown>): { isVali
   const errors: string[] = [];
 
   // Validate format parameter
-  if (params.format && !VALID_FORMATS.includes(params.format)) {
+  if (params.format && !(VALID_FORMATS as readonly string[]).includes(params.format as string)) {
     errors.push(`Invalid format: ${params.format}. Must be one of: ${VALID_FORMATS.join(', ')}`);
   }
 
@@ -82,6 +82,12 @@ export function hasNonDefaultValues(
   return false;
 }
 
+/**
+ * Parses URL query parameters and returns pack options and repository URL.
+ * Supports backward compatibility with 'style' parameter as alias for 'format'.
+ * 
+ * @returns Parsed options object with repository URL and pack options
+ */
 export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   if (typeof window === 'undefined') {
     return {};
@@ -141,6 +147,13 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   return params;
 }
 
+/**
+ * Updates URL query parameters with the provided options.
+ * Validates parameters and provides error handling for URL length limits.
+ * 
+ * @param options - Pack options and repository URL to set in URL
+ * @returns Result object with success status and optional error message
+ */
 export function updateUrlParameters(options: Partial<PackOptions & { repo?: string }>): {
   success: boolean;
   error?: string;
@@ -153,8 +166,13 @@ export function updateUrlParameters(options: Partial<PackOptions & { repo?: stri
     // Validate parameters before updating URL
     const validation = validateUrlParameters(options);
     if (!validation.isValid) {
+      // If validation fails due to URL length, return error instead of continuing
+      const hasLengthError = validation.errors.some(error => error.includes('too long'));
+      if (hasLengthError) {
+        return { success: false, error: validation.errors.join('; ') };
+      }
+      // For other validation errors, just warn and continue
       console.warn('URL parameter validation failed:', validation.errors);
-      // Continue with update but log warnings
     }
 
     const url = new URL(window.location.href);
