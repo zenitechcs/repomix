@@ -194,9 +194,13 @@ function handleReset() {
 }
 
 // Watch for changes in packOptions and inputUrl to update URL in real-time
-watch([packOptions, inputUrl], () => {
-  updateUrlFromCurrentState();
-}, { deep: true });
+watch(
+  [packOptions, inputUrl],
+  () => {
+    updateUrlFromCurrentState();
+  },
+  { deep: true },
+);
 
 // Handle URL parameters when component mounts
 onMounted(() => {
