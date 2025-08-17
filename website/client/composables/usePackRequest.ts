@@ -9,7 +9,8 @@ export type InputMode = 'url' | 'file' | 'folder';
 
 export function usePackRequest() {
   const packOptionsComposable = usePackOptions();
-  const { packOptions, getPackRequestOptions, resetOptions, DEFAULT_PACK_OPTIONS } = packOptionsComposable;
+  const { packOptions, getPackRequestOptions, resetOptions, applyUrlParameters, DEFAULT_PACK_OPTIONS } =
+    packOptionsComposable;
 
   // Input states
   const inputUrl = ref('');
@@ -107,8 +108,16 @@ export function usePackRequest() {
   }
 
   // Apply URL parameters after component mounts
+  // This must be done here (not during setup) because during SSR/hydration,
+  // browser globals like `window.location.search` are not available.
+  // Accessing them before mounting would cause errors in SSR environments.
   onMounted(() => {
     const urlParams = parseUrlParameters();
+
+    // Apply pack options from URL parameters
+    applyUrlParameters(urlParams);
+
+    // Apply repo URL from URL parameters
     if (urlParams.repo) {
       inputUrl.value = urlParams.repo;
     }

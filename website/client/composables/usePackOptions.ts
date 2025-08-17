@@ -1,5 +1,4 @@
-import { computed, onMounted, reactive } from 'vue';
-import { parseUrlParameters } from '../utils/urlParams';
+import { computed, reactive } from 'vue';
 
 export interface PackOptions {
   format: 'xml' | 'markdown' | 'plain';
@@ -31,18 +30,15 @@ export function usePackOptions() {
   // Initialize with default options only
   const packOptions = reactive<PackOptions>({ ...DEFAULT_PACK_OPTIONS });
 
-  // Apply URL parameters after component mounts
-  onMounted(() => {
-    const urlParams = parseUrlParameters();
-
-    // Apply URL parameters to pack options
+  // Function to apply URL parameters (exposed for external use)
+  function applyUrlParameters(urlParams: Record<string, unknown>) {
     for (const key of Object.keys(packOptions) as Array<keyof PackOptions>) {
       if (key in urlParams && urlParams[key] !== undefined) {
         // Type-safe assignment: only assign if the key is a valid PackOptions key
         packOptions[key] = urlParams[key] as PackOptions[typeof key];
       }
     }
-  });
+  }
 
   const getPackRequestOptions = computed(() => ({
     removeComments: packOptions.removeComments,
@@ -69,6 +65,7 @@ export function usePackOptions() {
     getPackRequestOptions,
     updateOption,
     resetOptions,
+    applyUrlParameters,
     DEFAULT_PACK_OPTIONS,
   };
 }
