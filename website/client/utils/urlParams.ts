@@ -99,13 +99,17 @@ export function parseUrlParameters(): Partial<PackOptions & { repo?: string }> {
   // Format and Style parameters (with conflict handling)
   const format = urlParams.get('format');
   const style = urlParams.get('style');
-  
-  if (format && (VALID_FORMATS as readonly string[]).includes(format) && 
-      style && (VALID_FORMATS as readonly string[]).includes(style)) {
+
+  if (
+    format &&
+    (VALID_FORMATS as readonly string[]).includes(format) &&
+    style &&
+    (VALID_FORMATS as readonly string[]).includes(style)
+  ) {
     // Both present: prefer format, warn about conflict
     params.format = format as (typeof VALID_FORMATS)[number];
     console.warn(
-      `Both 'format' and 'style' URL parameters are present. Using 'format=${format}' and ignoring 'style=${style}'.`
+      `Both 'format' and 'style' URL parameters are present. Using 'format=${format}' and ignoring 'style=${style}'.`,
     );
   } else if (format && (VALID_FORMATS as readonly string[]).includes(format)) {
     params.format = format as (typeof VALID_FORMATS)[number];
