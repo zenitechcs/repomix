@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
 import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
 import { isValidRemoteValue } from '../utils/validation';
