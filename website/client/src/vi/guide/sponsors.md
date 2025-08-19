@@ -26,12 +26,12 @@ Sự tài trợ của bạn giúp chúng tôi:
 <div align="center">
    <sup>Đặc biệt cảm ơn:</sup>
 
-   <a href="https://www.warp.dev/repomix" target="_blank">
-      <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+   <a href="https://go.warp.dev/repomix" target="_blank">
+      <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
    </a>
 
-  [Warp, terminal thông minh cho nhà phát triển](https://www.warp.dev/repomix)  
-  [Có sẵn cho MacOS, Linux và Windows](https://www.warp.dev/repomix)
+  [Warp, được xây dựng cho việc lập trình với nhiều AI agent](https://go.warp.dev/repomix)  
+  [Có sẵn cho MacOS, Linux và Windows](https://go.warp.dev/repomix)
 </div>
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
