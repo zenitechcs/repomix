@@ -10,6 +10,13 @@ export interface PackOptions {
   compress?: boolean;
 }
 
+export interface FileInfo {
+  path: string;
+  charCount: number;
+  tokenCount: number;
+  selected?: boolean;
+}
+
 export interface PackRequest {
   url: string;
   format: 'xml' | 'markdown' | 'plain';
@@ -32,7 +39,9 @@ export interface PackResult {
     topFiles: {
       path: string;
       charCount: number;
+      tokenCount: number;
     }[];
+    allFiles?: FileInfo[];
   };
 }
 
@@ -47,7 +56,7 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = import.meta.env.PROD ? 'https://api.repomix.com' : 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:8080' : 'https://api.repomix.com';
 
 export async function packRepository(request: PackRequest): Promise<PackResult> {
   const formData = new FormData();

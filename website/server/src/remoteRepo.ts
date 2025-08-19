@@ -98,11 +98,19 @@ export async function processRemoteRepo(
         topFiles: Object.entries(packResult.fileCharCounts)
           .map(([path, charCount]) => ({
             path,
-            charCount,
+            charCount: charCount as number,
             tokenCount: packResult.fileTokenCounts[path] || 0,
           }))
           .sort((a, b) => b.charCount - a.charCount)
           .slice(0, cliOptions.topFilesLen),
+        allFiles: Object.entries(packResult.fileCharCounts)
+          .map(([path, charCount]) => ({
+            path,
+            charCount: charCount as number,
+            tokenCount: packResult.fileTokenCounts[path] || 0,
+            selected: true, // Default to selected for initial packing
+          }))
+          .sort((a, b) => b.charCount - a.charCount),
       },
     };
 

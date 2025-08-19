@@ -93,6 +93,7 @@
           :loading="loading"
           :error="error"
           :repository-url="inputRepositoryUrl"
+          @repack="handleRepack"
         />
       </div>
     </form>
@@ -105,6 +106,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
 import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
 import { isValidRemoteValue } from '../utils/validation';
+import type { FileInfo } from '../api/client';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
 import TryItFolderUpload from './TryItFolderUpload.vue';
@@ -137,6 +139,7 @@ const {
   setMode,
   handleFileUpload,
   submitRequest,
+  repackWithSelectedFiles,
   resetOptions,
 } = usePackRequest();
 
@@ -191,6 +194,10 @@ function handleReset() {
 
   // Clear URL parameters
   updateUrlParameters({});
+}
+
+function handleRepack(selectedFiles: FileInfo[]) {
+  repackWithSelectedFiles(selectedFiles);
 }
 
 // Watch for changes in packOptions and inputUrl to update URL in real-time

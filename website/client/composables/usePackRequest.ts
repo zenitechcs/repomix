@@ -1,5 +1,5 @@
 import { computed, onMounted, ref } from 'vue';
-import type { PackResult } from '../components/api/client';
+import type { FileInfo, PackResult } from '../components/api/client';
 import { handlePackRequest } from '../components/utils/requestHandlers';
 import { isValidRemoteValue } from '../components/utils/validation';
 import { parseUrlParameters } from '../utils/urlParams';
@@ -99,6 +99,64 @@ export function usePackRequest() {
     }
   }
 
+  async function repackWithSelectedFiles(selectedFiles: FileInfo[]) {
+    if (!result.value || selectedFiles.length === 0) return;
+
+    // Cancel any pending request
+    if (requestController) {
+      requestController.abort();
+    }
+    requestController = new AbortController();
+
+    loading.value = true;
+    error.value = null;
+
+    // Generate include patterns from selected files
+    const selectedPaths = selectedFiles.map(file => file.path);
+    const includePatterns = selectedPaths.join(',');
+
+    // Create modified pack options for repack
+    const repackOptions = {
+      ...getPackRequestOptions.value,
+      includePatterns,
+      ignorePatterns: '', // Clear ignore patterns to ensure selected files are included
+    };
+
+    const timeoutId = setTimeout(() => {
+      if (requestController) {
+        requestController.abort('Request timed out');
+      }
+    }, TIMEOUT_MS);
+
+    try {
+      await handlePackRequest(
+        inputRepositoryUrl.value,
+        packOptions.format,
+        repackOptions,
+        {
+          onSuccess: (response) => {
+            // Update file selection state in the new result
+            if (response.metadata?.allFiles) {
+              response.metadata.allFiles.forEach(file => {
+                file.selected = selectedPaths.includes(file.path);
+              });
+            }
+            result.value = response;
+          },
+          onError: (errorMessage) => {
+            error.value = errorMessage;
+          },
+          signal: requestController.signal,
+          file: mode.value === 'file' || mode.value === 'folder' ? uploadedFile.value || undefined : undefined,
+        },
+      );
+    } finally {
+      clearTimeout(timeoutId);
+      loading.value = false;
+      requestController = null;
+    }
+  }
+
   function cancelRequest() {
     if (requestController) {
       requestController.abort();
@@ -147,6 +205,7 @@ export function usePackRequest() {
     handleFileUpload,
     resetRequest,
     submitRequest,
+    repackWithSelectedFiles,
     cancelRequest,
 
     // Pack option actions

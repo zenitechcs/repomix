@@ -1,111 +1,91 @@
 <script setup lang="ts">
-import type { PackResult } from '../api/client';
+import type { FileInfo, PackResult } from '../api/client';
+import TryItFileSelection from './TryItFileSelection.vue';
 import TryItResultContent from './TryItResultContent.vue';
 import TryItResultErrorContent from './TryItResultErrorContent.vue';
 
-defineProps<{
-  result: PackResult | null;
-  loading: boolean;
-  error: string | null;
+interface Props {
+  result?: PackResult | null;
+  loading?: boolean;
+  error?: string | null;
   repositoryUrl?: string;
-}>();
+}
+
+interface Emits {
+  (e: 'repack', selectedFiles: FileInfo[]): void;
+}
+
+defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+const handleRepack = (selectedFiles: FileInfo[]) => {
+  emit('repack', selectedFiles);
+};
 </script>
 
 <template>
-  <div class="result-viewer">
-    <div v-if="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Processing repository...</p>
-
-      <div class="sponsor-section">
-        <p class="sponsor-header">Special thanks to:</p>
-        <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-          <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
-        </a>
-        <p class="sponsor-title">
-          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-            Warp, built for coding with multiple AI agents
-          </a>
-        </p>
-        <p class="sponsor-subtitle">
-          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-            Available for MacOS, Linux, & Windows
-          </a>
-        </p>
-      </div>
-    </div>
-
+  <div class="result-container">
     <TryItResultErrorContent
-      v-else-if="error"
-      :message="error"
-      :repository-url="repositoryUrl"
+      v-if="error"
+      :error="error"
     />
-
     <TryItResultContent
       v-else-if="result"
       :result="result"
     />
+    <TryItFileSelection
+      v-if="result?.metadata?.allFiles && result.metadata.allFiles.length > 0"
+      :all-files="result.metadata.allFiles"
+      :loading="loading"
+      @repack="handleRepack"
+    />
+    <div
+      v-else-if="loading"
+      class="loading-container"
+    >
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Processing repository...</p>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.result-viewer {
-  margin-top: 24px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  overflow: hidden;
+.result-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-.loading {
-  padding: 36px;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 16px;
-  border: 3px solid var(--vp-c-brand-1);
-  border-radius: 50%;
-  border-top-color: transparent;
-  animation: spin 1s linear infinite;
-}
-
-.sponsor-section {
-  margin-top: 16px;
+.loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  margin-top: 16px;
 }
 
-.sponsor-section p {
-  margin: 8px 0;
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--vp-c-border);
+  border-top: 3px solid var(--vp-c-brand-1);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
 }
 
-.sponsor-section .sponsor-header {
-  font-size: 0.9em;
-}
-
-.sponsor-section img {
-  max-width: 100%;
-  height: auto;
-  margin: 12px 0;
-}
-
-.sponsor-section .sponsor-title {
-  font-weight: bold;
-  font-size: 1.1em;
-  color: var(--vp-c-brand-1);
-  text-decoration: underline;
-}
-
-.sponsor-section .sponsor-subtitle {
-  font-size: 0.9em;
-  color: var(--vp-c-brand-1);
-  text-decoration: underline;
+.loading-text {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  margin: 0;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
