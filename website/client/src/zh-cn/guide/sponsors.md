@@ -26,12 +26,12 @@ editLink: false
 <div align="center">
    <sup>特别感谢：</sup>
 
-   <a href="https://www.warp.dev/repomix" target="_blank">
-      <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+   <a href="https://go.warp.dev/repomix" target="_blank">
+      <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
    </a>
 
-  [Warp，开发者的智能终端](https://www.warp.dev/repomix)  
-  [支持 MacOS、Linux 和 Windows](https://www.warp.dev/repomix)
+  [Warp，专为多个AI代理编程而构建](https://go.warp.dev/repomix)  
+  [支持 MacOS、Linux 和 Windows](https://go.warp.dev/repomix)
 </div>
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)

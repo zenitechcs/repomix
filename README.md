@@ -2,12 +2,12 @@
    <sup>Special thanks to:</sup>
    <br>
    <br>
-   <a href="https://www.warp.dev/repomix">
-      <img alt="Warp sponsorship" width="400" src="website/client/src/public/images/sponsors/warp/Terminal-Image.png">
+   <a href="https://go.warp.dev/repomix">
+      <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
    </a>
 
-### [Warp, the agent terminal for developers](https://www.warp.dev/repomix)
-[Available for MacOS, Linux, & Windows](https://www.warp.dev/repomix)<br>
+### [Warp, built for coding with multiple AI agents](https://go.warp.dev/repomix)
+[Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)<br>
 
 </div>
 

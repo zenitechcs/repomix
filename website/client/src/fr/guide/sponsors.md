@@ -26,12 +26,12 @@ Votre parrainage nous aide à :
 <div align="center">
    <sup>Remerciements spéciaux à :</sup>
 
-   <a href="https://www.warp.dev/repomix" target="_blank">
-      <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+   <a href="https://go.warp.dev/repomix" target="_blank">
+      <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
    </a>
 
-  [Warp, le terminal agent pour les développeurs](https://www.warp.dev/repomix)  
-  [Disponible pour MacOS, Linux et Windows](https://www.warp.dev/repomix)
+  [Warp, conçu pour programmer avec plusieurs agents IA](https://go.warp.dev/repomix)  
+  [Disponible pour MacOS, Linux et Windows](https://go.warp.dev/repomix)
 </div>
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)

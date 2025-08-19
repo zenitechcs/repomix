@@ -19,16 +19,16 @@ defineProps<{
 
       <div class="sponsor-section">
         <p class="sponsor-header">Special thanks to:</p>
-        <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-          <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+        <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+          <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
         </a>
         <p class="sponsor-title">
-          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-            Warp, the AI terminal for developers
+          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+            Warp, built for coding with multiple AI agents
           </a>
         </p>
         <p class="sponsor-subtitle">
-          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
             Available for MacOS, Linux, & Windows
           </a>
         </p>

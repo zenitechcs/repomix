@@ -26,12 +26,12 @@ Your sponsorship helps us:
 <div align="center">
    <sup>Special thanks to:</sup>
 
-   <a href="https://www.warp.dev/repomix" target="_blank">
-      <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+   <a href="https://go.warp.dev/repomix" target="_blank">
+      <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
    </a>
 
-  [Warp, the agent terminal for developers](https://www.warp.dev/repomix)  
-  [Available for MacOS, Linux, & Windows](https://www.warp.dev/repomix)
+  [Warp, built for coding with multiple AI agents](https://go.warp.dev/repomix)  
+  [Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)
 </div>
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
