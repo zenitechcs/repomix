@@ -8,6 +8,7 @@ import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
 import { generateTreeString } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
+import type { GitLogResult } from '../git/gitLogHandle.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import { sortOutputFiles } from './outputSort.js';
 import {
@@ -50,6 +51,8 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     gitDiffEnabled: outputGeneratorContext.config.output.git?.includeDiffs,
     gitDiffWorkTree: outputGeneratorContext.gitDiffResult?.workTreeDiffContent,
     gitDiffStaged: outputGeneratorContext.gitDiffResult?.stagedDiffContent,
+    gitLogEnabled: outputGeneratorContext.config.output.git?.includeLogs,
+    gitLogContent: outputGeneratorContext.gitLogResult?.logContent,
   };
 };
 
@@ -84,6 +87,11 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
         ? {
             git_diff_work_tree: renderContext.gitDiffWorkTree,
             git_diff_staged: renderContext.gitDiffStaged,
+          }
+        : undefined,
+      git_logs: renderContext.gitLogEnabled
+        ? {
+            git_log_content: renderContext.gitLogContent,
           }
         : undefined,
       instruction: renderContext.instruction ? renderContext.instruction : undefined,
@@ -156,6 +164,7 @@ export const generateOutput = async (
   processedFiles: ProcessedFile[],
   allFilePaths: string[],
   gitDiffResult: GitDiffResult | undefined = undefined,
+  gitLogResult: GitLogResult | undefined = undefined,
   deps = {
     buildOutputGeneratorContext,
     generateHandlebarOutput,
@@ -172,6 +181,7 @@ export const generateOutput = async (
     allFilePaths,
     sortedProcessedFiles,
     gitDiffResult,
+    gitLogResult,
   );
   const renderContext = createRenderContext(outputGeneratorContext);
 
@@ -192,6 +202,7 @@ export const buildOutputGeneratorContext = async (
   allFilePaths: string[],
   processedFiles: ProcessedFile[],
   gitDiffResult: GitDiffResult | undefined = undefined,
+  gitLogResult: GitLogResult | undefined = undefined,
 ): Promise<OutputGeneratorContext> => {
   let repositoryInstruction = '';
 
@@ -229,5 +240,6 @@ export const buildOutputGeneratorContext = async (
     config,
     instruction: repositoryInstruction,
     gitDiffResult,
+    gitLogResult,
   };
 };

@@ -48,16 +48,18 @@ describe('calculateMetrics', () => {
         'file2.txt': 20,
       },
       gitDiffTokenCount: 0,
+      gitLogTokenCount: 0,
     };
 
     const config = createMockConfig();
 
     const gitDiffResult: GitDiffResult | undefined = undefined;
 
-    const result = await calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult, {
+    const result = await calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult, undefined, {
       calculateSelectiveFileMetrics,
       calculateOutputMetrics: () => Promise.resolve(30),
       calculateGitDiffMetrics: () => Promise.resolve(0),
+      calculateGitLogMetrics: () => Promise.resolve({ gitLogTokenCount: 0 }),
     });
 
     expect(progressCallback).toHaveBeenCalledWith('Calculating metrics...');

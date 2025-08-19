@@ -264,6 +264,21 @@ When using `--stdin`, the specified files are effectively added to the include p
 > [!NOTE]
 > When using `--stdin`, file paths can be relative or absolute, and Repomix will automatically handle path resolution and deduplication.
 
+To include git logs in the output:
+
+```bash
+# Include git logs with default count (50 commits)
+repomix --include-logs
+
+# Include git logs with specific commit count
+repomix --include-logs --include-logs-count 10
+
+# Combine with diffs for comprehensive git context
+repomix --include-logs --include-diffs
+```
+
+The git logs include commit dates, messages, and file paths for each commit, providing valuable context for AI analysis of code evolution and development patterns.
+
 To compress the output:
 
 ```bash
@@ -537,6 +552,8 @@ Instruction
 - `--include-empty-directories`: Include empty directories in the output
 - `--no-git-sort-by-changes`: Disable sorting files by git change count (enabled by default)
 - `--include-diffs`: Include git diffs in the output (includes both work tree and staged changes separately)
+- `--include-logs`: Include git logs in the output (includes commit history with dates, messages, and file paths)
+- `--include-logs-count <count>`: Number of git log commits to include (default: 50)
 
 #### File Selection Options
 - `--include <patterns>`: List of include patterns (comma-separated)
@@ -932,6 +949,8 @@ Here's an explanation of the configuration options:
 | `output.git.sortByChanges`       | Whether to sort files by git change count (files with more changes appear at the bottom)                                     | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Maximum number of commits to analyze for git changes                                                                     | `100`                  |
 | `output.git.includeDiffs`       | Whether to include git diffs in the output (includes both work tree and staged changes separately)                          | `false`                |
+| `output.git.includeLogs`        | Whether to include git logs in the output (includes commit history with dates, messages, and file paths)                   | `false`                |
+| `output.git.includeLogsCount`   | Number of git log commits to include                                                                                         | `50`                   |
 | `include`                        | Patterns of files to include (using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax))  | `[]`                   |
 | `ignore.useGitignore`            | Whether to use patterns from the project's `.gitignore` file                                                                 | `true`                 |
 | `ignore.useDefaultPatterns`      | Whether to use default ignore patterns                                                                                       | `true`                 |
@@ -972,7 +991,9 @@ Example configuration:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],

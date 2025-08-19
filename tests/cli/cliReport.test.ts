@@ -41,9 +41,11 @@ describe('cliReport', () => {
         fileTokenCounts: { 'file1.txt': 50 },
         suspiciousFilesResults: suspiciousFiles,
         suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
         processedFiles: [],
         safeFilePaths: [],
         gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
       };
 
       reportSummary(packResult, config);
@@ -64,9 +66,11 @@ describe('cliReport', () => {
         fileTokenCounts: { 'file1.txt': 50 },
         suspiciousFilesResults: [],
         suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
         processedFiles: [],
         safeFilePaths: [],
         gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
       };
 
       reportSummary(packResult, config);
@@ -81,7 +85,7 @@ describe('cliReport', () => {
         security: { enableSecurityCheck: false },
       });
 
-      reportSecurityCheck('/root', [], [], config);
+      reportSecurityCheck('/root', [], [], [], config);
       expect(logger.log).not.toHaveBeenCalled();
     });
 
@@ -90,7 +94,7 @@ describe('cliReport', () => {
         security: { enableSecurityCheck: true },
       });
 
-      reportSecurityCheck('/root', [], [], config);
+      reportSecurityCheck('/root', [], [], [], config);
 
       expect(logger.log).toHaveBeenCalledWith('WHITE:🔎 Security Check:');
       expect(logger.log).toHaveBeenCalledWith('DIM:──────────────────');
@@ -110,7 +114,7 @@ describe('cliReport', () => {
         },
       ];
 
-      reportSecurityCheck('/root', suspiciousFiles, [], config);
+      reportSecurityCheck('/root', suspiciousFiles, [], [], config);
 
       expect(logger.log).toHaveBeenCalledWith('YELLOW:1 suspicious file(s) detected and excluded from the output:');
       expect(logger.log).toHaveBeenCalledWith(`WHITE:1. WHITE:${configRelativePath}`);

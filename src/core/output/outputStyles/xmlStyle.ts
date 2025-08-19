@@ -64,6 +64,14 @@ This section contains the contents of the repository's files.
 </git_diffs>
 {{/if}}
 
+{{#if gitLogEnabled}}
+<git_logs>
+<git_log_content>
+{{{gitLogContent}}}
+</git_log_content>
+</git_logs>
+{{/if}}
+
 {{#if instruction}}
 <instruction>
 {{{instruction}}}

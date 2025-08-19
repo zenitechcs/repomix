@@ -2,7 +2,9 @@ import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
+import type { GitLogResult } from '../git/gitLogHandle.js';
 import { calculateGitDiffMetrics } from './calculateGitDiffMetrics.js';
+import { calculateGitLogMetrics } from './calculateGitLogMetrics.js';
 import { calculateOutputMetrics } from './calculateOutputMetrics.js';
 import { calculateSelectiveFileMetrics } from './calculateSelectiveFileMetrics.js';
 
@@ -13,6 +15,7 @@ export interface CalculateMetricsResult {
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
   gitDiffTokenCount: number;
+  gitLogTokenCount: number;
 }
 
 export const calculateMetrics = async (
@@ -21,10 +24,12 @@ export const calculateMetrics = async (
   progressCallback: RepomixProgressCallback,
   config: RepomixConfigMerged,
   gitDiffResult: GitDiffResult | undefined,
+  gitLogResult: GitLogResult | undefined,
   deps = {
     calculateSelectiveFileMetrics,
     calculateOutputMetrics,
     calculateGitDiffMetrics,
+    calculateGitLogMetrics,
   },
 ): Promise<CalculateMetricsResult> => {
   progressCallback('Calculating metrics...');
@@ -44,7 +49,7 @@ export const calculateMetrics = async (
         .slice(0, Math.min(processedFiles.length, Math.max(topFilesLength * 10, topFilesLength)))
         .map((file) => file.path);
 
-  const [selectiveFileMetrics, totalTokens, gitDiffTokenCount] = await Promise.all([
+  const [selectiveFileMetrics, totalTokens, gitDiffTokenCount, gitLogTokenCount] = await Promise.all([
     deps.calculateSelectiveFileMetrics(
       processedFiles,
       metricsTargetPaths,
@@ -53,6 +58,7 @@ export const calculateMetrics = async (
     ),
     deps.calculateOutputMetrics(output, config.tokenCount.encoding, config.output.filePath),
     deps.calculateGitDiffMetrics(config, gitDiffResult),
+    deps.calculateGitLogMetrics(config, gitLogResult),
   ]);
 
   const totalFiles = processedFiles.length;
@@ -77,5 +83,6 @@ export const calculateMetrics = async (
     fileCharCounts,
     fileTokenCounts,
     gitDiffTokenCount: gitDiffTokenCount,
+    gitLogTokenCount: gitLogTokenCount.gitLogTokenCount,
   };
 };

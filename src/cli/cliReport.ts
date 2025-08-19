@@ -27,7 +27,13 @@ export const reportResults = (cwd: string, packResult: PackResult, config: Repom
     logger.log('');
   }
 
-  reportSecurityCheck(cwd, packResult.suspiciousFilesResults, packResult.suspiciousGitDiffResults, config);
+  reportSecurityCheck(
+    cwd,
+    packResult.suspiciousFilesResults,
+    packResult.suspiciousGitDiffResults,
+    packResult.suspiciousGitLogResults,
+    config,
+  );
   logger.log('');
 
   reportSummary(packResult, config);
@@ -75,6 +81,7 @@ export const reportSecurityCheck = (
   rootDir: string,
   suspiciousFilesResults: SuspiciousFileResult[],
   suspiciousGitDiffResults: SuspiciousFileResult[],
+  suspiciousGitLogResults: SuspiciousFileResult[],
   config: RepomixConfigMerged,
 ) => {
   if (!config.security.enableSecurityCheck) {
@@ -112,6 +119,20 @@ export const reportSecurityCheck = (
     });
     logger.log(pc.yellow('\nNote: Git diffs with security issues are still included in the output.'));
     logger.log(pc.yellow('Please review the diffs before sharing the output.'));
+  }
+
+  // Report results for git logs
+  if (suspiciousGitLogResults.length > 0) {
+    logger.log('');
+    logger.log(pc.yellow(`${suspiciousGitLogResults.length} security issue(s) found in Git logs:`));
+    suspiciousGitLogResults.forEach((suspiciousResult, index) => {
+      logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(suspiciousResult.filePath)}`);
+      const issueCount = suspiciousResult.messages.length;
+      const issueText = issueCount === 1 ? 'security issue' : 'security issues';
+      logger.log(pc.dim(`   - ${issueCount} ${issueText} detected`));
+    });
+    logger.log(pc.yellow('\nNote: Git logs with security issues are still included in the output.'));
+    logger.log(pc.yellow('Please review the logs before sharing the output.'));
   }
 };
 

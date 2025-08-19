@@ -184,5 +184,11 @@ export const generateSummaryNotes = (config: RepomixConfigMerged): string => {
     notes.push('- Git diffs from the worktree and staged changes are included');
   }
 
+  // Git logs notes
+  if (config.output.git?.includeLogs) {
+    const logCount = config.output.git?.includeLogsCount || 50;
+    notes.push(`- Git logs (${logCount} commits) are included to show development patterns`);
+  }
+
   return notes.join('\n');
 };

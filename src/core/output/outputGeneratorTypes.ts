@@ -1,6 +1,7 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
+import type { GitLogResult } from '../git/gitLogHandle.js';
 
 export interface OutputGeneratorContext {
   generationDate: string;
@@ -9,6 +10,7 @@ export interface OutputGeneratorContext {
   config: RepomixConfigMerged;
   instruction: string;
   gitDiffResult: GitDiffResult | undefined;
+  gitLogResult: GitLogResult | undefined;
 }
 
 export interface RenderContext {
@@ -29,4 +31,6 @@ export interface RenderContext {
   readonly gitDiffEnabled: boolean;
   readonly gitDiffWorkTree: string | undefined;
   readonly gitDiffStaged: string | undefined;
+  readonly gitLogEnabled: boolean;
+  readonly gitLogContent: string | undefined;
 }

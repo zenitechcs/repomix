@@ -8,6 +8,7 @@ import { processFiles } from './file/fileProcess.js';
 import { searchFiles } from './file/fileSearch.js';
 import type { ProcessedFile, RawFile } from './file/fileTypes.js';
 import { GitDiffResult, getGitDiffs } from './git/gitDiffHandle.js';
+import { GitLogResult, getGitLogs } from './git/gitLogHandle.js';
 import { calculateMetrics } from './metrics/calculateMetrics.js';
 import { generateOutput } from './output/outputGenerate.js';
 import { copyToClipboardIfEnabled } from './packager/copyToClipboardIfEnabled.js';
@@ -22,8 +23,10 @@ export interface PackResult {
   fileCharCounts: Record<string, number>;
   fileTokenCounts: Record<string, number>;
   gitDiffTokenCount: number;
+  gitLogTokenCount: number;
   suspiciousFilesResults: SuspiciousFileResult[];
   suspiciousGitDiffResults: SuspiciousFileResult[];
+  suspiciousGitLogResults: SuspiciousFileResult[];
   processedFiles: ProcessedFile[];
   safeFilePaths: string[];
 }
@@ -39,6 +42,7 @@ const defaultDeps = {
   calculateMetrics,
   sortPaths,
   getGitDiffs,
+  getGitLogs,
 };
 
 export const pack = async (
@@ -93,11 +97,15 @@ export const pack = async (
   progressCallback('Getting git diffs...');
   const gitDiffResult = await deps.getGitDiffs(rootDirs, config);
 
+  // Get git logs if enabled - run this before security check
+  progressCallback('Getting git logs...');
+  const gitLogResult = await deps.getGitLogs(rootDirs, config);
+
   // Run security check and get filtered safe files
-  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults } = await withMemoryLogging(
-    'Security Check',
-    () => deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult),
-  );
+  const { safeFilePaths, safeRawFiles, suspiciousFilesResults, suspiciousGitDiffResults, suspiciousGitLogResults } =
+    await withMemoryLogging('Security Check', () =>
+      deps.validateFileSafety(rawFiles, progressCallback, config, gitDiffResult, gitLogResult),
+    );
 
   // Process files (remove comments, etc.)
   progressCallback('Processing files...');
@@ -107,7 +115,7 @@ export const pack = async (
 
   progressCallback('Generating output...');
   const output = await withMemoryLogging('Generate Output', () =>
-    deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult),
+    deps.generateOutput(rootDirs, config, processedFiles, safeFilePaths, gitDiffResult, gitLogResult),
   );
 
   progressCallback('Writing output file...');
@@ -116,7 +124,7 @@ export const pack = async (
   await deps.copyToClipboardIfEnabled(output, progressCallback, config);
 
   const metrics = await withMemoryLogging('Calculate Metrics', () =>
-    deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult),
+    deps.calculateMetrics(processedFiles, output, progressCallback, config, gitDiffResult, gitLogResult),
   );
 
   // Create a result object that includes metrics and security results
@@ -124,6 +132,7 @@ export const pack = async (
     ...metrics,
     suspiciousFilesResults,
     suspiciousGitDiffResults,
+    suspiciousGitLogResults,
     processedFiles,
     safeFilePaths,
   };

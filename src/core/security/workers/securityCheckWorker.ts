@@ -7,8 +7,8 @@ import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
 // This must be called before any logging operations in the worker
 setLogLevelByWorkerData();
 
-// Security check type to distinguish between regular files and git diffs
-export type SecurityCheckType = 'file' | 'gitDiff';
+// Security check type to distinguish between regular files, git diffs, and git logs
+export type SecurityCheckType = 'file' | 'gitDiff' | 'gitLog';
 
 export interface SecurityCheckTask {
   filePath: string;
