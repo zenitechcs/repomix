@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Whether to sort files by git change count. Files with more changes appear at the bottom                                      | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Maximum number of commits to analyze for git changes. Limits the history depth for performance                           | `100`                  |
 | `output.git.includeDiffs`        | Whether to include git diffs in the output. Shows both work tree and staged changes separately                               | `false`                |
+| `output.git.includeLogs`         | Whether to include git logs in the output. Shows commit history with dates, messages, and file paths                        | `false`                |
+| `output.git.includeLogsCount`    | Number of git log commits to include in the output                                                                          | `50`                   |
 | `include`                        | Patterns of files to include using [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)    | `[]`                   |
 | `ignore.useGitignore`            | Whether to use patterns from the project's `.gitignore` file                                                                 | `true`                 |
 | `ignore.useDefaultPatterns`      | Whether to use default ignore patterns (node_modules, .git, etc.)                                                           | `true`                 |
@@ -97,7 +99,9 @@ Here's an example of a complete configuration file (`repomix.config.json`):
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ The `output.git` configuration provides powerful Git-aware features:
 - `sortByChanges`: When true, files are sorted by the number of Git changes (commits that modified the file). Files with more changes appear at the bottom of the output. This helps prioritize more actively developed files. Default: `true`
 - `sortByChangesMaxCommits`: The maximum number of commits to analyze when counting file changes. Default: `100`
 - `includeDiffs`: When true, includes Git differences in the output (includes both work tree and staged changes separately). This allows the reader to see pending changes in the repository. Default: `false`
+- `includeLogs`: When true, includes Git commit history in the output. Shows commit dates, messages, and file paths for each commit. This helps AI understand development patterns and file relationships. Default: `false`
+- `includeLogsCount`: The number of recent commits to include in the git logs. Default: `50`
 
 Example configuration:
 ```json
@@ -194,7 +200,9 @@ Example configuration:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

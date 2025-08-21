@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Git統合
+
+AI分析のための開発コンテキストを提供するためにGit情報を含めます：
+
+```bash
+# Git差分を含める（コミットされていない変更）
+repomix --include-diffs
+
+# Gitコミットログを含める（デフォルトで最新50コミット）
+repomix --include-logs
+
+# 特定の数のコミットを含める
+repomix --include-logs --include-logs-count 10
+
+# 差分とログの両方を含める
+repomix --include-diffs --include-logs
+```
+
+これにより以下の貴重なコンテキストが追加されます：
+- **最近の変更**: Git差分はコミットされていない変更を表示
+- **開発パターン**: Gitログは通常一緒に変更されるファイルを明らかにする
+- **コミット履歴**: 最近のコミットメッセージは開発の焦点についての洞察を提供
+- **ファイル関係**: 同じコミットで変更されるファイルの理解
+
 ### トークン数最適化
 
 コードベースのトークン分布を理解することは、AIとの対話を最適化するために重要です。`--token-count-tree`オプションを使用して、プロジェクト全体のトークン使用量を視覚化できます：
