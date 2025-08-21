@@ -63,10 +63,17 @@ export const getMarkdownTemplate = () => {
 
 {{#if gitLogEnabled}}
 # Git Logs
-\`\`\`
-{{{gitLogContent}}}
-\`\`\`
 
+{{#each gitLogCommits}}
+## Commit: {{{this.date}}}
+**Message:** {{{this.message}}}
+
+**Files:**
+{{#each this.files}}
+- {{{this}}}
+{{/each}}
+
+{{/each}}
 {{/if}}
 
 {{#if instruction}}

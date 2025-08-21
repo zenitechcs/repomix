@@ -53,6 +53,7 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     gitDiffStaged: outputGeneratorContext.gitDiffResult?.stagedDiffContent,
     gitLogEnabled: outputGeneratorContext.config.output.git?.includeLogs,
     gitLogContent: outputGeneratorContext.gitLogResult?.logContent,
+    gitLogCommits: outputGeneratorContext.gitLogResult?.commits,
   };
 };
 
@@ -91,7 +92,11 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
         : undefined,
       git_logs: renderContext.gitLogEnabled
         ? {
-            git_log_content: renderContext.gitLogContent,
+            git_log_commit: renderContext.gitLogCommits?.map((commit) => ({
+              date: commit.date,
+              message: commit.message,
+              files: commit.files.map((file) => ({ '#text': file })),
+            })),
           }
         : undefined,
       instruction: renderContext.instruction ? renderContext.instruction : undefined,

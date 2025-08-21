@@ -25,7 +25,7 @@
       "sortByChangesMaxCommits": 100,
       "includeDiffs": true,
       "includeLogs": true,
-      "includeLogsCount": 100
+      "includeLogsCount": 50
     }
   },
   "include": [],

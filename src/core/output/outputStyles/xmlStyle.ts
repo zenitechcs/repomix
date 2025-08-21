@@ -66,9 +66,17 @@ This section contains the contents of the repository's files.
 
 {{#if gitLogEnabled}}
 <git_logs>
-<git_log_content>
-{{{gitLogContent}}}
-</git_log_content>
+{{#each gitLogCommits}}
+<git_log_commit>
+<date>{{{this.date}}}</date>
+<message>{{{this.message}}}</message>
+<files>
+{{#each this.files}}
+{{{this}}}
+{{/each}}
+</files>
+</git_log_commit>
+{{/each}}
 </git_logs>
 {{/if}}
 

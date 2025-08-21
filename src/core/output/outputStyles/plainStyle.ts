@@ -63,25 +63,35 @@ ${PLAIN_SEPARATOR}
 {{/if}}
 
 {{#if gitDiffEnabled}}
-\${PLAIN_LONG_SEPARATOR}
+${PLAIN_LONG_SEPARATOR}
 Git Diffs
-\${PLAIN_LONG_SEPARATOR}
-\${PLAIN_SEPARATOR}
+${PLAIN_LONG_SEPARATOR}
+${PLAIN_SEPARATOR}
 {{{gitDiffWorkTree}}}
-\${PLAIN_SEPARATOR}
+${PLAIN_SEPARATOR}
 
-\${PLAIN_SEPARATOR}
+${PLAIN_SEPARATOR}
 Git Diffs Staged
-\${PLAIN_SEPARATOR}
+${PLAIN_SEPARATOR}
 {{{gitDiffStaged}}}
 
 {{/if}}
 
 {{#if gitLogEnabled}}
-\${PLAIN_LONG_SEPARATOR}
+${PLAIN_LONG_SEPARATOR}
 Git Logs
-\${PLAIN_LONG_SEPARATOR}
-{{{gitLogContent}}}
+${PLAIN_LONG_SEPARATOR}
+{{#each gitLogCommits}}
+${PLAIN_SEPARATOR}
+Date: {{{this.date}}}
+Message: {{{this.message}}}
+Files:
+{{#each this.files}}
+  - {{{this}}}
+{{/each}}
+${PLAIN_SEPARATOR}
+
+{{/each}}
 
 {{/if}}
 
