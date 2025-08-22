@@ -95,9 +95,7 @@ export const getGitLogs = async (
         commits,
       };
     } catch (error) {
-      if (error instanceof Error) {
-        throw new RepomixError(`Failed to get git logs: ${error.message}`);
-      }
+      throw new RepomixError(`Failed to get git logs: ${(error as Error).message}`, { cause: error });
     }
   }
 
