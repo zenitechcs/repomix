@@ -32,6 +32,28 @@ src/
 // 文件内容
 </file>
 </files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
 
 ::: tip 为什么选择 XML？
@@ -66,6 +88,24 @@ helper.ts
 ```typescript
 // 文件内容
 ```
+
+# Git 日志
+
+## 提交：2025-08-20 00:47:19 +0900
+**消息：** feat(cli): Add --include-logs option for git commit history
+
+**文件：**
+- README.md
+- src/cli/cliRun.ts
+- src/core/git/gitCommand.ts
+- src/core/git/gitLogHandle.ts
+- src/core/output/outputGenerate.ts
+
+## 提交：2025-08-21 00:09:43 +0900
+**消息：** Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+
+**文件：**
+- .github/workflows/ratchet-update.yml
 ```
 
 ## 在 AI 模型中的使用
@@ -118,4 +158,25 @@ src/
 File: src/index.ts
 ================
 // 文件内容
+
+================
+Git 日志
+================
+================
+Date: 2025-08-20 00:47:19 +0900
+Message: feat(cli): Add --include-logs option for git commit history
+Files:
+  - README.md
+  - src/cli/cliRun.ts
+  - src/core/git/gitCommand.ts
+  - src/core/git/gitLogHandle.ts
+  - src/core/output/outputGenerate.ts
+================
+
+================
+Date: 2025-08-21 00:09:43 +0900
+Message: Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+Files:
+  - .github/workflows/ratchet-update.yml
+================
 ```
