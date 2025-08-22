@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Indique s'il faut trier les fichiers par nombre de modifications git. Les fichiers avec plus de modifications apparaissent en bas | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Nombre maximum de commits à analyser pour les modifications git. Limite la profondeur de l'historique pour les performances | `100`                  |
 | `output.git.includeDiffs`        | Indique s'il faut inclure les différences git dans la sortie. Montre séparément les modifications de l'arborescence de travail et les modifications indexées | `false`                |
+| `output.git.includeLogs`         | Indique s'il faut inclure les journaux git dans la sortie. Montre l'historique des commits avec les dates, les messages et les chemins de fichiers | `false`                |
+| `output.git.includeLogsCount`    | Nombre de commits de journaux git récents à inclure dans la sortie                                                                          | `50`                   |
 | `include`                        | Motifs des fichiers à inclure en utilisant les [motifs glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax) | `[]`                   |
 | `ignore.useGitignore`            | Indique s'il faut utiliser les motifs du fichier `.gitignore` du projet                                                      | `true`                 |
 | `ignore.useDefaultPatterns`      | Indique s'il faut utiliser les motifs d'ignorance par défaut (node_modules, .git, etc.)                                    | `true`                 |
@@ -97,7 +99,9 @@ Voici un exemple de fichier de configuration complet (`repomix.config.json`) :
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ La configuration `output.git` fournit des fonctionnalités puissantes liées à 
 - `sortByChanges` : Lorsque vrai, les fichiers sont triés par nombre de modifications Git (commits qui ont modifié le fichier). Les fichiers avec plus de modifications apparaissent en bas de la sortie. Cela aide à prioriser les fichiers plus activement développés. Par défaut : `true`
 - `sortByChangesMaxCommits` : Le nombre maximum de commits à analyser lors du comptage des modifications de fichiers. Par défaut : `100`
 - `includeDiffs` : Lorsque vrai, inclut les différences Git dans la sortie (inclut séparément les modifications de l'arborescence de travail et les modifications indexées). Cela permet au lecteur de voir les modifications en attente dans le dépôt. Par défaut : `false`
+- `includeLogs` : Lorsque vrai, inclut l'historique des commits Git dans la sortie. Montre les dates des commits, les messages et les chemins de fichiers pour chaque commit. Cela aide l'IA à comprendre les modèles de développement et les relations entre fichiers. Par défaut : `false`
+- `includeLogsCount` : Le nombre de commits récents à inclure dans les journaux git. Par défaut : `50`
 
 Exemple de configuration :
 ```json
@@ -194,7 +200,9 @@ Exemple de configuration :
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

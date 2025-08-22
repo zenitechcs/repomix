@@ -108,6 +108,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Integrasi Git
+
+Sertakan informasi Git untuk memberikan konteks pengembangan bagi analisis AI:
+
+```bash
+# Sertakan diff git (perubahan yang belum di-commit)
+repomix --include-diffs
+
+# Sertakan log commit git (50 commit terakhir secara default)
+repomix --include-logs
+
+# Sertakan jumlah commit tertentu
+repomix --include-logs --include-logs-count 10
+
+# Sertakan diff dan log
+repomix --include-diffs --include-logs
+```
+
+Ini menambahkan konteks berharga tentang:
+- **Perubahan terbaru**: Diff Git menunjukkan modifikasi yang belum di-commit
+- **Pola pengembangan**: Log Git mengungkapkan file mana yang biasanya diubah bersamaan
+- **Riwayat commit**: Pesan commit terbaru memberikan wawasan tentang fokus pengembangan
+- **Hubungan file**: Memahami file mana yang dimodifikasi dalam commit yang sama
+
 ### Optimisasi Jumlah Token
 
 Memahami distribusi token dari basis kode Anda sangat penting untuk mengoptimalkan interaksi AI. Gunakan opsi `--token-count-tree` untuk memvisualisasikan penggunaan token di seluruh proyek Anda:
@@ -144,17 +168,41 @@ Ini membantu Anda:
 
 ## Format Output
 
-Pilih format output yang Anda inginkan:
-
+### XML (Default)
 ```bash
-# Format XML (default)
 repomix --style xml
+```
 
-# Format Markdown
+### Markdown
+```bash
 repomix --style markdown
+```
 
-# Format teks biasa
+### Plain Text
+```bash
 repomix --style plain
+```
+
+## Opsi Tambahan
+
+### Hapus Komentar
+```bash
+repomix --remove-comments
+```
+
+### Tampilkan Nomor Baris
+```bash
+repomix --output-show-line-numbers
+```
+
+### Salin ke Clipboard
+```bash
+repomix --copy
+```
+
+### Nonaktifkan Pemeriksaan Keamanan
+```bash
+repomix --no-security-check
 ```
 
 ## Konfigurasi

@@ -1,113 +1,170 @@
 # Format Output
 
+Repomix mendukung tiga format output:
+- XML (default)
+- Markdown
+- Plain Text 
 
-Repomix mendukung beberapa format output untuk memenuhi berbagai kebutuhan. Anda dapat memilih format yang paling sesuai dengan kasus penggunaan Anda.
-
-## Format yang Tersedia
-
-Repomix mendukung tiga format output utama:
-
-1. **XML** (default): Format terstruktur yang ideal untuk pemrosesan AI
-2. **Markdown**: Format yang mudah dibaca manusia dengan dukungan sintaks
-3. **Teks Biasa**: Format sederhana tanpa markup
-
-## Memilih Format
-
-Anda dapat menentukan format output menggunakan flag `--style`:
+## Format XML
 
 ```bash
-# Format XML (default)
 repomix --style xml
-
-# Format Markdown
-repomix --style markdown
-
-# Format teks biasa
-repomix --style plain
 ```
 
-## Contoh Output
-
-### Format XML
+Format XML dioptimalkan untuk pemrosesan AI:
 
 ```xml
-<repomix version="1.0.0" timestamp="2023-04-01T12:00:00Z" repo="example-repo">
-  <stats>
-    <files>10</files>
-    <lines>500</lines>
-    <tokens>5000</tokens>
-  </stats>
-  <file path="src/index.js" language="javascript" tokens="120">
-    <content>
-    // Kode sumber di sini
-    </content>
-  </file>
-  <!-- File lainnya -->
-</repomix>
+Ini adalah representasi gabungan dari seluruh codebase...
+
+<file_summary>
+(Metadata dan instruksi AI)
+</file_summary>
+
+<directory_structure>
+src/
+  index.ts
+  utils/
+    helper.ts
+</directory_structure>
+
+<files>
+<file path="src/index.ts">
+// Konten file di sini
+</file>
+</files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
 
-### Format Markdown
+::: tip Mengapa XML?
+Tag XML membantu model AI seperti Claude mem-parsing konten dengan lebih akurat. [Dokumentasi Claude](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) merekomendasikan penggunaan tag XML untuk prompt terstruktur.
+:::
+
+## Format Markdown
+
+```bash
+repomix --style markdown
+```
+
+Markdown menyediakan format yang mudah dibaca:
 
 ```markdown
-# Repomix Output: example-repo
+Ini adalah representasi gabungan dari seluruh codebase...
 
-Generated on: 2023-04-01T12:00:00Z
+# File Summary
+(Metadata dan instruksi AI)
 
-## Stats
-- Files: 10
-- Lines: 500
-- Tokens: 5000
-
-## Files
-
-### src/index.js (JavaScript, 120 tokens)
-
-```javascript
-// Kode sumber di sini
+# Directory Structure
+```
+src/
+index.ts
+utils/
+helper.ts
 ```
 
-<!-- File lainnya -->
+# Files
+
+## File: src/index.ts
+```typescript
+// Konten file di sini
 ```
 
-### Format Teks Biasa
-
+# Git Logs
 ```
-Repomix Output: example-repo
-Generated on: 2023-04-01T12:00:00Z
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
 
-Stats:
-- Files: 10
-- Lines: 500
-- Tokens: 5000
-
-Files:
-
-src/index.js (JavaScript, 120 tokens)
-------------------------------------
-// Kode sumber di sini
-
-// File lainnya
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
 ```
 
-## Konfigurasi
+## Penggunaan dengan Model AI
 
-Anda dapat menentukan format output dalam file konfigurasi Anda:
+Setiap format bekerja dengan baik dengan model AI, tetapi pertimbangkan:
+- Gunakan XML untuk Claude (akurasi parsing terbaik)
+- Gunakan Markdown untuk keterbacaan umum
+- Gunakan Plain Text untuk kesederhanaan dan kompatibilitas universal
 
+## Kustomisasi
+
+Atur format default di `repomix.config.json`:
 ```json
 {
   "output": {
-    "style": "markdown",
-    "filePath": "custom-output.md"
+    "style": "xml",
+    "filePath": "output.xml"
   }
 }
 ```
 
-## Opsi Terkait
+## Format Plain Text
 
-Beberapa opsi terkait yang dapat memengaruhi output:
+```bash
+repomix --style plain
+```
 
-- `--output`, `-o`: Menentukan jalur file output
-- `--no-line-numbers`: Menonaktifkan nomor baris
-- `--remove-comments`: Menghapus komentar dari kode sumber
-- `--top-files`: Menentukan jumlah file teratas yang akan ditampilkan di ringkasan
-- `--copy-to-clipboard`: Menyalin output ke clipboard
+Struktur output:
+```text
+Ini adalah representasi gabungan dari seluruh codebase...
+
+================
+File Summary
+================
+(Metadata dan instruksi AI)
+
+================
+Directory Structure
+================
+src/
+  index.ts
+  utils/
+    helper.ts
+
+================
+Files
+================
+
+================
+File: src/index.ts
+================
+// Konten file di sini
+
+================
+Git Logs
+================
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+

@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: Ruta a un archivo que contiene instrucciones personalizadas detalladas
 - `--include-empty-directories`: Incluir directorios vacíos en la salida
 - `--include-diffs`: Incluir diffs de git en la salida (incluye cambios del árbol de trabajo y cambios en stage por separado)
+- `--include-logs`: Incluir logs de git en la salida (incluye historial de commits con fechas, mensajes y rutas de archivos)
+- `--include-logs-count <count>`: Número de commits de log de git a incluir (predeterminado: 50)
 - `--no-git-sort-by-changes`: Deshabilitar ordenamiento de archivos por conteo de cambios de git (habilitado por defecto)
 
 ## Opciones de selección de archivos
@@ -86,6 +88,12 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Integración con Git
+repomix --include-diffs  # Incluir diffs de git para cambios sin commit
+repomix --include-logs   # Incluir logs de git (últimos 50 commits por defecto)
+repomix --include-logs --include-logs-count 10  # Incluir últimos 10 commits
+repomix --include-diffs --include-logs  # Incluir tanto diffs como logs
 
 # Análisis de conteo de tokens
 repomix --token-count-tree

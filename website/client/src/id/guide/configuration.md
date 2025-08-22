@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Apakah akan mengurutkan file berdasarkan jumlah perubahan git. File dengan lebih banyak perubahan muncul di bagian bawah  | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Jumlah maksimum commit untuk dianalisis saat menghitung perubahan git. Membatasi kedalaman riwayat untuk performa     | `100`                  |
 | `output.git.includeDiffs`        | Apakah akan menyertakan perbedaan git dalam output. Menampilkan perubahan work tree dan staged secara terpisah            | `false`                |
+| `output.git.includeLogs`         | Apakah akan menyertakan log git dalam output. Menampilkan riwayat commit dengan tanggal, pesan, dan jalur file            | `false`                |
+| `output.git.includeLogsCount`    | Jumlah commit log git yang akan disertakan dalam output                                                                    | `50`                   |
 | `include`                        | Pola file untuk disertakan menggunakan [pola glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)  | `[]`                   |
 | `ignore.useGitignore`            | Apakah akan menggunakan pola dari file `.gitignore` proyek                                                                  | `true`                 |
 | `ignore.useDefaultPatterns`      | Apakah akan menggunakan pola ignore default (node_modules, .git, dll.)                                                     | `true`                 |
@@ -97,7 +99,9 @@ Berikut adalah contoh file konfigurasi lengkap (`repomix.config.json`):
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ Konfigurasi `output.git` menyediakan fitur Git-aware yang kuat:
 - `sortByChanges`: Ketika true, file diurutkan berdasarkan jumlah perubahan Git (commit yang memodifikasi file). File dengan lebih banyak perubahan muncul di bagian bawah output. Ini membantu memprioritaskan file yang lebih aktif dikembangkan. Default: `true`
 - `sortByChangesMaxCommits`: Jumlah maksimum commit untuk dianalisis saat menghitung perubahan file. Default: `100`
 - `includeDiffs`: Ketika true, menyertakan perbedaan Git dalam output (termasuk perubahan work tree dan staged secara terpisah). Ini memungkinkan pembaca melihat perubahan yang tertunda di repository. Default: `false`
+- `includeLogs`: Ketika true, menyertakan riwayat commit Git dalam output. Menampilkan tanggal commit, pesan, dan jalur file untuk setiap commit. Ini membantu AI memahami pola pengembangan dan hubungan file. Default: `false`
+- `includeLogsCount`: Jumlah commit terbaru yang akan disertakan dalam log git. Default: `50`
 
 Contoh konfigurasi:
 ```json
@@ -194,7 +200,9 @@ Contoh konfigurasi:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

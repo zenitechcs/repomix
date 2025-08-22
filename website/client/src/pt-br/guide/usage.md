@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Integração Git
+
+Incluir informações do Git para fornecer contexto de desenvolvimento para análise de IA:
+
+```bash
+# Incluir diffs do git (alterações não commitadas)
+repomix --include-diffs
+
+# Incluir logs de commits do git (últimos 50 commits por padrão)
+repomix --include-logs
+
+# Incluir número específico de commits
+repomix --include-logs --include-logs-count 10
+
+# Incluir tanto diffs quanto logs
+repomix --include-diffs --include-logs
+```
+
+Isso adiciona contexto valioso sobre:
+- **Alterações recentes**: Diffs do Git mostram modificações não commitadas
+- **Padrões de desenvolvimento**: Logs do Git revelam quais arquivos são tipicamente alterados juntos
+- **Histórico de commits**: Mensagens de commits recentes fornecem insights sobre o foco do desenvolvimento
+- **Relacionamentos entre arquivos**: Entender quais arquivos são modificados nos mesmos commits
+
 ### Otimização da Contagem de Tokens
 
 Entender a distribuição de tokens da sua base de código é crucial para otimizar as interações com IA. Use a opção `--token-count-tree` para visualizar o uso de tokens em todo o seu projeto:

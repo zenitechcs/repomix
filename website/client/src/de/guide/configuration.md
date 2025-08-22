@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Ob Dateien nach Git-Änderungen sortiert werden sollen. Häufiger geänderte Dateien erscheinen am Ende                     | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Maximale Anzahl zu analysierender Commits für Git-Änderungen. Begrenzt die Historien-Tiefe für bessere Performance   | `100`                  |
 | `output.git.includeDiffs`        | Ob Git-Unterschiede in der Ausgabe enthalten sein sollen. Zeigt Arbeitsverzeichnis- und Stage-Änderungen separat an     | `false`                |
+| `output.git.includeLogs`         | Ob Git-Logs in der Ausgabe enthalten sein sollen. Zeigt Commit-Historie mit Daten, Nachrichten und Dateipfaden an       | `false`                |
+| `output.git.includeLogsCount`    | Anzahl der Git-Log-Commits, die in die Ausgabe einbezogen werden sollen                                                   | `50`                   |
 | `include`                        | Zu einschließende Dateimuster (verwendet [glob-Muster](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)) | `[]`                   |
 | `ignore.useGitignore`            | Ob Muster aus der `.gitignore`-Datei des Projekts verwendet werden sollen                                                 | `true`                 |
 | `ignore.useDefaultPatterns`      | Ob Standard-Ignorier-Muster (node_modules, .git etc.) verwendet werden sollen                                             | `true`                 |
@@ -97,7 +99,9 @@ Hier ist ein Beispiel einer vollständigen Konfigurationsdatei (`repomix.config.
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ Die `output.git`-Konfiguration bietet leistungsstarke Git-bewusste Funktionen:
 - `sortByChanges`: Wenn auf true gesetzt, werden Dateien nach der Anzahl der Git-Änderungen (Commits, die die Datei modifiziert haben) sortiert. Häufiger geänderte Dateien erscheinen am Ende der Ausgabe. Dies hilft, aktiver entwickelte Dateien zu priorisieren. Standard: `true`
 - `sortByChangesMaxCommits`: Maximale Anzahl zu analysierender Commits bei der Zählung von Dateiänderungen. Standard: `100`
 - `includeDiffs`: Wenn auf true gesetzt, werden Git-Unterschiede in die Ausgabe einbezogen (enthält sowohl Arbeitsverzeichnis- als auch Stage-Änderungen separat). Dies ermöglicht es dem Leser, ausstehende Änderungen im Repository zu sehen. Standard: `false`
+- `includeLogs`: Wenn auf true gesetzt, werden Git-Logs in die Ausgabe einbezogen. Zeigt Commit-Historie mit Daten, Nachrichten und Dateipfaden für jeden Commit an. Dies hilft der KI, Entwicklungsmuster und Dateibeziehungen zu verstehen. Standard: `false`
+- `includeLogsCount`: Die Anzahl der letzten Commits, die in die Git-Logs einbezogen werden sollen. Standard: `50`
 
 Beispielkonfiguration:
 ```json
@@ -194,7 +200,9 @@ Beispielkonfiguration:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Indica se deve ordenar arquivos por número de alterações git. Arquivos com mais alterações aparecem no final            | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Número máximo de commits para analisar ao contar alterações git. Limita a profundidade do histórico por desempenho  | `100`                  |
 | `output.git.includeDiffs`        | Indica se deve incluir as diferenças git na saída. Mostra separadamente as alterações da árvore de trabalho e as alterações preparadas | `false`                |
+| `output.git.includeLogs`         | Indica se deve incluir logs do git na saída. Mostra histórico de commits com datas, mensagens e caminhos de arquivos            | `false`                |
+| `output.git.includeLogsCount`    | Número de commits do log do git para incluir na saída                                                                          | `50`                   |
 | `include`                        | Padrões de arquivos para incluir usando [padrões glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax) | `[]`                   |
 | `ignore.useGitignore`            | Indica se deve usar os padrões do arquivo `.gitignore` do projeto                                                        | `true`                 |
 | `ignore.useDefaultPatterns`      | Indica se deve usar os padrões de ignorar padrão (node_modules, .git, etc.)                                            | `true`                 |
@@ -97,7 +99,9 @@ Aqui está um exemplo de um arquivo de configuração completo (`repomix.config.
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ A configuração `output.git` fornece recursos poderosos relacionados ao Git:
 - `sortByChanges`: Quando verdadeiro, os arquivos são ordenados por número de alterações Git (commits que modificaram o arquivo). Arquivos com mais alterações aparecem no final da saída. Isso ajuda a priorizar os arquivos mais ativamente desenvolvidos. Padrão: `true`
 - `sortByChangesMaxCommits`: O número máximo de commits para analisar ao contar alterações de arquivos. Padrão: `100`
 - `includeDiffs`: Quando verdadeiro, inclui as diferenças Git na saída (inclui separadamente as alterações da árvore de trabalho e as alterações preparadas). Isso permite que o leitor veja as alterações pendentes no repositório. Padrão: `false`
+- `includeLogs`: Quando verdadeiro, inclui o histórico de commits Git na saída. Mostra datas de commit, mensagens e caminhos de arquivos para cada commit. Isso ajuda a IA a entender padrões de desenvolvimento e relacionamentos entre arquivos. Padrão: `false`
+- `includeLogsCount`: O número de commits recentes para incluir nos logs git. Padrão: `50`
 
 Exemplo de configuração:
 ```json
@@ -194,7 +200,9 @@ Exemplo de configuração:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

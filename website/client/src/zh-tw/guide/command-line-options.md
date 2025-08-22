@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: 包含詳細自訂指令的檔案路徑
 - `--include-empty-directories`: 在輸出中包含空目錄
 - `--include-diffs`: 在輸出中包含git差異（分別包含工作樹和暫存的變更）
+- `--include-logs`: 在輸出中包含git記錄（包含提交歷史，包括日期、訊息和檔案路徑）
+- `--include-logs-count <count>`: 要包含的git記錄提交數量（預設：50）
 - `--no-git-sort-by-changes`: 停用按git變更次數排序檔案（預設啟用）
 
 ## 檔案選擇選項
@@ -86,6 +88,12 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Git整合
+repomix --include-diffs  # 包含git差異用於未提交的變更
+repomix --include-logs   # 包含git記錄（預設為最後50次提交）
+repomix --include-logs --include-logs-count 10  # 包含最後10次提交
+repomix --include-diffs --include-logs  # 同時包含差異和記錄
 
 # 權杖計數分析
 repomix --token-count-tree

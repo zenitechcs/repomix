@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Có nên sắp xếp file theo số lượng thay đổi git hay không. Các file có nhiều thay đổi hơn xuất hiện ở cuối                 | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Số lượng commit tối đa để phân tích khi đếm các thay đổi git. Giới hạn độ sâu lịch sử để cải thiện hiệu suất         | `100`                  |
 | `output.git.includeDiffs`        | Có nên bao gồm các sự khác biệt git trong đầu ra hay không. Hiển thị riêng biệt các thay đổi work tree và staged         | `false`                |
+| `output.git.includeLogs`         | Có nên bao gồm nhật ký git trong đầu ra hay không. Hiển thị lịch sử commit với ngày tháng, thông điệp và đường dẫn tệp    | `false`                |
+| `output.git.includeLogsCount`    | Số lượng commit git logs để bao gồm trong đầu ra                                                                          | `50`                   |
 | `include`                        | Các mẫu file để bao gồm sử dụng [mẫu glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)         | `[]`                   |
 | `ignore.useGitignore`            | Có nên sử dụng các mẫu từ file `.gitignore` của dự án hay không                                                            | `true`                 |
 | `ignore.useDefaultPatterns`      | Có nên sử dụng các mẫu ignore mặc định (node_modules, .git, v.v.) hay không                                               | `true`                 |
@@ -97,7 +99,9 @@ Bạn có thể bật xác thực schema cho file cấu hình của mình bằng
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ Cấu hình `output.git` cung cấp các tính năng Git-aware mạnh mẽ:
 - `sortByChanges`: Khi là true, các file được sắp xếp theo số lượng thay đổi Git (các commit đã sửa đổi file). Các file có nhiều thay đổi hơn xuất hiện ở cuối đầu ra. Điều này giúp ưu tiên các file được phát triển tích cực hơn. Mặc định: `true`
 - `sortByChangesMaxCommits`: Số lượng commit tối đa để phân tích khi đếm các thay đổi file. Mặc định: `100`
 - `includeDiffs`: Khi là true, bao gồm các sự khác biệt Git trong đầu ra (bao gồm riêng biệt các thay đổi work tree và staged). Điều này cho phép người đọc xem các thay đổi đang chờ trong repository. Mặc định: `false`
+- `includeLogs`: Khi là true, bao gồm nhật ký Git trong đầu ra. Hiển thị lịch sử commit với ngày tháng, thông điệp và đường dẫn tệp. Điều này giúp AI hiểu các mẫu phát triển và mối quan hệ tệp. Mặc định: `false`
+- `includeLogsCount`: Số lượng commit gần đây để bao gồm trong nhật ký git. Mặc định: `50`
 
 Ví dụ cấu hình:
 ```json
@@ -194,7 +200,9 @@ Ví dụ cấu hình:
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

@@ -29,6 +29,18 @@ src/
 // Contenu du fichier ici
 </file>
 </files>
+
+<git_logs>
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+</git_logs>
 ```
 
 ::: tip Pourquoi XML?
@@ -58,6 +70,19 @@ helper.ts
 ## Fichier: src/index.ts
 ```typescript
 // Contenu du fichier ici
+```
+
+# Journaux Git
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
 ```
 
@@ -109,4 +134,17 @@ Fichiers
 Fichier: src/index.ts
 ================
 // Contenu du fichier ici
+
+================
+Journaux Git
+================
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
