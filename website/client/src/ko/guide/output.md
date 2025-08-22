@@ -32,6 +32,28 @@ src/
 // 파일 내용
 </file>
 </files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
 
 ::: tip XML을 사용하는 이유
@@ -66,6 +88,24 @@ helper.ts
 ```typescript
 // 파일 내용
 ```
+
+# Git 로그
+
+## 커밋: 2025-08-20 00:47:19 +0900
+**메시지:** feat(cli): Add --include-logs option for git commit history
+
+**파일:**
+- README.md
+- src/cli/cliRun.ts
+- src/core/git/gitCommand.ts
+- src/core/git/gitLogHandle.ts
+- src/core/output/outputGenerate.ts
+
+## 커밋: 2025-08-21 00:09:43 +0900
+**메시지:** Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+
+**파일:**
+- .github/workflows/ratchet-update.yml
 ```
 
 ## AI 모델과의 사용
@@ -118,4 +158,25 @@ src/
 File: src/index.ts
 ================
 // 파일 내용
+
+================
+Git 로그
+================
+================
+Date: 2025-08-20 00:47:19 +0900
+Message: feat(cli): Add --include-logs option for git commit history
+Files:
+  - README.md
+  - src/cli/cliRun.ts
+  - src/core/git/gitCommand.ts
+  - src/core/git/gitLogHandle.ts
+  - src/core/output/outputGenerate.ts
+================
+
+================
+Date: 2025-08-21 00:09:43 +0900
+Message: Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+Files:
+  - .github/workflows/ratchet-update.yml
+================
 ```

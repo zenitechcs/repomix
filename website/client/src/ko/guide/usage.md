@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Git 통합
+
+AI 분석을 위한 개발 컨텍스트를 제공하기 위해 Git 정보를 포함합니다:
+
+```bash
+# git 차이점 포함 (커밋되지 않은 변경사항)
+repomix --include-diffs
+
+# git 커밋 로그 포함 (기본값: 최근 50개 커밋)
+repomix --include-logs
+
+# 특정 수의 커밋 포함
+repomix --include-logs --include-logs-count 10
+
+# 차이점과 로그 모두 포함
+repomix --include-diffs --include-logs
+```
+
+이것은 다음과 같은 귀중한 컨텍스트를 추가합니다:
+- **최근 변경사항**: Git 차이점은 커밋되지 않은 수정사항을 보여줍니다
+- **개발 패턴**: Git 로그는 일반적으로 함께 변경되는 파일을 드러냅니다
+- **커밋 히스토리**: 최근 커밋 메시지는 개발 초점에 대한 통찰을 제공합니다
+- **파일 관계**: 같은 커밋에서 수정되는 파일들에 대한 이해
+
 ### 토큰 수 최적화
 
 코드베이스의 토큰 분포를 이해하는 것은 AI 상호 작용을 최적화하는 데 중요합니다. `--token-count-tree` 옵션을 사용하여 프로젝트 전체의 토큰 사용량을 시각화하세요:
