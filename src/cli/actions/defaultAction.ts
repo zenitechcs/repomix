@@ -289,23 +289,17 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     };
   }
 
-  if (options.includeLogs) {
-    cliConfig.output = {
-      ...cliConfig.output,
-      git: {
-        ...cliConfig.output?.git,
-        includeLogs: true,
-      },
+  // Configure git logs inclusion and count - consolidating related git log options
+  if (options.includeLogs || options.includeLogsCount !== undefined) {
+    const gitLogConfig = {
+      ...cliConfig.output?.git,
+      ...(options.includeLogs && { includeLogs: true }),
+      ...(options.includeLogsCount !== undefined && { includeLogsCount: options.includeLogsCount }),
     };
-  }
 
-  if (options.includeLogsCount !== undefined) {
     cliConfig.output = {
       ...cliConfig.output,
-      git: {
-        ...cliConfig.output?.git,
-        includeLogsCount: options.includeLogsCount,
-      },
+      git: gitLogConfig,
     };
   }
 
