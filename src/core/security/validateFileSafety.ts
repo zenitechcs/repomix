@@ -34,23 +34,8 @@ export const validateFileSafety = async (
     suspiciousGitDiffResults = allResults.filter((result) => result.type === 'gitDiff');
     suspiciousGitLogResults = allResults.filter((result) => result.type === 'gitLog');
 
-    if (suspiciousGitDiffResults.length > 0) {
-      logger.warn('Security issues found in Git diffs, but they will still be included in the output');
-      for (const result of suspiciousGitDiffResults) {
-        const issueCount = result.messages.length;
-        const issueText = issueCount === 1 ? 'issue' : 'issues';
-        logger.warn(`  - ${result.filePath}: ${issueCount} ${issueText} detected`);
-      }
-    }
-
-    if (suspiciousGitLogResults.length > 0) {
-      logger.warn('Security issues found in Git logs, but they will still be included in the output');
-      for (const result of suspiciousGitLogResults) {
-        const issueCount = result.messages.length;
-        const issueText = issueCount === 1 ? 'issue' : 'issues';
-        logger.warn(`  - ${result.filePath}: ${issueCount} ${issueText} detected`);
-      }
-    }
+    logSuspiciousContentWarning('Git diffs', suspiciousGitDiffResults);
+    logSuspiciousContentWarning('Git logs', suspiciousGitLogResults);
   }
 
   const safeRawFiles = deps.filterOutUntrustedFiles(rawFiles, suspiciousFilesResults);
@@ -64,4 +49,17 @@ export const validateFileSafety = async (
     suspiciousGitDiffResults,
     suspiciousGitLogResults,
   };
+};
+
+const logSuspiciousContentWarning = (contentType: string, results: SuspiciousFileResult[]) => {
+  if (results.length === 0) {
+    return;
+  }
+
+  logger.warn(`Security issues found in ${contentType}, but they will still be included in the output`);
+  for (const result of results) {
+    const issueCount = result.messages.length;
+    const issueText = issueCount === 1 ? 'issue' : 'issues';
+    logger.warn(`  - ${result.filePath}: ${issueCount} ${issueText} detected`);
+  }
 };

@@ -8,7 +8,7 @@ import { isGitRepository } from './gitRepositoryHandle.js';
 // This ensures commits are split correctly even when commit messages contain newlines
 export const GIT_LOG_RECORD_SEPARATOR = '\x00';
 
-// Git format string for null character separator 
+// Git format string for null character separator
 // Git expects %x00 format in pretty format strings
 export const GIT_LOG_FORMAT_SEPARATOR = '%x00';
 
