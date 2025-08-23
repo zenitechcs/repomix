@@ -10,7 +10,7 @@ describe('parseFile for PHP', () => {
 
 namespace App;
 
-use App\Greeter;
+use App\\Greeter;
 
 // Define the greeting function
 function greet($name) {
@@ -54,7 +54,7 @@ enum GreeterEnum: string {
     expect(typeof result).toBe('string');
     const expectContents = [
       'namespace App;',
-      'use AppGreeter;',
+      'use App\\Greeter;',
       'function greet($name) {',
       '// Define the greeting function',
       '// Print the personalized greeting message',
