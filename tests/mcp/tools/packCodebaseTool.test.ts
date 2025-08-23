@@ -39,7 +39,9 @@ describe('PackCodebaseTool', () => {
     fileTokenCounts: { 'test.js': 50 },
     suspiciousFilesResults: [],
     gitDiffTokenCount: 0,
+    gitLogTokenCount: 0,
     suspiciousGitDiffResults: [],
+    suspiciousGitLogResults: [],
     processedFiles: [],
     safeFilePaths: [],
   };

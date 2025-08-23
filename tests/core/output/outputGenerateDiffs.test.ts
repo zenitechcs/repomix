@@ -85,6 +85,7 @@ describe('Output Generation with Diffs', () => {
       mockProcessedFiles,
       allFilePaths,
       gitDiffResult,
+      undefined,
       mockDeps,
     );
 
@@ -112,7 +113,15 @@ describe('Output Generation with Diffs', () => {
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
+    const output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      mockProcessedFiles,
+      allFilePaths,
+      undefined,
+      undefined,
+      mockDeps,
+    );
 
     // Verify the diffs are included in the output
     expect(output).toContain('<repomix><diffs>');
@@ -138,7 +147,15 @@ describe('Output Generation with Diffs', () => {
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
+    const output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      mockProcessedFiles,
+      allFilePaths,
+      undefined,
+      undefined,
+      mockDeps,
+    );
 
     // Verify the diffs are included in the output
     expect(output).toContain('# Git Diffs');
@@ -164,7 +181,15 @@ describe('Output Generation with Diffs', () => {
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
+    const output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      mockProcessedFiles,
+      allFilePaths,
+      undefined,
+      undefined,
+      mockDeps,
+    );
 
     // Verify the diffs are included in the output
     expect(output).toContain('===============\nGit Diffs\n===============');
@@ -200,7 +225,15 @@ describe('Output Generation with Diffs', () => {
     });
 
     // Generate the output
-    const output = await generateOutput(rootDirs, mockConfig, mockProcessedFiles, allFilePaths, undefined, mockDeps);
+    const output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      mockProcessedFiles,
+      allFilePaths,
+      undefined,
+      undefined,
+      mockDeps,
+    );
 
     // Verify the diffs are not included in the output
     expect(output).not.toContain('Git Diffs');

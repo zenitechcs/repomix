@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Git-Integration
+
+Git-Informationen einschließen, um Entwicklungskontext für KI-Analysen bereitzustellen:
+
+```bash
+# Git-Diffs einschließen (ungespeicherte Änderungen)
+repomix --include-diffs
+
+# Git-Commit-Logs einschließen (standardmäßig die letzten 50 Commits)
+repomix --include-logs
+
+# Bestimmte Anzahl von Commits einschließen
+repomix --include-logs --include-logs-count 10
+
+# Sowohl Diffs als auch Logs einschließen
+repomix --include-diffs --include-logs
+```
+
+Dies fügt wertvollen Kontext hinzu über:
+- **Letzte Änderungen**: Git-Diffs zeigen ungespeicherte Modifikationen
+- **Entwicklungsmuster**: Git-Logs zeigen, welche Dateien typischerweise zusammen geändert werden
+- **Commit-Historie**: Aktuelle Commit-Nachrichten geben Einblick in den Entwicklungsfokus
+- **Dateibeziehungen**: Verstehen, welche Dateien in denselben Commits modifiziert werden
+
 ### Token-Anzahl-Optimierung
 
 Das Verständnis der Token-Verteilung Ihrer Codebasis ist entscheidend für die Optimierung von KI-Interaktionen. Verwenden Sie die `--token-count-tree`-Option, um die Token-Nutzung in Ihrem gesamten Projekt zu visualisieren:

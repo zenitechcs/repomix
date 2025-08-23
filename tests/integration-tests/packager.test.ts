@@ -124,19 +124,20 @@ describe.runIf(!isWindows)('packager integration', () => {
             workTreeDiffContent: '',
             stagedDiffContent: '',
           };
-          return validateFileSafety(rawFiles, progressCallback, config, gitDiffMock, {
+          return validateFileSafety(rawFiles, progressCallback, config, gitDiffMock, undefined, {
             runSecurityCheck: async () => [],
             filterOutUntrustedFiles,
           });
         },
         writeOutputToDisk,
         copyToClipboardIfEnabled,
-        calculateMetrics: async (processedFiles, output, progressCallback, config, gitDiffResult) => {
+        calculateMetrics: async (processedFiles, output, progressCallback, config, gitDiffResult, gitLogResult) => {
           return {
             totalFiles: processedFiles.length,
             totalCharacters: processedFiles.reduce((acc, file) => acc + file.content.length, 0),
             totalTokens: processedFiles.reduce((acc, file) => acc + file.content.split(/\s+/).length, 0),
             gitDiffTokenCount: 0,
+            gitLogTokenCount: 0,
             fileCharCounts: processedFiles.reduce(
               (acc, file) => {
                 acc[file.path] = file.content.length;

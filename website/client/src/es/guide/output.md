@@ -32,6 +32,28 @@ src/
 // Contenido del archivo aquí
 </file>
 </files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
 
 ::: tip ¿Por qué XML?
@@ -66,6 +88,19 @@ helper.ts
 ```typescript
 // Contenido del archivo aquí
 ```
+
+# Logs de Git
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
 ```
 
 ## Uso con modelos de IA
@@ -85,6 +120,7 @@ Establece el formato predeterminado en `repomix.config.json`:
     "filePath": "output.xml"
   }
 }
+```
 
 ## Formato de texto sin formato
 
@@ -117,4 +153,17 @@ Archivos
 Archivo: src/index.ts
 ================
 // Contenido del archivo aquí
+
+================
+Logs de Git
+================
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```

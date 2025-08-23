@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: Jalur ke file yang berisi instruksi kustom terperinci
 - `--include-empty-directories`: Menyertakan direktori kosong dalam output
 - `--include-diffs`: Menyertakan diff git dalam output (menyertakan perubahan pohon kerja dan perubahan staged secara terpisah)
+- `--include-logs`: Menyertakan log git dalam output (menyertakan riwayat commit dengan tanggal, pesan, dan jalur file)
+- `--include-logs-count <count>`: Jumlah commit log git yang akan disertakan (default: 50)
 - `--no-git-sort-by-changes`: Menonaktifkan pengurutan file berdasarkan jumlah perubahan git (diaktifkan secara default)
 
 ## Opsi Seleksi File
@@ -86,6 +88,12 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Integrasi Git
+repomix --include-diffs  # Sertakan diff git untuk perubahan yang belum di-commit
+repomix --include-logs   # Sertakan log git (50 commit terakhir secara default)
+repomix --include-logs --include-logs-count 10  # Sertakan 10 commit terakhir
+repomix --include-diffs --include-logs  # Sertakan diff dan log
 
 # Analisis jumlah token
 repomix --token-count-tree

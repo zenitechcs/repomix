@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Git 集成
+
+包含Git信息为AI分析提供开发上下文：
+
+```bash
+# 包含git差异（未提交的更改）
+repomix --include-diffs
+
+# 包含git提交日志（默认最近50个提交）
+repomix --include-logs
+
+# 包含特定数量的提交
+repomix --include-logs --include-logs-count 10
+
+# 同时包含差异和日志
+repomix --include-diffs --include-logs
+```
+
+这增加了宝贵的上下文信息：
+- **最近更改**：Git差异显示未提交的修改
+- **开发模式**：Git日志揭示通常一起更改的文件
+- **提交历史**：最近的提交消息提供开发重点的洞察
+- **文件关系**：理解在同一提交中修改的文件
+
 ### 令牌数量优化
 
 了解代码库的令牌分布对于优化AI交互至关重要。使用 `--token-count-tree` 选项可视化整个项目的令牌使用情况：

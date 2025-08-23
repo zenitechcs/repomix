@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Git परिवर्तन संख्या के अनुसार फ़ाइलों को सॉर्ट करना है या नहीं। अधिक परिवर्तन वाली फ़ाइलें नीचे दिखाई देती हैं                | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Git परिवर्तनों का विश्लेषण करने के लिए अधिकतम कमिट संख्या। प्रदर्शन के लिए इतिहास गहराई को सीमित करता है             | `100`                  |
 | `output.git.includeDiffs`        | आउटपुट में Git अंतर शामिल करना है या नहीं। वर्क ट्री और स्टेज्ड परिवर्तनों को अलग-अलग दिखाता है                         | `false`                |
+| `output.git.includeLogs`         | आउटपुट में Git logs शामिल करना है या नहीं। कमिट तारीखों, संदेशों और फ़ाइल पथों को दिखाता है                               | `false`                |
+| `output.git.includeLogsCount`    | आउटपुट में शामिल करने के लिए git log कमिट की संख्या                                                                     | `50`                   |
 | `include`                        | शामिल करने के लिए फ़ाइल पैटर्न [glob patterns](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax) का उपयोग करके | `[]`                   |
 | `ignore.useGitignore`            | प्रोजेक्ट की `.gitignore` फ़ाइल के पैटर्न का उपयोग करना है या नहीं                                                         | `true`                 |
 | `ignore.useDefaultPatterns`      | डिफ़ॉल्ट ignore पैटर्न (node_modules, .git, आदि) का उपयोग करना है या नहीं                                               | `true`                 |
@@ -97,7 +99,9 @@ repomix --init --global
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ dist/**
 - `sortByChanges`: जब true है, तो फ़ाइलें Git परिवर्तनों की संख्या (फ़ाइल को modify करने वाले commits) के अनुसार सॉर्ट होती हैं। अधिक परिवर्तन वाली फ़ाइलें आउटपुट के नीचे दिखाई देती हैं। यह अधिक सक्रिय रूप से विकसित फ़ाइलों को प्राथमिकता देने में मदद करता है। डिफ़ॉल्ट: `true`
 - `sortByChangesMaxCommits`: फ़ाइल परिवर्तनों की गिनती करते समय विश्लेषित करने के लिए अधिकतम commits। डिफ़ॉल्ट: `100`
 - `includeDiffs`: जब true है, तो आउटपुट में Git अंतर शामिल करता है (work tree और staged changes को अलग-अलग शामिल करता है)। यह reader को repository में pending changes देखने की अनुमति देता है। डिफ़ॉल्ट: `false`
+- `includeLogs`: जब true है, तो आउटपुट में Git कमिट इतिहास शामिल करता है। प्रत्येक कमिट के लिए कमिट तारीखें, संदेश और फ़ाइल पथ दिखाता है। यह AI को विकास पैटर्न और फ़ाइल संबंधों को समझने में मदद करता है। डिफ़ॉल्ट: `false`
+- `includeLogsCount`: git logs में शामिल करने के लिए हाल के commits की संख्या। डिफ़ॉल्ट: `50`
 
 कॉन्फिगरेशन उदाहरण:
 ```json
@@ -194,7 +200,9 @@ dist/**
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

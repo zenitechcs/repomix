@@ -25,15 +25,16 @@ describe('validateFileSafety', () => {
       filterOutUntrustedFiles: vi.fn().mockReturnValue(safeRawFiles),
     };
 
-    const result = await validateFileSafety(rawFiles, progressCallback, config, undefined, deps);
+    const result = await validateFileSafety(rawFiles, progressCallback, config, undefined, undefined, deps);
 
-    expect(deps.runSecurityCheck).toHaveBeenCalledWith(rawFiles, progressCallback, undefined);
+    expect(deps.runSecurityCheck).toHaveBeenCalledWith(rawFiles, progressCallback, undefined, undefined);
     expect(deps.filterOutUntrustedFiles).toHaveBeenCalledWith(rawFiles, suspiciousFilesResults);
     expect(result).toEqual({
       safeRawFiles,
       safeFilePaths: ['file1.txt', 'file2.txt'],
       suspiciousFilesResults,
       suspiciousGitDiffResults: [],
+      suspiciousGitLogResults: [],
     });
   });
 });

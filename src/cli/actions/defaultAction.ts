@@ -289,6 +289,20 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     };
   }
 
+  // Configure git logs inclusion and count - consolidating related git log options
+  if (options.includeLogs || options.includeLogsCount !== undefined) {
+    const gitLogConfig = {
+      ...cliConfig.output?.git,
+      ...(options.includeLogs && { includeLogs: true }),
+      ...(options.includeLogsCount !== undefined && { includeLogsCount: options.includeLogsCount }),
+    };
+
+    cliConfig.output = {
+      ...cliConfig.output,
+      git: gitLogConfig,
+    };
+  }
+
   if (options.tokenCountTree !== undefined) {
     cliConfig.output = {
       ...cliConfig.output,

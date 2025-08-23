@@ -100,10 +100,12 @@ index 123..456 100644
         workTreeDiffContent: sampleDiff,
         stagedDiffContent: '',
       },
+      undefined,
       {
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(25),
+        calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
       },
     );
 
@@ -173,10 +175,12 @@ index 123..456 100644
       vi.fn(), // Progress callback
       config,
       undefined, // No diff content
+      undefined,
       {
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
+        calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
       },
     );
 
@@ -244,10 +248,12 @@ index 123..456 100644
       vi.fn(), // Progress callback
       config,
       undefined, // No diff content
+      undefined,
       {
         calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
+        calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
       },
     );
 

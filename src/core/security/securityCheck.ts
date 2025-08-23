@@ -4,6 +4,7 @@ import { initTaskRunner } from '../../shared/processConcurrency.js';
 import type { RepomixProgressCallback } from '../../shared/types.js';
 import type { RawFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
+import type { GitLogResult } from '../git/gitLogHandle.js';
 import type { SecurityCheckTask, SecurityCheckType } from './workers/securityCheckWorker.js';
 
 export interface SuspiciousFileResult {
@@ -16,11 +17,13 @@ export const runSecurityCheck = async (
   rawFiles: RawFile[],
   progressCallback: RepomixProgressCallback = () => {},
   gitDiffResult?: GitDiffResult,
+  gitLogResult?: GitLogResult,
   deps = {
     initTaskRunner,
   },
 ): Promise<SuspiciousFileResult[]> => {
   const gitDiffTasks: SecurityCheckTask[] = [];
+  const gitLogTasks: SecurityCheckTask[] = [];
 
   // Add Git diff content for security checking if available
   if (gitDiffResult) {
@@ -41,8 +44,19 @@ export const runSecurityCheck = async (
     }
   }
 
+  // Add Git log content for security checking if available
+  if (gitLogResult) {
+    if (gitLogResult.logContent) {
+      gitLogTasks.push({
+        filePath: 'Git log history',
+        content: gitLogResult.logContent,
+        type: 'gitLog',
+      });
+    }
+  }
+
   const taskRunner = deps.initTaskRunner<SecurityCheckTask, SuspiciousFileResult | null>(
-    rawFiles.length + gitDiffTasks.length,
+    rawFiles.length + gitDiffTasks.length + gitLogTasks.length,
     new URL('./workers/securityCheckWorker.js', import.meta.url).href,
   );
   const fileTasks = rawFiles.map(
@@ -54,8 +68,8 @@ export const runSecurityCheck = async (
       }) satisfies SecurityCheckTask,
   );
 
-  // Combine file tasks and Git diff tasks
-  const tasks = [...fileTasks, ...gitDiffTasks];
+  // Combine file tasks, Git diff tasks, and Git log tasks
+  const tasks = [...fileTasks, ...gitDiffTasks, ...gitLogTasks];
 
   try {
     logger.trace(`Starting security check for ${tasks.length} files/content`);

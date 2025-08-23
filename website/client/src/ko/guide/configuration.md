@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Git 변경 횟수로 파일을 정렬할지 여부. 변경이 많은 파일이 하단에 표시됩니다                                               | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Git 변경을 분석할 때 분석할 최대 커밋 수. 성능을 위해 이력 깊이를 제한합니다                                         | `100`                  |
 | `output.git.includeDiffs`        | 출력에 Git 차이를 포함할지 여부. 작업 트리와 스테이징된 변경 사항을 별도로 표시합니다                                    | `false`                |
+| `output.git.includeLogs`         | 출력에 Git 로그를 포함할지 여부. 커밋 히스토리의 날짜, 메시지, 파일 경로를 표시합니다                                   | `false`                |
+| `output.git.includeLogsCount`    | 포함할 Git 로그 커밋 수. 개발 패턴을 이해하기 위한 히스토리 깊이를 제한합니다                                          | `50`                   |
 | `include`                        | 포함할 파일 패턴([glob 패턴](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax) 사용)                 | `[]`                   |
 | `ignore.useGitignore`            | 프로젝트의 `.gitignore` 파일의 패턴을 사용할지 여부                                                                        | `true`                 |
 | `ignore.useDefaultPatterns`      | 기본 무시 패턴(node_modules, .git 등)을 사용할지 여부                                                                     | `true`                 |
@@ -97,7 +99,9 @@ repomix --init --global
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ dist/**
 - `sortByChanges`: true로 설정하면 파일이 Git 변경 횟수(해당 파일을 수정한 커밋 수)로 정렬됩니다. 변경이 많은 파일이 출력 하단에 나타납니다. 이는 더 활발하게 개발되는 파일을 우선시하는 데 도움이 됩니다. 기본값: `true`
 - `sortByChangesMaxCommits`: 파일 변경 횟수를 계산할 때 분석할 최대 커밋 수. 기본값: `100`
 - `includeDiffs`: true로 설정하면 Git 차이를 출력에 포함합니다(작업 트리와 스테이징된 변경 사항을 별도로 포함). 이를 통해 독자는 저장소의 대기 중인 변경 사항을 볼 수 있습니다. 기본값: `false`
+- `includeLogs`: true로 설정하면 Git 로그를 출력에 포함합니다. 커밋 히스토리의 날짜, 메시지, 파일 경로가 표시되어 AI가 어떤 파일들이 일반적으로 함께 변경되는지 이해할 수 있습니다. 기본값: `false`
+- `includeLogsCount`: 포함할 Git 로그 커밋 수입니다. 개발 패턴 분석에 사용되는 히스토리 깊이를 제어합니다. 기본값: `50`
 
 설정 예시:
 ```json
@@ -194,7 +200,9 @@ dist/**
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 30
     }
   }
 }

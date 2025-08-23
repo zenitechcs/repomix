@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: Đường dẫn đến tệp chứa hướng dẫn tùy chỉnh chi tiết
 - `--include-empty-directories`: Bao gồm các thư mục trống trong đầu ra
 - `--include-diffs`: Bao gồm các diff git trong đầu ra (bao gồm các thay đổi cây làm việc và các thay đổi đã staged riêng biệt)
+- `--include-logs`: Bao gồm nhật ký git trong đầu ra (bao gồm lịch sử commit với ngày tháng, thông điệp và đường dẫn tệp)
+- `--include-logs-count <count>`: Số lượng commit git logs để bao gồm (mặc định: 50)
 - `--no-git-sort-by-changes`: Tắt sắp xếp tệp theo số lượng thay đổi git (được bật mặc định)
 
 ## Tùy chọn Lựa chọn Tệp
@@ -86,6 +88,12 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Tích hợp Git
+repomix --include-diffs  # Bao gồm diff git cho các thay đổi chưa commit
+repomix --include-logs   # Bao gồm nhật ký git (50 commit cuối cùng theo mặc định)
+repomix --include-logs --include-logs-count 10  # Bao gồm 10 commit cuối cùng
+repomix --include-diffs --include-logs  # Bao gồm cả diff và logs
 
 # Phân tích số lượng token
 repomix --token-count-tree

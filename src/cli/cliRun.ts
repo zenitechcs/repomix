@@ -96,6 +96,11 @@ export const run = async () => {
         '--include-diffs',
         'include git diffs in the output (includes both work tree and staged changes separately)',
       )
+      .option(
+        '--include-logs',
+        'include git logs in the output (includes commit history with dates, messages, and file paths)',
+      )
+      .option('--include-logs-count <count>', 'number of git log commits to include (default: 50)', Number.parseInt)
       // File Selection Options
       .optionsGroup('File Selection Options')
       .option('--include <patterns>', 'list of include patterns (comma-separated)')

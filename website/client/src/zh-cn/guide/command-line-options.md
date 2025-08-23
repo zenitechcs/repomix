@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: 包含详细自定义指令的文件路径
 - `--include-empty-directories`: 在输出中包含空目录
 - `--include-diffs`: 在输出中包含git差异（分别包含工作树和暂存的更改）
+- `--include-logs`: 在输出中包含git日志（包含日期、消息和文件路径的提交历史）
+- `--include-logs-count <count>`: 要包含的git日志提交数量（默认：50）
 - `--no-git-sort-by-changes`: 禁用按git更改次数排序文件（默认启用）
 
 ## 文件选择选项
@@ -69,6 +71,11 @@ repomix --stdout | llm "请解释这段代码的作用。"
 
 # 使用压缩的自定义输出
 repomix --compress
+
+# Git集成功能
+repomix --include-logs   # 包含git日志（默认50个提交）
+repomix --include-logs --include-logs-count 10  # 包含最近10个提交
+repomix --include-diffs --include-logs  # 同时包含差异和日志
 
 # 处理特定文件
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"

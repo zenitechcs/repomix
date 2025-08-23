@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | Gitの変更回数でファイルをソートするかどうか。変更が多いファイルが下部に表示されます                                       | `true`                 |
 | `output.git.sortByChangesMaxCommits` | Gitの変更を分析する最大コミット数。パフォーマンスのために履歴の深さを制限します                                       | `100`                  |
 | `output.git.includeDiffs`        | 出力にGitの差分を含めるかどうか。作業ツリーとステージング済みの変更を別々に表示します                                     | `false`                |
+| `output.git.includeLogs`         | 出力にGitログを含めるかどうか。コミット履歴の日時、メッセージ、ファイルパスを表示します                                   | `false`                |
+| `output.git.includeLogsCount`    | 含めるGitログのコミット数。開発パターンを理解するための履歴の深さを制限します                                           | `50`                   |
 | `include`                        | 含めるファイルのパターン（[globパターン](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)を使用）    | `[]`                   |
 | `ignore.useGitignore`            | プロジェクトの`.gitignore`ファイルのパターンを使用するかどうか                                                             | `true`                 |
 | `ignore.useDefaultPatterns`      | デフォルトの除外パターン（node_modules、.gitなど）を使用するかどうか                                                       | `true`                 |
@@ -97,7 +99,9 @@ repomix --init --global
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ dist/**
 - `sortByChanges`: trueに設定すると、ファイルはGitの変更回数（そのファイルを変更したコミット数）でソートされます。変更が多いファイルが出力の下部に表示されます。これは、より活発に開発されているファイルを優先するのに役立ちます。デフォルト: `true`
 - `sortByChangesMaxCommits`: ファイルの変更回数を数える際に分析する最大コミット数。デフォルト: `100`
 - `includeDiffs`: trueに設定すると、Git差分を出力に含めます（ワークツリーとステージング済みの変更を別々に含みます）。これにより、リポジトリの保留中の変更を確認できます。デフォルト: `false`
+- `includeLogs`: trueに設定すると、Gitログを出力に含めます。コミット履歴の日時、メッセージ、ファイルパスが表示され、AIがどのファイルが一緒に変更される傾向があるかを理解できます。デフォルト: `false`
+- `includeLogsCount`: 含めるGitログのコミット数。開発パターンの分析に使用する履歴の深さを制御します。デフォルト: `50`
 
 設定例：
 ```json
@@ -194,7 +200,9 @@ dist/**
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 30
     }
   }
 }

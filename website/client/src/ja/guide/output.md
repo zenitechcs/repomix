@@ -33,6 +33,28 @@ src/
 </file>
 </files>
 
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
+
 <instruction>
 （output.instructionFilePathで指定されたカスタム指示）
 </instruction>
@@ -70,6 +92,24 @@ helper.ts
 ```typescript
 // ファイルの内容がここに表示されます
 ```
+
+# Gitログ
+
+## コミット: 2025-08-20 00:47:19 +0900
+**メッセージ:** feat(cli): Add --include-logs option for git commit history
+
+**ファイル:**
+- README.md
+- src/cli/cliRun.ts
+- src/core/git/gitCommand.ts
+- src/core/git/gitLogHandle.ts
+- src/core/output/outputGenerate.ts
+
+## コミット: 2025-08-21 00:09:43 +0900
+**メッセージ:** Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+
+**ファイル:**
+- .github/workflows/ratchet-update.yml
 ```
 
 ## AIモデルとの使用
@@ -127,4 +167,25 @@ File: src/index.js
 File: src/utils.js
 ================
 // ファイルの内容がここに表示されます
+
+================
+Gitログ
+================
+================
+Date: 2025-08-20 00:47:19 +0900
+Message: feat(cli): Add --include-logs option for git commit history
+Files:
+  - README.md
+  - src/cli/cliRun.ts
+  - src/core/git/gitCommand.ts
+  - src/core/git/gitLogHandle.ts
+  - src/core/output/outputGenerate.ts
+================
+
+================
+Date: 2025-08-21 00:09:43 +0900
+Message: Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+Files:
+  - .github/workflows/ratchet-update.yml
+================
 ```

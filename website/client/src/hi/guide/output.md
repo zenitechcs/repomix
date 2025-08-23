@@ -1,173 +1,169 @@
 # आउटपुट फॉर्मेट
 
-Repomix तीन आउटपुट फॉर्मेट का समर्थन करता है: XML, मार्कडाउन और प्लेन टेक्स्ट। प्रत्येक फॉर्मेट के अपने फायदे हैं और विभिन्न उपयोग मामलों के लिए अनुकूलित हैं।
-
-## आउटपुट फॉर्मेट विकल्प
-
-आप `--style` विकल्प का उपयोग करके आउटपुट फॉर्मेट निर्दिष्ट कर सकते हैं:
-
-```bash
-# XML फॉर्मेट (डिफॉल्ट)
-repomix --style xml
-
-# मार्कडाउन फॉर्मेट
-repomix --style markdown
-
-# प्लेन टेक्स्ट फॉर्मेट
-repomix --style plain
-```
+Repomix तीन आउटपुट फॉर्मेट का समर्थन करता है:
+- XML (डिफ़ॉल्ट)
+- मार्कडाउन
+- प्लेन टेक्स्ट
 
 ## XML फॉर्मेट
 
-XML फॉर्मेट AI मॉडल के साथ उपयोग के लिए अनुशंसित फॉर्मेट है। यह फाइल पथ, फाइल प्रकार और कोड संरचना के बारे में स्पष्ट मेटाडेटा प्रदान करता है।
-
 ```bash
 repomix --style xml
 ```
 
-उदाहरण आउटपुट:
+XML फॉर्मेट AI प्रसंस्करण के लिए अनुकूलित है:
 
 ```xml
-<repository>
-  <file path="src/index.ts" type="typescript">
-    import { processRepository } from './core';
-    
-    export function main() {
-      processRepository('./my-repo');
-    }
-  </file>
-  <file path="src/core.ts" type="typescript">
-    export function processRepository(path: string) {
-      // कार्यान्वयन विवरण
-    }
-  </file>
-</repository>
+यह फ़ाइल संपूर्ण कोडबेस का मर्ज किया गया प्रतिनिधित्व है...
+
+<file_summary>
+(मेटाडेटा और AI निर्देश)
+</file_summary>
+
+<directory_structure>
+src/
+  index.ts
+  utils/
+    helper.ts
+</directory_structure>
+
+<files>
+<file path="src/index.ts">
+// फ़ाइल सामग्री यहाँ
+</file>
+</files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
 
-XML फॉर्मेट के लाभ:
-
-1. **स्पष्ट संरचना**: फाइलों और उनके संबंधों की स्पष्ट संरचना
-2. **मेटाडेटा**: फाइल पथ और प्रकार जैसे मेटाडेटा शामिल
-3. **AI पार्सिंग**: AI मॉडल द्वारा आसानी से पार्स किया जा सकता है
-4. **संदर्भ संरक्षण**: फाइल संदर्भ और संरचना संरक्षित रहती है
+::: tip XML क्यों?
+XML टैग Claude जैसे AI मॉडल को सामग्री को अधिक सटीक रूप से पार्स करने में मदद करते हैं। [Claude डॉक्यूमेंटेशन](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) संरचित प्रॉम्प्ट के लिए XML टैग का उपयोग करने की सिफारिश करता है।
+:::
 
 ## मार्कडाउन फॉर्मेट
-
-मार्कडाउन फॉर्मेट मानव पठनीयता और AI प्रोसेसिंग के बीच एक संतुलन प्रदान करता है। यह GitHub और अन्य मार्कडाउन व्यूअर में अच्छी तरह से प्रदर्शित होता है।
 
 ```bash
 repomix --style markdown
 ```
 
-उदाहरण आउटपुट:
+मार्कडाउन पठनीय फॉर्मेटिंग प्रदान करता है:
 
 ```markdown
-# Repository
+यह फ़ाइल संपूर्ण कोडबेस का मर्ज किया गया प्रतिनिधित्व है...
 
-## src/index.ts
+# फ़ाइल सारांश
+(मेटाडेटा और AI निर्देश)
+
+# डायरेक्टरी संरचना
+```
+src/
+index.ts
+utils/
+helper.ts
+```
+
+# फ़ाइलें
+
+## फ़ाइल: src/index.ts
 ```typescript
-import { processRepository } from './core';
-
-export function main() {
-  processRepository('./my-repo');
-}
+// फ़ाइल सामग्री यहाँ
 ```
 
-## src/core.ts
-```typescript
-export function processRepository(path: string) {
-  // कार्यान्वयन विवरण
-}
+# Git Logs
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
 ```
 
-मार्कडाउन फॉर्मेट के लाभ:
+## AI मॉडल के साथ उपयोग
 
-1. **पठनीयता**: मानव पाठकों के लिए अधिक पठनीय
-2. **प्रदर्शन**: GitHub और अन्य मार्कडाउन व्यूअर में अच्छी तरह से प्रदर्शित होता है
-3. **सिंटैक्स हाइलाइटिंग**: कोड ब्लॉक में सिंटैक्स हाइलाइटिंग का समर्थन
-4. **संपादन योग्यता**: आसानी से संपादित किया जा सकता है
+प्रत्येक फॉर्मेट AI मॉडल के साथ अच्छी तरह से काम करता है, लेकिन विचार करें:
+- Claude के लिए XML का उपयोग करें (सर्वोत्तम पार्सिंग सटीकता)
+- सामान्य पठनीयता के लिए मार्कडाउन का उपयोग करें
+- सादगी और सार्वभौमिक संगतता के लिए प्लेन टेक्स्ट का उपयोग करें
 
-## प्लेन टेक्स्ट फॉर्मेट
+## अनुकूलन
 
-प्लेन टेक्स्ट फॉर्मेट सबसे सरल आउटपुट विकल्प है। यह फाइल पथ और सामग्री को बिना किसी विशेष फॉर्मेटिंग के प्रस्तुत करता है।
-
-```bash
-repomix --style plain
-```
-
-उदाहरण आउटपुट:
-
-```
---- src/index.ts ---
-import { processRepository } from './core';
-
-export function main() {
-  processRepository('./my-repo');
-}
-
---- src/core.ts ---
-export function processRepository(path: string) {
-  // कार्यान्वयन विवरण
-}
-```
-
-प्लेन टेक्स्ट फॉर्मेट के लाभ:
-
-1. **सादगी**: कोई विशेष फॉर्मेटिंग नहीं
-2. **संगतता**: सभी टेक्स्ट एडिटर और टूल के साथ संगत
-3. **आकार**: आमतौर पर सबसे छोटा फाइल आकार
-
-## डिफॉल्ट आउटपुट फॉर्मेट सेट करना
-
-आप अपने `repomix.config.json` में डिफॉल्ट आउटपुट फॉर्मेट सेट कर सकते हैं:
-
+`repomix.config.json` में डिफ़ॉल्ट फॉर्मेट सेट करें:
 ```json
 {
   "output": {
-    "style": "markdown"
+    "style": "xml",
+    "filePath": "output.xml"
   }
 }
 ```
 
-## आउटपुट फाइल नाम
-
-आप `--output-file` विकल्प का उपयोग करके आउटपुट फाइल का नाम निर्दिष्ट कर सकते हैं:
+## प्लेन टेक्स्ट फॉर्मेट
 
 ```bash
-repomix --output-file my-repo-code.xml
+repomix --style plain
 ```
 
-डिफॉल्ट फाइल नाम `repomix-output.xml`, `repomix-output.md`, या `repomix-output.txt` है, जो चुने गए आउटपुट फॉर्मेट पर निर्भर करता है।
+आउटपुट संरचना:
+```text
+यह फ़ाइल संपूर्ण कोडबेस का मर्ज किया गया प्रतिनिधित्व है...
 
-## AI मॉडल के साथ आउटपुट का उपयोग
+================
+फ़ाइल सारांश
+================
+(मेटाडेटा और AI निर्देश)
 
-### XML के साथ
+================
+डायरेक्टरी संरचना
+================
+src/
+  index.ts
+  utils/
+    helper.ts
 
-XML फॉर्मेट AI मॉडल के साथ उपयोग के लिए अनुशंसित है। यह फाइल संरचना और संदर्भ को संरक्षित करता है, जिससे AI को कोडबेस को बेहतर ढंग से समझने में मदद मिलती है।
+================
+फ़ाइलें
+================
 
+================
+फ़ाइल: src/index.ts
+================
+// फ़ाइल सामग्री यहाँ
+
+================
+Git Logs
+================
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
-इस XML फाइल में मेरे रिपॉजिटरी की सभी फाइलें हैं। कृपया इसकी समीक्षा करें और सुधार के लिए सुझाव दें।
-```
-
-### मार्कडाउन के साथ
-
-मार्कडाउन फॉर्मेट मानव पठनीयता और AI प्रोसेसिंग के बीच एक अच्छा संतुलन प्रदान करता है।
-
-```
-इस मार्कडाउन फाइल में मेरे रिपॉजिटरी की सभी फाइलें हैं। कृपया इसकी समीक्षा करें और सुधार के लिए सुझाव दें।
-```
-
-### प्लेन टेक्स्ट के साथ
-
-प्लेन टेक्स्ट फॉर्मेट सबसे सरल है लेकिन फाइल संरचना और संदर्भ के बारे में कम जानकारी प्रदान करता है।
-
-```
-इस टेक्स्ट फाइल में मेरे रिपॉजिटरी की सभी फाइलें हैं। कृपया इसकी समीक्षा करें और सुधार के लिए सुझाव दें।
-```
-
-## अगला क्या है?
-
-- [कमांड लाइन विकल्पों](command-line-options.md) के बारे में अधिक जानें
-- [कॉन्फिगरेशन विकल्पों](configuration.md) का अन्वेषण करें
-- [सुरक्षा सुविधाओं](security.md) के बारे में जानें

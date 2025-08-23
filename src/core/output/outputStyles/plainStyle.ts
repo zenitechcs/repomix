@@ -77,6 +77,24 @@ ${PLAIN_SEPARATOR}
 
 {{/if}}
 
+{{#if gitLogEnabled}}
+${PLAIN_LONG_SEPARATOR}
+Git Logs
+${PLAIN_LONG_SEPARATOR}
+{{#each gitLogCommits}}
+${PLAIN_SEPARATOR}
+Date: {{{this.date}}}
+Message: {{{this.message}}}
+Files:
+{{#each this.files}}
+  - {{{this}}}
+{{/each}}
+${PLAIN_SEPARATOR}
+
+{{/each}}
+
+{{/if}}
+
 {{#if instruction}}
 ${PLAIN_LONG_SEPARATOR}
 Instruction

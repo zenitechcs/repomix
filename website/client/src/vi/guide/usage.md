@@ -170,6 +170,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Tích hợp Git
+
+Bao gồm thông tin Git để cung cấp ngữ cảnh phát triển cho phân tích AI:
+
+```bash
+# Bao gồm diff git (các thay đổi chưa commit)
+repomix --include-diffs
+
+# Bao gồm nhật ký commit git (50 commit cuối cùng theo mặc định)
+repomix --include-logs
+
+# Bao gồm số lượng commit cụ thể
+repomix --include-logs --include-logs-count 10
+
+# Bao gồm cả diff và logs
+repomix --include-diffs --include-logs
+```
+
+Điều này thêm ngữ cảnh có giá trị về:
+- **Các thay đổi gần đây**: Git diff hiển thị các sửa đổi chưa commit
+- **Các mẫu phát triển**: Git logs tiết lộ tệp nào thường được thay đổi cùng nhau
+- **Lịch sử commit**: Các thông điệp commit gần đây cung cấp hiểu biết về trọng tâm phát triển
+- **Mối quan hệ tệp**: Hiểu tệp nào được sửa đổi trong cùng một commit
+
 ### Tối ưu hóa số lượng token
 
 Hiểu được phân phối token của codebase là rất quan trọng để tối ưu hóa tương tác AI. Sử dụng tùy chọn `--token-count-tree` để trực quan hóa việc sử dụng token trong toàn bộ dự án của bạn:

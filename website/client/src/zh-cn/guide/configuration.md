@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | 是否按Git更改次数对文件进行排序。更改较多的文件显示在底部                                                                 | `true`                 |
 | `output.git.sortByChangesMaxCommits` | 分析Git更改时要分析的最大提交数。限制历史深度以提高性能                                                               | `100`                  |
 | `output.git.includeDiffs`        | 是否在输出中包含Git差异。分别显示工作树和暂存区的更改                                                                     | `false`                |
+| `output.git.includeLogs`         | 是否在输出中包含Git日志。显示提交历史的日期、消息和文件路径                                                              | `false`                |
+| `output.git.includeLogsCount`    | 要包含的Git日志提交数量。限制历史深度以了解开发模式                                                                      | `50`                   |
 | `include`                        | 要包含的文件模式（使用[glob模式](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)）                 | `[]`                   |
 | `ignore.useGitignore`            | 是否使用项目的`.gitignore`文件中的模式                                                                                     | `true`                 |
 | `ignore.useDefaultPatterns`      | 是否使用默认忽略模式（node_modules、.git等）                                                                              | `true`                 |
@@ -97,7 +99,9 @@ repomix --init --global
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ dist/**
 - `sortByChanges`：当设置为true时，文件按Git更改次数（修改该文件的提交数）排序。更改次数较多的文件出现在输出的底部。这有助于优先处理更活跃开发的文件。默认值：`true`
 - `sortByChangesMaxCommits`：计算文件更改次数时要分析的最大提交数。默认值：`100`
 - `includeDiffs`：当设置为true时，在输出中包含Git差异（同时分别包含工作树和暂存区的更改）。这允许读者查看存储库中的待处理更改。默认值：`false`
+- `includeLogs`：当设置为true时，在输出中包含Git日志。显示提交历史的日期、消息和文件路径，帮助AI理解哪些文件通常一起更改。默认值：`false`
+- `includeLogsCount`：要包含的Git日志提交数量。控制用于分析开发模式的历史深度。默认值：`50`
 
 配置示例：
 ```json
@@ -194,7 +200,9 @@ dist/**
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 30
     }
   }
 }

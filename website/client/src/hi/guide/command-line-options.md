@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: विस्तृत कस्टम निर्देश वाली फ़ाइल का पथ
 - `--include-empty-directories`: आउटपुट में खाली डायरेक्टरियां शामिल करें
 - `--include-diffs`: आउटपुट में git diffs शामिल करें (कार्य ट्री और staged परिवर्तनों को अलग से शामिल करता है)
+- `--include-logs`: आउटपुट में git logs शामिल करें (तारीखों, संदेशों और फ़ाइल पथों के साथ कमिट इतिहास शामिल करता है)
+- `--include-logs-count <count>`: शामिल करने के लिए git log कमिट की संख्या (डिफ़ॉल्ट: 50)
 - `--no-git-sort-by-changes`: git परिवर्तन गिनती द्वारा फ़ाइल सॉर्टिंग अक्षम करें (डिफ़ॉल्ट रूप से सक्षम)
 
 ## फ़ाइल चयन विकल्प
@@ -86,6 +88,12 @@ repomix --remote user/repo
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
+
+# Git एकीकरण
+repomix --include-diffs  # अप्रतिबद्ध परिवर्तनों के लिए git diffs शामिल करें
+repomix --include-logs   # git logs शामिल करें (डिफ़ॉल्ट रूप से अंतिम 50 कमिट)
+repomix --include-logs --include-logs-count 10  # अंतिम 10 कमिट शामिल करें
+repomix --include-diffs --include-logs  # diffs और logs दोनों शामिल करें
 
 # टोकन गिनती विश्लेषण
 repomix --token-count-tree

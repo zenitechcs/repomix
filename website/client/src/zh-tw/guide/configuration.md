@@ -39,6 +39,8 @@ repomix --init --global
 | `output.git.sortByChanges`       | 是否按Git更改次數對檔案進行排序。更改較多的檔案顯示在底部                                                                 | `true`                 |
 | `output.git.sortByChangesMaxCommits` | 分析Git更改時要分析的最大提交數。限制歷史深度以提高效能                                                               | `100`                  |
 | `output.git.includeDiffs`        | 是否在輸出中包含Git差異。分別顯示工作樹和暫存區的更改                                                                     | `false`                |
+| `output.git.includeLogs`         | 是否在輸出中包含Git記錄。顯示提交歷史包括日期、訊息和檔案路徑                                                            | `false`                |
+| `output.git.includeLogsCount`    | 在輸出中包含的git記錄提交數量                                                                                        | `50`                   |
 | `include`                        | 要包含的檔案模式（使用[glob模式](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax)）                 | `[]`                   |
 | `ignore.useGitignore`            | 是否使用專案的`.gitignore`檔案中的模式                                                                                     | `true`                 |
 | `ignore.useDefaultPatterns`      | 是否使用預設忽略模式（node_modules、.git等）                                                                              | `true`                 |
@@ -97,7 +99,9 @@ repomix --init --global
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": false
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
     }
   },
   "include": ["**/*"],
@@ -186,6 +190,8 @@ dist/**
 - `sortByChanges`：當設定為true時，檔案按Git更改次數（修改該檔案的提交數）排序。更改次數較多的檔案出現在輸出的底部。這有助於優先處理更活躍開發的檔案。預設值：`true`
 - `sortByChangesMaxCommits`：計算檔案更改次數時要分析的最大提交數。預設值：`100`
 - `includeDiffs`：當設定為true時，在輸出中包含Git差異（同時分別包含工作樹和暫存區的更改）。這允許讀者查看儲存庫中的待處理更改。預設值：`false`
+- `includeLogs`：當設定為true時，在輸出中包含Git記錄。顯示提交歷史包括日期、訊息和檔案路徑。這有助於AI理解開發模式和檔案關係。預設值：`false`
+- `includeLogsCount`：在git記錄中包含的最近提交數量。預設值：`50`
 
 設定範例：
 ```json
@@ -194,7 +200,9 @@ dist/**
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
-      "includeDiffs": true
+      "includeDiffs": true,
+      "includeLogs": true,
+      "includeLogsCount": 25
     }
   }
 }

@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: 상세한 사용자 정의 지침이 포함된 파일 경로
 - `--include-empty-directories`: 출력에 빈 디렉토리 포함
 - `--include-diffs`: 출력에 git 차이점 포함 (작업 트리와 스테이징된 변경사항을 별도로 포함)
+- `--include-logs`: 출력에 git 로그 포함 (날짜, 메시지, 파일 경로를 포함한 커밋 히스토리)
+- `--include-logs-count <count>`: 포함할 git 로그 커밋 수 (기본값: 50)
 - `--no-git-sort-by-changes`: git 변경 횟수별 파일 정렬 비활성화 (기본적으로 활성화됨)
 
 ## 파일 선택 옵션
@@ -69,6 +71,11 @@ repomix --stdout | llm "이 코드가 무엇을 하는지 설명해주세요."
 
 # 압축을 사용한 사용자 정의 출력
 repomix --compress
+
+# Git 통합 기능
+repomix --include-logs   # git 로그 포함 (기본 50개 커밋)
+repomix --include-logs --include-logs-count 10  # 최근 10개 커밋 포함
+repomix --include-diffs --include-logs  # 차이점과 로그 모두 포함
 
 # 특정 파일 처리
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"

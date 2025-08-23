@@ -150,6 +150,33 @@ export const execGitShallowClone = async (
   await fs.rm(path.join(directory, '.git'), { recursive: true, force: true });
 };
 
+export const execGitLog = async (
+  directory: string,
+  maxCommits: number,
+  gitSeparator: string,
+  deps = {
+    execFileAsync,
+  },
+): Promise<string> => {
+  try {
+    const result = await deps.execFileAsync('git', [
+      '-C',
+      directory,
+      'log',
+      `--pretty=format:${gitSeparator}%ad|%s`,
+      '--date=iso',
+      '--name-only',
+      '-n',
+      maxCommits.toString(),
+    ]);
+
+    return result.stdout || '';
+  } catch (error) {
+    logger.trace('Failed to execute git log:', (error as Error).message);
+    throw error;
+  }
+};
+
 /**
  * Validates a Git URL for security and format
  * @throws {RepomixError} If the URL is invalid or contains potentially dangerous parameters

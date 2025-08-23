@@ -93,6 +93,30 @@ repomix --compress
 repomix --remote yamadashy/repomix --compress
 ```
 
+### Git整合
+
+包含Git資訊以為AI分析提供開發脈絡：
+
+```bash
+# 包含git差異（未提交的變更）
+repomix --include-diffs
+
+# 包含git提交記錄（預設為最後50次提交）
+repomix --include-logs
+
+# 包含特定數量的提交
+repomix --include-logs --include-logs-count 10
+
+# 同時包含差異和記錄
+repomix --include-diffs --include-logs
+```
+
+這會添加有價值的脈絡資訊：
+- **最近的變更**：Git差異顯示未提交的修改
+- **開發模式**：Git記錄揭示哪些檔案通常一起變更
+- **提交歷史**：最近的提交訊息提供對開發重點的洞察
+- **檔案關係**：了解哪些檔案在同一次提交中被修改
+
 ### 權杖數量最佳化
 
 了解程式碼庫的權杖分布對於最佳化AI互動至關重要。使用 `--token-count-tree` 選項可視化整個專案的權杖使用情況：

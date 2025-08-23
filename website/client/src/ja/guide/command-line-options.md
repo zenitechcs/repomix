@@ -28,6 +28,8 @@
 - `--instruction-file-path <path>`: 詳細なカスタム指示を含むファイルのパス
 - `--include-empty-directories`: 空のディレクトリを出力に含める
 - `--include-diffs`: Git差分を出力に含める（ワークツリーとステージングされた変更を別々に含む）
+- `--include-logs`: Gitログを出力に含める（日時、メッセージ、ファイルパスを含むコミット履歴）
+- `--include-logs-count <count>`: 含めるGitログのコミット数（デフォルト: 50）
 - `--no-git-sort-by-changes`: Gitの変更回数によるファイルのソートを無効化（デフォルトで有効）
 
 ## ファイル選択オプション
@@ -69,6 +71,11 @@ repomix --stdout | llm "このコードについて説明してください"
 
 # 圧縮を使用したカスタム出力
 repomix --compress
+
+# Git統合機能
+repomix --include-logs   # Gitログを含める（デフォルトで50コミット）
+repomix --include-logs --include-logs-count 10  # 最新10コミットを含める
+repomix --include-diffs --include-logs  # 差分とログの両方を含める
 
 # 特定のファイルを処理
 repomix --include "src/**/*.ts" --ignore "**/*.test.ts"

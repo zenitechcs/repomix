@@ -52,7 +52,9 @@ const mockInitTaskRunner = <T, R>(numOfTasks: number, workerPath: string) => {
 
 describe('runSecurityCheck', () => {
   it('should identify files with security issues', async () => {
-    const result = await runSecurityCheck(mockFiles, () => {}, undefined, { initTaskRunner: mockInitTaskRunner });
+    const result = await runSecurityCheck(mockFiles, () => {}, undefined, undefined, {
+      initTaskRunner: mockInitTaskRunner,
+    });
 
     expect(result).toHaveLength(1);
     expect(result[0].filePath).toBe('test1.js');
@@ -62,7 +64,7 @@ describe('runSecurityCheck', () => {
   it('should call progress callback with correct messages', async () => {
     const progressCallback = vi.fn();
 
-    await runSecurityCheck(mockFiles, progressCallback, undefined, {
+    await runSecurityCheck(mockFiles, progressCallback, undefined, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -88,7 +90,7 @@ describe('runSecurityCheck', () => {
     };
 
     await expect(
-      runSecurityCheck(mockFiles, () => {}, undefined, {
+      runSecurityCheck(mockFiles, () => {}, undefined, undefined, {
         initTaskRunner: mockErrorTaskRunner,
       }),
     ).rejects.toThrow('Worker error');
@@ -97,7 +99,7 @@ describe('runSecurityCheck', () => {
   });
 
   it('should handle empty file list', async () => {
-    const result = await runSecurityCheck([], () => {}, undefined, {
+    const result = await runSecurityCheck([], () => {}, undefined, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -105,7 +107,7 @@ describe('runSecurityCheck', () => {
   });
 
   it('should log performance metrics in trace mode', async () => {
-    await runSecurityCheck(mockFiles, () => {}, undefined, {
+    await runSecurityCheck(mockFiles, () => {}, undefined, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -116,7 +118,7 @@ describe('runSecurityCheck', () => {
   it('should process files in parallel', async () => {
     const startTime = Date.now();
 
-    await runSecurityCheck(mockFiles, () => {}, undefined, {
+    await runSecurityCheck(mockFiles, () => {}, undefined, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -130,7 +132,7 @@ describe('runSecurityCheck', () => {
   it('should not modify original files', async () => {
     const originalFiles = JSON.parse(JSON.stringify(mockFiles));
 
-    await runSecurityCheck(mockFiles, () => {}, undefined, {
+    await runSecurityCheck(mockFiles, () => {}, undefined, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -156,7 +158,7 @@ describe('runSecurityCheck', () => {
     };
 
     const progressCallback = vi.fn();
-    const result = await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, {
+    const result = await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -178,7 +180,7 @@ describe('runSecurityCheck', () => {
     };
 
     const progressCallback = vi.fn();
-    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, {
+    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -198,7 +200,7 @@ describe('runSecurityCheck', () => {
     };
 
     const progressCallback = vi.fn();
-    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, {
+    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 
@@ -218,7 +220,7 @@ describe('runSecurityCheck', () => {
     };
 
     const progressCallback = vi.fn();
-    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, {
+    await runSecurityCheck(mockFiles, progressCallback, gitDiffResult, undefined, {
       initTaskRunner: mockInitTaskRunner,
     });
 

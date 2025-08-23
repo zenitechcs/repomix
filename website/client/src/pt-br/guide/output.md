@@ -3,7 +3,7 @@
 O Repomix suporta três formatos de saída:
 - XML (padrão)
 - Markdown
-- Texto simples
+- Texto simples 
 
 ## Formato XML
 
@@ -12,10 +12,6 @@ repomix --style xml
 ```
 
 O formato XML é otimizado para processamento por IA:
-
-::: tip Por que XML?
-As tags XML ajudam modelos de IA como o Claude a analisar o conteúdo com mais precisão. A [documentação do Claude](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) recomenda o uso de tags XML para prompts estruturados.
-:::
 
 ```xml
 Este arquivo é uma representação consolidada de toda a base de código...
@@ -36,7 +32,33 @@ src/
 // Conteúdo do arquivo aqui
 </file>
 </files>
+
+<git_logs>
+<git_log_commit>
+<date>2025-08-20 00:47:19 +0900</date>
+<message>feat(cli): Add --include-logs option for git commit history</message>
+<files>
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+</files>
+</git_log_commit>
+
+<git_log_commit>
+<date>2025-08-21 00:09:43 +0900</date>
+<message>Merge pull request #795 from yamadashy/chore/ratchet-update-ci</message>
+<files>
+.github/workflows/ratchet-update.yml
+</files>
+</git_log_commit>
+</git_logs>
 ```
+
+::: tip Por que XML?
+As tags XML ajudam modelos de IA como o Claude a analisar o conteúdo com mais precisão. A [documentação do Claude](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) recomenda o uso de tags XML para prompts estruturados.
+:::
 
 ## Formato Markdown
 
@@ -53,11 +75,11 @@ Este arquivo é uma representação consolidada de toda a base de código...
 (Metadados e instruções para IA)
 
 # Estrutura de Diretórios
-```text
+```
 src/
-  index.ts
-  utils/
-    helper.ts
+index.ts
+utils/
+helper.ts
 ```
 
 # Arquivos
@@ -65,6 +87,19 @@ src/
 ## Arquivo: src/index.ts
 ```typescript
 // Conteúdo do arquivo aqui
+```
+
+# Logs do Git
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
 ```
 
@@ -118,4 +153,17 @@ Arquivos
 Arquivo: src/index.ts
 ================
 // Conteúdo do arquivo aqui
+
+================
+Logs do Git
+================
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
 ```
