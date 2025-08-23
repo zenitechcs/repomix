@@ -152,7 +152,8 @@ export const execGitShallowClone = async (
 
 export const execGitLog = async (
   directory: string,
-  maxCommits = 50,
+  maxCommits: number,
+  gitSeparator: string,
   deps = {
     execFileAsync,
   },
@@ -162,9 +163,7 @@ export const execGitLog = async (
       '-C',
       directory,
       'log',
-      // Use null character (\x00) as record separator for robust parsing
-      // This ensures commits are split correctly even when commit messages contain newlines
-      '--pretty=format:%x00%ad|%s',
+      `--pretty=format:${gitSeparator}%ad|%s`,
       '--date=iso',
       '--name-only',
       '-n',

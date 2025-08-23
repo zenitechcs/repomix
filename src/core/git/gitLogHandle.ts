@@ -4,6 +4,14 @@ import { logger } from '../../shared/logger.js';
 import { execGitLog } from './gitCommand.js';
 import { isGitRepository } from './gitRepositoryHandle.js';
 
+// Null character used as record separator in git log output for robust parsing
+// This ensures commits are split correctly even when commit messages contain newlines
+export const GIT_LOG_RECORD_SEPARATOR = '\x00';
+
+// Git format string for null character separator 
+// Git expects %x00 format in pretty format strings
+export const GIT_LOG_FORMAT_SEPARATOR = '%x00';
+
 export interface GitLogCommit {
   date: string;
   message: string;
@@ -15,18 +23,19 @@ export interface GitLogResult {
   commits: GitLogCommit[];
 }
 
-const parseGitLog = (rawLogOutput: string): GitLogCommit[] => {
+const parseGitLog = (rawLogOutput: string, recordSeparator = GIT_LOG_RECORD_SEPARATOR): GitLogCommit[] => {
   if (!rawLogOutput.trim()) {
     return [];
   }
 
   const commits: GitLogCommit[] = [];
-  // Split by null character (\x00) which is used as a record separator in git log output
+  // Split by record separator used in git log output
   // This is more robust than splitting by double newlines, as commit messages may contain newlines
-  const logEntries = rawLogOutput.split('\x00').filter(Boolean);
+  const logEntries = rawLogOutput.split(recordSeparator).filter(Boolean);
 
   for (const entry of logEntries) {
-    const lines = entry.split('\n').filter((line) => line.trim() !== '');
+    // Split on both \n and \r\n to handle different line ending formats across platforms
+    const lines = entry.split(/\r?\n/).filter((line) => line.trim() !== '');
     if (lines.length === 0) continue;
 
     // First line contains date and message separated by |
@@ -64,7 +73,7 @@ export const getGitLog = async (
   }
 
   try {
-    return await deps.execGitLog(directory, maxCommits);
+    return await deps.execGitLog(directory, maxCommits, GIT_LOG_FORMAT_SEPARATOR);
   } catch (error) {
     logger.trace('Failed to get git log:', (error as Error).message);
     throw error;

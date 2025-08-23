@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   execGitDiff,
+  execGitLog,
   execGitLogFilenames,
   execGitRevParse,
   execGitShallowClone,
@@ -279,6 +280,83 @@ file2.ts
         '1',
         'origin',
         remoteBranch,
+      ]);
+    });
+  });
+
+  describe('execGitLog', () => {
+    test('should return git log with null character separator', async () => {
+      const mockOutput = `\x002024-01-01 10:00:00 +0900|Initial commit
+file1.txt
+file2.txt
+\x002024-01-02 11:00:00 +0900|Add new feature
+src/feature.ts
+test/feature.test.ts`;
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await execGitLog('/test/dir', 10, '%x00', { execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(mockOutput);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', [
+        '-C',
+        '/test/dir',
+        'log',
+        '--pretty=format:%x00%ad|%s',
+        '--date=iso',
+        '--name-only',
+        '-n',
+        '10',
+      ]);
+    });
+
+    test('should use custom record separator when provided', async () => {
+      const customSeparator = '|SEPARATOR|';
+      const mockOutput = `${customSeparator}2024-01-01 10:00:00 +0900|Initial commit
+file1.txt`;
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await execGitLog('/test/dir', 5, customSeparator, { execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(mockOutput);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', [
+        '-C',
+        '/test/dir',
+        'log',
+        `--pretty=format:${customSeparator}%ad|%s`,
+        '--date=iso',
+        '--name-only',
+        '-n',
+        '5',
+      ]);
+    });
+
+    test('should throw error when git log fails', async () => {
+      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('git command failed'));
+
+      await expect(execGitLog('/test/dir', 10, '%x00', { execFileAsync: mockFileExecAsync })).rejects.toThrow(
+        'git command failed',
+      );
+      expect(logger.trace).toHaveBeenCalledWith('Failed to execute git log:', 'git command failed');
+    });
+
+    test('should work with different separators', async () => {
+      const separator = '###';
+      const mockOutput = `${separator}2024-01-01 10:00:00 +0900|Test commit
+file.txt`;
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await execGitLog('/test/dir', 50, separator, { execFileAsync: mockFileExecAsync });
+
+      expect(result).toBe(mockOutput);
+      expect(mockFileExecAsync).toHaveBeenCalledWith('git', [
+        '-C',
+        '/test/dir',
+        'log',
+        `--pretty=format:${separator}%ad|%s`,
+        '--date=iso',
+        '--name-only',
+        '-n',
+        '50',
       ]);
     });
   });

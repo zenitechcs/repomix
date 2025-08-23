@@ -89,7 +89,7 @@ helper.ts
 // 文件内容
 ```
 
-# Git 日志
+# Git Logs
 
 ## 提交：2025-08-20 00:47:19 +0900
 **消息：** feat(cli): Add --include-logs option for git commit history
@@ -160,7 +160,7 @@ File: src/index.ts
 // 文件内容
 
 ================
-Git 日志
+Git Logs
 ================
 ================
 Date: 2025-08-20 00:47:19 +0900
