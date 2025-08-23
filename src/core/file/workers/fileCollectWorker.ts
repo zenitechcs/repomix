@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { setLogLevelByWorkerData } from '../../../shared/logger.js';
-import { FileSkipReason, readRawFile } from '../fileRead.js';
+import { type FileSkipReason, readRawFile } from '../fileRead.js';
 import type { RawFile } from '../fileTypes.js';
 
 // Initialize logger configuration from workerData at module load time
@@ -45,5 +45,7 @@ export default async ({ filePath, rootDir, maxFileSize }: FileCollectTask): Prom
     };
   }
 
-  return {};
+  throw new Error(
+    `File processing for ${filePath} resulted in an unexpected state: content is null but no skip reason was provided.`,
+  );
 };

@@ -94,8 +94,8 @@ export const pack = async (
       ),
   );
 
-  const rawFiles = collectResults.reduce((acc: RawFile[], curr) => acc.concat(...curr.rawFiles), []);
-  const allSkippedFiles = collectResults.reduce((acc: SkippedFileInfo[], curr) => acc.concat(...curr.skippedFiles), []);
+  const rawFiles = collectResults.flatMap((curr) => curr.rawFiles);
+  const allSkippedFiles = collectResults.flatMap((curr) => curr.skippedFiles);
 
   // Get git diffs if enabled - run this before security check
   progressCallback('Getting git diffs...');
