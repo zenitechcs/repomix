@@ -162,7 +162,7 @@ export const execGitLog = async (
       '-C',
       directory,
       'log',
-      '--pretty=format:%ad|%s',
+      '--pretty=format:%x00%ad|%s',
       '--date=iso',
       '--name-only',
       '-n',

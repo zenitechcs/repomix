@@ -21,7 +21,7 @@ const parseGitLog = (rawLogOutput: string): GitLogCommit[] => {
   }
 
   const commits: GitLogCommit[] = [];
-  const logEntries = rawLogOutput.split('\n\n');
+  const logEntries = rawLogOutput.split('\x00').filter(Boolean);
 
   for (const entry of logEntries) {
     const lines = entry.split('\n').filter((line) => line.trim() !== '');
