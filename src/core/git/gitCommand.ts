@@ -162,6 +162,8 @@ export const execGitLog = async (
       '-C',
       directory,
       'log',
+      // Use null character (\x00) as record separator for robust parsing
+      // This ensures commits are split correctly even when commit messages contain newlines
       '--pretty=format:%x00%ad|%s',
       '--date=iso',
       '--name-only',

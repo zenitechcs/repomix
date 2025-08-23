@@ -21,6 +21,8 @@ const parseGitLog = (rawLogOutput: string): GitLogCommit[] => {
   }
 
   const commits: GitLogCommit[] = [];
+  // Split by null character (\x00) which is used as a record separator in git log output
+  // This is more robust than splitting by double newlines, as commit messages may contain newlines
   const logEntries = rawLogOutput.split('\x00').filter(Boolean);
 
   for (const entry of logEntries) {
