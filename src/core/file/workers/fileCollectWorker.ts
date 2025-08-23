@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
-import { readRawFile } from '../fileRead.js';
+import { setLogLevelByWorkerData } from '../../../shared/logger.js';
+import { FileSkipReason, readRawFile } from '../fileRead.js';
 import type { RawFile } from '../fileTypes.js';
 
 // Initialize logger configuration from workerData at module load time
@@ -15,7 +15,7 @@ export interface FileCollectTask {
 
 export interface SkippedFileInfo {
   path: string;
-  reason: string;
+  reason: FileSkipReason;
 }
 
 export interface FileCollectResult {

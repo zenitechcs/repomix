@@ -169,7 +169,7 @@ export const reportSkippedFiles = (rootDir: string, skippedFiles: SkippedFileInf
   }
 
   logger.log(pc.white('📄 Binary Files Detected:'));
-  logger.log(pc.dim('──────────────────────────'));
+  logger.log(pc.dim('─────────────────────────'));
 
   if (binaryContentFiles.length === 1) {
     logger.log(pc.yellow('1 file detected as binary by content inspection:'));
@@ -180,7 +180,6 @@ export const reportSkippedFiles = (rootDir: string, skippedFiles: SkippedFileInf
   binaryContentFiles.forEach((file, index) => {
     const relativeFilePath = path.relative(rootDir, file.path);
     logger.log(`${pc.white(`${index + 1}.`)} ${pc.white(relativeFilePath)}`);
-    logger.log(pc.dim('   - Detected as binary despite text extension'));
   });
 
   logger.log(pc.yellow('\nThese files have been excluded from the output.'));

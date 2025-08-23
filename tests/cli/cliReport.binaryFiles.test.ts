@@ -30,7 +30,6 @@ describe('reportSkippedFiles', () => {
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('📄 Binary Files Detected:'));
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 file detected as binary'));
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('dir/malformed.txt'));
-    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Detected as binary despite text extension'));
   });
 
   test('should report multiple binary-content files', () => {
