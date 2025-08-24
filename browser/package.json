@@ -27,7 +27,7 @@
     "@types/chrome": "^0.1.1",
     "@types/node": "^24.0.14",
     "@types/webextension-polyfill": "^0.12.3",
-    "@typescript/native-preview": "^7.0.0-dev.20250708.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250824.1",
     "@webextension-toolbox/webextension-toolbox": "^7.1.1",
     "jsdom": "^26.1.0",
     "sharp": "^0.34.3",

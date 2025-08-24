@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@types/gtag.js": "^0.0.20",
-    "@typescript/native-preview": "^7.0.0-dev.20250708.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250824.1",
     "rollup-plugin-visualizer": "^6.0.3",
     "vite-plugin-pwa": "^1.0.1",
     "vitepress": "^1.6.3"

@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.14",
-    "@typescript/native-preview": "^7.0.0-dev.20250708.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250824.1",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
