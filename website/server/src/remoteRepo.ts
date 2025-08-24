@@ -63,6 +63,7 @@ export async function processRemoteRepo(
     topFilesLen: 10,
     include: sanitizedIncludePatterns,
     ignore: sanitizedIgnorePatterns,
+    tokenCountTree: true, // Required to generate token counts for all files in the repository
     quiet: true, // Enable quiet mode to suppress output
   } as CliOptions;
 
