@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AppError } from './errorHandler.js';
+import { AppError } from '../../../utils/errorHandler.js';
 
 export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): T {
   try {

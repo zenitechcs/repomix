@@ -2,8 +2,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { unzip } from 'fflate';
-import { FILE_SIZE_LIMITS, formatFileSize } from '../constants.js';
-import { AppError } from './errorHandler.js';
+import { FILE_SIZE_LIMITS, formatFileSize } from '../../../constants.js';
+import { AppError } from '../../../utils/errorHandler.js';
 
 // Enhanced ZIP extraction limits (aligned with processZipFile.ts)
 const ZIP_SECURITY_LIMITS = {
