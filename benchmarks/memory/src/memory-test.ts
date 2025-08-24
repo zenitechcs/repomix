@@ -245,12 +245,9 @@ async function runMemoryTest(): Promise<void> {
   const initialUsage = memoryHistory[0];
 
   if (initialUsage) {
-    const heapGrowth = initialUsage.heapUsed > 0 
-      ? ((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed) * 100
-      : 0;
-    const rssGrowth = initialUsage.rss > 0 
-      ? ((finalUsage.rss - initialUsage.rss) / initialUsage.rss) * 100
-      : 0;
+    const heapGrowth =
+      initialUsage.heapUsed > 0 ? ((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed) * 100 : 0;
+    const rssGrowth = initialUsage.rss > 0 ? ((finalUsage.rss - initialUsage.rss) / initialUsage.rss) * 100 : 0;
 
     console.log('\n📊 Final Memory Analysis:');
     console.log(`Initial: Heap ${initialUsage.heapUsed}MB, RSS ${initialUsage.rss}MB`);
