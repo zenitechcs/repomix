@@ -257,9 +257,7 @@ async function runMemoryTest(): Promise<void> {
     // Exit with error code if memory growth exceeds threshold
     if (heapGrowth > WARNING_THRESHOLD || rssGrowth > WARNING_THRESHOLD) {
       console.log('⚠️  WARNING: Significant memory growth detected!');
-      if (process.env.CI) {
-        process.exitCode = 1;
-      }
+      process.exitCode = 1;
     } else {
       console.log('✅ Memory usage appears stable');
     }
