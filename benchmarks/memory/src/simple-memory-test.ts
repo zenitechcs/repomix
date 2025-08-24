@@ -36,7 +36,7 @@ function getMemoryMB(): Pick<MemoryUsage, 'heapUsed' | 'rss'> {
 async function cleanup(): Promise<void> {
   try {
     await fs.unlink(path.join(__dirname, '../memory-test-output.txt'));
-  } catch (error) {
+  } catch {
     // Ignore if file doesn't exist
   }
 }
