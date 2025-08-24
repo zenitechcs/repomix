@@ -32,8 +32,7 @@ jobs:
           node-version-file: .tool-versions
           cache: npm
       - run: npm ci
-      - run: npm run lint-oxlint
-
+      - run: npm run lint-oxlint && git diff --exit-code
   lint-ts:
     name: Lint TypeScript
     runs-on: ubuntu-latest
