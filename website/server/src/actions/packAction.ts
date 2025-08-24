@@ -3,6 +3,7 @@ import { isValidRemoteValue } from 'repomix';
 import { z } from 'zod';
 import { processZipFile } from '../domains/pack/processZipFile.js';
 import { processRemoteRepo } from '../domains/pack/remoteRepo.js';
+import { FILE_SIZE_LIMITS } from '../domains/pack/utils/fileUtils.js';
 import { sanitizePattern } from '../domains/pack/utils/validation.js';
 import type { PackResult } from '../types.js';
 import { getClientInfo } from '../utils/clientInfo.js';
@@ -28,7 +29,7 @@ const packRequestSchema = z
       .refine((file) => file.type === 'application/zip' || file.name.endsWith('.zip'), {
         message: 'Only ZIP files are allowed',
       })
-      .refine((file) => file.size <= 10 * 1024 * 1024, {
+      .refine((file) => file.size <= FILE_SIZE_LIMITS.MAX_ZIP_SIZE, {
         // 10MB limit
         message: 'File size must be less than 10MB',
       })
@@ -77,7 +78,13 @@ export const packAction = async (c: Context) => {
 
     // Get form data
     const format = formData.get('format') as 'xml' | 'markdown' | 'plain';
-    const options = JSON.parse(formData.get('options') as string);
+    const optionsRaw = formData.get('options') as string | null;
+    let options: unknown = {};
+    try {
+      options = optionsRaw ? JSON.parse(optionsRaw) : {};
+    } catch {
+      return c.json(createErrorResponse('Invalid JSON in options', requestId), 400);
+    }
     const file = formData.get('file') as File | null;
     const url = formData.get('url') as string | null;
 
@@ -107,10 +114,8 @@ export const packAction = async (c: Context) => {
     if (validatedData.file) {
       result = await processZipFile(validatedData.file, validatedData.format, sanitizedOptions);
     } else {
-      if (!validatedData.url) {
-        return c.json(createErrorResponse('Repository URL is required', requestId), 400);
-      }
-      result = await processRemoteRepo(validatedData.url, validatedData.format, sanitizedOptions);
+      // Zod schema guarantees that url is present when file is not
+      result = await processRemoteRepo(validatedData.url as string, validatedData.format, sanitizedOptions);
     }
 
     // Log operation result with memory usage

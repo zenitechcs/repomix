@@ -1,6 +1,7 @@
 import type { Context, Next } from 'hono';
 import { rateLimiter } from '../domains/pack/utils/sharedInstance.js';
 import { getClientInfo } from '../utils/clientInfo.js';
+import { createErrorResponse } from '../utils/logger.js';
 
 export function rateLimitMiddleware() {
   return async function rateLimitMiddleware(c: Context, next: Next) {
@@ -9,12 +10,9 @@ export function rateLimitMiddleware() {
     // Check rate limit
     if (!rateLimiter.isAllowed(clientInfo.ip)) {
       const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientInfo.ip) / 1000);
-      return c.json(
-        {
-          error: `Rate limit exceeded. Please try again in ${remainingTime} seconds.`,
-        },
-        429,
-      );
+      const message = `Rate limit exceeded. Please try again in ${remainingTime} seconds.`;
+      const requestId = c.get('requestId');
+      return c.json(createErrorResponse(message, requestId), 429);
     }
 
     await next();
