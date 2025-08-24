@@ -102,58 +102,31 @@ export function usePackRequest() {
   async function repackWithSelectedFiles(selectedFiles: FileInfo[]) {
     if (!result.value || selectedFiles.length === 0) return;
 
-    // Cancel any pending request
-    if (requestController) {
-      requestController.abort();
-    }
-    requestController = new AbortController();
-
-    loading.value = true;
-    error.value = null;
-
     // Generate include patterns from selected files
     const selectedPaths = selectedFiles.map(file => file.path);
     const includePatterns = selectedPaths.join(',');
 
-    // Create modified pack options for repack
-    const repackOptions = {
-      ...getPackRequestOptions.value,
-      includePatterns,
-      ignorePatterns: '', // Clear ignore patterns to ensure selected files are included
-    };
-
-    const timeoutId = setTimeout(() => {
-      if (requestController) {
-        requestController.abort('Request timed out');
-      }
-    }, TIMEOUT_MS);
+    // Temporarily update pack options with include patterns
+    const originalIncludePatterns = packOptions.includePatterns;
+    const originalIgnorePatterns = packOptions.ignorePatterns;
+    
+    packOptions.includePatterns = includePatterns;
+    packOptions.ignorePatterns = ''; // Clear ignore patterns to ensure selected files are included
 
     try {
-      await handlePackRequest(
-        inputRepositoryUrl.value,
-        packOptions.format,
-        repackOptions,
-        {
-          onSuccess: (response) => {
-            // Update file selection state in the new result
-            if (response.metadata?.allFiles) {
-              response.metadata.allFiles.forEach(file => {
-                file.selected = selectedPaths.includes(file.path);
-              });
-            }
-            result.value = response;
-          },
-          onError: (errorMessage) => {
-            error.value = errorMessage;
-          },
-          signal: requestController.signal,
-          file: mode.value === 'file' || mode.value === 'folder' ? uploadedFile.value || undefined : undefined,
-        },
-      );
+      // Use the same loading state as normal pack processing
+      await submitRequest();
+      
+      // Update file selection state in the new result
+      if (result.value?.metadata?.allFiles) {
+        result.value.metadata.allFiles.forEach(file => {
+          file.selected = selectedPaths.includes(file.path);
+        });
+      }
     } finally {
-      clearTimeout(timeoutId);
-      loading.value = false;
-      requestController = null;
+      // Restore original pack options
+      packOptions.includePatterns = originalIncludePatterns;
+      packOptions.ignorePatterns = originalIgnorePatterns;
     }
   }
 

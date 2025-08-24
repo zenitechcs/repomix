@@ -28,8 +28,21 @@
           @click="handleRepack"
           :disabled="!hasSelectedFiles || loading"
         >
-          <Package :size="14" />
           {{ loading ? 'Re-packing...' : 'Re-pack Selected' }}
+          <svg
+            v-if="!loading"
+            class="pack-button-icon"
+            width="14"
+            height="14"
+            viewBox="96.259 93.171 300 300"
+          >
+            <g transform="matrix(1.160932, 0, 0, 1.160932, 97.635941, 94.725143)">
+              <path
+                fill="currentColor"
+                d="M 128.03 -1.486 L 21.879 65.349 L 21.848 190.25 L 127.979 256.927 L 234.2 190.27 L 234.197 65.463 L 128.03 -1.486 Z M 208.832 70.323 L 127.984 121.129 L 47.173 70.323 L 128.144 19.57 L 208.832 70.323 Z M 39.669 86.367 L 119.188 136.415 L 119.255 230.529 L 39.637 180.386 L 39.669 86.367 Z M 136.896 230.506 L 136.887 136.575 L 216.469 86.192 L 216.417 180.46 L 136.896 230.506 Z M 136.622 230.849"
+              />
+            </g>
+          </svg>
         </button>
       </div>
     </div>
@@ -47,31 +60,55 @@
 
     <div class="file-list-container">
       <div class="file-list-scroll">
-        <div
-          v-for="file in sortedFiles"
-          :key="file.path"
-          class="file-item"
-          :class="{ 'file-item-selected': file.selected }"
-        >
-          <label class="file-checkbox-label">
-            <input
-              type="checkbox"
-              v-model="file.selected"
-              class="file-checkbox"
-              @change="onFileSelectionChange"
-            />
-            <div class="file-info">
-              <div class="file-path">{{ file.path }}</div>
-              <div class="file-stats">
-                {{ file.tokenCount.toLocaleString() }} <span class="unit">tokens</span>
-                <span class="separator">|</span>
-                {{ file.charCount.toLocaleString() }} <span class="unit">chars</span>
-                <span class="separator">|</span>
-                {{ ((file.tokenCount / totalTokens) * 100).toFixed(1) }}<span class="unit">%</span>
-              </div>
-            </div>
-          </label>
-        </div>
+        <table class="file-table">
+          <thead>
+            <tr>
+              <th class="checkbox-column">
+                <input
+                  type="checkbox"
+                  :checked="selectedFiles.length === allFiles.length && allFiles.length > 0"
+                  :indeterminate="selectedFiles.length > 0 && selectedFiles.length < allFiles.length"
+                  @change="($event.target as HTMLInputElement).checked ? selectAll() : deselectAll()"
+                  class="header-checkbox"
+                />
+              </th>
+              <th class="file-path-column">File Path</th>
+              <th class="tokens-column">Tokens</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="file in sortedFiles"
+              :key="file.path"
+              class="file-row"
+              :class="{ 'file-row-selected': file.selected }"
+              @click="toggleFileSelection(file, $event)"
+            >
+              <td class="checkbox-cell">
+                <input
+                  type="checkbox"
+                  v-model="file.selected"
+                  class="file-checkbox"
+                  @change="onFileSelectionChange"
+                />
+              </td>
+              <td class="file-path-cell">
+                <span class="file-path">{{ file.path }}</span>
+              </td>
+              <td class="tokens-cell">
+                <span class="file-tokens">{{ file.tokenCount.toLocaleString() }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div v-if="selectedFiles.length > 500" class="warning-message">
+      <div class="warning-icon">⚠️</div>
+      <div class="warning-text">
+        Selecting more than 500 files may cause processing issues or timeouts. Consider reducing your selection for better performance.
       </div>
     </div>
   </div>
@@ -139,6 +176,16 @@ const handleRepack = () => {
   if (hasSelectedFiles.value) {
     emit('repack', selectedFiles.value);
   }
+};
+
+const toggleFileSelection = (file: FileInfo, event?: Event) => {
+  // Prevent double-toggling when clicking directly on checkbox
+  if (event?.target && (event.target as HTMLInputElement).type === 'checkbox') {
+    return;
+  }
+
+  file.selected = !file.selected;
+  onFileSelectionChange();
 };
 </script>
 
@@ -232,62 +279,109 @@ const handleRepack = () => {
 }
 
 .file-list-scroll {
-  padding: 8px;
+  padding: 0;
 }
 
-.file-item {
-  border-radius: 4px;
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.file-table th {
+  background: var(--vp-c-bg-soft);
+  border-bottom: 1px solid var(--vp-c-border);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vp-c-text-2);
+  position: sticky;
+  top: 0;
+}
+
+.checkbox-column {
+  width: 40px;
+  text-align: center;
+}
+
+.file-path-column {
+  width: 70%;
+}
+
+.tokens-column {
+  width: 30%;
+  text-align: left;
+}
+
+.file-row {
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
-.file-item:hover {
+.file-row:hover {
   background: var(--vp-c-bg-soft);
 }
 
-.file-item-selected {
-  background: var(--vp-c-bg-alt);
+.file-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--vp-c-border-soft);
 }
 
-.file-checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px;
-  cursor: pointer;
+.checkbox-cell {
+  text-align: center;
+}
+
+.file-path-cell {
+  max-width: 0;
   width: 100%;
-}
-
-.file-checkbox {
-  margin-top: 2px;
-  flex-shrink: 0;
-}
-
-.file-info {
-  flex: 1;
-  min-width: 0;
 }
 
 .file-path {
   font-size: 13px;
   color: var(--vp-c-text-1);
-  margin-bottom: 2px;
   word-break: break-all;
   font-family: var(--vp-font-family-mono);
 }
 
-.file-stats {
+.tokens-cell {
+  text-align: left;
+}
+
+.file-tokens {
   font-size: 12px;
   color: var(--vp-c-text-2);
+  white-space: nowrap;
 }
 
-.unit {
-  color: var(--vp-c-text-3);
-  margin-left: 0.2em;
+.header-checkbox {
+  cursor: pointer;
 }
 
-.separator {
-  color: var(--vp-c-text-3);
-  margin: 0 0.5em;
+.file-checkbox {
+  cursor: pointer;
+}
+
+.warning-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--vp-c-warning-soft);
+  border: 1px solid var(--vp-c-warning);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.warning-icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.warning-text {
+  font-size: 13px;
+  color: var(--vp-c-text-1);
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {

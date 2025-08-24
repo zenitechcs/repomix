@@ -15,6 +15,7 @@ interface Props {
 
 interface Emits {
   (e: 'repack', selectedFiles: FileInfo[]): void;
+  (e: 'repack-completed'): void;
 }
 
 const props = defineProps<Props>();
@@ -22,7 +23,6 @@ const emit = defineEmits<Emits>();
 
 // Tab management
 const activeTab = ref<'result' | 'files'>('result');
-const repackLoading = ref(false);
 
 const hasFileSelection = computed(() => 
   props.result?.metadata?.allFiles && props.result.metadata.allFiles.length > 0
@@ -38,13 +38,10 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
     return;
   }
   
-  repackLoading.value = true;
-  emit('repack', selectedFiles);
+  // Switch to result tab immediately when re-pack starts
+  activeTab.value = 'result';
   
-  // Reset loading after a short delay to show feedback
-  setTimeout(() => {
-    repackLoading.value = false;
-  }, 1000);
+  emit('repack', selectedFiles);
 };
 </script>
 
@@ -85,7 +82,7 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
         <TryItFileSelection
           v-if="hasFileSelection"
           :all-files="result.metadata!.allFiles!"
-          :loading="repackLoading"
+          :loading="loading"
           @repack="handleRepack"
         />
       </div>
