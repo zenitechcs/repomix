@@ -197,8 +197,7 @@ export const validateGitUrl = (url: string): void => {
     }
   } catch (error: unknown) {
     // Redact embedded credentials in https URLs to avoid PII leakage
-    const redactedUrl =
-      url.startsWith('https://') ? url.replace(/^(https?:\/\/)([^@/]+)@/i, '$1***@') : url;
+    const redactedUrl = url.startsWith('https://') ? url.replace(/^(https?:\/\/)([^@/]+)@/i, '$1***@') : url;
     logger.trace('Invalid repository URL:', (error as Error).message);
     throw new RepomixError(`Invalid repository URL. Please provide a valid URL: ${redactedUrl}`);
   }
