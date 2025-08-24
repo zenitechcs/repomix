@@ -1,12 +1,12 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { bodyLimit } from 'hono/body-limit';
 import { compress } from 'hono/compress';
-import { cors } from 'hono/cors';
 import { timeout } from 'hono/timeout';
 import { packAction } from './actions/packAction.js';
-import { FILE_SIZE_LIMITS } from './constants.js';
-import { cloudLogger, createErrorResponse, logInfo, logMemoryUsage } from './utils/logger.js';
+import { bodyLimitMiddleware } from './middlewares/bodyLimit.js';
+import { corsMiddleware } from './middlewares/cors.js';
+import { cloudLogger } from './middlewares/logger.js';
+import { logInfo, logMemoryUsage } from './utils/logger.js';
 import { getProcessConcurrency } from './utils/processConcurrency.js';
 
 // Log server metrics on startup
@@ -27,28 +27,7 @@ const app = new Hono();
 app.use('*', cloudLogger());
 
 // Configure CORS
-app.use(
-  '/*',
-  cors({
-    origin: (origin) => {
-      const allowedOrigins = ['http://localhost:5173', 'https://repomix.com', 'https://api.repomix.com'];
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        return origin;
-      }
-
-      if (origin.endsWith('.repomix.pages.dev')) {
-        return origin;
-      }
-
-      return null;
-    },
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
-    allowHeaders: ['Content-Type'],
-    maxAge: 86400,
-    credentials: true,
-  }),
-);
+app.use('/*', corsMiddleware);
 
 // Enable compression
 app.use(compress());
@@ -60,18 +39,7 @@ app.use('/api', timeout(30000));
 app.get('/health', (c) => c.text('OK'));
 
 // Main packing endpoint
-app.post(
-  '/api/pack',
-  bodyLimit({
-    maxSize: FILE_SIZE_LIMITS.MAX_REQUEST_SIZE,
-    onError: (c) => {
-      const requestId = c.get('requestId');
-      const response = createErrorResponse('File size too large', requestId);
-      return c.json(response, 413);
-    },
-  }),
-  packAction,
-);
+app.post('/api/pack', bodyLimitMiddleware, packAction);
 
 // Start server
 const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 3000;
