@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <form class="try-it-container" @submit.prevent="handleSubmit">
+    <form class="try-it-container" @submit.prevent="handleSubmit($event)">
       <div class="input-row">
         <div class="tab-container">
           <button
@@ -178,7 +178,20 @@ function updateUrlFromCurrentState() {
   updateUrlParameters(urlParamsToUpdate);
 }
 
-async function handleSubmit() {
+async function handleSubmit(event?: SubmitEvent) {
+  // Prevent accidental form submissions from unintended buttons
+  if (event?.submitter && !isSubmitValid.value) {
+    const submitter = event.submitter as HTMLElement;
+    if (!submitter.matches('.pack-button, [type="submit"]')) {
+      return; // Ignore submission from non-pack buttons when form is invalid
+    }
+  }
+  
+  // Only proceed if form is valid
+  if (!isSubmitValid.value) {
+    return;
+  }
+  
   await submitRequest();
 }
 

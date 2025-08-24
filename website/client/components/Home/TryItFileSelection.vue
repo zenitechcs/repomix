@@ -6,25 +6,25 @@
         File Selection
       </h3>
       <div class="file-selection-actions">
-        <button 
-          type="button" 
-          class="action-btn select-all" 
+        <button
+          type="button"
+          class="action-btn select-all"
           @click="selectAll"
           :disabled="!hasFiles"
         >
           Select All
         </button>
-        <button 
-          type="button" 
-          class="action-btn deselect-all" 
+        <button
+          type="button"
+          class="action-btn deselect-all"
           @click="deselectAll"
           :disabled="!hasFiles"
         >
           Deselect All
         </button>
-        <button 
-          type="button" 
-          class="action-btn repack" 
+        <button
+          type="button"
+          class="action-btn repack"
           @click="handleRepack"
           :disabled="!hasSelectedFiles || loading"
         >
@@ -40,22 +40,22 @@
       </span>
       <span class="stat-separator">|</span>
       <span class="stat-item">
-        {{ selectedTokens.toLocaleString() }} tokens 
+        {{ selectedTokens.toLocaleString() }} tokens
         ({{ ((selectedTokens / totalTokens) * 100).toFixed(1) }}%)
       </span>
     </div>
 
     <div class="file-list-container">
       <div class="file-list-scroll">
-        <div 
-          v-for="file in sortedFiles" 
+        <div
+          v-for="file in sortedFiles"
           :key="file.path"
           class="file-item"
           :class="{ 'file-item-selected': file.selected }"
         >
           <label class="file-checkbox-label">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               v-model="file.selected"
               class="file-checkbox"
               @change="onFileSelectionChange"
@@ -99,21 +99,21 @@ const emit = defineEmits<Emits>();
 
 const hasFiles = computed(() => props.allFiles.length > 0);
 
-const selectedFiles = computed(() => 
+const selectedFiles = computed(() =>
   props.allFiles.filter(file => file.selected)
 );
 
 const hasSelectedFiles = computed(() => selectedFiles.value.length > 0);
 
-const totalTokens = computed(() => 
+const totalTokens = computed(() =>
   props.allFiles.reduce((sum, file) => sum + file.tokenCount, 0)
 );
 
-const selectedTokens = computed(() => 
+const selectedTokens = computed(() =>
   selectedFiles.value.reduce((sum, file) => sum + file.tokenCount, 0)
 );
 
-const sortedFiles = computed(() => 
+const sortedFiles = computed(() =>
   [...props.allFiles].sort((a, b) => b.tokenCount - a.tokenCount)
 );
 
@@ -143,13 +143,6 @@ const handleRepack = () => {
 </script>
 
 <style scoped>
-.file-selection-container {
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg);
-  margin-top: 16px;
-}
-
 .file-selection-header {
   display: flex;
   justify-content: space-between;
@@ -313,4 +306,4 @@ const handleRepack = () => {
     justify-content: center;
   }
 }
-</style> 
+</style>
