@@ -45,6 +45,23 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
     >
       <div class="loading-spinner"></div>
       <p class="loading-text">Processing repository...</p>
+
+      <div class="sponsor-section">
+        <p class="sponsor-header">Special thanks to:</p>
+        <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+          <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
+        </a>
+        <p class="sponsor-title">
+          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+            Warp, the AI terminal for developers
+          </a>
+        </p>
+        <p class="sponsor-subtitle">
+          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+            Available for MacOS, Linux, & Windows
+          </a>
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -87,5 +104,39 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.sponsor-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sponsor-section p {
+  margin: 8px 0;
+}
+
+.sponsor-section .sponsor-header {
+  font-size: 0.9em;
+}
+
+.sponsor-section img {
+  max-width: 100%;
+  height: auto;
+  margin: 12px 0;
+}
+
+.sponsor-section .sponsor-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+}
+
+.sponsor-section .sponsor-subtitle {
+  font-size: 0.9em;
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
 }
 </style>
