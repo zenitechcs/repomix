@@ -6,7 +6,8 @@ import { processRemoteRepo } from '../domains/pack/remoteRepo.js';
 import { sanitizePattern } from '../domains/pack/utils/validation.js';
 import type { PackResult } from '../types.js';
 import { getClientInfo } from '../utils/clientInfo.js';
-import { createErrorResponse, logError, logInfo, logMemoryUsage } from '../utils/logger.js';
+import { createErrorResponse, logError, logInfo } from '../utils/logger.js';
+import { calculateMemoryDiff, getMemoryUsage } from '../utils/memory.js';
 import { formatLatencyForDisplay } from '../utils/time.js';
 import { validateRequest } from '../utils/validation.js';
 
@@ -99,6 +100,7 @@ export const packAction = async (c: Context) => {
     };
 
     const startTime = Date.now();
+    const beforeMemory = getMemoryUsage();
 
     // Process file or repository
     let result: PackResult;
@@ -112,6 +114,9 @@ export const packAction = async (c: Context) => {
     }
 
     // Log operation result with memory usage
+    const afterMemory = getMemoryUsage();
+    const memoryDiff = calculateMemoryDiff(beforeMemory, afterMemory);
+
     logInfo('Pack operation completed', {
       requestId,
       format: validatedData.format,
@@ -122,19 +127,16 @@ export const packAction = async (c: Context) => {
         ip: clientInfo.ip,
         userAgent: clientInfo.userAgent,
       },
+      memory: {
+        before: beforeMemory,
+        after: afterMemory,
+        diff: memoryDiff,
+      },
       metrics: {
         totalFiles: result.metadata.summary?.totalFiles,
         totalCharacters: result.metadata.summary?.totalCharacters,
         totalTokens: result.metadata.summary?.totalTokens,
       },
-    });
-
-    // Log memory usage after processing
-    logMemoryUsage('Pack operation memory usage', {
-      requestId,
-      repository: result.metadata.repository,
-      totalFiles: result.metadata.summary?.totalFiles,
-      totalCharacters: result.metadata.summary?.totalCharacters,
     });
 
     return c.json(result);

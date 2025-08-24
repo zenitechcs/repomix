@@ -1,6 +1,6 @@
 import { LoggingWinston } from '@google-cloud/logging-winston';
 import winston from 'winston';
-import { formatMemoryUsage, getMemoryMetrics, getMemoryUsage } from './memory.js';
+import { formatMemoryUsage, getMemoryUsage } from './memory.js';
 
 // Configure transports based on environment
 function createLogger() {
@@ -81,11 +81,10 @@ export function logError(message: string, error?: Error, context?: Record<string
  */
 export function logMemoryUsage(message: string, context?: Record<string, unknown>): void {
   const memoryUsage = getMemoryUsage();
-  const memoryMetrics = getMemoryMetrics();
 
   logger.info({
     message: `${message} - Memory: ${formatMemoryUsage(memoryUsage)}`,
-    memory: memoryMetrics,
+    memory: memoryUsage,
     ...context,
   });
 }
