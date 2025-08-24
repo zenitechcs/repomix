@@ -12,51 +12,6 @@ import { createErrorResponse, logError, logInfo, logMemoryUsage } from '../utils
 import { formatLatencyForDisplay } from '../utils/time.js';
 import { validateRequest } from '../utils/validation.js';
 
-// Request validation schemas
-// Regular expression to validate ignore patterns
-// Allowed characters: alphanumeric, *, ?, /, -, _, ., !, (, ), space, comma
-const ignorePatternRegex = /^[a-zA-Z0-9*?/\-_.,!()\s]*$/;
-
-const packOptionsSchema = z
-  .object({
-    removeComments: z.boolean().optional(),
-    removeEmptyLines: z.boolean().optional(),
-    showLineNumbers: z.boolean().optional(),
-    fileSummary: z.boolean().optional(),
-    directoryStructure: z.boolean().optional(),
-    includePatterns: z
-      .string()
-      .max(100_000, 'Include patterns too long')
-      .optional()
-      .transform((val) => val?.trim()),
-    ignorePatterns: z
-      .string()
-      .regex(ignorePatternRegex, 'Invalid characters in ignore patterns')
-      .max(1000, 'Ignore patterns too long')
-      .optional()
-      .transform((val) => val?.trim()),
-    outputParsable: z.boolean().optional(),
-    compress: z.boolean().optional(),
-  })
-  .strict();
-
-const isValidZipFile = (file: File) => {
-  return file.type === 'application/zip' || file.name.endsWith('.zip');
-};
-
-const fileSchema = z
-  .custom<File>()
-  .refine((file) => file instanceof File, {
-    message: 'Invalid file format',
-  })
-  .refine((file) => isValidZipFile(file), {
-    message: 'Only ZIP files are allowed',
-  })
-  .refine((file) => file.size <= 10 * 1024 * 1024, {
-    // 10MB limit
-    message: 'File size must be less than 10MB',
-  });
-
 const packRequestSchema = z
   .object({
     url: z
@@ -66,9 +21,44 @@ const packRequestSchema = z
       .transform((val) => val.trim())
       .refine((val) => isValidRemoteValue(val), { message: 'Invalid repository URL' })
       .optional(),
-    file: fileSchema.optional(),
+    file: z
+      .custom<File>()
+      .refine((file) => file instanceof File, {
+        message: 'Invalid file format',
+      })
+      .refine((file) => file.type === 'application/zip' || file.name.endsWith('.zip'), {
+        message: 'Only ZIP files are allowed',
+      })
+      .refine((file) => file.size <= 10 * 1024 * 1024, {
+        // 10MB limit
+        message: 'File size must be less than 10MB',
+      })
+      .optional(),
     format: z.enum(['xml', 'markdown', 'plain']),
-    options: packOptionsSchema,
+    options: z
+      .object({
+        removeComments: z.boolean().optional(),
+        removeEmptyLines: z.boolean().optional(),
+        showLineNumbers: z.boolean().optional(),
+        fileSummary: z.boolean().optional(),
+        directoryStructure: z.boolean().optional(),
+        includePatterns: z
+          .string()
+          .max(100_000, 'Include patterns too long')
+          .optional()
+          .transform((val) => val?.trim()),
+        ignorePatterns: z
+          .string()
+          // Regular expression to validate ignore patterns
+          // Allowed characters: alphanumeric, *, ?, /, -, _, ., !, (, ), space, comma
+          .regex(/^[a-zA-Z0-9*?/\-_.,!()\s]*$/, 'Invalid characters in ignore patterns')
+          .max(1000, 'Ignore patterns too long')
+          .optional()
+          .transform((val) => val?.trim()),
+        outputParsable: z.boolean().optional(),
+        compress: z.boolean().optional(),
+      })
+      .strict(),
   })
   .strict()
   .refine((data) => data.url || data.file, {
@@ -97,15 +87,6 @@ export const packAction = async (c: Context) => {
     const options = JSON.parse(formData.get('options') as string);
     const file = formData.get('file') as File | null;
     const url = formData.get('url') as string | null;
-
-    // Validate input
-    if (!file && !url) {
-      return c.json(createErrorResponse('Either repository URL or file is required', requestId), 400);
-    }
-
-    if (!['xml', 'markdown', 'plain'].includes(format)) {
-      return c.json(createErrorResponse('Invalid format specified', requestId), 400);
-    }
 
     // Validate and sanitize request data
     const validatedData = validateRequest(packRequestSchema, {
