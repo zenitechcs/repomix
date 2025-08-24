@@ -103,25 +103,25 @@ export function usePackRequest() {
     if (!result.value || selectedFiles.length === 0) return;
 
     // Generate include patterns from selected files
-    const selectedPaths = selectedFiles.map(file => file.path);
+    const selectedPaths = selectedFiles.map((file) => file.path);
     const includePatterns = selectedPaths.join(',');
 
     // Temporarily update pack options with include patterns
     const originalIncludePatterns = packOptions.includePatterns;
     const originalIgnorePatterns = packOptions.ignorePatterns;
-    
+
     packOptions.includePatterns = includePatterns;
     packOptions.ignorePatterns = ''; // Clear ignore patterns to ensure selected files are included
 
     try {
       // Use the same loading state as normal pack processing
       await submitRequest();
-      
+
       // Update file selection state in the new result
       if (result.value?.metadata?.allFiles) {
-        result.value.metadata.allFiles.forEach(file => {
+        for (const file of result.value.metadata.allFiles) {
           file.selected = selectedPaths.includes(file.path);
-        });
+        }
       }
     } finally {
       // Restore original pack options

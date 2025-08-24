@@ -105,8 +105,8 @@ import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
 import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
-import { isValidRemoteValue } from '../utils/validation';
 import type { FileInfo } from '../api/client';
+import { isValidRemoteValue } from '../utils/validation';
 import PackButton from './PackButton.vue';
 import TryItFileUpload from './TryItFileUpload.vue';
 import TryItFolderUpload from './TryItFolderUpload.vue';
@@ -186,12 +186,12 @@ async function handleSubmit(event?: SubmitEvent) {
       return; // Ignore submission from non-pack buttons when form is invalid
     }
   }
-  
+
   // Only proceed if form is valid
   if (!isSubmitValid.value) {
     return;
   }
-  
+
   await submitRequest();
 }
 

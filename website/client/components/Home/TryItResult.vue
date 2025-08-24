@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { FileInfo, PackResult } from '../api/client';
 import TryItFileSelection from './TryItFileSelection.vue';
 import TryItLoading from './TryItLoading.vue';
@@ -24,9 +24,7 @@ const emit = defineEmits<Emits>();
 // Tab management
 const activeTab = ref<'result' | 'files'>('result');
 
-const hasFileSelection = computed(() => 
-  props.result?.metadata?.allFiles && props.result.metadata.allFiles.length > 0
-);
+const hasFileSelection = computed(() => props.result?.metadata?.allFiles && props.result.metadata.allFiles.length > 0);
 
 const handleTabClick = (tab: 'result' | 'files') => {
   activeTab.value = tab;
@@ -37,10 +35,10 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
   if (!selectedFiles || selectedFiles.length === 0) {
     return;
   }
-  
+
   // Switch to result tab immediately when re-pack starts
   activeTab.value = 'result';
-  
+
   emit('repack', selectedFiles);
 };
 </script>

@@ -112,9 +112,7 @@ interface Props {
   loading?: boolean;
 }
 
-interface Emits {
-  (e: 'repack', selectedFiles: FileInfo[]): void;
-}
+type Emits = (e: 'repack', selectedFiles: FileInfo[]) => void;
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
@@ -124,35 +122,27 @@ const emit = defineEmits<Emits>();
 
 const hasFiles = computed(() => props.allFiles.length > 0);
 
-const selectedFiles = computed(() =>
-  props.allFiles.filter(file => file.selected)
-);
+const selectedFiles = computed(() => props.allFiles.filter((file) => file.selected));
 
 const hasSelectedFiles = computed(() => selectedFiles.value.length > 0);
 
-const totalTokens = computed(() =>
-  props.allFiles.reduce((sum, file) => sum + file.tokenCount, 0)
-);
+const totalTokens = computed(() => props.allFiles.reduce((sum, file) => sum + file.tokenCount, 0));
 
-const selectedTokens = computed(() =>
-  selectedFiles.value.reduce((sum, file) => sum + file.tokenCount, 0)
-);
+const selectedTokens = computed(() => selectedFiles.value.reduce((sum, file) => sum + file.tokenCount, 0));
 
-const sortedFiles = computed(() =>
-  [...props.allFiles].sort((a, b) => b.tokenCount - a.tokenCount)
-);
+const sortedFiles = computed(() => [...props.allFiles].sort((a, b) => b.tokenCount - a.tokenCount));
 
 const selectAll = () => {
-  props.allFiles.forEach(file => {
+  for (const file of props.allFiles) {
     file.selected = true;
-  });
+  }
   onFileSelectionChange();
 };
 
 const deselectAll = () => {
-  props.allFiles.forEach(file => {
+  for (const file of props.allFiles) {
     file.selected = false;
-  });
+  }
   onFileSelectionChange();
 };
 
@@ -296,9 +286,10 @@ const toggleFileSelection = (file: FileInfo, event?: Event) => {
   width: 70%;
 }
 
-.tokens-column {
+.file-table .tokens-column {
   width: 30%;
   text-align: left;
+  padding-right: 2rem;
 }
 
 .file-row {
@@ -331,8 +322,9 @@ const toggleFileSelection = (file: FileInfo, event?: Event) => {
   font-family: var(--vp-font-family-mono);
 }
 
-.tokens-cell {
+.file-table .tokens-cell {
   text-align: left;
+  padding-right: 2rem;
 }
 
 .file-tokens {
