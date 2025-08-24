@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import { type CliOptions, runCli } from 'repomix';
-import { packRequestSchema } from './schemas/request.js';
-import type { PackOptions, PackResult } from './types.js';
-import { generateCacheKey } from './utils/cache.js';
-import { AppError } from './utils/errorHandler.js';
-import { logMemoryUsage } from './utils/logger.js';
-import { cache, rateLimiter } from './utils/sharedInstance.js';
-import { sanitizePattern, validateRequest } from './utils/validation.js';
+import { packRequestSchema } from '../../schemas/request.js';
+import type { PackOptions, PackResult } from '../../types.js';
+import { generateCacheKey } from '../../utils/cache.js';
+import { AppError } from '../../utils/errorHandler.js';
+import { logMemoryUsage } from '../../utils/logger.js';
+import { cache, rateLimiter } from '../../utils/sharedInstance.js';
+import { sanitizePattern, validateRequest } from '../../utils/validation.js';
 
 export async function processRemoteRepo(
   repoUrl: string,

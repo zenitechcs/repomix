@@ -3,14 +3,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { unzip } from 'fflate';
 import { type CliOptions, runDefaultAction, setLogLevel } from 'repomix';
-import { packRequestSchema } from './schemas/request.js';
-import type { PackOptions, PackResult } from './types.js';
-import { generateCacheKey } from './utils/cache.js';
-import { AppError } from './utils/errorHandler.js';
-import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from './utils/fileUtils.js';
-import { logMemoryUsage } from './utils/logger.js';
-import { cache, rateLimiter } from './utils/sharedInstance.js';
-import { sanitizePattern, validateRequest } from './utils/validation.js';
+import { packRequestSchema } from '../../schemas/request.js';
+import type { PackOptions, PackResult } from '../../types.js';
+import { generateCacheKey } from '../../utils/cache.js';
+import { AppError } from '../../utils/errorHandler.js';
+import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from '../../utils/fileUtils.js';
+import { logMemoryUsage } from '../../utils/logger.js';
+import { cache, rateLimiter } from '../../utils/sharedInstance.js';
+import { sanitizePattern, validateRequest } from '../../utils/validation.js';
 
 // Enhanced ZIP extraction limits
 const ZIP_SECURITY_LIMITS = {
