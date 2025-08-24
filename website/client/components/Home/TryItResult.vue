@@ -25,9 +25,33 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
 
 <template>
   <div class="result-container">
+    <div
+      v-if="loading"
+      class="loading-container"
+    >
+      <div class="spinner"></div>
+      <p>Processing repository...</p>
+      <div class="sponsor-section">
+        <p class="sponsor-header">Special thanks to:</p>
+        <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+          <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
+        </a>
+        <p class="sponsor-title">
+          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+            Warp, built for coding with multiple AI agents
+          </a>
+        </p>
+        <p class="sponsor-subtitle">
+          <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
+            Available for MacOS, Linux, & Windows
+          </a>
+        </p>
+      </div>
+    </div>
     <TryItResultErrorContent
-      v-if="error"
-      :error="error"
+      v-else-if="error"
+      :message="error"
+      :repository-url="repositoryUrl"
     />
     <TryItResultContent
       v-else-if="result"
@@ -39,30 +63,6 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
       :loading="loading"
       @repack="handleRepack"
     />
-    <div
-      v-else-if="loading"
-      class="loading-container"
-    >
-      <div class="loading-spinner"></div>
-      <p class="loading-text">Processing repository...</p>
-
-      <div class="sponsor-section">
-        <p class="sponsor-header">Special thanks to:</p>
-        <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-          <img alt="Warp sponsorship" width="400" src="/images/sponsors/warp/Terminal-Image.png">
-        </a>
-        <p class="sponsor-title">
-          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-            Warp, the AI terminal for developers
-          </a>
-        </p>
-        <p class="sponsor-subtitle">
-          <a href="https://www.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-            Available for MacOS, Linux, & Windows
-          </a>
-        </p>
-      </div>
-    </div>
   </div>
 </template>
 
