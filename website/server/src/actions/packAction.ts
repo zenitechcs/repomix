@@ -1,14 +1,96 @@
 import type { Context } from 'hono';
+import { isValidRemoteValue } from 'repomix';
+import { z } from 'zod';
 import { processZipFile } from '../domains/pack/processZipFile.js';
 import { processRemoteRepo } from '../domains/pack/remoteRepo.js';
+import { rateLimiter } from '../domains/pack/utils/sharedInstance.js';
+import { sanitizePattern } from '../domains/pack/utils/validation.js';
 import type { PackResult } from '../types.js';
+import { getClientInfo } from '../utils/clientInfo.js';
+import { AppError } from '../utils/errorHandler.js';
 import { createErrorResponse, logError, logInfo, logMemoryUsage } from '../utils/logger.js';
 import { formatLatencyForDisplay } from '../utils/time.js';
+import { validateRequest } from '../utils/validation.js';
+
+// Request validation schemas
+// Regular expression to validate ignore patterns
+// Allowed characters: alphanumeric, *, ?, /, -, _, ., !, (, ), space, comma
+const ignorePatternRegex = /^[a-zA-Z0-9*?/\-_.,!()\s]*$/;
+
+const packOptionsSchema = z
+  .object({
+    removeComments: z.boolean().optional(),
+    removeEmptyLines: z.boolean().optional(),
+    showLineNumbers: z.boolean().optional(),
+    fileSummary: z.boolean().optional(),
+    directoryStructure: z.boolean().optional(),
+    includePatterns: z
+      .string()
+      .max(100_000, 'Include patterns too long')
+      .optional()
+      .transform((val) => val?.trim()),
+    ignorePatterns: z
+      .string()
+      .regex(ignorePatternRegex, 'Invalid characters in ignore patterns')
+      .max(1000, 'Ignore patterns too long')
+      .optional()
+      .transform((val) => val?.trim()),
+    outputParsable: z.boolean().optional(),
+    compress: z.boolean().optional(),
+  })
+  .strict();
+
+const isValidZipFile = (file: File) => {
+  return file.type === 'application/zip' || file.name.endsWith('.zip');
+};
+
+const fileSchema = z
+  .custom<File>()
+  .refine((file) => file instanceof File, {
+    message: 'Invalid file format',
+  })
+  .refine((file) => isValidZipFile(file), {
+    message: 'Only ZIP files are allowed',
+  })
+  .refine((file) => file.size <= 10 * 1024 * 1024, {
+    // 10MB limit
+    message: 'File size must be less than 10MB',
+  });
+
+const packRequestSchema = z
+  .object({
+    url: z
+      .string()
+      .min(1, 'Repository URL is required')
+      .max(200, 'Repository URL is too long')
+      .transform((val) => val.trim())
+      .refine((val) => isValidRemoteValue(val), { message: 'Invalid repository URL' })
+      .optional(),
+    file: fileSchema.optional(),
+    format: z.enum(['xml', 'markdown', 'plain']),
+    options: packOptionsSchema,
+  })
+  .strict()
+  .refine((data) => data.url || data.file, {
+    message: 'Either URL or file must be provided',
+  })
+  .refine((data) => !(data.url && data.file), {
+    message: 'Cannot provide both URL and file',
+  });
 
 export const packAction = async (c: Context) => {
   try {
     const formData = await c.req.formData();
     const requestId = c.get('requestId');
+
+    // Get client information early for rate limiting
+    const clientInfo = getClientInfo(c);
+
+    // Rate limit check
+    if (!rateLimiter.isAllowed(clientInfo.ip)) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientInfo.ip) / 1000);
+      throw new AppError(`Rate limit exceeded. Please try again in ${remainingTime} seconds.`, 429);
+    }
 
     // Get form data
     const format = formData.get('format') as 'xml' | 'markdown' | 'plain';
@@ -25,33 +107,48 @@ export const packAction = async (c: Context) => {
       return c.json(createErrorResponse('Invalid format specified', requestId), 400);
     }
 
-    // Get client IP
-    const clientIp =
-      c.req.header('x-forwarded-for')?.split(',')[0] ||
-      c.req.header('x-real-ip') ||
-      c.req.header('cf-connecting-ip') ||
-      '0.0.0.0';
+    // Validate and sanitize request data
+    const validatedData = validateRequest(packRequestSchema, {
+      url: url || undefined,
+      file: file || undefined,
+      format,
+      options,
+    });
+
+    const sanitizedIncludePatterns = sanitizePattern(validatedData.options.includePatterns);
+    const sanitizedIgnorePatterns = sanitizePattern(validatedData.options.ignorePatterns);
+
+    // Create sanitized options
+    const sanitizedOptions = {
+      ...validatedData.options,
+      includePatterns: sanitizedIncludePatterns,
+      ignorePatterns: sanitizedIgnorePatterns,
+    };
 
     const startTime = Date.now();
 
     // Process file or repository
     let result: PackResult;
-    if (file) {
-      result = await processZipFile(file, format, options, clientIp);
+    if (validatedData.file) {
+      result = await processZipFile(validatedData.file, validatedData.format, sanitizedOptions);
     } else {
-      if (!url) {
+      if (!validatedData.url) {
         return c.json(createErrorResponse('Repository URL is required', requestId), 400);
       }
-      result = await processRemoteRepo(url, format, options, clientIp);
+      result = await processRemoteRepo(validatedData.url, validatedData.format, sanitizedOptions);
     }
 
     // Log operation result with memory usage
     logInfo('Pack operation completed', {
       requestId,
-      format,
+      format: validatedData.format,
       repository: result.metadata.repository,
       duration: formatLatencyForDisplay(startTime),
-      inputType: file ? 'file' : url ? 'url' : 'unknown',
+      inputType: validatedData.file ? 'file' : validatedData.url ? 'url' : 'unknown',
+      clientInfo: {
+        ip: clientInfo.ip,
+        userAgent: clientInfo.userAgent,
+      },
       metrics: {
         totalFiles: result.metadata.summary?.totalFiles,
         totalCharacters: result.metadata.summary?.totalCharacters,

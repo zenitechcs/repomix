@@ -4,8 +4,8 @@ import { compress } from 'hono/compress';
 import { timeout } from 'hono/timeout';
 import { packAction } from './actions/packAction.js';
 import { bodyLimitMiddleware } from './middlewares/bodyLimit.js';
+import { cloudLoggerMiddleware } from './middlewares/cloudLogger.js';
 import { corsMiddleware } from './middlewares/cors.js';
-import { cloudLogger } from './middlewares/logger.js';
 import { logInfo, logMemoryUsage } from './utils/logger.js';
 import { getProcessConcurrency } from './utils/processConcurrency.js';
 
@@ -24,7 +24,7 @@ logMemoryUsage('Server startup', {
 const app = new Hono();
 
 // Setup custom logger
-app.use('*', cloudLogger());
+app.use('*', cloudLoggerMiddleware());
 
 // Configure CORS
 app.use('/*', corsMiddleware);

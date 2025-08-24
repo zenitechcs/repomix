@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono';
+import { getClientInfo } from '../utils/clientInfo.js';
 import { logger } from '../utils/logger.js';
 import { formatMemoryUsage, getMemoryUsage } from '../utils/memory.js';
-import { getClientIP } from '../utils/network.js';
 import { calculateLatency } from '../utils/time.js';
 
 // Augment Hono's context type
@@ -17,8 +17,8 @@ function generateRequestId(): string {
 }
 
 // Main logging middleware for Hono
-export function cloudLogger() {
-  return async function loggerMiddleware(c: Context, next: Next) {
+export function cloudLoggerMiddleware() {
+  return async function cloudLoggerMiddleware(c: Context, next: Next) {
     const requestId = generateRequestId();
     const startTime = Date.now();
 
@@ -28,9 +28,7 @@ export function cloudLogger() {
     // Collect basic request information
     const method = c.req.method;
     const url = new URL(c.req.url);
-    const userAgent = c.req.header('user-agent');
-    const referer = c.req.header('referer');
-    const remoteIp = getClientIP(c);
+    const clientInfo = getClientInfo(c);
 
     // Log request start
     logger.info({
@@ -39,9 +37,9 @@ export function cloudLogger() {
       httpRequest: {
         requestMethod: method,
         requestUrl: url.toString(),
-        userAgent,
-        referer,
-        remoteIp,
+        userAgent: clientInfo.userAgent,
+        referer: clientInfo.referer,
+        remoteIp: clientInfo.ip,
       },
     });
 
@@ -63,9 +61,9 @@ export function cloudLogger() {
           status: c.res.status,
           responseSize: c.res.headers.get('content-length'),
           latency: responseTime,
-          userAgent,
-          referer,
-          remoteIp,
+          userAgent: clientInfo.userAgent,
+          referer: clientInfo.referer,
+          remoteIp: clientInfo.ip,
         },
         memoryUsage: formatMemoryUsage(memoryUsage),
       });
@@ -86,9 +84,9 @@ export function cloudLogger() {
           requestMethod: method,
           requestUrl: url.toString(),
           latency: responseTime,
-          userAgent,
-          referer,
-          remoteIp,
+          userAgent: clientInfo.userAgent,
+          referer: clientInfo.referer,
+          remoteIp: clientInfo.ip,
         },
         memoryUsage: formatMemoryUsage(memoryUsage),
       });

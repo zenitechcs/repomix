@@ -1,5 +1,5 @@
 import { bodyLimit } from 'hono/body-limit';
-import { FILE_SIZE_LIMITS } from '../constants.js';
+import { FILE_SIZE_LIMITS } from '../domains/pack/utils/fileUtils.js';
 import { createErrorResponse } from '../utils/logger.js';
 
 export const bodyLimitMiddleware = bodyLimit({
