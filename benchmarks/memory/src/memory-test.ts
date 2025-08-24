@@ -26,7 +26,7 @@ const flags = {
 };
 
 // Extract numeric arguments
-const numericArgs = args.filter(arg => !arg.startsWith('-') && !isNaN(Number(arg)));
+const numericArgs = args.filter((arg) => !arg.startsWith('-') && !Number.isNaN(Number(arg)));
 const iterations = Number(numericArgs[0]) || (flags.full ? 200 : 50);
 const delay = Number(numericArgs[1]) || (flags.full ? 100 : 50);
 
@@ -232,7 +232,8 @@ async function runMemoryTest(): Promise<void> {
     }
 
     // Safety exit for continuous mode during CI
-    if (flags.continuous && !flags.full && Date.now() - startTime > 60000) { // 1 minute limit for CI
+    if (flags.continuous && !flags.full && Date.now() - startTime > 60000) {
+      // 1 minute limit for CI
       console.log('\n⏱️  CI time limit reached, stopping continuous test');
       break;
     }
@@ -245,8 +246,8 @@ async function runMemoryTest(): Promise<void> {
   const initialUsage = memoryHistory[0];
 
   if (initialUsage) {
-    const heapGrowth = (((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed) * 100);
-    const rssGrowth = (((finalUsage.rss - initialUsage.rss) / initialUsage.rss) * 100);
+    const heapGrowth = ((finalUsage.heapUsed - initialUsage.heapUsed) / initialUsage.heapUsed) * 100;
+    const rssGrowth = ((finalUsage.rss - initialUsage.rss) / initialUsage.rss) * 100;
 
     console.log('\n📊 Final Memory Analysis:');
     console.log(`Initial: Heap ${initialUsage.heapUsed}MB, RSS ${initialUsage.rss}MB`);
@@ -306,11 +307,13 @@ if (Number.isNaN(delay) || delay < 0) {
 // Display configuration
 console.log('🧪 Memory Test');
 console.log(`📋 Mode: ${flags.full ? 'Comprehensive' : 'Basic'} (${iterations} iterations, ${delay}ms delay)`);
-console.log(`⚡ Features: ${[
-  flags.continuous && 'Continuous Mode',
-  flags.saveResults && 'Save Results',
-  flags.full && 'Full Analysis'
-].filter(Boolean).join(', ') || 'Basic Test'}`);
+console.log(
+  `⚡ Features: ${
+    [flags.continuous && 'Continuous Mode', flags.saveResults && 'Save Results', flags.full && 'Full Analysis']
+      .filter(Boolean)
+      .join(', ') || 'Basic Test'
+  }`,
+);
 console.log('🛑 Press Ctrl+C to stop\n');
 
 // Run the test
