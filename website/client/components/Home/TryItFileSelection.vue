@@ -131,8 +131,12 @@ const localFiles = ref<FileInfo[]>([]);
 watch(
   () => props.allFiles,
   (newFiles) => {
-    // Use structuredClone for better performance than JSON.parse(JSON.stringify())
-    localFiles.value = structuredClone(newFiles || []);
+    // Deep clone to avoid mutating props - fallback to JSON method for compatibility
+    try {
+      localFiles.value = structuredClone(newFiles || []);
+    } catch {
+      localFiles.value = JSON.parse(JSON.stringify(newFiles || []));
+    }
   },
   { immediate: true },
 );
