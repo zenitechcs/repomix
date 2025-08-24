@@ -76,7 +76,6 @@
                   type="checkbox"
                   v-model="file.selected"
                   class="file-checkbox"
-                  @change="onFileSelectionChange"
                 />
               </td>
               <td class="file-path-cell">
@@ -103,7 +102,7 @@
 
 <script setup lang="ts">
 import { FileText } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { FileInfo } from '../api/client';
 import PackIcon from './PackIcon.vue';
 
@@ -120,34 +119,41 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>();
 
-const hasFiles = computed(() => props.allFiles.length > 0);
+// Create local reactive state to avoid mutating props
+const localFiles = ref<FileInfo[]>([]);
 
-const selectedFiles = computed(() => props.allFiles.filter((file) => file.selected));
+// Watch for changes to props.allFiles and update localFiles with a deep copy
+watch(
+  () => props.allFiles,
+  (newFiles) => {
+    // Create a deep copy to avoid mutating props
+    localFiles.value = JSON.parse(JSON.stringify(newFiles || []));
+  },
+  { immediate: true, deep: true },
+);
+
+const hasFiles = computed(() => localFiles.value.length > 0);
+
+const selectedFiles = computed(() => localFiles.value.filter((file) => file.selected));
 
 const hasSelectedFiles = computed(() => selectedFiles.value.length > 0);
 
-const totalTokens = computed(() => props.allFiles.reduce((sum, file) => sum + file.tokenCount, 0));
+const totalTokens = computed(() => localFiles.value.reduce((sum, file) => sum + file.tokenCount, 0));
 
 const selectedTokens = computed(() => selectedFiles.value.reduce((sum, file) => sum + file.tokenCount, 0));
 
-const sortedFiles = computed(() => [...props.allFiles].sort((a, b) => b.tokenCount - a.tokenCount));
+const sortedFiles = computed(() => [...localFiles.value].sort((a, b) => b.tokenCount - a.tokenCount));
 
 const selectAll = () => {
-  for (const file of props.allFiles) {
+  for (const file of localFiles.value) {
     file.selected = true;
   }
-  onFileSelectionChange();
 };
 
 const deselectAll = () => {
-  for (const file of props.allFiles) {
+  for (const file of localFiles.value) {
     file.selected = false;
   }
-  onFileSelectionChange();
-};
-
-const onFileSelectionChange = () => {
-  // This will trigger reactivity updates
 };
 
 const handleRepack = () => {
@@ -163,7 +169,6 @@ const toggleFileSelection = (file: FileInfo, event?: Event) => {
   }
 
   file.selected = !file.selected;
-  onFileSelectionChange();
 };
 </script>
 
