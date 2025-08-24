@@ -251,8 +251,6 @@ const toggleFileSelection = (file: FileInfo, event?: Event) => {
 .file-list-container {
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 4px;
   background: var(--vp-c-bg);
 }
 
