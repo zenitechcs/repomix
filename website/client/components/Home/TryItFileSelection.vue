@@ -11,6 +11,7 @@
           class="action-btn select-all"
           @click="selectAll"
           :disabled="!hasFiles"
+          aria-label="Select all files"
         >
           Select All
         </button>
@@ -19,6 +20,7 @@
           class="action-btn deselect-all"
           @click="deselectAll"
           :disabled="!hasFiles"
+          aria-label="Deselect all files"
         >
           Deselect All
         </button>
@@ -27,6 +29,7 @@
           class="action-btn repack"
           @click="handleRepack"
           :disabled="!hasSelectedFiles || loading"
+          :aria-label="loading ? 'Re-packing selected files' : `Re-pack ${selectedFiles.length} selected files`"
         >
           {{ loading ? 'Re-packing...' : 'Re-pack Selected' }}
           <PackIcon v-if="!loading" :size="14" />
@@ -41,13 +44,13 @@
       <span class="stat-separator">|</span>
       <span class="stat-item">
         {{ selectedTokens.toLocaleString() }} tokens
-        ({{ ((selectedTokens / totalTokens) * 100).toFixed(1) }}%)
+        ({{ totalTokens > 0 ? ((selectedTokens / totalTokens) * 100).toFixed(1) : '0.0' }}%)
       </span>
     </div>
 
     <div class="file-list-container">
       <div class="file-list-scroll">
-        <table class="file-table">
+        <table class="file-table" aria-label="File selection table">
           <thead>
             <tr>
               <th class="checkbox-column">
@@ -57,6 +60,7 @@
                   :indeterminate="selectedFiles.length > 0 && selectedFiles.length < allFiles.length"
                   @change="($event.target as HTMLInputElement).checked ? selectAll() : deselectAll()"
                   class="header-checkbox"
+                  aria-label="Select or deselect all files"
                 />
               </th>
               <th class="file-path-column">File Path</th>
@@ -76,6 +80,7 @@
                   type="checkbox"
                   v-model="file.selected"
                   class="file-checkbox"
+                  :aria-label="`Select file ${file.path}`"
                 />
               </td>
               <td class="file-path-cell">
@@ -91,19 +96,19 @@
     </div>
 
 
-    <div v-if="selectedFiles.length > 500" class="warning-message">
-      <div class="warning-icon">⚠️</div>
-      <div class="warning-text">
-        Selecting more than 500 files may cause processing issues or timeouts. Consider reducing your selection for better performance.
-      </div>
-    </div>
+    <FileSelectionWarning
+      v-if="selectedFiles.length > FILE_SELECTION_WARNING_THRESHOLD"
+      :threshold="FILE_SELECTION_WARNING_THRESHOLD"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { FileText } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
+import { FILE_SELECTION_WARNING_THRESHOLD } from '../../constants/fileSelection';
 import type { FileInfo } from '../api/client';
+import FileSelectionWarning from './FileSelectionWarning.vue';
 import PackIcon from './PackIcon.vue';
 
 interface Props {
@@ -119,17 +124,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>();
 
-// Create local reactive state to avoid mutating props
+// Local reactive state to avoid mutating props directly (Vue one-way data flow)
 const localFiles = ref<FileInfo[]>([]);
 
-// Watch for changes to props.allFiles and update localFiles with a deep copy
+// Sync props.allFiles to localFiles with deep copying to maintain reactivity
 watch(
   () => props.allFiles,
   (newFiles) => {
-    // Create a deep copy to avoid mutating props
-    localFiles.value = JSON.parse(JSON.stringify(newFiles || []));
+    // Use structuredClone for better performance than JSON.parse(JSON.stringify())
+    localFiles.value = structuredClone(newFiles || []);
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 );
 
 const hasFiles = computed(() => localFiles.value.length > 0);
@@ -344,28 +349,6 @@ const toggleFileSelection = (file: FileInfo, event?: Event) => {
   cursor: pointer;
 }
 
-.warning-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--vp-c-warning-soft);
-  border: 1px solid var(--vp-c-warning);
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.warning-icon {
-  font-size: 16px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.warning-text {
-  font-size: 13px;
-  color: var(--vp-c-text-1);
-  line-height: 1.4;
-}
 
 @media (max-width: 768px) {
   .file-selection-header {

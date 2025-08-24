@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import type { TabType } from '../../types/ui';
 import type { FileInfo, PackResult } from '../api/client';
 import TryItFileSelection from './TryItFileSelection.vue';
 import TryItLoading from './TryItLoading.vue';
@@ -22,11 +23,11 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Tab management
-const activeTab = ref<'result' | 'files'>('result');
+const activeTab = ref<TabType>('result');
 
 const hasFileSelection = computed(() => props.result?.metadata?.allFiles && props.result.metadata.allFiles.length > 0);
 
-const handleTabClick = (tab: 'result' | 'files') => {
+const handleTabClick = (tab: TabType) => {
   activeTab.value = tab;
 };
 
