@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import type { PackResult } from '../api/client';
+import type { FileInfo, PackResult } from '../api/client';
+import TryItFileSelection from './TryItFileSelection.vue';
 import TryItResultContent from './TryItResultContent.vue';
 import TryItResultErrorContent from './TryItResultErrorContent.vue';
 
-defineProps<{
-  result: PackResult | null;
-  loading: boolean;
-  error: string | null;
+interface Props {
+  result?: PackResult | null;
+  loading?: boolean;
+  error?: string | null;
   repositoryUrl?: string;
-}>();
+}
+
+interface Emits {
+  (e: 'repack', selectedFiles: FileInfo[]): void;
+}
+
+defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+const handleRepack = (selectedFiles: FileInfo[]) => {
+  emit('repack', selectedFiles);
+};
 </script>
 
 <template>
@@ -41,6 +53,12 @@ defineProps<{
     <TryItResultContent
       v-else-if="result"
       :result="result"
+    />
+    <TryItFileSelection
+      v-if="result?.metadata?.allFiles && result.metadata.allFiles.length > 0"
+      :all-files="result.metadata.allFiles"
+      :loading="loading"
+      @repack="handleRepack"
     />
   </div>
 </template>
