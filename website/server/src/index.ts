@@ -6,6 +6,7 @@ import { packAction } from './actions/packAction.js';
 import { bodyLimitMiddleware } from './middlewares/bodyLimit.js';
 import { cloudLoggerMiddleware } from './middlewares/cloudLogger.js';
 import { corsMiddleware } from './middlewares/cors.js';
+import { rateLimitMiddleware } from './middlewares/rateLimit.js';
 import { logInfo, logMemoryUsage } from './utils/logger.js';
 import { getProcessConcurrency } from './utils/processConcurrency.js';
 
@@ -23,9 +24,6 @@ logMemoryUsage('Server startup', {
 
 const app = new Hono();
 
-// Setup custom logger
-app.use('*', cloudLoggerMiddleware());
-
 // Configure CORS
 app.use('/*', corsMiddleware);
 
@@ -34,6 +32,12 @@ app.use(compress());
 
 // Set timeout for API routes
 app.use('/api', timeout(30000));
+
+// Setup custom logger
+app.use('*', cloudLoggerMiddleware());
+
+// Apply rate limiting to API routes
+app.use('/api/*', rateLimitMiddleware());
 
 // Health check endpoint
 app.get('/health', (c) => c.text('OK'));

@@ -3,11 +3,9 @@ import { isValidRemoteValue } from 'repomix';
 import { z } from 'zod';
 import { processZipFile } from '../domains/pack/processZipFile.js';
 import { processRemoteRepo } from '../domains/pack/remoteRepo.js';
-import { rateLimiter } from '../domains/pack/utils/sharedInstance.js';
 import { sanitizePattern } from '../domains/pack/utils/validation.js';
 import type { PackResult } from '../types.js';
 import { getClientInfo } from '../utils/clientInfo.js';
-import { AppError } from '../utils/errorHandler.js';
 import { createErrorResponse, logError, logInfo, logMemoryUsage } from '../utils/logger.js';
 import { formatLatencyForDisplay } from '../utils/time.js';
 import { validateRequest } from '../utils/validation.js';
@@ -73,14 +71,8 @@ export const packAction = async (c: Context) => {
     const formData = await c.req.formData();
     const requestId = c.get('requestId');
 
-    // Get client information early for rate limiting
+    // Get client information for logging
     const clientInfo = getClientInfo(c);
-
-    // Rate limit check
-    if (!rateLimiter.isAllowed(clientInfo.ip)) {
-      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientInfo.ip) / 1000);
-      throw new AppError(`Rate limit exceeded. Please try again in ${remainingTime} seconds.`, 429);
-    }
 
     // Get form data
     const format = formData.get('format') as 'xml' | 'markdown' | 'plain';
