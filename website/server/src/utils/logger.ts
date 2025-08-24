@@ -25,22 +25,6 @@ function createLogger() {
 // Create and export the logger instance
 export const logger = createLogger();
 
-// Error response interface with request tracking
-interface ErrorResponse {
-  error: string;
-  requestId: string;
-  timestamp: string;
-}
-
-// Generate standardized error response
-export function createErrorResponse(message: string, requestId: string): ErrorResponse {
-  return {
-    error: message,
-    requestId,
-    timestamp: new Date().toISOString(),
-  };
-}
-
 // Utility logging functions
 export function logDebug(message: string, context?: Record<string, unknown>): void {
   logger.debug({

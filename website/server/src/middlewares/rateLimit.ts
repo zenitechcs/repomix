@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono';
 import { rateLimiter } from '../domains/pack/utils/sharedInstance.js';
 import { getClientInfo } from '../utils/clientInfo.js';
-import { createErrorResponse } from '../utils/logger.js';
+import { createErrorResponse } from '../utils/http.js';
 
 export function rateLimitMiddleware() {
   return async function rateLimitMiddleware(c: Context, next: Next) {

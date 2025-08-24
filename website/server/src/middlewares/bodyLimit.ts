@@ -1,6 +1,6 @@
 import { bodyLimit } from 'hono/body-limit';
 import { FILE_SIZE_LIMITS } from '../domains/pack/utils/fileUtils.js';
-import { createErrorResponse } from '../utils/logger.js';
+import { createErrorResponse } from '../utils/http.js';
 
 export const bodyLimitMiddleware = bodyLimit({
   maxSize: FILE_SIZE_LIMITS.MAX_REQUEST_SIZE,
