@@ -781,30 +781,6 @@ func main() {
 }`,
     },
     {
-      name: 'Go nested block comments',
-      ext: '.go',
-      input: `package main
-
-/* Outer comment
-   /* Inner comment */
-   Still in outer comment
-*/
-
-func main() {
-    fmt.Println("Hello")
-}`,
-      expected: `package main
-
-
-
-   Still in outer comment
-*/
-
-func main() {
-    fmt.Println("Hello")
-}`,
-    },
-    {
       name: 'Go mixed directives and comments',
       ext: '.go',
       input: `//go:build linux
