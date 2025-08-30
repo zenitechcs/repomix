@@ -25,8 +25,6 @@ Seu patrocínio nos ajuda a:
 
 <!--@include: ../../shared/sponsors-section.md-->
 
-[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
-
 ---
 
 *O Repomix é possível graças ao generoso apoio de nossos patrocinadores e da comunidade de código aberto. Obrigado! ❤️*

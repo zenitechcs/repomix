@@ -25,8 +25,6 @@ Repomix를 지원해주시는 모든 훌륭한 개인과 조직에게 감사드�
 
 <!--@include: ../../shared/sponsors-section.md-->
 
-[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
-
 ---
 
 *Repomix는 후원자와 오픈소스 커뮤니티의 아낌없는 지원으로 만들어졌습니다. 감사합니다! ❤️*

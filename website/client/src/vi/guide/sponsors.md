@@ -25,8 +25,6 @@ Sự tài trợ của bạn giúp chúng tôi:
 
 <!--@include: ../../shared/sponsors-section.md-->
 
-[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
-
 ---
 
 *Repomix được thực hiện nhờ sự hỗ trợ hào phóng của các nhà tài trợ và cộng đồng mã nguồn mở. Cảm ơn! ❤️*

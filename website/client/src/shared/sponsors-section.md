@@ -18,3 +18,5 @@
 
   [Tuple, the premier screen sharing app for developers on macOS and Windows.](https://tuple.app/repomix)
 </div>
+
+[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)

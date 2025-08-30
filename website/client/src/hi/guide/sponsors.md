@@ -25,8 +25,6 @@ editLink: false
 
 <!--@include: ../../shared/sponsors-section.md-->
 
-[![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
-
 ---
 
 *Repomix हमारे प्रायोजकों और ओपन सोर्स समुदाय के उदार समर्थन से संभव हुआ है। धन्यवाद! ❤️*
