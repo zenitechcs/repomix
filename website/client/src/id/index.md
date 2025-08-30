@@ -40,8 +40,6 @@ Kami merasa terhormat! Repomix telah dinominasikan untuk kategori **Powered by A
 
 Ini tidak mungkin terjadi tanpa semua pengguna yang menggunakan dan mendukung Repomix. Terima kasih!
 
-Jika Repomix telah membantu Anda menganalisis atau mengemas basis kode untuk alat AI, kami akan sangat berterima kasih atas suara Anda dalam kategori **Powered by AI**.
-
 ## Apa itu Repomix?
 
 Repomix adalah alat yang powerful yang mengemas seluruh codebase Anda ke dalam satu file yang ramah AI. Baik Anda sedang bekerja pada code review, refactoring, atau membutuhkan bantuan AI untuk proyek Anda, Repomix memudahkan berbagi seluruh konteks repository dengan alat AI.

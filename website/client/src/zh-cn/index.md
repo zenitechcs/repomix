@@ -40,8 +40,6 @@ import { VIDEO_IDS } from '../../utils/videos'
 
 这一切都离不开所有使用和支持 Repomix 的用户。谢谢大家！
 
-如果 Repomix 帮助您分析或打包代码库用于 AI 工具，我们将非常感谢您在 **Powered by AI** 类别中为我们投票。
-
 ## 什么是 Repomix？
 
 Repomix 是一个强大的工具，可以将您的整个代码库打包到一个 AI 友好的文件中。无论您是在进行代码审查、重构，还是需要 AI 协助您的项目，Repomix 都可以轻松地与 AI 工具共享您的整个代码库上下文。

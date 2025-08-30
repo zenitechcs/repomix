@@ -40,8 +40,6 @@ We're honored! Repomix has been nominated for the **Powered by AI** category at 
 
 This wouldn't have been possible without all of you using and supporting Repomix. Thank you!
 
-If Repomix has helped you analyze or pack codebases for AI tools, we'd be grateful for your vote in the **Powered by AI** category.
-
 ## What is Repomix?
 
 Repomix is a powerful tool that packages your entire codebase into a single AI-friendly file. Whether you're working on code reviews, refactoring, or getting AI assistance with your project, Repomix makes it easy to share your entire repository context with AI tools.

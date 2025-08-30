@@ -40,8 +40,6 @@ import { VIDEO_IDS } from '../../utils/videos'
 
 ¡Esto no habría sido posible sin todos ustedes que usan y apoyan Repomix. ¡Gracias!
 
-Si Repomix te ha ayudado a analizar o empaquetar bases de código para herramientas de IA, agradeceríamos tu voto en la categoría **Powered by AI**.
-
 ## ¿Qué es Repomix?
 
 Repomix es una herramienta poderosa que empaqueta toda tu base de código en un solo archivo compatible con IA. Ya sea que estés trabajando en revisiones de código, refactoring o necesites asistencia de IA para tu proyecto, Repomix facilita compartir todo el contexto de tu repositorio con herramientas de IA.
