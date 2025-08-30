@@ -9,11 +9,6 @@
 ### [Warp, built for coding with multiple AI agents](https://go.warp.dev/repomix)
 [Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)<br>
 
-
-<hr />
-
-<div align="center" markdown="1">
-   <sup>Special thanks to:</sup>
    <br>
    <br>
 

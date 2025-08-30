@@ -32,6 +32,15 @@ Your sponsorship helps us:
 
   [Warp, built for coding with multiple AI agents](https://go.warp.dev/repomix)  
   [Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)
+  
+  <br>
+  <br>
+
+   <a href="https://tuple.app/repomix" target="_blank">
+      <img alt="Tuple sponsorship" width="400" src="/images/sponsors/tuple/github_repo_sponsorship.png">
+   </a>
+
+  [Tuple, the premier screen sharing app for developers on macOS and Windows.](https://tuple.app/repomix)
 </div>
 
 [![Sponsors](https://cdn.jsdelivr.net/gh/yamadashy/sponsor-list/sponsors/sponsors.png)](https://github.com/sponsors/yamadashy)
