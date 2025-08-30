@@ -64,20 +64,20 @@ class CppManipulator extends BaseManipulator {
   }
 }
 
+enum GoParserState {
+  Normal = 0,
+  InLineComment = 1,
+  InBlockComment = 2,
+  InDoubleQuoteString = 3,
+  InRawString = 4,
+  InRuneLiteral = 5,
+}
+
 class GoManipulator extends BaseManipulator {
   removeComments(content: string): string {
     if (!content) return '';
 
-    enum State {
-      Normal = 0,
-      InLineComment = 1,
-      InBlockComment = 2,
-      InDoubleQuoteString = 3,
-      InRawString = 4,
-      InRuneLiteral = 5,
-    }
-
-    let state: State = State.Normal;
+    let state: GoParserState = GoParserState.Normal;
     let result = '';
     let lineStart = 0;
     let i = 0;
@@ -89,12 +89,11 @@ class GoManipulator extends BaseManipulator {
       const isAtLineStart = i === lineStart;
 
       switch (state) {
-        case State.Normal:
+        case GoParserState.Normal:
           if (char === '/' && nextChar === '/') {
-            // //go: Directive handling
+            // Go directive handling
             if (isAtLineStart || content.substring(lineStart, i).trim() === '') {
-              const restOfLine = content.substring(i);
-              if (restOfLine.startsWith('//go:')) {
+              if (content.startsWith('//go:', i)) {
                 // Preserve //go: directives
                 const lineEnd = content.indexOf('\n', i);
                 if (lineEnd === -1) {
@@ -108,41 +107,37 @@ class GoManipulator extends BaseManipulator {
                 continue;
               }
             }
-            state = State.InLineComment;
+            state = GoParserState.InLineComment;
             i += 2; // skip '//'
             continue;
           }
           if (char === '/' && nextChar === '*') {
-            state = State.InBlockComment;
+            state = GoParserState.InBlockComment;
             blockCommentDepth = 1;
             i += 2; // skip '/*'
             continue;
           }
+          result += char;
           if (char === '"') {
-            result += char;
-            state = State.InDoubleQuoteString;
+            state = GoParserState.InDoubleQuoteString;
           } else if (char === '`') {
-            result += char;
-            state = State.InRawString;
+            state = GoParserState.InRawString;
           } else if (char === "'") {
-            result += char;
-            state = State.InRuneLiteral;
-          } else {
-            result += char;
+            state = GoParserState.InRuneLiteral;
           }
           break;
 
-        case State.InLineComment:
+        case GoParserState.InLineComment:
           // Skip text within line comments until newline
           if (char === '\n') {
             result += char;
-            state = State.Normal;
+            state = GoParserState.Normal;
             lineStart = i + 1;
           }
           // Skip all other characters
           break;
 
-        case State.InBlockComment:
+        case GoParserState.InBlockComment:
           // Handle nested block comments (Go supports them)
           if (char === '/' && nextChar === '*') {
             blockCommentDepth++;
@@ -152,7 +147,7 @@ class GoManipulator extends BaseManipulator {
           if (char === '*' && nextChar === '/') {
             blockCommentDepth--;
             if (blockCommentDepth === 0) {
-              state = State.Normal;
+              state = GoParserState.Normal;
             }
             i += 2;
             continue;
@@ -165,7 +160,7 @@ class GoManipulator extends BaseManipulator {
           // Skip all other characters within block comments
           break;
 
-        case State.InDoubleQuoteString:
+        case GoParserState.InDoubleQuoteString:
           result += char;
           if (char === '\\' && nextChar !== null) {
             // Handle escape sequences
@@ -174,18 +169,18 @@ class GoManipulator extends BaseManipulator {
             continue;
           }
           if (char === '"') {
-            state = State.Normal;
+            state = GoParserState.Normal;
           }
           break;
 
-        case State.InRawString:
+        case GoParserState.InRawString:
           result += char;
           if (char === '`') {
-            state = State.Normal;
+            state = GoParserState.Normal;
           }
           break;
 
-        case State.InRuneLiteral:
+        case GoParserState.InRuneLiteral:
           result += char;
           if (char === '\\' && nextChar !== null) {
             // Handle escape sequences
@@ -194,7 +189,7 @@ class GoManipulator extends BaseManipulator {
             continue;
           }
           if (char === "'") {
-            state = State.Normal;
+            state = GoParserState.Normal;
           }
           break;
       }
