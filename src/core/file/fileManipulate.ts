@@ -64,6 +64,150 @@ class CppManipulator extends BaseManipulator {
   }
 }
 
+class GoManipulator extends BaseManipulator {
+  removeComments(content: string): string {
+    if (!content) return '';
+
+    enum State {
+      Normal = 0,
+      InLineComment = 1,
+      InBlockComment = 2,
+      InDoubleQuoteString = 3,
+      InRawString = 4,
+      InRuneLiteral = 5,
+    }
+
+    let state: State = State.Normal;
+    let result = '';
+    let lineStart = 0;
+    let i = 0;
+    let blockCommentDepth = 0; // Track nested block comments
+
+    while (i < content.length) {
+      const char = content[i];
+      const nextChar = i + 1 < content.length ? content[i + 1] : null;
+      const isAtLineStart = i === lineStart;
+
+      switch (state) {
+        case State.Normal:
+          if (char === '/' && nextChar === '/') {
+            // //go: Directive handling
+            if (isAtLineStart || content.substring(lineStart, i).trim() === '') {
+              const restOfLine = content.substring(i);
+              if (restOfLine.startsWith('//go:')) {
+                // Preserve //go: directives
+                const lineEnd = content.indexOf('\n', i);
+                if (lineEnd === -1) {
+                  result += content.substring(i);
+                  i = content.length;
+                } else {
+                  result += content.substring(i, lineEnd + 1);
+                  i = lineEnd + 1;
+                  lineStart = i;
+                }
+                continue;
+              }
+            }
+            state = State.InLineComment;
+            i += 2; // skip '//'
+            continue;
+          }
+          if (char === '/' && nextChar === '*') {
+            state = State.InBlockComment;
+            blockCommentDepth = 1;
+            i += 2; // skip '/*'
+            continue;
+          }
+          if (char === '"') {
+            result += char;
+            state = State.InDoubleQuoteString;
+          } else if (char === '`') {
+            result += char;
+            state = State.InRawString;
+          } else if (char === "'") {
+            result += char;
+            state = State.InRuneLiteral;
+          } else {
+            result += char;
+          }
+          break;
+
+        case State.InLineComment:
+          // Skip text within line comments until newline
+          if (char === '\n') {
+            result += char;
+            state = State.Normal;
+            lineStart = i + 1;
+          }
+          // Skip all other characters
+          break;
+
+        case State.InBlockComment:
+          // Handle nested block comments (Go supports them)
+          if (char === '/' && nextChar === '*') {
+            blockCommentDepth++;
+            i += 2;
+            continue;
+          }
+          if (char === '*' && nextChar === '/') {
+            blockCommentDepth--;
+            if (blockCommentDepth === 0) {
+              state = State.Normal;
+            }
+            i += 2;
+            continue;
+          }
+          if (char === '\n') {
+            // Preserve newlines in block comments to maintain line structure
+            result += char;
+            lineStart = i + 1;
+          }
+          // Skip all other characters within block comments
+          break;
+
+        case State.InDoubleQuoteString:
+          result += char;
+          if (char === '\\' && nextChar !== null) {
+            // Handle escape sequences
+            result += nextChar;
+            i += 2;
+            continue;
+          }
+          if (char === '"') {
+            state = State.Normal;
+          }
+          break;
+
+        case State.InRawString:
+          result += char;
+          if (char === '`') {
+            state = State.Normal;
+          }
+          break;
+
+        case State.InRuneLiteral:
+          result += char;
+          if (char === '\\' && nextChar !== null) {
+            // Handle escape sequences
+            result += nextChar;
+            i += 2;
+            continue;
+          }
+          if (char === "'") {
+            state = State.Normal;
+          }
+          break;
+      }
+
+      if (char === '\n') {
+        lineStart = i + 1;
+      }
+      i++;
+    }
+    return rtrimLines(result);
+  }
+}
+
 class PythonManipulator extends BaseManipulator {
   removeDocStrings(content: string): string {
     if (!content) return '';
@@ -197,7 +341,7 @@ const manipulators: Record<string, FileManipulator> = {
   '.cs': new StripCommentsManipulator('csharp'),
   '.css': new StripCommentsManipulator('css'),
   '.dart': new StripCommentsManipulator('c'),
-  '.go': new StripCommentsManipulator('c'),
+  '.go': new GoManipulator(),
   '.html': new StripCommentsManipulator('html'),
   '.java': new StripCommentsManipulator('java'),
   '.js': new StripCommentsManipulator('javascript'),
