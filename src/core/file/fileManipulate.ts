@@ -79,20 +79,19 @@ class GoManipulator extends BaseManipulator {
 
     let state: GoParserState = GoParserState.Normal;
     let result = '';
-    let lineStart = 0;
     let i = 0;
     let blockCommentDepth = 0; // Track nested block comments
+    let hasNonWhitespaceOnLine = false; // Track if line has non-whitespace content
 
     while (i < content.length) {
       const char = content[i];
       const nextChar = i + 1 < content.length ? content[i + 1] : null;
-      const isAtLineStart = i === lineStart;
 
       switch (state) {
         case GoParserState.Normal:
           if (char === '/' && nextChar === '/') {
             // Go directive handling
-            if (isAtLineStart || content.substring(lineStart, i).trim() === '') {
+            if (!hasNonWhitespaceOnLine) {
               if (content.startsWith('//go:', i)) {
                 // Preserve //go: directives
                 const lineEnd = content.indexOf('\n', i);
@@ -102,7 +101,7 @@ class GoManipulator extends BaseManipulator {
                 } else {
                   result += content.substring(i, lineEnd + 1);
                   i = lineEnd + 1;
-                  lineStart = i;
+                  hasNonWhitespaceOnLine = false;
                 }
                 continue;
               }
@@ -118,6 +117,9 @@ class GoManipulator extends BaseManipulator {
             continue;
           }
           result += char;
+          if (char !== ' ' && char !== '\t' && char !== '\n') {
+            hasNonWhitespaceOnLine = true;
+          }
           if (char === '"') {
             state = GoParserState.InDoubleQuoteString;
           } else if (char === '`') {
@@ -132,13 +134,13 @@ class GoManipulator extends BaseManipulator {
           if (char === '\n') {
             result += char;
             state = GoParserState.Normal;
-            lineStart = i + 1;
+            hasNonWhitespaceOnLine = false;
           }
           // Skip all other characters
           break;
 
         case GoParserState.InBlockComment:
-          // Handle nested block comments (Go supports them)
+          // Handle nested block comment sequences for robustness (Go block comments do not nest per spec)
           if (char === '/' && nextChar === '*') {
             blockCommentDepth++;
             i += 2;
@@ -155,7 +157,7 @@ class GoManipulator extends BaseManipulator {
           if (char === '\n') {
             // Preserve newlines in block comments to maintain line structure
             result += char;
-            lineStart = i + 1;
+            hasNonWhitespaceOnLine = false;
           }
           // Skip all other characters within block comments
           break;
@@ -195,7 +197,7 @@ class GoManipulator extends BaseManipulator {
       }
 
       if (char === '\n') {
-        lineStart = i + 1;
+        hasNonWhitespaceOnLine = false;
       }
       i++;
     }
