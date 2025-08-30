@@ -9,7 +9,16 @@
 ### [Warp, built for coding with multiple AI agents](https://go.warp.dev/repomix)
 [Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)<br>
 
+   <br>
+
+   <a href="https://tuple.app/repomix">
+      <img alt="Tuple sponsorship" width="400" src="website/client/src/public/images/sponsors/tuple/github_repo_sponsorship.png">
+   </a>
+
+### [Tuple, the premier screen sharing app for developers on macOS and Windows.](https://tuple.app/repomix)
+
 </div>
+
 
 <hr />
 
