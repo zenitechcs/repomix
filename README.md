@@ -10,7 +10,6 @@
 [Available for MacOS, Linux, & Windows](https://go.warp.dev/repomix)<br>
 
    <br>
-   <br>
 
    <a href="https://tuple.app/repomix">
       <img alt="Tuple sponsorship" width="400" src="website/client/src/public/images/sponsors/tuple/github_repo_sponsorship.png">
