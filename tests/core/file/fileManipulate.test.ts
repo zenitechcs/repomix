@@ -797,8 +797,8 @@ func main() {
 
 
 
-
-
+   Still in outer comment
+*/
 
 func main() {
     fmt.Println("Hello")

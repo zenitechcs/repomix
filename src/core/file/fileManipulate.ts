@@ -80,7 +80,6 @@ class GoManipulator extends BaseManipulator {
     let state: GoParserState = GoParserState.Normal;
     let result = '';
     let i = 0;
-    let blockCommentDepth = 0; // Track nested block comments
     let hasNonWhitespaceOnLine = false; // Track if line has non-whitespace content
 
     while (i < content.length) {
@@ -112,7 +111,6 @@ class GoManipulator extends BaseManipulator {
           }
           if (char === '/' && nextChar === '*') {
             state = GoParserState.InBlockComment;
-            blockCommentDepth = 1;
             i += 2; // skip '/*'
             continue;
           }
@@ -140,18 +138,10 @@ class GoManipulator extends BaseManipulator {
           break;
 
         case GoParserState.InBlockComment:
-          // Handle nested block comment sequences for robustness (Go block comments do not nest per spec)
-          if (char === '/' && nextChar === '*') {
-            blockCommentDepth++;
-            i += 2;
-            continue;
-          }
+          // Go block comments do not nest - first */ closes the comment
           if (char === '*' && nextChar === '/') {
-            blockCommentDepth--;
-            if (blockCommentDepth === 0) {
-              state = GoParserState.Normal;
-            }
-            i += 2;
+            state = GoParserState.Normal;
+            i += 2; // skip '*/'
             continue;
           }
           if (char === '\n') {
