@@ -73,7 +73,7 @@ describe('processConcurrency', () => {
 
     it('should initialize Tinypool with correct configuration', () => {
       const workerPath = '/path/to/worker.js';
-      const tinypool = createWorkerPool(500, workerPath);
+      const tinypool = createWorkerPool({ numOfTasks: 500, workerPath });
 
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,
@@ -90,7 +90,7 @@ describe('processConcurrency', () => {
 
     it('should initialize Tinypool with worker_threads runtime when specified', () => {
       const workerPath = '/path/to/worker.js';
-      const tinypool = createWorkerPool(500, workerPath, 'worker_threads');
+      const tinypool = createWorkerPool({ numOfTasks: 500, workerPath, runtime: 'worker_threads' });
 
       expect(Tinypool).toHaveBeenCalledWith({
         filename: workerPath,
@@ -120,7 +120,7 @@ describe('processConcurrency', () => {
 
     it('should return a TaskRunner with run and cleanup methods', () => {
       const workerPath = '/path/to/worker.js';
-      const taskRunner = initTaskRunner(100, workerPath);
+      const taskRunner = initTaskRunner({ numOfTasks: 100, workerPath });
 
       expect(taskRunner).toHaveProperty('run');
       expect(taskRunner).toHaveProperty('cleanup');
@@ -130,7 +130,7 @@ describe('processConcurrency', () => {
 
     it('should pass runtime parameter to createWorkerPool', () => {
       const workerPath = '/path/to/worker.js';
-      const taskRunner = initTaskRunner(100, workerPath, 'worker_threads');
+      const taskRunner = initTaskRunner({ numOfTasks: 100, workerPath, runtime: 'worker_threads' });
 
       expect(Tinypool).toHaveBeenCalledWith(
         expect.objectContaining({
