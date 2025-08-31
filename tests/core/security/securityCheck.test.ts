@@ -9,7 +9,7 @@ import type { SecurityCheckTask } from '../../../src/core/security/workers/secur
 import securityCheckWorker from '../../../src/core/security/workers/securityCheckWorker.js';
 import { logger } from '../../../src/shared/logger.js';
 import { repomixLogLevels } from '../../../src/shared/logger.js';
-import type { WorkerRuntime } from '../../../src/shared/processConcurrency.js';
+import type { WorkerOptions } from '../../../src/shared/processConcurrency.js';
 
 vi.mock('../../../src/shared/logger');
 vi.mock('../../../src/shared/processConcurrency', () => ({
@@ -40,7 +40,7 @@ const mockFiles: RawFile[] = [
   },
 ];
 
-const mockInitTaskRunner = <T, R>(_numOfTasks: number, _workerPath: string, _runtime?: WorkerRuntime) => {
+const mockInitTaskRunner = <T, R>(_options: WorkerOptions) => {
   return {
     run: async (task: T) => {
       return (await securityCheckWorker(task as SecurityCheckTask)) as R;
@@ -79,7 +79,7 @@ describe('runSecurityCheck', () => {
 
   it('should handle worker errors gracefully', async () => {
     const mockError = new Error('Worker error');
-    const mockErrorTaskRunner = (_numOfTasks?: number, _workerPath?: string, _runtime?: WorkerRuntime) => {
+    const mockErrorTaskRunner = (_options?: WorkerOptions) => {
       return {
         run: async () => {
           throw mockError;

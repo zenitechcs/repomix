@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { reportSkippedFiles } from '../../src/cli/cliReport.js';
 import type { SkippedFileInfo } from '../../src/core/file/fileCollect.js';

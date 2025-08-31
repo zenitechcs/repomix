@@ -9,7 +9,7 @@ import { collectFiles } from '../../../src/core/file/fileCollect.js';
 import type { FileCollectTask } from '../../../src/core/file/workers/fileCollectWorker.js';
 import fileCollectWorker from '../../../src/core/file/workers/fileCollectWorker.js';
 import { logger } from '../../../src/shared/logger.js';
-import type { WorkerRuntime } from '../../../src/shared/processConcurrency.js';
+import type { WorkerOptions, WorkerRuntime } from '../../../src/shared/processConcurrency.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 // Define the max file size constant for tests
@@ -23,9 +23,7 @@ vi.mock('../../../src/shared/logger');
 
 interface MockInitTaskRunner {
   <T, R>(
-    numOfTasks: number,
-    workerPath: string,
-    runtime?: WorkerRuntime,
+    options: WorkerOptions,
   ): {
     run: (task: T) => Promise<R>;
     cleanup: () => Promise<void>;
@@ -33,9 +31,9 @@ interface MockInitTaskRunner {
   lastRuntime?: WorkerRuntime;
 }
 
-const mockInitTaskRunner = <T, R>(_numOfTasks: number, _workerPath: string, runtime?: WorkerRuntime) => {
+const mockInitTaskRunner = <T, R>(options: WorkerOptions) => {
   // Store runtime for verification in tests
-  (mockInitTaskRunner as MockInitTaskRunner).lastRuntime = runtime;
+  (mockInitTaskRunner as MockInitTaskRunner).lastRuntime = options.runtime;
   return {
     run: async (task: T) => {
       return (await fileCollectWorker(task as FileCollectTask)) as R;

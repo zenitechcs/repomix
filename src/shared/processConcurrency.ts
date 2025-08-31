@@ -1,5 +1,5 @@
 import os from 'node:os';
-import { Options, Tinypool } from 'tinypool';
+import { type Options, Tinypool } from 'tinypool';
 import { logger } from './logger.js';
 
 export type WorkerRuntime = NonNullable<Options['runtime']>;
