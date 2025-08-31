@@ -2,11 +2,11 @@ import * as path from 'node:path';
 import Parser from 'web-tree-sitter';
 
 import { RepomixError } from '../../shared/errorHandle.js';
+import { logger } from '../../shared/logger.js';
 import { ext2Lang } from './ext2Lang.js';
 import { type SupportedLang, lang2Query } from './lang2Query.js';
 import { loadLanguage } from './loadLanguage.js';
 import { type ParseStrategy, createParseStrategy } from './parseStrategies/ParseStrategy.js';
-import { logger } from '../../shared/logger.js';
 
 interface LanguageResources {
   lang: SupportedLang;

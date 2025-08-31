@@ -16,7 +16,6 @@ export const executeGlobbyInWorker = async (
   const taskRunner = deps.initTaskRunner<GlobbyTask, string[]>({
     numOfTasks: 1,
     workerPath: new URL('./workers/globbyWorker.js', import.meta.url).href,
-    // Low memory leak risk
     runtime: 'worker_threads',
   });
 

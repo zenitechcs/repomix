@@ -19,8 +19,7 @@ export const calculateOutputMetrics = async (
   const taskRunner = deps.initTaskRunner<OutputMetricsTask, number>({
     numOfTasks,
     workerPath: new URL('./workers/outputMetricsWorker.js', import.meta.url).href,
-    // Low memory leak risk
-    runtime: 'worker_threads',
+    runtime: 'child_process',
   });
 
   try {

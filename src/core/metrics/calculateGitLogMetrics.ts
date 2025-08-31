@@ -31,8 +31,7 @@ export const calculateGitLogMetrics = async (
   const taskRunner = deps.initTaskRunner<GitLogMetricsTask, number>({
     numOfTasks: 1, // Single task for git log calculation
     workerPath: new URL('./workers/gitLogMetricsWorker.js', import.meta.url).href,
-    // Low memory leak risk
-    runtime: 'worker_threads',
+    runtime: 'child_process',
   });
 
   try {
