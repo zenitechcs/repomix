@@ -93,6 +93,7 @@ const getLanguageParserSingleton = async () => {
 export const cleanupLanguageParser = () => {
   if (languageParserSingleton) {
     languageParserSingleton.deleteAllParsers();
+    logger.debug('Language parser singleton deleted');
   }
 };
 
