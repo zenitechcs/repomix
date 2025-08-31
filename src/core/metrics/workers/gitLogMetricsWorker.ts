@@ -35,3 +35,8 @@ export default async ({ content, encoding }: GitLogMetricsTask): Promise<number>
     freeTokenCounters();
   }
 };
+
+// Export cleanup function for Tinypool teardown
+export const onWorkerTermination = () => {
+  freeTokenCounters();
+};

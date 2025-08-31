@@ -1,6 +1,5 @@
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
-import { onWorkerTermination } from '../../../shared/workerCleanup.js';
 import type { ProcessedFile } from '../../file/fileTypes.js';
 import { freeTokenCounters, getTokenCounter } from '../tokenCounterFactory.js';
 import type { FileMetrics } from './types.js';
@@ -38,7 +37,7 @@ export const calculateIndividualFileMetrics = async (
   return { path: file.path, charCount, tokenCount };
 };
 
-// Cleanup token counters when worker is terminated
-onWorkerTermination(() => {
+// Export cleanup function for Tinypool teardown
+export const onWorkerTermination = () => {
   freeTokenCounters();
-});
+};

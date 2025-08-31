@@ -1,6 +1,5 @@
 import type { TiktokenEncoding } from 'tiktoken';
 import { logger, setLogLevelByWorkerData } from '../../../shared/logger.js';
-import { onWorkerTermination } from '../../../shared/workerCleanup.js';
 import { freeTokenCounters, getTokenCounter } from '../tokenCounterFactory.js';
 
 // Initialize logger configuration from workerData at module load time
@@ -37,7 +36,7 @@ export default async ({ workTreeDiffContent, stagedDiffContent, encoding }: GitD
   return totalTokens;
 };
 
-// Cleanup token counters when worker is terminated
-onWorkerTermination(() => {
+// Export cleanup function for Tinypool teardown
+export const onWorkerTermination = () => {
   freeTokenCounters();
-});
+};

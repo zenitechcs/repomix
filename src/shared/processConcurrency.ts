@@ -47,6 +47,7 @@ export const createWorkerPool = (options: WorkerOptions): Tinypool => {
     minThreads,
     maxThreads,
     idleTimeout: 5000,
+    teardown: 'onWorkerTermination',
     workerData: {
       logLevel: logger.getLogLevel(),
     },
