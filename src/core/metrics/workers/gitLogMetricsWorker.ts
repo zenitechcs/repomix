@@ -30,9 +30,6 @@ export default async ({ content, encoding }: GitLogMetricsTask): Promise<number>
   } catch (error) {
     logger.error('Error calculating git log token count:', error);
     return 0;
-  } finally {
-    // Clean up token counters to free memory
-    freeTokenCounters();
   }
 };
 

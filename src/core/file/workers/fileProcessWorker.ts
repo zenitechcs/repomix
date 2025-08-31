@@ -22,6 +22,6 @@ export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFi
 };
 
 // Export cleanup function for Tinypool teardown
-export const onWorkerTermination = () => {
-  cleanupLanguageParser();
+export const onWorkerTermination = async () => {
+  await cleanupLanguageParser();
 };

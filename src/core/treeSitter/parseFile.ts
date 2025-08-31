@@ -90,10 +90,16 @@ const getLanguageParserSingleton = async () => {
 /**
  * Clean up the language parser singleton by deleting all loaded parsers
  */
-export const cleanupLanguageParser = () => {
+export const cleanupLanguageParser = async (): Promise<void> => {
   if (languageParserSingleton) {
-    languageParserSingleton.dispose();
-    logger.debug('Language parser singleton deleted');
+    try {
+      await languageParserSingleton.dispose();
+      logger.debug('Language parser singleton deleted');
+    } catch (err) {
+      logger.debug('Language parser dispose threw', err);
+    } finally {
+      languageParserSingleton = null;
+    }
   }
 };
 
