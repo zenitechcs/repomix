@@ -9,6 +9,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import asciichart from 'asciichart';
 import { runCli } from 'repomix';
 import type { MemoryHistory, MemoryTestSummary, MemoryUsage, TestConfig } from './types.js';
 
@@ -22,6 +23,7 @@ const flags = {
   continuous: args.includes('--continuous'),
   saveResults: args.includes('--save') || args.includes('-s'),
   help: args.includes('--help') || args.includes('-h'),
+  showGraph: args.includes('--graph') || args.includes('-g'),
 };
 
 // Extract numeric arguments
@@ -31,7 +33,7 @@ const delay = Number(numericArgs[1]) || (flags.full ? 100 : 50);
 
 // Configuration
 const MEMORY_LOG_INTERVAL = flags.full ? 10 : 5;
-const FORCE_GC_INTERVAL = flags.full ? 20 : 10;
+const FORCE_GC_INTERVAL = flags.full ? 50 : 20;
 const WARNING_THRESHOLD = flags.full ? 50 : 100; // Memory growth percentage
 
 // Test configuration
@@ -42,7 +44,7 @@ const TEST_CONFIG: TestConfig = {
   options: {
     include: 'src/**/*.ts',
     output: path.join(__dirname, '../test-output.txt'),
-    style: 'plain',
+    compress: true,
     quiet: true,
   },
 };
@@ -62,6 +64,7 @@ Options:
   --full, -f       Enable comprehensive testing (more iterations, detailed analysis)
   --continuous     Run until stopped with Ctrl+C
   --save, -s       Save detailed results to JSON file
+  --graph, -g      Show real-time ASCII graphs during testing
   --help, -h       Show this help message
 
 Examples:
@@ -92,9 +95,7 @@ function getMemoryUsage(): MemoryUsage {
 function forceGC(): void {
   if (global.gc) {
     global.gc();
-    if (flags.full) {
-      console.log('🗑️  Forced garbage collection');
-    }
+    console.log('🗑️  Forced garbage collection');
   }
 }
 
@@ -113,10 +114,18 @@ function logMemoryUsage(iteration: number, configName: string, error: Error | nu
   const statusIcon = error ? '❌' : '✅';
   const errorText = error ? ` (ERROR: ${error.message})` : '';
 
+  // Format with fixed widths for alignment
+  const iterationStr = `Iteration ${iteration.toString().padStart(3)}`;
+  const configStr = configName.padEnd(12);
+  const heapStr = `${usage.heapUsed.toString().padStart(6)}MB`;
+  const heapTotalStr = `${usage.heapTotal.toString().padStart(6)}MB`;
+  const heapPercentStr = `(${usage.heapUsagePercent.toString().padStart(5)}%)`;
+  const rssStr = `${usage.rss.toString().padStart(6)}MB`;
+
   console.log(
-    `${statusIcon} Iteration ${iteration}: ${configName} - ` +
-      `Heap: ${usage.heapUsed}MB/${usage.heapTotal}MB (${usage.heapUsagePercent}%), ` +
-      `RSS: ${usage.rss}MB${errorText}`,
+    `${statusIcon} ${iterationStr}: ${configStr} - ` +
+      `Heap: ${heapStr}/${heapTotalStr} ${heapPercentStr}, ` +
+      `RSS: ${rssStr}${errorText}`,
   );
 }
 
@@ -128,6 +137,29 @@ async function cleanupFiles(): Promise<void> {
       console.warn(`Failed to cleanup ${TEST_CONFIG.options.output}:`, error.message);
     }
   }
+}
+
+function displayMemoryGraphs(): void {
+  if (memoryHistory.length < 5 || !flags.showGraph) return;
+
+  const recentHistory = memoryHistory.slice(-40); // Last 40 data points for graph
+
+  const heapData = recentHistory.map(entry => entry.heapUsed);
+  const rssData = recentHistory.map(entry => entry.rss);
+
+  console.log('\n📈 Memory Usage Graphs:');
+
+  console.log('\n🔸 Heap Usage (MB):');
+  console.log((asciichart as any).plot(heapData, {
+    height: 8,
+    format: (x: number) => x.toFixed(1)
+  }));
+
+  console.log('\n🔹 RSS Usage (MB):');
+  console.log((asciichart as any).plot(rssData, {
+    height: 8,
+    format: (x: number) => x.toFixed(1)
+  }));
 }
 
 function analyzeMemoryTrends(): void {
@@ -153,6 +185,9 @@ function analyzeMemoryTrends(): void {
   if (heapGrowth > WARNING_THRESHOLD || rssGrowth > WARNING_THRESHOLD) {
     console.log('⚠️  WARNING: Significant memory growth detected - possible memory leak!');
   }
+
+  // Show graphs if enabled
+  displayMemoryGraphs();
 }
 
 async function saveMemoryHistory(): Promise<void> {
@@ -263,6 +298,12 @@ async function runMemoryTest(): Promise<void> {
     }
   }
 
+  // Show final graph if requested
+  if (flags.showGraph && memoryHistory.length >= 5) {
+    console.log('\n📈 Complete Memory Usage Timeline:');
+    displayMemoryGraphs();
+  }
+
   // Save results if requested
   await saveMemoryHistory();
 
@@ -307,7 +348,12 @@ console.log('🧪 Memory Test');
 console.log(`📋 Mode: ${flags.full ? 'Comprehensive' : 'Basic'} (${iterations} iterations, ${delay}ms delay)`);
 console.log(
   `⚡ Features: ${
-    [flags.continuous && 'Continuous Mode', flags.saveResults && 'Save Results', flags.full && 'Full Analysis']
+    [
+      flags.continuous && 'Continuous Mode',
+      flags.saveResults && 'Save Results',
+      flags.full && 'Full Analysis',
+      flags.showGraph && 'Graph Display'
+    ]
       .filter(Boolean)
       .join(', ') || 'Basic Test'
   }`,
