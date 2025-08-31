@@ -7,7 +7,7 @@ export type WorkerRuntime = NonNullable<Options['runtime']>;
 export interface WorkerOptions {
   numOfTasks: number;
   workerPath: string;
-  runtime?: WorkerRuntime;
+  runtime: WorkerRuntime;
 }
 
 // Worker initialization is expensive, so we prefer fewer threads unless there are many files

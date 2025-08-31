@@ -26,6 +26,8 @@ export const calculateSelectiveFileMetrics = async (
   const taskRunner = deps.initTaskRunner<FileMetricsTask, FileMetrics>({
     numOfTasks: filesToProcess.length,
     workerPath: new URL('./workers/fileMetricsWorker.js', import.meta.url).href,
+    // Low memory leak risk
+    runtime: 'worker_threads',
   });
   const tasks = filesToProcess.map(
     (file, index) =>
