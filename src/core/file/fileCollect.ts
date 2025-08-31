@@ -26,7 +26,8 @@ export const collectFiles = async (
   const taskRunner = deps.initTaskRunner<FileCollectTask, FileCollectResult>({
     numOfTasks: filePaths.length,
     workerPath: new URL('./workers/fileCollectWorker.js', import.meta.url).href,
-    runtime: 'worker_threads',
+    // Use worker_threads for file collection - low memory leak risk
+    runtime: 'worker_threads'
   });
   const tasks = filePaths.map(
     (filePath) =>
