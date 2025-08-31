@@ -9,7 +9,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import asciichart from 'asciichart';
+import * as asciichart from 'asciichart';
 import { runCli } from 'repomix';
 import type { MemoryHistory, MemoryTestSummary, MemoryUsage, TestConfig } from './types.js';
 
@@ -144,22 +144,26 @@ function displayMemoryGraphs(): void {
 
   const recentHistory = memoryHistory.slice(-40); // Last 40 data points for graph
 
-  const heapData = recentHistory.map(entry => entry.heapUsed);
-  const rssData = recentHistory.map(entry => entry.rss);
+  const heapData = recentHistory.map((entry) => entry.heapUsed);
+  const rssData = recentHistory.map((entry) => entry.rss);
 
   console.log('\n📈 Memory Usage Graphs:');
 
   console.log('\n🔸 Heap Usage (MB):');
-  console.log((asciichart as any).plot(heapData, {
-    height: 8,
-    format: (x: number) => x.toFixed(1)
-  }));
+  console.log(
+    asciichart.plot(heapData, {
+      height: 8,
+      format: (x: number) => x.toFixed(1),
+    }),
+  );
 
   console.log('\n🔹 RSS Usage (MB):');
-  console.log((asciichart as any).plot(rssData, {
-    height: 8,
-    format: (x: number) => x.toFixed(1)
-  }));
+  console.log(
+    asciichart.plot(rssData, {
+      height: 8,
+      format: (x: number) => x.toFixed(1),
+    }),
+  );
 }
 
 function analyzeMemoryTrends(): void {
@@ -352,7 +356,7 @@ console.log(
       flags.continuous && 'Continuous Mode',
       flags.saveResults && 'Save Results',
       flags.full && 'Full Analysis',
-      flags.showGraph && 'Graph Display'
+      flags.showGraph && 'Graph Display',
     ]
       .filter(Boolean)
       .join(', ') || 'Basic Test'

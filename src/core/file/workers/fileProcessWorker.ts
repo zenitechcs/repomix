@@ -1,5 +1,7 @@
 import type { RepomixConfigMerged } from '../../../config/configSchema.js';
 import { setLogLevelByWorkerData } from '../../../shared/logger.js';
+import { onWorkerTermination } from '../../../shared/workerCleanup.js';
+import { cleanupLanguageParser } from '../../treeSitter/parseFile.js';
 import { processContent } from '../fileProcessContent.js';
 import type { ProcessedFile, RawFile } from '../fileTypes.js';
 
@@ -19,3 +21,8 @@ export default async ({ rawFile, config }: FileProcessTask): Promise<ProcessedFi
     content: processedContent,
   };
 };
+
+// Cleanup language parser resources when worker is terminated
+onWorkerTermination(() => {
+  cleanupLanguageParser();
+});

@@ -87,6 +87,14 @@ const getLanguageParserSingleton = async () => {
   }
   return languageParserSingleton;
 };
+/**
+ * Clean up the language parser singleton by deleting all loaded parsers
+ */
+export const cleanupLanguageParser = () => {
+  if (languageParserSingleton) {
+    languageParserSingleton.deleteAllParsers();
+  }
+};
 
 const filterDuplicatedChunks = (chunks: CapturedChunk[]): CapturedChunk[] => {
   // Group chunks by their start row

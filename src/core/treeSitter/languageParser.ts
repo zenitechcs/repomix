@@ -99,4 +99,14 @@ export class LanguageParser {
     this.loadedResources.clear();
     this.initialized = false;
   }
+
+  /**
+   * Delete all loaded parsers from loadedResources
+   */
+  public deleteAllParsers(): void {
+    for (const resources of this.loadedResources.values()) {
+      resources.parser.delete();
+    }
+    this.loadedResources.clear();
+  }
 }
