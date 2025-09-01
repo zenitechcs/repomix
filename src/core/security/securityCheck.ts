@@ -59,7 +59,7 @@ export const runSecurityCheck = async (
     numOfTasks: rawFiles.length + gitDiffTasks.length + gitLogTasks.length,
     workerPath: new URL('./workers/securityCheckWorker.js', import.meta.url).href,
     // Low memory leak risk
-    runtime: 'worker_threads',
+    runtime: 'child_process',
   });
   const fileTasks = rawFiles.map(
     (file) =>
