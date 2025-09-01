@@ -31,10 +31,15 @@ const numericArgs = args.filter((arg) => !arg.startsWith('-') && !Number.isNaN(N
 const iterations = Number(numericArgs[0]) || (flags.full ? 200 : 100);
 const delay = Number(numericArgs[1]) || (flags.full ? 100 : 50);
 
-// Configuration
+// Configuration constants
 const MEMORY_LOG_INTERVAL = flags.full ? 10 : 5;
 const FORCE_GC_INTERVAL = flags.full ? 50 : 20;
 const WARNING_THRESHOLD = flags.full ? 50 : 100; // Memory growth percentage
+
+// Graph display constants
+const MIN_POINTS_FOR_GRAPH = 5;
+const GRAPH_DATA_POINTS = 40;
+const GRAPH_HEIGHT = 8;
 
 // Test configuration
 const TEST_CONFIG: TestConfig = {
@@ -139,10 +144,10 @@ async function cleanupFiles(): Promise<void> {
   }
 }
 
-function displayMemoryGraphs(): void {
-  if (memoryHistory.length < 5 || !flags.showGraph) return;
+function displayMemoryGraphs(history: MemoryHistory[]): void {
+  if (history.length < MIN_POINTS_FOR_GRAPH || !flags.showGraph) return;
 
-  const recentHistory = memoryHistory.slice(-40); // Last 40 data points for graph
+  const recentHistory = history.slice(-GRAPH_DATA_POINTS);
 
   const heapData = recentHistory.map((entry) => entry.heapUsed);
   const rssData = recentHistory.map((entry) => entry.rss);
@@ -152,7 +157,7 @@ function displayMemoryGraphs(): void {
   console.log('\n🔸 Heap Usage (MB):');
   console.log(
     asciichart.plot(heapData, {
-      height: 8,
+      height: GRAPH_HEIGHT,
       format: (x: number) => x.toFixed(1),
     }),
   );
@@ -160,7 +165,7 @@ function displayMemoryGraphs(): void {
   console.log('\n🔹 RSS Usage (MB):');
   console.log(
     asciichart.plot(rssData, {
-      height: 8,
+      height: GRAPH_HEIGHT,
       format: (x: number) => x.toFixed(1),
     }),
   );
@@ -191,7 +196,7 @@ function analyzeMemoryTrends(): void {
   }
 
   // Show graphs if enabled
-  displayMemoryGraphs();
+  displayMemoryGraphs(memoryHistory);
 }
 
 async function saveMemoryHistory(): Promise<void> {
@@ -303,9 +308,9 @@ async function runMemoryTest(): Promise<void> {
   }
 
   // Show final graph if requested
-  if (flags.showGraph && memoryHistory.length >= 5) {
+  if (flags.showGraph && memoryHistory.length >= MIN_POINTS_FOR_GRAPH) {
     console.log('\n📈 Complete Memory Usage Timeline:');
-    displayMemoryGraphs();
+    displayMemoryGraphs(memoryHistory);
   }
 
   // Save results if requested
