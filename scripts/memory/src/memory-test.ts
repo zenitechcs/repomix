@@ -23,7 +23,6 @@ const flags = {
   continuous: args.includes('--continuous'),
   saveResults: args.includes('--save') || args.includes('-s'),
   help: args.includes('--help') || args.includes('-h'),
-  showGraph: args.includes('--graph') || args.includes('-g'),
 };
 
 // Extract numeric arguments
@@ -69,7 +68,6 @@ Options:
   --full, -f       Enable comprehensive testing (more iterations, detailed analysis)
   --continuous     Run until stopped with Ctrl+C
   --save, -s       Save detailed results to JSON file
-  --graph, -g      Show real-time ASCII graphs during testing
   --help, -h       Show this help message
 
 Examples:
@@ -145,7 +143,7 @@ async function cleanupFiles(): Promise<void> {
 }
 
 function displayMemoryGraphs(history: MemoryHistory[]): void {
-  if (history.length < MIN_POINTS_FOR_GRAPH || !flags.showGraph) return;
+  if (history.length < MIN_POINTS_FOR_GRAPH) return;
 
   const recentHistory = history.slice(-GRAPH_DATA_POINTS);
 
@@ -195,7 +193,7 @@ function analyzeMemoryTrends(): void {
     console.log('⚠️  WARNING: Significant memory growth detected - possible memory leak!');
   }
 
-  // Show graphs if enabled
+  // Show graphs
   displayMemoryGraphs(memoryHistory);
 }
 
@@ -307,8 +305,8 @@ async function runMemoryTest(): Promise<void> {
     }
   }
 
-  // Show final graph if requested
-  if (flags.showGraph && memoryHistory.length >= MIN_POINTS_FOR_GRAPH) {
+  // Show final graph
+  if (memoryHistory.length >= MIN_POINTS_FOR_GRAPH) {
     console.log('\n📈 Complete Memory Usage Timeline:');
     displayMemoryGraphs(memoryHistory);
   }
@@ -361,7 +359,7 @@ console.log(
       flags.continuous && 'Continuous Mode',
       flags.saveResults && 'Save Results',
       flags.full && 'Full Analysis',
-      flags.showGraph && 'Graph Display',
+      'Graph Display',
     ]
       .filter(Boolean)
       .join(', ') || 'Basic Test'
