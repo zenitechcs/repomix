@@ -1,60 +1,60 @@
 # Command Line Options
 
 ## Basic Options
-- `-v, --version`: show version information and exit
+- `-v, --version`: Show version information and exit
 
 ## CLI Input/Output Options
-- `--verbose`: enable detailed debug logging (shows file processing, token counts, and configuration details)
-- `--quiet`: suppress all console output except errors (useful for scripting)
-- `--stdout`: write packed output directly to stdout instead of a file (suppresses all logging)
-- `--stdin`: read file paths from stdin, one per line (specified files are processed directly)
-- `--copy`: copy the generated output to system clipboard after processing
-- `--token-count-tree [threshold]`: show file tree with token counts; optional threshold to show only files with ≥N tokens (e.g., --token-count-tree 100)
-- `--top-files-len <number>`: number of largest files to show in summary (default: 5, e.g., --top-files-len 20)
+- `--verbose`: Enable detailed debug logging (shows file processing, token counts, and configuration details)
+- `--quiet`: Suppress all console output except errors (useful for scripting)
+- `--stdout`: Write packed output directly to stdout instead of a file (suppresses all logging)
+- `--stdin`: Read file paths from stdin, one per line (specified files are processed directly)
+- `--copy`: Copy the generated output to system clipboard after processing
+- `--token-count-tree [threshold]`: Show file tree with token counts; optional threshold to show only files with ≥N tokens (e.g., --token-count-tree 100)
+- `--top-files-len <number>`: Number of largest files to show in summary (default: 5, e.g., --top-files-len 20)
 
 ## Repomix Output Options
-- `-o, --output <file>`: output file path (default: repomix-output.xml, use "-" for stdout)
-- `--style <type>`: output format: xml, markdown, or plain (default: xml)
-- `--parsable-style`: escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)
-- `--compress`: extract essential code structure (classes, functions, interfaces) using Tree-sitter parsing
-- `--output-show-line-numbers`: prefix each line with its line number in the output
-- `--no-file-summary`: omit the file summary section from output
-- `--no-directory-structure`: omit the directory tree visualization from output
-- `--no-files`: generate metadata only without file contents (useful for repository analysis)
-- `--remove-comments`: strip all code comments before packing
-- `--remove-empty-lines`: remove blank lines from all files
-- `--truncate-base64`: truncate long base64 data strings to reduce output size
-- `--header-text <text>`: custom text to include at the beginning of the output
-- `--instruction-file-path <path>`: path to file containing custom instructions to include in output
-- `--include-empty-directories`: include folders with no files in directory structure
-- `--no-git-sort-by-changes`: don't sort files by git change frequency (default: most changed files first)
-- `--include-diffs`: add git diff section showing working tree and staged changes
-- `--include-logs`: add git commit history with messages and changed files
-- `--include-logs-count <count>`: number of recent commits to include with --include-logs (default: 50)
+- `-o, --output <file>`: Output file path (default: repomix-output.xml, use "-" for stdout)
+- `--style <style>`: Output format: xml, markdown, or plain (default: xml)
+- `--parsable-style`: Escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)
+- `--compress`: Extract essential code structure (classes, functions, interfaces) using Tree-sitter parsing
+- `--output-show-line-numbers`: Prefix each line with its line number in the output
+- `--no-file-summary`: Omit the file summary section from output
+- `--no-directory-structure`: Omit the directory tree visualization from output
+- `--no-files`: Generate metadata only without file contents (useful for repository analysis)
+- `--remove-comments`: Strip all code comments before packing
+- `--remove-empty-lines`: Remove blank lines from all files
+- `--truncate-base64`: Truncate long base64 data strings to reduce output size
+- `--header-text <text>`: Custom text to include at the beginning of the output
+- `--instruction-file-path <path>`: Path to file containing custom instructions to include in output
+- `--include-empty-directories`: Include folders with no files in directory structure
+- `--no-git-sort-by-changes`: Don't sort files by git change frequency (default: most changed files first)
+- `--include-diffs`: Add git diff section showing working tree and staged changes
+- `--include-logs`: Add git commit history with messages and changed files
+- `--include-logs-count <count>`: Number of recent commits to include with --include-logs (default: 50)
 
 ## File Selection Options
-- `--include <patterns>`: include only files matching these glob patterns (comma-separated, e.g., "src/**/*.js,*.md")
-- `-i, --ignore <patterns>`: additional patterns to exclude (comma-separated, e.g., "*.test.js,docs/**")
-- `--no-gitignore`: don't use .gitignore rules for filtering files
-- `--no-default-patterns`: don't apply built-in ignore patterns (node_modules, .git, build dirs, etc.)
+- `--include <patterns>`: Include only files matching these glob patterns (comma-separated, e.g., "src/**/*.js,*.md")
+- `-i, --ignore <patterns>`: Additional patterns to exclude (comma-separated, e.g., "*.test.js,docs/**")
+- `--no-gitignore`: Don't use .gitignore rules for filtering files
+- `--no-default-patterns`: Don't apply built-in ignore patterns (node_modules, .git, build dirs, etc.)
 
 ## Remote Repository Options
-- `--remote <url>`: clone and pack a remote repository (GitHub URL or user/repo format)
-- `--remote-branch <name>`: specific branch, tag, or commit to use (default: repository's default branch)
+- `--remote <url>`: Clone and pack a remote repository (GitHub URL or user/repo format)
+- `--remote-branch <name>`: Specific branch, tag, or commit to use (default: repository's default branch)
 
 ## Configuration Options
-- `-c, --config <path>`: use custom config file instead of repomix.config.json
-- `--init`: create a new repomix.config.json file with defaults
-- `--global`: with --init, create config in home directory instead of current directory
+- `-c, --config <path>`: Use custom config file instead of repomix.config.json
+- `--init`: Create a new repomix.config.json file with defaults
+- `--global`: With --init, create config in home directory instead of current directory
 
 ## Security Options
-- `--no-security-check`: skip scanning for sensitive data like API keys and passwords
+- `--no-security-check`: Skip scanning for sensitive data like API keys and passwords (use with caution; may expose secrets in output)
 
 ## Token Count Options
-- `--token-count-encoding <encoding>`: tokenizer model for counting: o200k_base (GPT-4o), cl100k_base (GPT-3.5/4), etc. (default: o200k_base)
+- `--token-count-encoding <encoding>`: Tokenizer model for counting: o200k_base (GPT-4o), cl100k_base (GPT-3.5/4), etc. (default: o200k_base)
 
 ## MCP Options
-- `--mcp`: run as Model Context Protocol server for AI tool integration
+- `--mcp`: Run as Model Context Protocol server for AI tool integration
 ## Examples
 
 ```bash
@@ -62,7 +62,7 @@
 repomix
 
 # Custom output file and format
-repomix -o my-output.xml --style xml
+repomix -o my-output.md --style markdown
 
 # Output to stdout
 repomix --stdout > custom-output.txt

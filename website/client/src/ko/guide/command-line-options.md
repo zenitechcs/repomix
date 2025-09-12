@@ -23,14 +23,14 @@
 - `--no-files`: 파일 내용 출력 비활성화 (메타데이터 전용 모드)
 - `--remove-comments`: 지원되는 파일 타입에서 주석 제거
 - `--remove-empty-lines`: 출력에서 빈 줄 제거
-- `--truncate-base64`: base64 데이터 문자열 자르기 활성화
+- `--truncate-base64`: Base64 데이터 문자열 자르기 활성화
 - `--header-text <text>`: 파일 헤더에 포함할 사용자 정의 텍스트
 - `--instruction-file-path <path>`: 상세한 사용자 정의 지침이 포함된 파일 경로
 - `--include-empty-directories`: 출력에 빈 디렉토리 포함
 - `--include-diffs`: 출력에 git 차이점 포함 (작업 트리와 스테이징된 변경사항을 별도로 포함)
 - `--include-logs`: 출력에 git 로그 포함 (날짜, 메시지, 파일 경로를 포함한 커밋 히스토리)
 - `--include-logs-count <count>`: 포함할 git 로그 커밋 수 (기본값: 50)
-- `--no-git-sort-by-changes`: git 변경 횟수별 파일 정렬 비활성화 (기본적으로 활성화됨)
+- `--no-git-sort-by-changes`: Git 변경 횟수별 파일 정렬 비활성화 (기본적으로 활성화됨)
 
 ## 파일 선택 옵션
 - `--include <patterns>`: 포함 패턴 목록 (쉼표로 구분)
