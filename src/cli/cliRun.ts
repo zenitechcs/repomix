@@ -55,9 +55,21 @@ export const run = async () => {
       .option('-v, --version', 'show version information and exit')
       // CLI Input/Output Options
       .optionsGroup('CLI Input/Output Options')
-      .addOption(new Option('--verbose', 'enable detailed debug logging (shows file processing, token counts, and configuration details)').conflicts('quiet'))
-      .addOption(new Option('--quiet', 'suppress all console output except errors (useful for scripting)').conflicts('verbose'))
-      .addOption(new Option('--stdout', 'write packed output directly to stdout instead of a file (suppresses all logging)').conflicts('output'))
+      .addOption(
+        new Option(
+          '--verbose',
+          'enable detailed debug logging (shows file processing, token counts, and configuration details)',
+        ).conflicts('quiet'),
+      )
+      .addOption(
+        new Option('--quiet', 'suppress all console output except errors (useful for scripting)').conflicts('verbose'),
+      )
+      .addOption(
+        new Option(
+          '--stdout',
+          'write packed output directly to stdout instead of a file (suppresses all logging)',
+        ).conflicts('output'),
+      )
       .option('--stdin', 'read file paths from stdin, one per line (specified files are processed directly)')
       .option('--copy', 'copy the generated output to system clipboard after processing')
       .option(
@@ -74,13 +86,23 @@ export const run = async () => {
           return value;
         },
       )
-      .option('--top-files-len <number>', 'number of largest files to show in summary (default: 5, e.g., --top-files-len 20)', Number.parseInt)
+      .option(
+        '--top-files-len <number>',
+        'number of largest files to show in summary (default: 5, e.g., --top-files-len 20)',
+        Number.parseInt,
+      )
       // Repomix Output Options
       .optionsGroup('Repomix Output Options')
       .option('-o, --output <file>', 'output file path (default: repomix-output.xml, use "-" for stdout)')
       .option('--style <type>', 'output format: xml, markdown, or plain (default: xml)')
-      .option('--parsable-style', 'escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)')
-      .option('--compress', 'extract essential code structure (classes, functions, interfaces) using Tree-sitter parsing')
+      .option(
+        '--parsable-style',
+        'escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)',
+      )
+      .option(
+        '--compress',
+        'extract essential code structure (classes, functions, interfaces) using Tree-sitter parsing',
+      )
       .option('--output-show-line-numbers', 'prefix each line with its line number in the output')
       .option('--no-file-summary', 'omit the file summary section from output')
       .option('--no-directory-structure', 'omit the directory tree visualization from output')
@@ -91,29 +113,30 @@ export const run = async () => {
       .option('--header-text <text>', 'custom text to include at the beginning of the output')
       .option('--instruction-file-path <path>', 'path to file containing custom instructions to include in output')
       .option('--include-empty-directories', 'include folders with no files in directory structure')
-      .option('--no-git-sort-by-changes', 'don\'t sort files by git change frequency (default: most changed files first)')
       .option(
-        '--include-diffs',
-        'add git diff section showing working tree and staged changes',
+        '--no-git-sort-by-changes',
+        "don't sort files by git change frequency (default: most changed files first)",
       )
+      .option('--include-diffs', 'add git diff section showing working tree and staged changes')
+      .option('--include-logs', 'add git commit history with messages and changed files')
       .option(
-        '--include-logs',
-        'add git commit history with messages and changed files',
+        '--include-logs-count <count>',
+        'number of recent commits to include with --include-logs (default: 50)',
+        Number.parseInt,
       )
-      .option('--include-logs-count <count>', 'number of recent commits to include with --include-logs (default: 50)', Number.parseInt)
       // File Selection Options
       .optionsGroup('File Selection Options')
-      .option('--include <patterns>', 'include only files matching these glob patterns (comma-separated, e.g., "src/**/*.js,*.md")')
+      .option(
+        '--include <patterns>',
+        'include only files matching these glob patterns (comma-separated, e.g., "src/**/*.js,*.md")',
+      )
       .option('-i, --ignore <patterns>', 'additional patterns to exclude (comma-separated, e.g., "*.test.js,docs/**")')
-      .option('--no-gitignore', 'don\'t use .gitignore rules for filtering files')
-      .option('--no-default-patterns', 'don\'t apply built-in ignore patterns (node_modules, .git, build dirs, etc.)')
+      .option('--no-gitignore', "don't use .gitignore rules for filtering files")
+      .option('--no-default-patterns', "don't apply built-in ignore patterns (node_modules, .git, build dirs, etc.)")
       // Remote Repository Options
       .optionsGroup('Remote Repository Options')
       .option('--remote <url>', 'clone and pack a remote repository (GitHub URL or user/repo format)')
-      .option(
-        '--remote-branch <name>',
-        'specific branch, tag, or commit to use (default: repository\'s default branch)',
-      )
+      .option('--remote-branch <name>', "specific branch, tag, or commit to use (default: repository's default branch)")
       // Configuration Options
       .optionsGroup('Configuration Options')
       .option('-c, --config <path>', 'use custom config file instead of repomix.config.json')
@@ -124,7 +147,10 @@ export const run = async () => {
       .option('--no-security-check', 'skip scanning for sensitive data like API keys and passwords')
       // Token Count Options
       .optionsGroup('Token Count Options')
-      .option('--token-count-encoding <encoding>', 'tokenizer model for counting: o200k_base (GPT-4o), cl100k_base (GPT-3.5/4), etc. (default: o200k_base)')
+      .option(
+        '--token-count-encoding <encoding>',
+        'tokenizer model for counting: o200k_base (GPT-4o), cl100k_base (GPT-3.5/4), etc. (default: o200k_base)',
+      )
       // MCP
       .optionsGroup('MCP')
       .option('--mcp', 'run as Model Context Protocol server for AI tool integration')
