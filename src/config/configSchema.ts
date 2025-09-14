@@ -2,7 +2,7 @@ import type { TiktokenEncoding } from 'tiktoken';
 import { z } from 'zod';
 
 // Output style enum
-export const repomixOutputStyleSchema = z.enum(['xml', 'markdown', 'plain', 'json']);
+export const repomixOutputStyleSchema = z.enum(['xml', 'markdown', 'json', 'plain']);
 export type RepomixOutputStyle = z.infer<typeof repomixOutputStyleSchema>;
 
 // Default values map

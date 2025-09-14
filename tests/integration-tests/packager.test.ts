@@ -217,7 +217,7 @@ describe.runIf(!isWindows)('packager integration', () => {
           expect(actualOutput).toContain('function greet(name) {');
           break;
 
-        case 'json':
+        case 'json': {
           // Validate it's valid JSON
           const jsonOutput = JSON.parse(actualOutput);
           expect(jsonOutput.fileSummary).toBeDefined();
@@ -227,6 +227,7 @@ describe.runIf(!isWindows)('packager integration', () => {
           expect(jsonOutput.files['src/index.js']).toContain('function main() {');
           expect(jsonOutput.files['src/utils.js']).toContain('function greet(name) {');
           break;
+        }
 
         default:
           throw new Error(`Unsupported style: ${config.output?.style}`);
