@@ -1,8 +1,9 @@
 # 輸出格式
 
-Repomix 支援三種輸出格式：
+Repomix 支援四種輸出格式：
 - XML（預設）
 - Markdown
+- JSON
 - 純文字
 
 ## XML 格式
@@ -64,6 +65,104 @@ Repomix 基於廣泛的研究和測試，選擇 XML 作為預設輸出格式。�
 - **Google (Gemini)**: 推薦在複雜任務中使用包括 XML 在內的結構化格式（[文檔](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts)）
 - **OpenAI (GPT)**: 在複雜場景中倡導結構化提示（[公告](https://x.com/OpenAIDevs/status/1890147300493914437)、[cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)）
 
+## JSON 格式
+
+```bash
+repomix --style json
+```
+
+JSON 格式提供使用 camelCase 屬性名的結構化、可程式化存取的輸出：
+
+```json
+{
+  "fileSummary": {
+    "generationHeader": "本文件是由 Repomix 將整個程式碼庫合併到單個文件中的表示形式。",
+    "purpose": "本文件包含整個儲存庫內容的打包表示...",
+    "fileFormat": "內容組織如下...",
+    "usageGuidelines": "- 此文件應視為唯讀...",
+    "notes": "- 某些文件可能已根據 .gitignore 規則被排除..."
+  },
+  "userProvidedHeader": "指定時的自訂標題文字",
+  "directoryStructure": "src/
+  cli/
+    cliOutput.ts
+    index.ts
+  config/
+    configLoader.ts",
+  "files": {
+    "src/index.js": "// 文件內容",
+    "src/utils.js": "// 文件內容"
+  },
+  "instruction": "來自 instructionFilePath 的自訂指令"
+}
+```
+
+### JSON 格式的優勢
+
+JSON 格式非常適合：
+- **程式化處理**: 使用任何程式語言中的 JSON 函式庫都能輕鬆解析和操作
+- **API 整合**: 可直接被 Web 服務和應用程式使用
+- **AI 工具相容性**: 為機器學習和 AI 系統優化的結構化格式
+- **資料分析**: 使用 `jq` 等工具輕鬆提取特定資訊
+
+### 使用 `jq` 處理 JSON 輸出
+
+JSON 格式使得程式化提取特定資訊變得容易。以下是常見範例：
+
+#### 基本文件操作
+```bash
+# 列出所有文件路徑
+cat repomix-output.json | jq -r '.files | keys[]'
+
+# 計算文件總數
+cat repomix-output.json | jq '.files | keys | length'
+
+# 提取特定文件內容
+cat repomix-output.json | jq -r '.files["README.md"]'
+cat repomix-output.json | jq -r '.files["src/index.js"]'
+```
+
+#### 文件篩選和分析
+```bash
+# 按副檔名查找文件
+cat repomix-output.json | jq -r '.files | keys[] | select(endswith(".ts"))'
+cat repomix-output.json | jq -r '.files | keys[] | select(endswith(".js") or endswith(".ts"))'
+
+# 查找包含特定文字的文件
+cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | contains("function")) | .key'
+
+# 建立包含字元計數的文件清單
+cat repomix-output.json | jq -r '.files | to_entries[] | "\(.key): \(.value | length) 個字元"'
+```
+
+#### 元資料提取
+```bash
+# 提取目錄結構
+cat repomix-output.json | jq -r '.directoryStructure'
+
+# 取得文件概要資訊
+cat repomix-output.json | jq '.fileSummary.purpose'
+cat repomix-output.json | jq -r '.fileSummary.generationHeader'
+
+# 提取使用者提供的標題（如果存在）
+cat repomix-output.json | jq -r '.userProvidedHeader // "未提供標題"'
+
+# 取得自訂指令
+cat repomix-output.json | jq -r '.instruction // "未提供指令"'
+```
+
+#### 進階分析
+```bash
+# 按內容長度查找最大的文件
+cat repomix-output.json | jq -r '.files | to_entries[] | [.key, (.value | length)] | @tsv' | sort -k2 -nr | head -10
+
+# 搜尋包含特定模式的文件
+cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("import.*react"; "i")) | .key'
+
+# 提取符合多個副檔名的文件路徑
+cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
+```
+
 ## Markdown 格式
 
 ```bash
@@ -112,7 +211,8 @@ src/core/output/outputGenerate.ts
 每種格式都能在 AI 模型中正常工作，但需要考慮以下幾點：
 - 對 Claude 使用 XML（解析最準確）
 - 對一般可讀性使用 Markdown
-- 對簡單性和通用兼容性使用純文字
+- 對程式化處理和 API 整合使用 JSON
+- 對簡單性和通用相容性使用純文字
 
 ## 自定義設置
 
