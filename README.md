@@ -615,7 +615,7 @@ Instruction
 #### Repomix Output Options
 - `-o, --output <file>`: Output file path (default: repomix-output.xml, use "-" for stdout)
 - `--style <style>`: Output format: xml, markdown, json, or plain (default: xml)
-- `--parsable-style`: Escape special characters to ensure valid XML/Markdown/JSON (needed when output contains code that breaks formatting)
+- `--parsable-style`: Escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)
 - `--compress`: Extract essential code structure (classes, functions, interfaces) using Tree-sitter parsing
 - `--output-show-line-numbers`: Prefix each line with its line number in the output
 - `--no-file-summary`: Omit the file summary section from output

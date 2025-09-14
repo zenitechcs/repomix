@@ -14,6 +14,7 @@ import { sortOutputFiles } from './outputSort.js';
 import {
   generateHeader,
   generateSummaryFileFormat,
+  generateSummaryFileFormatJson,
   generateSummaryNotes,
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
@@ -118,10 +119,7 @@ const generateParsableJsonOutput = async (renderContext: RenderContext): Promise
       fileSummary: {
         generationHeader: renderContext.generationHeader,
         purpose: renderContext.summaryPurpose,
-        fileFormat: `${renderContext.summaryFileFormat}
-5. Repository files, each consisting of:
-  - File path as a key
-  - Full contents of the file as the value`,
+        fileFormat: generateSummaryFileFormatJson(),
         usageGuidelines: renderContext.summaryUsageGuidelines,
         notes: renderContext.summaryNotes,
       },

@@ -101,7 +101,7 @@ export const run = async () => {
       .option('--style <type>', 'Output format: xml, markdown, json, or plain (default: xml)')
       .option(
         '--parsable-style',
-        'Escape special characters to ensure valid XML/Markdown/JSON (needed when output contains code that breaks formatting)',
+        'Escape special characters to ensure valid XML/Markdown (needed when output contains code that breaks formatting)',
       )
       .option(
         '--compress',
