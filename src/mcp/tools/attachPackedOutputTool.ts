@@ -165,7 +165,6 @@ function extractFileMetricsXml(content: string): { filePaths: string[]; fileChar
   const filePaths: string[] = [];
   const fileCharCounts: Record<string, number> = {};
   const fileRegex = /<file path="([^"]+)">([\s\S]*?)<\/file>/g;
-  let match: RegExpExecArray | null;
 
   for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
@@ -186,7 +185,6 @@ function extractFileMetricsMarkdown(content: string): { filePaths: string[]; fil
 
   // Pattern: ## File: [path] followed by code block
   const fileRegex = /## File: ([^\n]+)\n```[^\n]*\n([\s\S]*?)```/g;
-  let match: RegExpExecArray | null;
 
   for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
@@ -207,7 +205,6 @@ function extractFileMetricsPlain(content: string): { filePaths: string[]; fileCh
 
   // Pattern: separator lines with "File: [path]" followed by content
   const fileRegex = /={16,}\nFile: ([^\n]+)\n={16,}\n([\s\S]*?)(?=\n={16,}\n|$)/g;
-  let match: RegExpExecArray | null;
 
   for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
@@ -236,7 +233,7 @@ function extractFileMetricsJson(content: string): { filePaths: string[]; fileCha
         fileCharCounts[filePath] = fileContent.length;
       }
     }
-  } catch (error) {
+  } catch {
     // If JSON parsing fails, return empty results
   }
 

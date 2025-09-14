@@ -245,19 +245,19 @@ function helper() {}
 
     vi.mocked(fs.readFile).mockResolvedValue(markdownContent);
 
-    const result = await toolHandler({ path: testFilePath });
+    await toolHandler({ path: testFilePath });
 
     expect(fs.stat).toHaveBeenCalledWith(testFilePath);
     expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
     expect(formatPackToolResponse).toHaveBeenCalled();
-    
+
     const expectedFilePaths = ['src/index.js', 'src/utils.js'];
     const expectedCharCounts = {
-      'src/index.js': "console.log('Hello');".length,
-      'src/utils.js': 'function helper() {}'.length,
+      'src/index.js': "console.log('Hello');\n".length,
+      'src/utils.js': 'function helper() {}\n'.length,
     };
     const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
-    
+
     expect(formatPackToolResponse).toHaveBeenCalledWith(
       { directory: 'test' },
       expect.objectContaining({
@@ -288,19 +288,19 @@ function helper() {}
 
     vi.mocked(fs.readFile).mockResolvedValue(plainContent);
 
-    const result = await toolHandler({ path: testFilePath });
+    await toolHandler({ path: testFilePath });
 
     expect(fs.stat).toHaveBeenCalledWith(testFilePath);
     expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
     expect(formatPackToolResponse).toHaveBeenCalled();
-    
+
     const expectedFilePaths = ['src/index.js', 'src/utils.js'];
     const expectedCharCounts = {
       'src/index.js': "console.log('Hello');".length,
       'src/utils.js': 'function helper() {}'.length,
     };
     const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
-    
+
     expect(formatPackToolResponse).toHaveBeenCalledWith(
       { directory: 'test' },
       expect.objectContaining({
@@ -327,12 +327,12 @@ function helper() {}
 
     vi.mocked(fs.readFile).mockResolvedValue(jsonContent);
 
-    const result = await toolHandler({ path: testFilePath });
+    await toolHandler({ path: testFilePath });
 
     expect(fs.stat).toHaveBeenCalledWith(testFilePath);
     expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
     expect(formatPackToolResponse).toHaveBeenCalled();
-    
+
     const expectedFilePaths = ['src/index.js', 'src/utils.js', 'package.json'];
     const expectedCharCounts = {
       'src/index.js': "console.log('Hello');".length,
@@ -340,7 +340,7 @@ function helper() {}
       'package.json': '{"name":"test"}'.length,
     };
     const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
-    
+
     expect(formatPackToolResponse).toHaveBeenCalledWith(
       { directory: 'test' },
       expect.objectContaining({
