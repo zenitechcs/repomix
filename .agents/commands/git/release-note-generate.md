@@ -51,8 +51,9 @@ Based on analysis of existing release notes in `.github/releases/`, this documen
 - Less significant than "What's New" items
 
 #### Internal Changes 🔧
-- For infrastructure, CI/CD, or internal improvements
-- Usually not user-facing
+- **Generally avoid including this section** - internal changes are typically not relevant to users
+- Only include if the internal change has direct user-visible benefits or impacts
+- For infrastructure, CI/CD, or internal improvements that don't affect user experience, omit entirely
 
 #### Website Enhancements 🌐
 - For Repomix website updates
