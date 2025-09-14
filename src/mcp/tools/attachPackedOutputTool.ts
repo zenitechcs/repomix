@@ -3,6 +3,7 @@ import path from 'node:path';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
+import { defaultFilePathMap } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
 import {
   type McpToolMetrics,
@@ -17,7 +18,9 @@ import {
 const attachPackedOutputInputSchema = z.object({
   path: z
     .string()
-    .describe('Path to a directory containing repomix-output.xml or direct path to a packed repository XML file'),
+    .describe(
+      'Path to a directory containing repomix output file or direct path to a packed repository file (supports .xml, .md, .txt, .json formats)',
+    ),
   topFilesLength: z
     .number()
     .optional()
@@ -39,27 +42,47 @@ const attachPackedOutputOutputSchema = z.object({
 });
 
 /**
- * Resolves the path to a repomix output file
- * @param inputPath Path to a directory containing repomix-output.xml or direct path to an XML file
- * @returns The resolved path to the repomix output file
- * @throws Error if the file doesn't exist or isn't a valid XML file
+ * Resolves the path to a repomix output file and detects its format
+ * @param inputPath Path to a directory containing repomix output file or direct path to a packed repository file
+ * @returns Object containing the resolved path and detected format
+ * @throws Error if the file doesn't exist or isn't a supported format
  */
-async function resolveOutputFilePath(inputPath: string): Promise<string> {
+async function resolveOutputFilePath(inputPath: string): Promise<{ filePath: string; format: string }> {
   try {
     const stats = await fs.stat(inputPath);
 
     if (stats.isDirectory()) {
-      // If it's a directory, look for repomix-output.xml inside
-      const outputFilePath = path.join(inputPath, 'repomix-output.xml');
-      await fs.access(outputFilePath); // Will throw if file doesn't exist
-      return outputFilePath;
+      // If it's a directory, look for repomix output files in priority order
+      const possibleFiles = Object.values(defaultFilePathMap);
+
+      for (const fileName of possibleFiles) {
+        const outputFilePath = path.join(inputPath, fileName);
+        try {
+          await fs.access(outputFilePath);
+          const format = getFormatFromFileName(fileName);
+          return { filePath: outputFilePath, format };
+        } catch {
+          // File doesn't exist, continue to next
+        }
+      }
+
+      throw new Error(
+        `No repomix output file found in directory: ${inputPath}. Looking for: ${possibleFiles.join(', ')}`,
+      );
     }
 
-    // If it's a file, check if it's an XML file
-    if (!inputPath.toLowerCase().endsWith('.xml')) {
-      throw new Error('The provided file is not an XML file. Only XML files are supported.');
+    // If it's a file, check if it's a supported format
+    const supportedExtensions = ['.xml', '.md', '.txt', '.json'];
+    const fileExtension = path.extname(inputPath).toLowerCase();
+
+    if (!supportedExtensions.includes(fileExtension)) {
+      throw new Error(
+        `Unsupported file format: ${fileExtension}. Supported formats: ${supportedExtensions.join(', ')}`,
+      );
     }
-    return inputPath;
+
+    const format = getFormatFromExtension(fileExtension);
+    return { filePath: inputPath, format };
   } catch (error) {
     if (error instanceof Error && error.message.includes('ENOENT')) {
       throw new Error(`File or directory not found for path: ${inputPath}`, { cause: error });
@@ -69,11 +92,76 @@ async function resolveOutputFilePath(inputPath: string): Promise<string> {
 }
 
 /**
+ * Get format from file name
+ */
+function getFormatFromFileName(fileName: string): string {
+  for (const [format, defaultFileName] of Object.entries(defaultFilePathMap)) {
+    if (fileName === defaultFileName) {
+      return format;
+    }
+  }
+  return 'xml'; // fallback
+}
+
+/**
+ * Get format from file extension
+ */
+function getFormatFromExtension(extension: string): string {
+  switch (extension) {
+    case '.xml':
+      return 'xml';
+    case '.md':
+      return 'markdown';
+    case '.txt':
+      return 'plain';
+    case '.json':
+      return 'json';
+    default:
+      return 'xml'; // fallback
+  }
+}
+
+/**
  * Extract file paths and character counts from a repomix output XML file
  * @param content The content of the repomix output XML file
  * @returns An object containing an array of file paths and a record of file paths to character counts
  */
-function extractFileMetrics(content: string): { filePaths: string[]; fileCharCounts: Record<string, number> } {
+function extractFileMetrics(
+  content: string,
+  format: string,
+): { filePaths: string[]; fileCharCounts: Record<string, number> } {
+  switch (format) {
+    case 'xml':
+      return extractFileMetricsXml(content);
+    case 'markdown':
+      return extractFileMetricsMarkdown(content);
+    case 'plain':
+      return extractFileMetricsPlain(content);
+    case 'json':
+      return extractFileMetricsJson(content);
+    default:
+      // Fallback to XML parsing
+      return extractFileMetricsXml(content);
+  }
+}
+
+/**
+ * Create processed files from file paths
+ * @param filePaths Array of file paths
+ * @param charCounts Record of file paths to character counts
+ * @returns Array of ProcessedFile objects
+ */
+function createProcessedFiles(filePaths: string[], charCounts: Record<string, number>): ProcessedFile[] {
+  return filePaths.map((path) => ({
+    path,
+    content: ''.padEnd(charCounts[path]), // Create a string of the appropriate length
+  }));
+}
+
+/**
+ * Extract file metrics from XML format
+ */
+function extractFileMetricsXml(content: string): { filePaths: string[]; fileCharCounts: Record<string, number> } {
   const filePaths: string[] = [];
   const fileCharCounts: Record<string, number> = {};
   const fileRegex = /<file path="([^"]+)">([\s\S]*?)<\/file>/g;
@@ -94,16 +182,78 @@ function extractFileMetrics(content: string): { filePaths: string[]; fileCharCou
 }
 
 /**
- * Create processed files from file paths
- * @param filePaths Array of file paths
- * @param charCounts Record of file paths to character counts
- * @returns Array of ProcessedFile objects
+ * Extract file metrics from Markdown format
  */
-function createProcessedFiles(filePaths: string[], charCounts: Record<string, number>): ProcessedFile[] {
-  return filePaths.map((path) => ({
-    path,
-    content: ''.padEnd(charCounts[path]), // Create a string of the appropriate length
-  }));
+function extractFileMetricsMarkdown(content: string): { filePaths: string[]; fileCharCounts: Record<string, number> } {
+  const filePaths: string[] = [];
+  const fileCharCounts: Record<string, number> = {};
+
+  // Pattern: ## File: [path] followed by code block
+  const fileRegex = /## File: ([^\n]+)\n```[^\n]*\n([\s\S]*?)```/g;
+  let match: RegExpExecArray | null;
+
+  while (true) {
+    match = fileRegex.exec(content);
+    if (!match) {
+      break;
+    }
+    const filePath = match[1];
+    const fileContent = match[2];
+    filePaths.push(filePath);
+    fileCharCounts[filePath] = fileContent.length;
+  }
+
+  return { filePaths, fileCharCounts };
+}
+
+/**
+ * Extract file metrics from Plain text format
+ */
+function extractFileMetricsPlain(content: string): { filePaths: string[]; fileCharCounts: Record<string, number> } {
+  const filePaths: string[] = [];
+  const fileCharCounts: Record<string, number> = {};
+
+  // Pattern: separator lines with "File: [path]" followed by content
+  const fileRegex = /={16,}\nFile: ([^\n]+)\n={16,}\n([\s\S]*?)(?=\n={16,}\n|$)/g;
+  let match: RegExpExecArray | null;
+
+  while (true) {
+    match = fileRegex.exec(content);
+    if (!match) {
+      break;
+    }
+    const filePath = match[1];
+    const fileContent = match[2].trim();
+    filePaths.push(filePath);
+    fileCharCounts[filePath] = fileContent.length;
+  }
+
+  return { filePaths, fileCharCounts };
+}
+
+/**
+ * Extract file metrics from JSON format
+ */
+function extractFileMetricsJson(content: string): { filePaths: string[]; fileCharCounts: Record<string, number> } {
+  const filePaths: string[] = [];
+  const fileCharCounts: Record<string, number> = {};
+
+  try {
+    const jsonData = JSON.parse(content);
+    const files = jsonData.files || {};
+
+    for (const [filePath, fileContent] of Object.entries(files)) {
+      if (typeof fileContent === 'string') {
+        filePaths.push(filePath);
+        fileCharCounts[filePath] = fileContent.length;
+      }
+    }
+  } catch (error) {
+    // If JSON parsing fails, return empty results
+    console.warn('Failed to parse JSON content:', error);
+  }
+
+  return { filePaths, fileCharCounts };
 }
 
 /**
@@ -115,7 +265,8 @@ export const registerAttachPackedOutputTool = (mcpServer: McpServer) => {
     {
       title: 'Attach Packed Output',
       description: `Attach an existing Repomix packed output file for AI analysis.
-This tool accepts either a directory containing a repomix-output.xml file or a direct path to an XML file.
+This tool accepts either a directory containing a repomix output file or a direct path to a packed repository file.
+Supports multiple formats: XML (structured with <file> tags), Markdown (human-readable with ## headers and code blocks), JSON (machine-readable with files as key-value pairs), and Plain text (simple format with separators).
 Calling the tool again with the same file path will refresh the content if the file has been updated.
 It will return in that case a new output ID and the updated content.`,
       inputSchema: attachPackedOutputInputSchema.shape,
@@ -130,13 +281,13 @@ It will return in that case a new output ID and the updated content.`,
     async ({ path: inputPath, topFilesLength }): Promise<CallToolResult> => {
       try {
         // Resolve the path to the repomix output file
-        const outputFilePath = await resolveOutputFilePath(inputPath);
+        const { filePath: outputFilePath, format } = await resolveOutputFilePath(inputPath);
 
         // Read the file content
         const content = await fs.readFile(outputFilePath, 'utf8');
 
-        // Extract file paths and character counts from the XML content
-        const { filePaths, fileCharCounts } = extractFileMetrics(content);
+        // Extract file paths and character counts from the content
+        const { filePaths, fileCharCounts } = extractFileMetrics(content, format);
 
         // Calculate metrics
         const totalCharacters = Object.values(fileCharCounts).reduce((sum, count) => sum + count, 0);

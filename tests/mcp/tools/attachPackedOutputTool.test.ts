@@ -45,6 +45,10 @@ describe('AttachPackedOutputTool', () => {
     vi.mocked(path.join).mockImplementation((...args) => args.join('/'));
     vi.mocked(path.basename).mockImplementation((p) => p.split('/').pop() || '');
     vi.mocked(path.dirname).mockImplementation((p) => p.split('/').slice(0, -1).join('/') || '.');
+    vi.mocked(path.extname).mockImplementation((p) => {
+      const parts = p.split('.');
+      return parts.length > 1 ? `.${parts[parts.length - 1]}` : '';
+    });
 
     // Mock fs functions
     vi.mocked(fs.stat).mockResolvedValue({
@@ -142,8 +146,8 @@ describe('AttachPackedOutputTool', () => {
     );
   });
 
-  test('should handle non-XML file error', async () => {
-    const testFilePath = '/test/not-xml-file.txt';
+  test('should handle non-supported file format error', async () => {
+    const testFilePath = '/test/not-supported-file.xyz';
 
     const result = await toolHandler({ path: testFilePath });
 
