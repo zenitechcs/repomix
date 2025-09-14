@@ -376,4 +376,50 @@ function helper() {}
       undefined,
     );
   });
+
+  test('should handle CRLF line endings in Markdown format', async () => {
+    const testFilePath = '/test/repomix-output.md';
+    const markdownContentWithCRLF = `# Files\r\n\r\n## File: src/index.js\r\n\`\`\`javascript\r\nconsole.log('Hello');\r\n\`\`\`\r\n\r\n## File: src/utils.js\r\n\`\`\`javascript\r\nfunction helper() {}\r\n\`\`\``;
+
+    vi.mocked(fs.readFile).mockResolvedValue(markdownContentWithCRLF);
+
+    await toolHandler({ path: testFilePath });
+
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 2,
+        safeFilePaths: ['src/index.js', 'src/utils.js'],
+        fileCharCounts: {
+          'src/index.js': "console.log('Hello');\r\n".length,
+          'src/utils.js': 'function helper() {}\r\n'.length,
+        },
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
+
+  test('should handle CRLF line endings in Plain text format', async () => {
+    const testFilePath = '/test/repomix-output.txt';
+    const plainContentWithCRLF = `================\r\nFile: src/index.js\r\n================\r\nconsole.log('Hello');\r\n\r\n================\r\nFile: src/utils.js\r\n================\r\nfunction helper() {}`;
+
+    vi.mocked(fs.readFile).mockResolvedValue(plainContentWithCRLF);
+
+    await toolHandler({ path: testFilePath });
+
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 2,
+        safeFilePaths: ['src/index.js', 'src/utils.js'],
+        fileCharCounts: {
+          'src/index.js': "console.log('Hello');".length,
+          'src/utils.js': 'function helper() {}'.length,
+        },
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
 });

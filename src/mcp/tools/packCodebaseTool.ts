@@ -34,11 +34,12 @@ const packCodebaseInputSchema = z.object({
     ),
   topFilesLength: z
     .number()
+    .int()
+    .min(1)
     .optional()
     .default(10)
     .describe('Number of largest files by size to display in the metrics summary for codebase analysis (default: 10)'),
   style: repomixOutputStyleSchema
-    .optional()
     .default('xml')
     .describe(
       'Output format style: xml (structured tags, default), markdown (human-readable with code blocks), json (machine-readable key-value), or plain (simple text with separators)',
@@ -83,7 +84,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
 
       try {
         tempDir = await createToolWorkspace();
-        const outputFileName = defaultFilePathMap[style || 'xml'];
+        const outputFileName = defaultFilePathMap[style];
         const outputFilePath = path.join(tempDir, outputFileName);
 
         const cliOptions = {
@@ -91,7 +92,7 @@ export const registerPackCodebaseTool = (mcpServer: McpServer) => {
           include: includePatterns,
           ignore: ignorePatterns,
           output: outputFilePath,
-          style: style || 'xml',
+          style,
           securityCheck: true,
           topFilesLen: topFilesLength,
           quiet: true,

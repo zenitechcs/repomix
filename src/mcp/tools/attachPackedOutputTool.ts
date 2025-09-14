@@ -23,6 +23,8 @@ const attachPackedOutputInputSchema = z.object({
     ),
   topFilesLength: z
     .number()
+    .int()
+    .min(1)
     .optional()
     .default(10)
     .describe('Number of largest files by size to display in the metrics summary (default: 10)'),
@@ -184,7 +186,7 @@ function extractFileMetricsMarkdown(content: string): { filePaths: string[]; fil
   const fileCharCounts: Record<string, number> = {};
 
   // Pattern: ## File: [path] followed by code block
-  const fileRegex = /## File: ([^\n]+)\n```[^\n]*\n([\s\S]*?)```/g;
+  const fileRegex = /## File: ([^\r\n]+)\r?\n```[^\r\n]*\r?\n([\s\S]*?)```/g;
 
   for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
@@ -204,7 +206,7 @@ function extractFileMetricsPlain(content: string): { filePaths: string[]; fileCh
   const fileCharCounts: Record<string, number> = {};
 
   // Pattern: separator lines with "File: [path]" followed by content
-  const fileRegex = /={16,}\nFile: ([^\n]+)\n={16,}\n([\s\S]*?)(?=\n={16,}\n|$)/g;
+  const fileRegex = /={16,}\r?\nFile: ([^\r\n]+)\r?\n={16,}\r?\n([\s\S]*?)(?=\r?\n={16,}\r?\n|$)/g;
 
   for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
