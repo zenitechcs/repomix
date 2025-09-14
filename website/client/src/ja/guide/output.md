@@ -70,6 +70,54 @@ XML採用の主な理由は、大手AIプロバイダーからの公式推奨事
 - **Google (Gemini)**: 複雑なタスクにおいてXMLを含む構造化フォーマットを推奨（[ドキュメント](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts)）
 - **OpenAI (GPT)**: 複雑なシナリオでの構造化プロンプトを推奨（[発表](https://x.com/OpenAIDevs/status/1890147300493914437)、[cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)）
 
+## Markdownフォーマット
+
+```bash
+repomix --style markdown
+```
+
+Markdownは読みやすいフォーマットを提供します。
+
+````markdown
+このファイルは、コードベース全体を1つのドキュメントにまとめた表現です...
+
+# ファイルサマリー
+（メタデータとAI向けの使用説明）
+
+# ディレクトリ構造
+```
+src/
+index.ts
+utils/
+helper.ts
+```
+
+# ファイル
+
+## File: src/index.ts
+```typescript
+// ファイルの内容がここに表示されます
+```
+
+# Gitログ
+
+## コミット: 2025-08-20 00:47:19 +0900
+**メッセージ:** feat(cli): Add --include-logs option for git commit history
+
+**ファイル:**
+- README.md
+- src/cli/cliRun.ts
+- src/core/git/gitCommand.ts
+- src/core/git/gitLogHandle.ts
+- src/core/output/outputGenerate.ts
+
+## コミット: 2025-08-21 00:09:43 +0900
+**メッセージ:** Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+
+**ファイル:**
+- .github/workflows/ratchet-update.yml
+````
+
 ## JSONフォーマット
 
 ```bash
@@ -168,74 +216,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
 
-## Markdownフォーマット
-
-```bash
-repomix --style markdown
-```
-
-Markdownは読みやすいフォーマットを提供します。
-
-```markdown
-このファイルは、コードベース全体を1つのドキュメントにまとめた表現です...
-
-# ファイルサマリー
-（メタデータとAI向けの使用説明）
-
-# ディレクトリ構造
-```
-src/
-index.ts
-utils/
-helper.ts
-```
-
-# ファイル
-
-## File: src/index.ts
-```typescript
-// ファイルの内容がここに表示されます
-```
-
-# Gitログ
-
-## コミット: 2025-08-20 00:47:19 +0900
-**メッセージ:** feat(cli): Add --include-logs option for git commit history
-
-**ファイル:**
-- README.md
-- src/cli/cliRun.ts
-- src/core/git/gitCommand.ts
-- src/core/git/gitLogHandle.ts
-- src/core/output/outputGenerate.ts
-
-## コミット: 2025-08-21 00:09:43 +0900
-**メッセージ:** Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-
-**ファイル:**
-- .github/workflows/ratchet-update.yml
-```
-
-## AIモデルとの使用
-
-各フォーマットはAIモデルで問題なく動作しますが、以下の点を考慮してください：
-- XMLはClaude用に最適化（最も正確な解析）
-- Markdownは一般的な読みやすさを重視
-- JSONはプログラム処理とAPI統合に最適
-- プレーンテキストはシンプルさと互換性を重視
-
-## カスタマイズ
-
-`repomix.config.json`でデフォルトのフォーマットを設定
-```json
-{
-  "output": {
-    "style": "xml",
-    "filePath": "output.xml"
-  }
-}
-```
-
 ## プレーンテキストフォーマット
 
 ```bash
@@ -293,4 +273,24 @@ Message: Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 Files:
   - .github/workflows/ratchet-update.yml
 ================
+```
+
+## AIモデルとの使用
+
+各フォーマットはAIモデルで問題なく動作しますが、以下の点を考慮してください：
+- XMLはClaude用に最適化（最も正確な解析）
+- Markdownは一般的な読みやすさを重視
+- JSONはプログラム処理とAPI統合に最適
+- プレーンテキストはシンプルさと互換性を重視
+
+## カスタマイズ
+
+`repomix.config.json`でデフォルトのフォーマットを設定
+```json
+{
+  "output": {
+    "style": "xml",
+    "filePath": "output.xml"
+  }
+}
 ```

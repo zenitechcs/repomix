@@ -65,6 +65,49 @@ Repomix 基於廣泛的研究和測試，選擇 XML 作為預設輸出格式。�
 - **Google (Gemini)**: 推薦在複雜任務中使用包括 XML 在內的結構化格式（[文檔](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts)）
 - **OpenAI (GPT)**: 在複雜場景中倡導結構化提示（[公告](https://x.com/OpenAIDevs/status/1890147300493914437)、[cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)）
 
+## Markdown 格式
+
+```bash
+repomix --style markdown
+```
+
+Markdown 提供了易讀的格式：
+
+````markdown
+本文件是整個程式碼庫的合併表示形式...
+
+# 文件概要
+（元數據和 AI 指令）
+
+# 目錄結構
+```
+src/
+index.ts
+utils/
+helper.ts
+```
+
+# 文件
+
+## File: src/index.ts
+```typescript
+// 文件內容
+```
+
+# Git 記錄
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+````
+
 ## JSON 格式
 
 ```bash
@@ -163,69 +206,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
 
-## Markdown 格式
-
-```bash
-repomix --style markdown
-```
-
-Markdown 提供了易讀的格式：
-
-```markdown
-本文件是整個程式碼庫的合併表示形式...
-
-# 文件概要
-（元數據和 AI 指令）
-
-# 目錄結構
-```
-src/
-index.ts
-utils/
-helper.ts
-```
-
-# 文件
-
-## File: src/index.ts
-```typescript
-// 文件內容
-```
-
-# Git 記錄
-```
-2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
-README.md
-src/cli/cliRun.ts
-src/core/git/gitCommand.ts
-src/core/git/gitLogHandle.ts
-src/core/output/outputGenerate.ts
-
-2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-.github/workflows/ratchet-update.yml
-```
-```
-
-## 在 AI 模型中的使用
-
-每種格式都能在 AI 模型中正常工作，但需要考慮以下幾點：
-- 對 Claude 使用 XML（解析最準確）
-- 對一般可讀性使用 Markdown
-- 對程式化處理和 API 整合使用 JSON
-- 對簡單性和通用相容性使用純文字
-
-## 自定義設置
-
-在 `repomix.config.json` 中設置預設格式：
-```json
-{
-  "output": {
-    "style": "xml",
-    "filePath": "output.xml"
-  }
-}
-```
-
 ## 純文字格式
 
 ```bash
@@ -270,4 +250,24 @@ src/core/output/outputGenerate.ts
 
 2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 .github/workflows/ratchet-update.yml
+```
+
+## 在 AI 模型中的使用
+
+每種格式都能在 AI 模型中正常工作，但需要考慮以下幾點：
+- 對 Claude 使用 XML（解析最準確）
+- 對一般可讀性使用 Markdown
+- 對程式化處理和 API 整合使用 JSON
+- 對簡單性和通用相容性使用純文字
+
+## 自定義設置
+
+在 `repomix.config.json` 中設置預設格式：
+```json
+{
+  "output": {
+    "style": "xml",
+    "filePath": "output.xml"
+  }
+}
 ```

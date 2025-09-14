@@ -55,6 +55,49 @@ Our choice of XML is primarily influenced by official recommendations from major
 - **Google (Gemini)**: Recommends structured formats including XML for complex tasks ([documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts))
 - **OpenAI (GPT)**: Advocates for structured prompting in complex scenarios ([announcement](https://x.com/OpenAIDevs/status/1890147300493914437), [cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide))
 
+## Markdown Format
+
+```bash
+repomix --style markdown
+```
+
+Markdown provides readable formatting:
+
+````markdown
+This file is a merged representation of the entire codebase...
+
+# File Summary
+(Metadata and AI instructions)
+
+# Directory Structure
+```
+src/
+index.ts
+utils/
+helper.ts
+```
+
+# Files
+
+## File: src/index.ts
+```typescript
+// File contents here
+```
+
+# Git Logs
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+````
+
 ## JSON Format
 
 ```bash
@@ -153,69 +196,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
 
-## Markdown Format
-
-```bash
-repomix --style markdown
-```
-
-Markdown provides readable formatting:
-
-```markdown
-This file is a merged representation of the entire codebase...
-
-# File Summary
-(Metadata and AI instructions)
-
-# Directory Structure
-```
-src/
-index.ts
-utils/
-helper.ts
-```
-
-# Files
-
-## File: src/index.ts
-```typescript
-// File contents here
-```
-
-# Git Logs
-```
-2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
-README.md
-src/cli/cliRun.ts
-src/core/git/gitCommand.ts
-src/core/git/gitLogHandle.ts
-src/core/output/outputGenerate.ts
-
-2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-.github/workflows/ratchet-update.yml
-```
-```
-
-## Usage with AI Models
-
-Each format works well with AI models, but consider:
-- Use XML for Claude (best parsing accuracy)
-- Use Markdown for general readability
-- Use JSON for programmatic processing and API integration
-- Use Plain Text for simplicity and universal compatibility
-
-## Customization
-
-Set default format in `repomix.config.json`:
-```json
-{
-  "output": {
-    "style": "json",
-    "filePath": "output.json"
-  }
-}
-```
-
 ## Plain Text Format
 
 ```bash
@@ -260,4 +240,23 @@ src/core/output/outputGenerate.ts
 
 2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 .github/workflows/ratchet-update.yml
+```
+## Usage with AI Models
+
+Each format works well with AI models, but consider:
+- Use XML for Claude (best parsing accuracy)
+- Use Markdown for general readability
+- Use JSON for programmatic processing and API integration
+- Use Plain Text for simplicity and universal compatibility
+
+## Customization
+
+Set default format in `repomix.config.json`:
+```json
+{
+  "output": {
+    "style": "xml",
+    "filePath": "output.xml"
+  }
+}
 ```

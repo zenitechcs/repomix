@@ -66,6 +66,49 @@ Nuestra elección de XML está principalmente influenciada por las recomendacion
 - **Google (Gemini)**: Recomienda formatos estructurados incluyendo XML para tareas complejas ([documentación](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts))
 - **OpenAI (GPT)**: Aboga por el prompting estructurado en escenarios complejos ([anuncio](https://x.com/OpenAIDevs/status/1890147300493914437), [cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide))
 
+## Formato Markdown
+
+```bash
+repomix --style markdown
+```
+
+Markdown proporciona un formato legible:
+
+````markdown
+Este archivo es una representación fusionada de toda la base de código...
+
+# Resumen de archivos
+(Metadatos e instrucciones de IA)
+
+# Estructura de directorios
+```
+src/
+index.ts
+utils/
+helper.ts
+```
+
+# Archivos
+
+## Archivo: src/index.ts
+```typescript
+// Contenido del archivo aquí
+```
+
+# Logs de Git
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+````
+
 ## Formato JSON
 
 ```bash
@@ -164,69 +207,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
 
-## Formato Markdown
-
-```bash
-repomix --style markdown
-```
-
-Markdown proporciona un formato legible:
-
-```markdown
-Este archivo es una representación fusionada de toda la base de código...
-
-# Resumen de archivos
-(Metadatos e instrucciones de IA)
-
-# Estructura de directorios
-```
-src/
-index.ts
-utils/
-helper.ts
-```
-
-# Archivos
-
-## Archivo: src/index.ts
-```typescript
-// Contenido del archivo aquí
-```
-
-# Logs de Git
-```
-2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
-README.md
-src/cli/cliRun.ts
-src/core/git/gitCommand.ts
-src/core/git/gitLogHandle.ts
-src/core/output/outputGenerate.ts
-
-2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-.github/workflows/ratchet-update.yml
-```
-```
-
-## Uso con modelos de IA
-
-Cada formato funciona bien con modelos de IA, pero considera:
-- Usar XML para Claude (mejor precisión de análisis)
-- Usar Markdown para legibilidad general
-- Usar JSON para procesamiento programático e integración de API
-- Usar texto sin formato para simplicidad y compatibilidad universal
-
-## Personalización
-
-Establece el formato predeterminado en `repomix.config.json`:
-```json
-{
-  "output": {
-    "style": "xml",
-    "filePath": "output.xml"
-  }
-}
-```
-
 ## Formato de texto sin formato
 
 ```bash
@@ -271,4 +251,24 @@ src/core/output/outputGenerate.ts
 
 2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 .github/workflows/ratchet-update.yml
+```
+
+## Uso con modelos de IA
+
+Cada formato funciona bien con modelos de IA, pero considera:
+- Usar XML para Claude (mejor precisión de análisis)
+- Usar Markdown para legibilidad general
+- Usar JSON para procesamiento programático e integración de API
+- Usar texto sin formato para simplicidad y compatibilidad universal
+
+## Personalización
+
+Establece el formato predeterminado en `repomix.config.json`:
+```json
+{
+  "output": {
+    "style": "xml",
+    "filePath": "output.xml"
+  }
+}
 ```

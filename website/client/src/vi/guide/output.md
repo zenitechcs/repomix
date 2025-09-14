@@ -86,6 +86,60 @@ Lựa chọn XML của chúng tôi chủ yếu được ảnh hưởng bởi cá
 - **Google (Gemini)**: Khuyến nghị các định dạng có cấu trúc bao gồm XML cho các tác vụ phức tạp ([tài liệu](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts))
 - **OpenAI (GPT)**: Ủng hộ prompting có cấu trúc trong các tình huống phức tạp ([thông báo](https://x.com/OpenAIDevs/status/1890147300493914437), [cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide))
 
+## Định dạng Markdown
+
+Định dạng Markdown cung cấp đầu ra dễ đọc hơn cho con người, đồng thời vẫn duy trì cấu trúc đủ tốt cho AI.
+
+Ví dụ về đầu ra Markdown:
+
+````markdown
+# Repository: repomix
+
+## Stats
+- File count: 42
+- Total lines: 1234
+- Total tokens: 5678
+
+## Top Files
+1. src/index.ts (100 lines, 450 tokens)
+2. src/utils.ts (80 lines, 320 tokens)
+...
+
+## Files
+
+### src/index.ts (typescript)
+```typescript
+import { processRepository } from './core';
+// Nội dung tệp...
+```
+
+### src/utils.ts (typescript)
+```typescript
+export function formatOutput(data) {
+  // Nội dung tệp...
+}
+```
+
+# Git Logs
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+...
+````
+
+Định dạng Markdown đặc biệt hữu ích cho:
+- Đọc và xem xét bởi con người
+- Chia sẻ codebase trong các tài liệu hoặc wiki
+- Sử dụng với các công cụ hỗ trợ Markdown
+
 ## Định dạng JSON
 
 ```bash
@@ -183,60 +237,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 # Trích xuất đường dẫn file khớp với nhiều phần mở rộng
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
-
-## Định dạng Markdown
-
-Định dạng Markdown cung cấp đầu ra dễ đọc hơn cho con người, đồng thời vẫn duy trì cấu trúc đủ tốt cho AI.
-
-Ví dụ về đầu ra Markdown:
-
-```markdown
-# Repository: repomix
-
-## Stats
-- File count: 42
-- Total lines: 1234
-- Total tokens: 5678
-
-## Top Files
-1. src/index.ts (100 lines, 450 tokens)
-2. src/utils.ts (80 lines, 320 tokens)
-...
-
-## Files
-
-### src/index.ts (typescript)
-```typescript
-import { processRepository } from './core';
-// Nội dung tệp...
-```
-
-### src/utils.ts (typescript)
-```typescript
-export function formatOutput(data) {
-  // Nội dung tệp...
-}
-```
-
-# Git Logs
-```
-2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
-README.md
-src/cli/cliRun.ts
-src/core/git/gitCommand.ts
-src/core/git/gitLogHandle.ts
-src/core/output/outputGenerate.ts
-
-2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-.github/workflows/ratchet-update.yml
-```
-...
-```
-
-Định dạng Markdown đặc biệt hữu ích cho:
-- Đọc và xem xét bởi con người
-- Chia sẻ codebase trong các tài liệu hoặc wiki
-- Sử dụng với các công cụ hỗ trợ Markdown
 
 ## Định dạng văn bản thuần túy
 

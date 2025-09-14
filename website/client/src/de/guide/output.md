@@ -56,6 +56,49 @@ Unsere Wahl von XML wird hauptsächlich von offiziellen Empfehlungen großer KI-
 - **Google (Gemini)**: Empfiehlt strukturierte Formate einschließlich XML für komplexe Aufgaben ([Dokumentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/structure-prompts))
 - **OpenAI (GPT)**: Befürwortet strukturiertes Prompting in komplexen Szenarien ([Ankündigung](https://x.com/OpenAIDevs/status/1890147300493914437), [Cookbook](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide))
 
+## Markdown-Format
+
+```bash
+repomix --style markdown
+```
+
+Markdown bietet lesbare Formatierung:
+
+````markdown
+Diese Datei ist eine zusammengeführte Darstellung der gesamten Codebasis...
+
+# Dateizusammenfassung
+(Metadaten und KI-Anweisungen)
+
+# Verzeichnisstruktur
+```text
+src/
+  index.ts
+  utils/
+    helper.ts
+```
+
+# Dateien
+
+## Datei: src/index.ts
+```typescript
+// Dateiinhalt hier
+```
+
+# Git-Logs
+```
+2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
+README.md
+src/cli/cliRun.ts
+src/core/git/gitCommand.ts
+src/core/git/gitLogHandle.ts
+src/core/output/outputGenerate.ts
+
+2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
+.github/workflows/ratchet-update.yml
+```
+```` 
+
 ## JSON-Format
 
 ```bash
@@ -153,48 +196,6 @@ cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("i
 # Dateipfade mit mehreren Erweiterungen extrahieren
 cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
-
-## Markdown-Format
-
-```bash
-repomix --style markdown
-```
-
-Markdown bietet lesbare Formatierung:
-
-```markdown
-Diese Datei ist eine zusammengeführte Darstellung der gesamten Codebasis...
-
-# Dateizusammenfassung
-(Metadaten und KI-Anweisungen)
-
-# Verzeichnisstruktur
-```text
-src/
-  index.ts
-  utils/
-    helper.ts
-```
-
-# Dateien
-
-## Datei: src/index.ts
-```typescript
-// Dateiinhalt hier
-```
-
-# Git-Logs
-```
-2025-08-20 00:47:19 +0900|feat(cli): Add --include-logs option for git commit history
-README.md
-src/cli/cliRun.ts
-src/core/git/gitCommand.ts
-src/core/git/gitLogHandle.ts
-src/core/output/outputGenerate.ts
-
-2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
-.github/workflows/ratchet-update.yml
-``` 
 
 ## Klartext-Format
 
