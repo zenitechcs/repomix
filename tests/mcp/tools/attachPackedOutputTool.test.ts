@@ -226,4 +226,154 @@ describe('AttachPackedOutputTool', () => {
       undefined,
     );
   });
+
+  test('should handle Markdown file path input', async () => {
+    const testFilePath = '/test/repomix-output.md';
+    const markdownContent = `
+# Files
+
+## File: src/index.js
+\`\`\`javascript
+console.log('Hello');
+\`\`\`
+
+## File: src/utils.js
+\`\`\`javascript
+function helper() {}
+\`\`\`
+    `;
+
+    vi.mocked(fs.readFile).mockResolvedValue(markdownContent);
+
+    const result = await toolHandler({ path: testFilePath });
+
+    expect(fs.stat).toHaveBeenCalledWith(testFilePath);
+    expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
+    expect(formatPackToolResponse).toHaveBeenCalled();
+    
+    const expectedFilePaths = ['src/index.js', 'src/utils.js'];
+    const expectedCharCounts = {
+      'src/index.js': "console.log('Hello');".length,
+      'src/utils.js': 'function helper() {}'.length,
+    };
+    const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
+    
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 2,
+        totalCharacters: totalCharacters,
+        totalTokens: Math.floor(totalCharacters / 4),
+        safeFilePaths: expectedFilePaths,
+        fileCharCounts: expectedCharCounts,
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
+
+  test('should handle Plain text file path input', async () => {
+    const testFilePath = '/test/repomix-output.txt';
+    const plainContent = `
+================
+File: src/index.js
+================
+console.log('Hello');
+
+================
+File: src/utils.js
+================
+function helper() {}
+    `;
+
+    vi.mocked(fs.readFile).mockResolvedValue(plainContent);
+
+    const result = await toolHandler({ path: testFilePath });
+
+    expect(fs.stat).toHaveBeenCalledWith(testFilePath);
+    expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
+    expect(formatPackToolResponse).toHaveBeenCalled();
+    
+    const expectedFilePaths = ['src/index.js', 'src/utils.js'];
+    const expectedCharCounts = {
+      'src/index.js': "console.log('Hello');".length,
+      'src/utils.js': 'function helper() {}'.length,
+    };
+    const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
+    
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 2,
+        totalCharacters: totalCharacters,
+        totalTokens: Math.floor(totalCharacters / 4),
+        safeFilePaths: expectedFilePaths,
+        fileCharCounts: expectedCharCounts,
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
+
+  test('should handle JSON file path input', async () => {
+    const testFilePath = '/test/repomix-output.json';
+    const jsonContent = JSON.stringify({
+      files: {
+        'src/index.js': "console.log('Hello');",
+        'src/utils.js': 'function helper() {}',
+        'package.json': '{"name":"test"}',
+      },
+    });
+
+    vi.mocked(fs.readFile).mockResolvedValue(jsonContent);
+
+    const result = await toolHandler({ path: testFilePath });
+
+    expect(fs.stat).toHaveBeenCalledWith(testFilePath);
+    expect(fs.readFile).toHaveBeenCalledWith(testFilePath, 'utf8');
+    expect(formatPackToolResponse).toHaveBeenCalled();
+    
+    const expectedFilePaths = ['src/index.js', 'src/utils.js', 'package.json'];
+    const expectedCharCounts = {
+      'src/index.js': "console.log('Hello');".length,
+      'src/utils.js': 'function helper() {}'.length,
+      'package.json': '{"name":"test"}'.length,
+    };
+    const totalCharacters = Object.values(expectedCharCounts).reduce((a, b) => a + b, 0);
+    
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 3,
+        totalCharacters: totalCharacters,
+        totalTokens: Math.floor(totalCharacters / 4),
+        safeFilePaths: expectedFilePaths,
+        fileCharCounts: expectedCharCounts,
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
+
+  test('should handle malformed JSON by returning zero metrics', async () => {
+    const testFilePath = '/test/repomix-output.json';
+    const malformedJson = '{"files": {"test.js": "content"'; // missing closing braces
+
+    vi.mocked(fs.readFile).mockResolvedValue(malformedJson);
+
+    await toolHandler({ path: testFilePath });
+
+    expect(formatPackToolResponse).toHaveBeenCalledWith(
+      { directory: 'test' },
+      expect.objectContaining({
+        totalFiles: 0,
+        totalCharacters: 0,
+        totalTokens: 0,
+        safeFilePaths: [],
+        fileCharCounts: {},
+      }),
+      testFilePath,
+      undefined,
+    );
+  });
 });

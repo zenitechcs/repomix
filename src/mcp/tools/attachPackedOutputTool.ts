@@ -72,7 +72,7 @@ async function resolveOutputFilePath(inputPath: string): Promise<{ filePath: str
     }
 
     // If it's a file, check if it's a supported format
-    const supportedExtensions = ['.xml', '.md', '.txt', '.json'];
+    const supportedExtensions = Object.values(defaultFilePathMap).map((file) => path.extname(file));
     const fileExtension = path.extname(inputPath).toLowerCase();
 
     if (!supportedExtensions.includes(fileExtension)) {
@@ -167,11 +167,7 @@ function extractFileMetricsXml(content: string): { filePaths: string[]; fileChar
   const fileRegex = /<file path="([^"]+)">([\s\S]*?)<\/file>/g;
   let match: RegExpExecArray | null;
 
-  while (true) {
-    match = fileRegex.exec(content);
-    if (!match) {
-      break;
-    }
+  for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
     const fileContent = match[2];
     filePaths.push(filePath);
@@ -192,11 +188,7 @@ function extractFileMetricsMarkdown(content: string): { filePaths: string[]; fil
   const fileRegex = /## File: ([^\n]+)\n```[^\n]*\n([\s\S]*?)```/g;
   let match: RegExpExecArray | null;
 
-  while (true) {
-    match = fileRegex.exec(content);
-    if (!match) {
-      break;
-    }
+  for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
     const fileContent = match[2];
     filePaths.push(filePath);
@@ -217,11 +209,7 @@ function extractFileMetricsPlain(content: string): { filePaths: string[]; fileCh
   const fileRegex = /={16,}\nFile: ([^\n]+)\n={16,}\n([\s\S]*?)(?=\n={16,}\n|$)/g;
   let match: RegExpExecArray | null;
 
-  while (true) {
-    match = fileRegex.exec(content);
-    if (!match) {
-      break;
-    }
+  for (const match of content.matchAll(fileRegex)) {
     const filePath = match[1];
     const fileContent = match[2].trim();
     filePaths.push(filePath);
@@ -250,7 +238,6 @@ function extractFileMetricsJson(content: string): { filePaths: string[]; fileCha
     }
   } catch (error) {
     // If JSON parsing fails, return empty results
-    console.warn('Failed to parse JSON content:', error);
   }
 
   return { filePaths, fileCharCounts };
