@@ -1,8 +1,14 @@
+---
+title: "Formatos de salida"
+description: "Compara los formatos de salida XML, Markdown, JSON y texto plano de Repomix y elige la mejor estructura para Claude, ChatGPT, Gemini, APIs y automatización."
+---
+
 # Formatos de salida
 
-Repomix admite tres formatos de salida:
+Repomix admite cuatro formatos de salida:
 - XML (predeterminado)
 - Markdown
+- JSON
 - Texto sin formato
 
 ## Formato XML
@@ -73,7 +79,7 @@ repomix --style markdown
 
 Markdown proporciona un formato legible:
 
-```markdown
+````markdown
 Este archivo es una representación fusionada de toda la base de código...
 
 # Resumen de archivos
@@ -106,25 +112,104 @@ src/core/output/outputGenerate.ts
 2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 .github/workflows/ratchet-update.yml
 ```
+````
+
+## Formato JSON
+
+```bash
+repomix --style json
 ```
 
-## Uso con modelos de IA
+El formato JSON proporciona salida estructurada y accesible programáticamente con nombres de propiedades en camelCase:
 
-Cada formato funciona bien con modelos de IA, pero considera:
-- Usar XML para Claude (mejor precisión de análisis)
-- Usar Markdown para legibilidad general
-- Usar texto sin formato para simplicidad y compatibilidad universal
-
-## Personalización
-
-Establece el formato predeterminado en `repomix.config.json`:
 ```json
 {
-  "output": {
-    "style": "xml",
-    "filePath": "output.xml"
-  }
+  "fileSummary": {
+    "generationHeader": "Este archivo es una representación fusionada de toda la base de código, combinada en un solo documento por Repomix.",
+    "purpose": "Este archivo contiene una representación empaquetada del contenido completo del repositorio...",
+    "fileFormat": "El contenido está organizado de la siguiente manera...",
+    "usageGuidelines": "- Este archivo debe tratarse como de solo lectura...",
+    "notes": "- Algunos archivos pueden haber sido excluidos según las reglas de .gitignore..."
+  },
+  "userProvidedHeader": "Texto de encabezado personalizado si se especifica",
+  "directoryStructure": "src/
+  cli/
+    cliOutput.ts
+    index.ts
+  config/
+    configLoader.ts",
+  "files": {
+    "src/index.js": "// Contenido del archivo aquí",
+    "src/utils.js": "// Contenido del archivo aquí"
+  },
+  "instruction": "Instrucciones personalizadas desde instructionFilePath"
 }
+```
+
+### Beneficios del formato JSON
+
+El formato JSON es ideal para:
+- **Procesamiento programático**: Fácil de analizar y manipular con bibliotecas JSON en cualquier lenguaje de programación
+- **Integración de API**: Consumo directo por servicios web y aplicaciones
+- **Compatibilidad con herramientas de IA**: Formato estructurado optimizado para aprendizaje automático y sistemas de IA
+- **Análisis de datos**: Extracción sencilla de información específica usando herramientas como `jq`
+
+### Trabajando con salida JSON usando `jq`
+
+El formato JSON facilita la extracción programática de información específica. Aquí hay ejemplos comunes:
+
+#### Operaciones básicas de archivos
+```bash
+# Listar todas las rutas de archivos
+cat repomix-output.json | jq -r '.files | keys[]'
+
+# Contar el número total de archivos
+cat repomix-output.json | jq '.files | keys | length'
+
+# Extraer contenido de archivo específico
+cat repomix-output.json | jq -r '.files["README.md"]'
+cat repomix-output.json | jq -r '.files["src/index.js"]'
+```
+
+#### Filtrado y análisis de archivos
+```bash
+# Encontrar archivos por extensión
+cat repomix-output.json | jq -r '.files | keys[] | select(endswith(".ts"))'
+cat repomix-output.json | jq -r '.files | keys[] | select(endswith(".js") or endswith(".ts"))'
+
+# Obtener archivos que contengan texto específico
+cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | contains("function")) | .key'
+
+# Crear lista de archivos con conteo de caracteres
+cat repomix-output.json | jq -r '.files | to_entries[] | "\(.key): \(.value | length) caracteres"'
+```
+
+#### Extracción de metadatos
+```bash
+# Extraer estructura de directorios
+cat repomix-output.json | jq -r '.directoryStructure'
+
+# Obtener información de resumen de archivos
+cat repomix-output.json | jq '.fileSummary.purpose'
+cat repomix-output.json | jq -r '.fileSummary.generationHeader'
+
+# Extraer encabezado proporcionado por el usuario (si existe)
+cat repomix-output.json | jq -r '.userProvidedHeader // "No se proporcionó encabezado"'
+
+# Obtener instrucciones personalizadas
+cat repomix-output.json | jq -r '.instruction // "No se proporcionaron instrucciones"'
+```
+
+#### Análisis avanzado
+```bash
+# Encontrar archivos más grandes por longitud de contenido
+cat repomix-output.json | jq -r '.files | to_entries[] | [.key, (.value | length)] | @tsv' | sort -k2 -nr | head -10
+
+# Buscar archivos que contengan patrones específicos
+cat repomix-output.json | jq -r '.files | to_entries[] | select(.value | test("import.*react"; "i")) | .key'
+
+# Extraer rutas de archivos que coincidan con múltiples extensiones
+cat repomix-output.json | jq -r '.files | keys[] | select(test("\.(js|ts|jsx|tsx)$"))'
 ```
 
 ## Formato de texto sin formato
@@ -172,3 +257,30 @@ src/core/output/outputGenerate.ts
 2025-08-21 00:09:43 +0900|Merge pull request #795 from yamadashy/chore/ratchet-update-ci
 .github/workflows/ratchet-update.yml
 ```
+
+## Uso con modelos de IA
+
+Cada formato funciona bien con modelos de IA, pero considera:
+- Usar XML para Claude (mejor precisión de análisis)
+- Usar Markdown para legibilidad general
+- Usar JSON para procesamiento programático e integración de API
+- Usar texto sin formato para simplicidad y compatibilidad universal
+
+## Personalización
+
+Establece el formato predeterminado en `repomix.config.json`:
+```json
+{
+  "output": {
+    "style": "xml",
+    "filePath": "output.xml"
+  }
+}
+```
+
+## Recursos relacionados
+
+- [Configuración](/es/guide/configuration) - Referencia completa de opciones de configuración
+- [Opciones de línea de comandos](/es/guide/command-line-options) - Usar `--style` para establecer el formato de salida
+- [Compresión de código](/es/guide/code-compress) - Reducir el conteo de tokens preservando la estructura
+- [Ejemplos de prompts](/es/guide/prompt-examples) - Consejos para usar la salida con diferentes modelos de IA

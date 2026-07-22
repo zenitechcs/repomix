@@ -1,13 +1,52 @@
+import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
-import { type CliOptions, runCli } from 'repomix';
-import type { PackOptions, PackResult } from '../../types.js';
+import { promisify } from 'node:util';
+import { type CliOptions, parseRemoteValue, runDefaultAction } from 'repomix';
+import type { PackOptions, PackProgressCallback, PackResult, ProcessPackResult } from '../../types.js';
 import { AppError } from '../../utils/errorHandler.js';
 import { logMemoryUsage } from '../../utils/logger.js';
 import { generateCacheKey } from './utils/cache.js';
+import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from './utils/fileUtils.js';
 import { cache } from './utils/sharedInstance.js';
+import { assertPublicHttpsRepoUrl } from './validateRemoteRepoUrl.js';
 
-export async function processRemoteRepo(repoUrl: string, format: string, options: PackOptions): Promise<PackResult> {
+const execFileAsync = promisify(execFile);
+
+async function cloneRepository(repoUrl: string, destPath: string, branch?: string): Promise<void> {
+  // `assertPublicHttpsRepoUrl` only validates the URL the user supplied. Without
+  // the config below, git would still follow an HTTP 3xx from that (public,
+  // allowed) host to an internal one — e.g. a public https repo redirecting to
+  // `http://169.254.169.254/…` — re-introducing the SSRF after the check passed.
+  // Disallow redirects entirely, and pin the transport to https so a redirect
+  // cannot switch protocol to file:// / ext:: either.
+  const hardeningConfig = [
+    '-c',
+    'http.followRedirects=false',
+    '-c',
+    'protocol.allow=never',
+    '-c',
+    'protocol.https.allow=always',
+  ];
+  const args = [...hardeningConfig, 'clone', '--depth', '1', '--single-branch'];
+  if (branch) {
+    args.push('--branch', branch);
+  }
+  args.push('--', repoUrl, destPath);
+
+  try {
+    await execFileAsync('git', args, { timeout: 60_000, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } });
+  } catch {
+    throw new AppError('Failed to clone repository.\nThe repository may not be public or the URL may be invalid.', 500);
+  }
+}
+
+export async function processRemoteRepo(
+  repoUrl: string,
+  format: string,
+  options: PackOptions,
+  onProgress?: PackProgressCallback,
+): Promise<ProcessPackResult> {
   if (!repoUrl) {
     throw new AppError('Repository URL is required for remote processing', 400);
   }
@@ -16,16 +55,24 @@ export async function processRemoteRepo(repoUrl: string, format: string, options
   const cacheKey = generateCacheKey(repoUrl, format, options, 'url');
 
   // Check if the result is already cached
+  await onProgress?.('cache-check');
   const cachedResult = await cache.get(cacheKey);
   if (cachedResult) {
-    return cachedResult;
+    return { result: cachedResult, cached: true };
   }
 
+  // Clone the repository
+  await onProgress?.('cloning');
+  const parsed = parseRemoteValue(repoUrl);
+  // Enforce a public-https-only allowlist before invoking git. `parseRemoteValue`
+  // only checks the owner/repo shape, so without this a user could pass
+  // file:// (local file read) or http(s):// to an internal host (SSRF).
+  await assertPublicHttpsRepoUrl(parsed.repoUrl);
+  const tempDirPath = await createTempDirectory();
   const outputFilePath = `repomix-output-${randomUUID()}.txt`;
 
-  // Create CLI options with correct mapping
+  // Create CLI options for runDefaultAction (no 'remote' needed since we clone ourselves)
   const cliOptions = {
-    remote: repoUrl,
     output: outputFilePath,
     style: format,
     parsableStyle: options.outputParsable,
@@ -39,8 +86,8 @@ export async function processRemoteRepo(repoUrl: string, format: string, options
     topFilesLen: 10,
     include: options.includePatterns,
     ignore: options.ignorePatterns,
-    tokenCountTree: true, // Required to generate token counts for all files in the repository
-    quiet: true, // Enable quiet mode to suppress output
+    quiet: true,
+    skipLocalConfig: true, // Prevent loading config files from untrusted cloned repositories
   } as CliOptions;
 
   try {
@@ -50,11 +97,16 @@ export async function processRemoteRepo(repoUrl: string, format: string, options
       format: format,
     });
 
-    // Execute remote action
-    const result = await runCli(['.'], process.cwd(), cliOptions);
-    if (!result) {
-      throw new AppError('Remote action failed to return a result', 500);
-    }
+    // Clone the repository to temp directory
+    await cloneRepository(parsed.repoUrl, tempDirPath, parsed.remoteBranch);
+
+    // Process the cloned repository
+    await onProgress?.('processing');
+    const packProgressCallback = (message: string) => {
+      return onProgress?.('processing', message);
+    };
+    const result = await runDefaultAction([tempDirPath], tempDirPath, cliOptions, packProgressCallback);
+    await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
     const { packResult } = result;
 
     // Read the generated file
@@ -80,13 +132,13 @@ export async function processRemoteRepo(repoUrl: string, format: string, options
           }))
           .sort((a, b) => b.tokenCount - a.tokenCount)
           .slice(0, cliOptions.topFilesLen),
-        allFiles: Object.entries(packResult.fileTokenCounts)
-          .map(([path]) => ({
+        allFiles: Object.entries(packResult.fileCharCounts)
+          .map(([path, charCount]) => ({
             path,
-            tokenCount: packResult.fileTokenCounts[path] || 0,
-            selected: true, // Default to selected for initial packing
+            charCount: charCount as number,
+            selected: true,
           }))
-          .sort((a, b) => b.tokenCount - a.tokenCount),
+          .sort((a, b) => b.charCount - a.charCount),
       },
     };
 
@@ -101,20 +153,28 @@ export async function processRemoteRepo(repoUrl: string, format: string, options
       totalTokens: packResult.totalTokens,
     });
 
-    return packResultData;
+    return { result: packResultData, cached: false };
   } catch (error) {
-    console.error('Error in remote action:', error);
-    if (error instanceof Error) {
-      throw new AppError(`Remote action failed: ${error.message}`, 500);
+    console.error('Error in remote repository processing:', error);
+    if (error instanceof AppError) {
+      throw error;
     }
-    throw new AppError('Remote action failed with unknown error', 500);
+    if (error instanceof Error) {
+      throw new AppError(
+        `Remote repository processing failed.\nThe repository may not be public or there may be an issue with Repomix.\n\n${error.message}`,
+        500,
+      );
+    }
+    throw new AppError(
+      'Remote repository processing failed.\nThe repository may not be public or there may be an issue with Repomix.',
+      500,
+    );
   } finally {
-    // Clean up the output file
+    await cleanupTempDirectory(tempDirPath);
     try {
       await fs.unlink(outputFilePath);
-    } catch (err) {
+    } catch {
       // Ignore file deletion errors
-      console.warn('Failed to cleanup output file:', err);
     }
   }
 }

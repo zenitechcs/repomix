@@ -1,166 +1,227 @@
-import type { TiktokenEncoding } from 'tiktoken';
-import { z } from 'zod';
+import * as v from 'valibot';
+// Use the lightweight tokenEncodings module so gpt-tokenizer stays off the startup import graph.
+import { TOKEN_ENCODINGS } from '../core/metrics/tokenEncodings.js';
 
 // Output style enum
-export const repomixOutputStyleSchema = z.enum(['xml', 'markdown', 'plain']);
-export type RepomixOutputStyle = z.infer<typeof repomixOutputStyleSchema>;
+export const repomixOutputStyleSchema = v.picklist(['xml', 'markdown', 'json', 'plain']);
+export type RepomixOutputStyle = v.InferOutput<typeof repomixOutputStyleSchema>;
+
+// Output file path style enum
+export const repomixOutputFilePathStyleSchema = v.picklist(['target-relative', 'cwd-relative']);
+export type RepomixOutputFilePathStyle = v.InferOutput<typeof repomixOutputFilePathStyleSchema>;
 
 // Default values map
 export const defaultFilePathMap: Record<RepomixOutputStyle, string> = {
   xml: 'repomix-output.xml',
   markdown: 'repomix-output.md',
   plain: 'repomix-output.txt',
+  json: 'repomix-output.json',
 } as const;
 
+// Per-file inclusion level pattern (output.patterns).
+// Each entry targets files by glob (matched the same way as include/ignore) and
+// overrides the global output.compress setting for matching files. Patterns are
+// evaluated in array order and the first match wins. `directoryStructureOnly`
+// takes precedence over `compress`: the file is listed in the directory
+// structure but its content block is omitted from the output.
+export const outputPatternSchema = v.object({
+  pattern: v.string(),
+  compress: v.optional(v.boolean()),
+  directoryStructureOnly: v.optional(v.boolean()),
+});
+export type OutputPattern = v.InferOutput<typeof outputPatternSchema>;
+
+// File processor error handling mode (input.processors[].onError).
+// - `fail` (default): abort the whole pack when the command exits non-zero or times out.
+// - `skip`: log a warning and fall back to the file's original content.
+export const fileProcessorOnErrorSchema = v.picklist(['fail', 'skip']);
+export type FileProcessorOnError = v.InferOutput<typeof fileProcessorOnErrorSchema>;
+
+// Per-file external command transform (input.processors).
+// Each entry targets files by glob (matched the same way as include/ignore) and
+// replaces matching files' content with the command's stdout before packing.
+// Entries are evaluated in array order and the first match wins (one processor
+// per file, no chaining). `command` must contain a `{file}` placeholder, which
+// is substituted with a temp file holding the file's current content.
+export const fileProcessorSchema = v.object({
+  pattern: v.string(),
+  command: v.string(),
+  // Per-command timeout in milliseconds. Defaults to DEFAULT_FILE_PROCESSOR_TIMEOUT_MS.
+  // Capped at Node's max 32-bit timer delay (2^31 - 1); larger values are clamped
+  // to ~1ms by Node, which would make the command fail instantly.
+  timeout: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(2_147_483_647))),
+  onError: v.optional(fileProcessorOnErrorSchema),
+});
+export type FileProcessor = v.InferOutput<typeof fileProcessorSchema>;
+
 // Base config schema
-export const repomixConfigBaseSchema = z.object({
-  $schema: z.string().optional(),
-  input: z
-    .object({
-      maxFileSize: z.number().optional(),
-    })
-    .optional(),
-  output: z
-    .object({
-      filePath: z.string().optional(),
-      style: repomixOutputStyleSchema.optional(),
-      parsableStyle: z.boolean().optional(),
-      headerText: z.string().optional(),
-      instructionFilePath: z.string().optional(),
-      fileSummary: z.boolean().optional(),
-      directoryStructure: z.boolean().optional(),
-      files: z.boolean().optional(),
-      removeComments: z.boolean().optional(),
-      removeEmptyLines: z.boolean().optional(),
-      compress: z.boolean().optional(),
-      topFilesLength: z.number().optional(),
-      showLineNumbers: z.boolean().optional(),
-      truncateBase64: z.boolean().optional(),
-      copyToClipboard: z.boolean().optional(),
-      includeEmptyDirectories: z.boolean().optional(),
-      tokenCountTree: z.union([z.boolean(), z.number(), z.string()]).optional(),
-      git: z
-        .object({
-          sortByChanges: z.boolean().optional(),
-          sortByChangesMaxCommits: z.number().optional(),
-          includeDiffs: z.boolean().optional(),
-          includeLogs: z.boolean().optional(),
-          includeLogsCount: z.number().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-  include: z.array(z.string()).optional(),
-  ignore: z
-    .object({
-      useGitignore: z.boolean().optional(),
-      useDefaultPatterns: z.boolean().optional(),
-      customPatterns: z.array(z.string()).optional(),
-    })
-    .optional(),
-  security: z
-    .object({
-      enableSecurityCheck: z.boolean().optional(),
-    })
-    .optional(),
-  tokenCount: z
-    .object({
-      encoding: z.string().optional(),
-    })
-    .optional(),
+export const repomixConfigBaseSchema = v.object({
+  $schema: v.optional(v.string()),
+  input: v.optional(
+    v.object({
+      maxFileSize: v.optional(v.number()),
+      processors: v.optional(v.array(fileProcessorSchema)),
+    }),
+  ),
+  output: v.optional(
+    v.object({
+      filePath: v.optional(v.string()),
+      style: v.optional(repomixOutputStyleSchema),
+      filePathStyle: v.optional(repomixOutputFilePathStyleSchema),
+      parsableStyle: v.optional(v.boolean()),
+      headerText: v.optional(v.string()),
+      instructionFilePath: v.optional(v.string()),
+      fileSummary: v.optional(v.boolean()),
+      directoryStructure: v.optional(v.boolean()),
+      files: v.optional(v.boolean()),
+      removeComments: v.optional(v.boolean()),
+      removeEmptyLines: v.optional(v.boolean()),
+      compress: v.optional(v.boolean()),
+      patterns: v.optional(v.array(outputPatternSchema)),
+      topFilesLength: v.optional(v.number()),
+      showLineNumbers: v.optional(v.boolean()),
+      truncateBase64: v.optional(v.boolean()),
+      copyToClipboard: v.optional(v.boolean()),
+      includeEmptyDirectories: v.optional(v.boolean()),
+      includeFullDirectoryStructure: v.optional(v.boolean()),
+      splitOutput: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(Number.MAX_SAFE_INTEGER))),
+      tokenCountTree: v.optional(v.union([v.boolean(), v.number(), v.string()])),
+      tokenBudget: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(Number.MAX_SAFE_INTEGER))),
+      git: v.optional(
+        v.object({
+          sortByChanges: v.optional(v.boolean()),
+          sortByChangesMaxCommits: v.optional(v.number()),
+          includeDiffs: v.optional(v.boolean()),
+          includeLogs: v.optional(v.boolean()),
+          includeLogsCount: v.optional(v.number()),
+        }),
+      ),
+    }),
+  ),
+  include: v.optional(v.array(v.string())),
+  ignore: v.optional(
+    v.object({
+      useGitignore: v.optional(v.boolean()),
+      useDotIgnore: v.optional(v.boolean()),
+      useDefaultPatterns: v.optional(v.boolean()),
+      customPatterns: v.optional(v.array(v.string())),
+    }),
+  ),
+  security: v.optional(
+    v.object({
+      enableSecurityCheck: v.optional(v.boolean()),
+    }),
+  ),
+  tokenCount: v.optional(
+    v.object({
+      encoding: v.optional(v.string()),
+    }),
+  ),
 });
 
 // Default config schema with default values
-export const repomixConfigDefaultSchema = z.object({
-  input: z
-    .object({
-      maxFileSize: z
-        .number()
-        .int()
-        .min(1)
-        .default(50 * 1024 * 1024), // Default: 50MB
-    })
-    .default({}),
-  output: z
-    .object({
-      filePath: z.string().default(defaultFilePathMap.xml),
-      style: repomixOutputStyleSchema.default('xml'),
-      parsableStyle: z.boolean().default(false),
-      headerText: z.string().optional(),
-      instructionFilePath: z.string().optional(),
-      fileSummary: z.boolean().default(true),
-      directoryStructure: z.boolean().default(true),
-      files: z.boolean().default(true),
-      removeComments: z.boolean().default(false),
-      removeEmptyLines: z.boolean().default(false),
-      compress: z.boolean().default(false),
-      topFilesLength: z.number().int().min(0).default(5),
-      showLineNumbers: z.boolean().default(false),
-      truncateBase64: z.boolean().default(false),
-      copyToClipboard: z.boolean().default(false),
-      includeEmptyDirectories: z.boolean().optional(),
-      tokenCountTree: z.union([z.boolean(), z.number(), z.string()]).default(false),
-      git: z
-        .object({
-          sortByChanges: z.boolean().default(true),
-          sortByChangesMaxCommits: z.number().int().min(1).default(100),
-          includeDiffs: z.boolean().default(false),
-          includeLogs: z.boolean().default(false),
-          includeLogsCount: z.number().int().min(1).default(50),
-        })
-        .default({}),
-    })
-    .default({}),
-  include: z.array(z.string()).default([]),
-  ignore: z
-    .object({
-      useGitignore: z.boolean().default(true),
-      useDefaultPatterns: z.boolean().default(true),
-      customPatterns: z.array(z.string()).default([]),
-    })
-    .default({}),
-  security: z
-    .object({
-      enableSecurityCheck: z.boolean().default(true),
-    })
-    .default({}),
-  tokenCount: z
-    .object({
-      encoding: z
-        .string()
-        .default('o200k_base')
-        .transform((val) => val as TiktokenEncoding),
-    })
-    .default({}),
+export const repomixConfigDefaultSchema = v.object({
+  input: v.object({
+    maxFileSize: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 50 * 1024 * 1024), // Default: 50MB
+  }),
+  output: v.object({
+    filePath: v.optional(v.string(), defaultFilePathMap.xml),
+    style: v.optional(repomixOutputStyleSchema, 'xml'),
+    filePathStyle: v.optional(repomixOutputFilePathStyleSchema, 'target-relative'),
+    parsableStyle: v.optional(v.boolean(), false),
+    headerText: v.optional(v.string()),
+    instructionFilePath: v.optional(v.string()),
+    fileSummary: v.optional(v.boolean(), true),
+    directoryStructure: v.optional(v.boolean(), true),
+    files: v.optional(v.boolean(), true),
+    removeComments: v.optional(v.boolean(), false),
+    removeEmptyLines: v.optional(v.boolean(), false),
+    compress: v.optional(v.boolean(), false),
+    topFilesLength: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0)), 5),
+    showLineNumbers: v.optional(v.boolean(), false),
+    truncateBase64: v.optional(v.boolean(), false),
+    copyToClipboard: v.optional(v.boolean(), false),
+    includeEmptyDirectories: v.optional(v.boolean()),
+    includeFullDirectoryStructure: v.optional(v.boolean(), false),
+    splitOutput: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(Number.MAX_SAFE_INTEGER))),
+    tokenCountTree: v.optional(v.union([v.boolean(), v.number(), v.string()]), false),
+    // No default: undefined means "unlimited" (no budget enforced), preserving current behavior.
+    tokenBudget: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(Number.MAX_SAFE_INTEGER))),
+    git: v.object({
+      sortByChanges: v.optional(v.boolean(), true),
+      sortByChangesMaxCommits: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 100),
+      includeDiffs: v.optional(v.boolean(), false),
+      includeLogs: v.optional(v.boolean(), false),
+      includeLogsCount: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 50),
+    }),
+  }),
+  include: v.optional(v.array(v.string()), () => []),
+  ignore: v.object({
+    useGitignore: v.optional(v.boolean(), true),
+    useDotIgnore: v.optional(v.boolean(), true),
+    useDefaultPatterns: v.optional(v.boolean(), true),
+    customPatterns: v.optional(v.array(v.string()), () => []),
+  }),
+  security: v.object({
+    enableSecurityCheck: v.optional(v.boolean(), true),
+  }),
+  tokenCount: v.object({
+    encoding: v.optional(v.picklist(TOKEN_ENCODINGS), 'o200k_base'),
+  }),
 });
 
 // File-specific schema. Add options for file path and style
 export const repomixConfigFileSchema = repomixConfigBaseSchema;
 
-// CLI-specific schema. Add options for standard output mode
-export const repomixConfigCliSchema = repomixConfigBaseSchema.and(
-  z.object({
-    output: z
-      .object({
-        stdout: z.boolean().optional(),
-      })
-      .optional(),
+// CLI-specific schema. Add options for standard output mode and skill generation
+export const repomixConfigCliSchema = v.intersect([
+  repomixConfigBaseSchema,
+  v.object({
+    output: v.optional(
+      v.object({
+        stdout: v.optional(v.boolean()),
+      }),
+    ),
+    skillGenerate: v.optional(v.union([v.string(), v.boolean()])),
+    // Runtime gate for input.processors (arbitrary command execution). Not a
+    // config-file field: it is injected only by the real CLI entry point so that
+    // library `pack()`/`runCli()` callers, MCP, and the hosted website default
+    // to OFF. Remote runs enable it only with --remote-trust-config.
+    enableFileProcessors: v.optional(v.boolean()),
   }),
-);
+]);
 
-// Merged schema for all configurations
-export const repomixConfigMergedSchema = repomixConfigDefaultSchema
-  .and(repomixConfigFileSchema)
-  .and(repomixConfigCliSchema)
-  .and(
-    z.object({
-      cwd: z.string(),
-    }),
-  );
+// Merged schema for all configurations.
+// `v.intersect` is intentional: it layers the default schema (required fields
+// with applied defaults) over the file and CLI schemas (all fields optional).
+// Flattening to a single object via spread would silently demote the
+// required-with-default fields to optional and change merge semantics.
+export const repomixConfigMergedSchema = v.intersect([
+  repomixConfigDefaultSchema,
+  repomixConfigFileSchema,
+  repomixConfigCliSchema,
+  v.object({
+    cwd: v.string(),
+  }),
+]);
 
-export type RepomixConfigDefault = z.infer<typeof repomixConfigDefaultSchema>;
-export type RepomixConfigFile = z.infer<typeof repomixConfigFileSchema>;
-export type RepomixConfigCli = z.infer<typeof repomixConfigCliSchema>;
-export type RepomixConfigMerged = z.infer<typeof repomixConfigMergedSchema>;
+export type RepomixConfigDefault = v.InferOutput<typeof repomixConfigDefaultSchema>;
+export type RepomixConfigFile = v.InferOutput<typeof repomixConfigFileSchema>;
+export type RepomixConfigCli = v.InferOutput<typeof repomixConfigCliSchema>;
+export type RepomixConfigMerged = v.InferOutput<typeof repomixConfigMergedSchema>;
 
-export const defaultConfig = repomixConfigDefaultSchema.parse({});
+// Pass empty objects to let Valibot apply all default values.
+// Explicit nested objects are required because we do not wrap the outer schema
+// in v.optional with a default.
+export const defaultConfig = v.parse(repomixConfigDefaultSchema, {
+  input: {},
+  output: {
+    git: {},
+  },
+  ignore: {},
+  security: {},
+  tokenCount: {},
+});
+
+// Helper function for type-safe config definition
+export const defineConfig = (config: RepomixConfigFile): RepomixConfigFile => config;

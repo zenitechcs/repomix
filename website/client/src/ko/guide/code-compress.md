@@ -1,3 +1,8 @@
+---
+title: 코드 압축
+description: "Tree-sitter 기반 Repomix 코드 압축으로 imports, exports, 클래스, 함수, 인터페이스, 구조를 보존하면서 토큰 사용량을 줄입니다."
+---
+
 # 코드 압축
 
 코드 압축은 구현 세부 사항을 제거하면서 필수적인 코드 구조를 지능적으로 추출하는 강력한 기능입니다. 이는 코드베이스의 중요한 구조적 정보를 유지하면서 토큰 수를 줄일 때 특히 유용합니다.
@@ -107,6 +112,12 @@ interface Item {
 ## 관련 옵션
 
 압축은 다음 옵션들과 함께 사용할 수 있습니다:
-- `--remove-comments`: 코드 주석 제거
+- `--remove-comments`: 코드 주석 제거 ([주석 제거](/ko/guide/comment-removal) 참조)
 - `--remove-empty-lines`: 빈 줄 제거
 - `--output-show-line-numbers`: 출력에 줄 번호 추가
+
+## 관련 리소스
+
+- [주석 제거](/ko/guide/comment-removal) - 주석을 제거하여 토큰 수를 더 줄이기
+- [설정](/ko/guide/configuration) - 설정 파일에서 `output.compress` 설정
+- [명령행 옵션](/ko/guide/command-line-options) - 전체 CLI 레퍼런스

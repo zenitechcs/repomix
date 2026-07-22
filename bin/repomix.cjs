@@ -1,5 +1,21 @@
 #!/usr/bin/env node
 
+// https://nodejs.org/api/module.html#module-compile-cache
+// Enable compile cache for the main process and propagate the cache directory
+// via NODE_COMPILE_CACHE env var so child_process workers inherit it at startup
+// (before any modules are loaded), which is critical for ESM static imports.
+const nodeModule = require('node:module');
+if (nodeModule.enableCompileCache && !process.env.NODE_DISABLE_COMPILE_CACHE) {
+  try {
+    const result = nodeModule.enableCompileCache();
+    if (result && result.directory && !process.env.NODE_COMPILE_CACHE) {
+      process.env.NODE_COMPILE_CACHE = result.directory;
+    }
+  } catch {
+    // Ignore errors
+  }
+}
+
 const nodeVersion = process.versions.node;
 const [major] = nodeVersion.split('.').map(Number);
 

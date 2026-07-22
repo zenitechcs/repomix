@@ -143,7 +143,7 @@ describe('markdownStyle', () => {
       expect(getExtension('file.html')).toBe('html');
       expect(getExtension('file.css')).toBe('css');
       expect(getExtension('file.scss')).toBe('scss');
-      expect(getExtension('file.sass')).toBe('scss');
+      expect(getExtension('file.sass')).toBe('sass');
       expect(getExtension('file.vue')).toBe('vue');
     });
 
@@ -158,7 +158,7 @@ describe('markdownStyle', () => {
 
     // System programming languages
     test('should handle system programming language extensions', () => {
-      expect(getExtension('file.c')).toBe('cpp');
+      expect(getExtension('file.c')).toBe('c');
       expect(getExtension('file.cpp')).toBe('cpp');
       expect(getExtension('file.rs')).toBe('rust');
       expect(getExtension('file.swift')).toBe('swift');
@@ -234,6 +234,18 @@ describe('markdownStyle', () => {
       expect(getExtension('.gitignore')).toBe(''); // Dotfile
       expect(getExtension('file.unknown')).toBe(''); // Unknown extension
       expect(getExtension('path/to/file.js')).toBe('javascript'); // Path with directory
+    });
+
+    // Extensionless whole-filename keys (Dockerfile, Makefile) must resolve in
+    // subdirectories too, not only at the repo root.
+    test('should handle extensionless filenames regardless of directory depth', () => {
+      expect(getExtension('Dockerfile')).toBe('dockerfile');
+      expect(getExtension('docker/Dockerfile')).toBe('dockerfile');
+      expect(getExtension('services/api/Dockerfile')).toBe('dockerfile');
+      expect(getExtension('Makefile')).toBe('makefile');
+      expect(getExtension('src/Makefile')).toBe('makefile');
+      expect(getExtension('my.dir/Dockerfile')).toBe('dockerfile'); // dot in a directory segment
+      expect(getExtension('path\\to\\Dockerfile')).toBe('dockerfile'); // Windows separator
     });
   });
 });

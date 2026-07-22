@@ -2,21 +2,26 @@ import fs from 'node:fs/promises';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
+import { createSecretLintConfig, runSecretLint } from '../../core/security/workers/securityCheckWorker.js';
 import { logger } from '../../shared/logger.js';
 import {
   buildMcpToolErrorResponse,
   buildMcpToolSuccessResponse,
   convertErrorToJson,
   getOutputFilePath,
+  requiresSecretScan,
 } from './mcpToolRuntime.js';
 
 const readRepomixOutputInputSchema = z.object({
   outputId: z.string().describe('ID of the Repomix output file to read'),
-  startLine: z
+  startLine: z.coerce
     .number()
     .optional()
     .describe('Starting line number (1-based, inclusive). If not specified, reads from beginning.'),
-  endLine: z.number().optional().describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
+  endLine: z.coerce
+    .number()
+    .optional()
+    .describe('Ending line number (1-based, inclusive). If not specified, reads to end.'),
 });
 
 const readRepomixOutputOutputSchema = z.object({
@@ -37,8 +42,8 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
       title: 'Read Repomix Output',
       description:
         'Read the contents of a Repomix-generated output file. Supports partial reading with line range specification for large files. This tool is designed for environments where direct file system access is limited (e.g., web-based environments, sandboxed applications). For direct file system access, use standard file operations.',
-      inputSchema: readRepomixOutputInputSchema.shape,
-      outputSchema: readRepomixOutputOutputSchema.shape,
+      inputSchema: readRepomixOutputInputSchema,
+      outputSchema: readRepomixOutputOutputSchema,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -69,6 +74,19 @@ export const registerReadRepomixOutputTool = (mcpServer: McpServer) => {
 
         // Read the file content
         const content = await fs.readFile(filePath, 'utf8');
+
+        // For files attached from an untrusted path, run the same secret scan as
+        // file_system_read_file before serving any content, so this path cannot be
+        // used to bypass it.
+        if (requiresSecretScan(outputId)) {
+          const securityCheckResult = await runSecretLint(filePath, content, 'file', createSecretLintConfig());
+          if (securityCheckResult !== null) {
+            return buildMcpToolErrorResponse({
+              errorMessage: `Error: Security check failed. The file at ${filePath} may contain sensitive information.`,
+            });
+          }
+        }
+
         const lines = content.split('\n');
         const totalLines = lines.length;
 

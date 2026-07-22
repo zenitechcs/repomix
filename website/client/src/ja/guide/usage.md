@@ -1,3 +1,8 @@
+---
+title: 基本的な使い方
+description: Repomix CLIでディレクトリ、リモートリポジトリ、選択ファイル、git diff、コミットログ、分割出力、トークン数、圧縮コードを扱う基本操作を説明します。
+---
+
 # 基本的な使い方
 
 ## クイックスタート
@@ -25,6 +30,24 @@ repomix --include "src/**/*.ts,**/*.md"
 repomix --ignore "**/*.log,tmp/"
 ```
 
+### 出力を複数ファイルに分割
+
+大規模なコードベースを扱う際、パックされた出力が一部のAIツールのファイルサイズ制限を超える場合があります（例: Google AI Studioの1MB制限）。`--split-output`を使用して出力を自動的に複数のファイルに分割できます:
+
+```bash
+repomix --split-output 1mb
+```
+
+これにより、以下のような番号付きファイルが生成されます:
+- `repomix-output.1.xml`
+- `repomix-output.2.xml`
+- `repomix-output.3.xml`
+
+サイズは単位付きで指定できます: `500kb`、`1mb`、`2mb`、`1.5mb`など。小数値もサポートされています。
+
+> [!NOTE]
+> コンテキストを維持するため、ファイルはトップレベルディレクトリごとにグループ化されます。単一のファイルやディレクトリが複数の出力ファイルに分割されることはありません。
+
 ### リモートリポジトリ
 ```bash
 # GitHub URLを使用
@@ -32,6 +55,9 @@ repomix --remote https://github.com/user/repo
 
 # ショートハンドを使用
 repomix --remote user/repo
+
+# --remote なしでショートハンドを使用（自動検出）
+repomix user/repo
 
 # 特定のブランチ/タグ/コミット
 repomix --remote user/repo --remote-branch main
@@ -85,6 +111,8 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 > `--stdin`を使用する場合、ファイルパスは相対パスまたは絶対パスのどちらでも指定でき、Repomixが自動的にパス解決と重複除去を処理します。
 
 ### コード圧縮
+
+コード構造を維持しながらトークン数を削減します。詳細は[コード圧縮ガイド](/ja/guide/code-compress)をご覧ください。
 
 ```bash
 repomix --compress
@@ -163,6 +191,11 @@ repomix --style xml
 repomix --style markdown
 ```
 
+### JSON
+```bash
+repomix --style json
+```
+
 ### プレーンテキスト
 ```bash
 repomix --style plain
@@ -171,6 +204,9 @@ repomix --style plain
 ## その他のオプション
 
 ### コメントを削除
+
+サポートされている言語や詳細は[コメント削除](/ja/guide/comment-removal)をご覧ください。
+
 ```bash
 repomix --remove-comments
 ```
@@ -186,6 +222,9 @@ repomix --copy
 ```
 
 ### セキュリティチェックを無効化
+
+Repomixが検出する内容の詳細は[セキュリティ](/ja/guide/security)をご覧ください。
+
 ```bash
 repomix --no-security-check
 ```
@@ -198,3 +237,10 @@ repomix --init
 ```
 
 詳細なオプションについては[設定ガイド](/ja/guide/configuration)を参照してください。
+
+## 関連リソース
+
+- [出力フォーマット](/ja/guide/output) - XML、Markdown、JSON、プレーンテキスト形式について
+- [コマンドラインオプション](/ja/guide/command-line-options) - CLIリファレンス
+- [プロンプト例](/ja/guide/prompt-examples) - AI分析用のプロンプトテンプレート
+- [ユースケース](/ja/guide/use-cases) - 実際のワークフロー例

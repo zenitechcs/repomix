@@ -1,3 +1,8 @@
+---
+title: Xóa bình luận
+description: Xóa comment code khỏi output Repomix để giảm nhiễu và token usage trong khi vẫn giữ nguyên source file và hành vi ngôn ngữ được hỗ trợ.
+---
+
 # Xóa bình luận
 
 Repomix cung cấp tùy chọn để xóa bình luận khỏi mã nguồn trong đầu ra, giúp giảm kích thước đầu ra và tập trung vào mã thực tế.
@@ -171,8 +176,8 @@ class User {
 }
 ```
 
-## Tiếp theo là gì?
+## Tài nguyên liên quan
 
-- [Nén mã](code-compress.md): Tìm hiểu về tính năng nén mã
-- [Cấu hình](configuration.md): Tìm hiểu về tệp cấu hình
-- [Tùy chọn dòng lệnh](command-line-options.md): Xem tất cả các tùy chọn dòng lệnh có sẵn
+- [Nén mã](/vi/guide/code-compress) - Giảm thêm số lượng token bằng cách trích xuất cấu trúc mã
+- [Cấu hình](/vi/guide/configuration) - Đặt `output.removeComments` trong tệp cấu hình của bạn
+- [Tùy chọn dòng lệnh](/vi/guide/command-line-options) - Sử dụng cờ `--remove-comments`

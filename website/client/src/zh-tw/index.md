@@ -1,6 +1,7 @@
 ---
 layout: home
 title: Repomix
+description: 將本機或遠端儲存庫打包為適用於 Claude、ChatGPT、Gemini、MCP 與程式碼審查流程的 AI 友善 XML、Markdown、JSON 或純文字。
 titleTemplate: 將程式碼庫打包成AI友好的格式
 aside: false
 editLink: false
@@ -187,6 +188,9 @@ repomix --style xml
 
 # Markdown 格式
 repomix --style markdown
+
+# JSON 格式
+repomix --style json
 
 # 純文字格式
 repomix --style plain

@@ -6,33 +6,40 @@ on:
     paths:
       - '.github/actions/repomix/**'
 
+permissions:
+  contents: read
+
 jobs:
   test-action:
     name: Test Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [22, 24, 26]
         include:
-          - node-version: 18
-            test-case: "minimal"
-          - node-version: 20
-            test-case: "basic"
           - node-version: 22
+            test-case: "minimal"
+          - node-version: 24
+            test-case: "basic"
+          - node-version: 26
             test-case: "full"
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # ratchet:actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Run Repomix Action (Minimal)
         if: matrix['test-case'] == 'minimal'
         uses: ./.github/actions/repomix
         with:
+          node-version: ${{ matrix.node-version }}
           output: "repomix-minimal-output.txt"
 
       - name: Run Repomix Action (Basic)
         if: matrix['test-case'] == 'basic'
         uses: ./.github/actions/repomix
         with:
+          node-version: ${{ matrix.node-version }}
           directories: "src"
           include: "**/*.ts"
           output: "repomix-basic-output.txt"
@@ -42,6 +49,7 @@ jobs:
         if: matrix['test-case'] == 'full'
         uses: ./.github/actions/repomix
         with:
+          node-version: ${{ matrix.node-version }}
           directories: "src tests"
           include: "**/*.ts,**/*.md"
           ignore: "**/*.test.ts"
@@ -50,7 +58,7 @@ jobs:
           additional-args: "--no-file-summary"
 
       - name: Upload result
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: repomix-output-node${{ matrix.node-version }}
           path: repomix-*-output.txt

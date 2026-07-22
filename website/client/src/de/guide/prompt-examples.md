@@ -1,3 +1,8 @@
+---
+title: "Prompt-Beispiele"
+description: "Kopieren Sie Prompt-Vorlagen für Repomix-Ausgaben in KI-Code-Reviews, Sicherheitsanalysen, Performance-Reviews, Dokumentation, Tests und Qualitätsprüfungen."
+---
+
 # Prompt-Beispiele
 
 ## Code-Review
@@ -122,3 +127,10 @@ Geben Sie konkrete Beispiele für gute und problematische Muster an.
 - Funktioniert mit allen Formaten
 - Konzentrieren Sie sich pro Anfrage auf bestimmte Bereiche
 - Verwenden Sie schrittweise Analyse
+
+## Verwandte Ressourcen
+
+- [Ausgabeformate](/de/guide/output) - Details zu jedem Ausgabeformat
+- [Benutzerdefinierte Anweisungen](/de/guide/custom-instructions) - Kontext und Richtlinien zur Ausgabe hinzufügen
+- [Anwendungsfälle](/de/guide/use-cases) - Praxisbeispiele für KI-gestützte Workflows
+- [Code-Komprimierung](/de/guide/code-compress) - Token-Anzahl für große Codebasen reduzieren

@@ -1,3 +1,8 @@
+---
+title: "Casos de Uso"
+description: "Explora flujos prácticos de Repomix para revisiones de código con IA, investigación de errores, refactorización, documentación, onboarding, auditorías de seguridad y análisis de arquitectura."
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Identifica cuellos de botella de rendimiento y obtén recomendaciones de optimiz
 ```
 Analiza esta base de código para cuellos de botella de rendimiento. Busca algoritmos ineficientes, consultas innecesarias de base de datos, fugas de memoria y áreas que podrían beneficiarse del almacenamiento en caché o optimización.
 ```
+
+## Recursos relacionados
+
+- [Ejemplos de prompts](/es/guide/prompt-examples) - Más plantillas de prompts para análisis de IA
+- [Formatos de salida](/es/guide/output) - Elegir el mejor formato para tu modelo de IA
+- [Instrucciones personalizadas](/es/guide/custom-instructions) - Agregar contexto para guiar el análisis de IA
+- [Procesamiento de repositorios de GitHub](/es/guide/remote-repository-processing) - Analizar repositorios remotos

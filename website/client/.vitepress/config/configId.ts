@@ -22,6 +22,7 @@ export const configId = defineConfig({
             { text: 'Penggunaan Dasar', link: '/id/guide/usage' },
             { text: 'Contoh Prompt', link: '/id/guide/prompt-examples' },
             { text: 'Kasus Penggunaan', link: '/id/guide/use-cases' },
+            { text: 'FAQ dan Pemecahan Masalah', link: '/id/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configId = defineConfig({
           items: [
             { text: 'Format Output', link: '/id/guide/output' },
             { text: 'Opsi Baris Perintah', link: '/id/guide/command-line-options' },
+            { text: 'Mode Watch', link: '/id/guide/watch-mode' },
             { text: 'Konfigurasi', link: '/id/guide/configuration' },
             { text: 'Instruksi Khusus', link: '/id/guide/custom-instructions' },
             { text: 'Pemrosesan Repositori GitHub', link: '/id/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configId = defineConfig({
           text: 'Lanjutan',
           items: [
             { text: 'Server MCP', link: '/id/guide/mcp-server' },
+            { text: 'Plugin Claude Code', link: '/id/guide/claude-code-plugins' },
+            { text: 'Pembuatan Agent Skills', link: '/id/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/id/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/id/guide/github-actions' },
             {
               text: 'Menggunakan Repomix sebagai Library',
@@ -55,6 +60,7 @@ export const configId = defineConfig({
             { text: 'Proyek Komunitas', link: '/id/guide/community-projects' },
             { text: 'Berkontribusi ke Repomix', link: '/id/guide/development/' },
             { text: 'Sponsor', link: '/id/guide/sponsors' },
+            { text: 'Kebijakan Privasi', link: '/id/guide/privacy' },
           ],
         },
       ],

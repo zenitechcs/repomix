@@ -2,29 +2,16 @@ import { RepomixError } from '../../shared/errorHandle.js';
 import type { GitHubRepoInfo } from './gitRemoteParse.js';
 
 /**
- * Constructs GitHub archive download URL
- * Format: https://github.com/owner/repo/archive/refs/heads/branch.zip
- * For tags: https://github.com/owner/repo/archive/refs/tags/tag.zip
- * For commits: https://github.com/owner/repo/archive/commit.zip
+ * Constructs GitHub archive download URL using codeload.github.com directly.
+ * This skips the 302 redirect from github.com/archive, saving ~100-300ms per request.
+ * codeload.github.com resolves branches, tags, and commit SHAs automatically,
+ * so no refs/heads/ or refs/tags/ prefix is needed.
+ * Format: https://codeload.github.com/owner/repo/tar.gz/{ref}
  */
 export const buildGitHubArchiveUrl = (repoInfo: GitHubRepoInfo): string => {
   const { owner, repo, ref } = repoInfo;
-  const baseUrl = `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive`;
-
-  if (!ref) {
-    // Default to HEAD (repository's default branch)
-    return `${baseUrl}/HEAD.zip`;
-  }
-
-  // Check if ref looks like a commit SHA (40 hex chars or shorter)
-  const isCommitSha = /^[0-9a-f]{4,40}$/i.test(ref);
-  if (isCommitSha) {
-    return `${baseUrl}/${encodeURIComponent(ref)}.zip`;
-  }
-
-  // For branches and tags, we need to determine the type
-  // Default to branch format, will fallback to tag if needed
-  return `${baseUrl}/refs/heads/${encodeURIComponent(ref)}.zip`;
+  const baseUrl = `https://codeload.github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tar.gz`;
+  return `${baseUrl}/${ref ? encodeURIComponent(ref) : 'HEAD'}`;
 };
 
 /**
@@ -36,33 +23,15 @@ export const buildGitHubMasterArchiveUrl = (repoInfo: GitHubRepoInfo): string | 
     return null; // Only applicable when no ref is specified
   }
 
-  return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive/refs/heads/master.zip`;
+  return `https://codeload.github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tar.gz/master`;
 };
 
 /**
  * Builds alternative archive URL for tags
+ * With codeload.github.com, refs are resolved automatically so tag fallback is no longer needed.
  */
-export const buildGitHubTagArchiveUrl = (repoInfo: GitHubRepoInfo): string | null => {
-  const { owner, repo, ref } = repoInfo;
-  if (!ref || /^[0-9a-f]{4,40}$/i.test(ref)) {
-    return null; // Not applicable for commits or no ref
-  }
-
-  return `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/archive/refs/tags/${encodeURIComponent(ref)}.zip`;
-};
-
-/**
- * Gets the expected archive filename from GitHub
- * Format: repo-branch.zip or repo-sha.zip
- */
-export const getArchiveFilename = (repoInfo: GitHubRepoInfo): string => {
-  const { repo, ref } = repoInfo;
-  const refPart = ref || 'HEAD';
-
-  // GitHub uses the last part of the ref for the filename
-  const refName = refPart.includes('/') ? refPart.split('/').pop() : refPart;
-
-  return `${repo}-${refName}.zip`;
+export const buildGitHubTagArchiveUrl = (_repoInfo: GitHubRepoInfo): string | null => {
+  return null;
 };
 
 /**
@@ -79,7 +48,7 @@ export const checkGitHubResponse = (response: Response): void => {
     const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining');
     if (rateLimitRemaining === '0') {
       const resetTime = response.headers.get('X-RateLimit-Reset');
-      const resetDate = resetTime ? new Date(Number.parseInt(resetTime) * 1000) : null;
+      const resetDate = resetTime ? new Date(Number.parseInt(resetTime, 10) * 1000) : null;
       throw new RepomixError(
         `GitHub API rate limit exceeded. ${resetDate ? `Rate limit resets at ${resetDate.toISOString()}` : 'Please try again later.'}`,
       );

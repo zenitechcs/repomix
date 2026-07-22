@@ -1,12 +1,15 @@
-import type { PackOptions, PackRequest, PackResult } from '../api/client';
+import type { PackOptions, PackProgressStage, PackRequest, PackResult } from '../api/client';
 import { packRepository } from '../api/client';
 import { type AnalyticsActionType, analyticsUtils } from './analytics';
 
 interface RequestHandlerOptions {
   onSuccess?: (result: PackResult) => void;
   onError?: (error: string) => void;
+  onAbort?: (message: string) => void;
+  onProgress?: (stage: PackProgressStage, message?: string) => void;
   signal?: AbortSignal;
   file?: File;
+  turnstileToken?: string;
 }
 
 /**
@@ -18,7 +21,7 @@ export async function handlePackRequest(
   options: PackOptions,
   handlerOptions: RequestHandlerOptions = {},
 ): Promise<void> {
-  const { onSuccess, onError, signal, file } = handlerOptions;
+  const { onSuccess, onError, onAbort, onProgress, signal, file, turnstileToken } = handlerOptions;
   const processedUrl = url.trim();
 
   // Track pack start
@@ -29,11 +32,17 @@ export async function handlePackRequest(
       url: processedUrl,
       format,
       options,
-      signal,
       file,
     };
 
-    const response = await packRepository(request);
+    const response = await packRepository(
+      request,
+      {
+        onProgress,
+        signal,
+      },
+      turnstileToken,
+    );
 
     // Track successful pack
     if (response.metadata.summary) {
@@ -46,14 +55,34 @@ export async function handlePackRequest(
 
     onSuccess?.(response);
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+    // Check for abort/timeout first, regardless of error type
+    if (signal?.aborted) {
+      const isTimeout = signal?.reason === 'timeout';
+      if (isTimeout) {
+        onAbort?.('Request timed out.\nPlease consider using Include Patterns or Ignore Patterns to reduce the scope.');
+        return;
+      }
 
-    if (errorMessage === 'AbortError') {
-      onError?.('Request was cancelled');
+      const isCancelled = signal?.reason === 'cancel';
+      if (isCancelled) {
+        onAbort?.('Request was cancelled.');
+        return;
+      }
+
+      onAbort?.('Request was cancelled with an unknown reason.');
       return;
     }
 
+    let errorMessage: string;
+
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    } else {
+      errorMessage = 'An unexpected error occurred';
+    }
+
     analyticsUtils.trackPackError(processedUrl, errorMessage);
+
     console.error('Error processing repository:', err);
     onError?.(errorMessage);
   }

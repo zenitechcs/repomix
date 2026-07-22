@@ -1,3 +1,8 @@
+---
+title: Repomix 入門指南
+description: 開始使用 Repomix，將儲存庫打包為適用於 ChatGPT、Claude、Gemini、Grok、DeepSeek、Perplexity 等 LLM 的 AI 友善上下文。
+---
+
 # Repomix 入門指南
 
 <script setup>
@@ -62,6 +67,8 @@ Repomix的強項在於可以與ChatGPT、Claude、Gemini、Grok等訂閱服務�
 - [使用指南](usage.md)：學習基本和進階功能
 - [配置](configuration.md)：根據需求自定義 Repomix
 - [安全功能](security.md)：了解安全檢查詳情
+- [輸出格式](output.md)：為 AI 模型選擇最合適的輸出格式
+- [MCP 伺服器](mcp-server.md)：將 Repomix 與 AI 助手直接整合
 
 ## 社區
 

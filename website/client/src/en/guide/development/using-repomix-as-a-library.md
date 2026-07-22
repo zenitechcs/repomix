@@ -1,3 +1,8 @@
+---
+title: Using Repomix as a Library
+description: Use Repomix as a Node.js library to pack local directories or remote repositories, access core APIs, and integrate AI-ready codebase output into applications.
+---
+
 # Using Repomix as a Library
 
 In addition to using Repomix as a CLI tool, you can integrate its functionality directly into your Node.js applications.
@@ -52,10 +57,13 @@ async function processRemoteRepo(repoUrl) {
     output: 'output.xml',
     compress: true
   } as CliOptions;
-  
+
   return await runCli(['.'], process.cwd(), options);
 }
 ```
+
+> [!NOTE]
+> For security, config files in remote repositories are not loaded by default. To trust a remote repository's config, add `remoteTrustConfig: true` to the options, or set the `REPOMIX_REMOTE_TRUST_CONFIG=true` environment variable.
 
 ## Using Core Components
 
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## Bundling
+
+When bundling repomix with tools like Rolldown or esbuild, some dependencies must remain external and WASM files need to be copied:
+
+**External dependencies (cannot be bundled):**
+- `tinypool` - Spawns worker threads using file paths
+
+**WASM files to copy:**
+- `web-tree-sitter.wasm` → Same directory as bundled JS (required for code compression feature)
+- Tree-sitter language files → Directory specified by `REPOMIX_WASM_DIR` environment variable
+
+For a working example, see [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs).
 
 ## Real-World Example
 

@@ -28,8 +28,8 @@ export const registerFileSystemReadDirectoryTool = (mcpServer: McpServer) => {
       title: 'Read Directory',
       description:
         'List the contents of a directory using an absolute path. Returns a formatted list showing files and subdirectories with clear [FILE]/[DIR] indicators. Useful for exploring project structure and understanding codebase organization.',
-      inputSchema: fileSystemReadDirectoryInputSchema.shape,
-      outputSchema: fileSystemReadDirectoryOutputSchema.shape,
+      inputSchema: fileSystemReadDirectoryInputSchema,
+      outputSchema: fileSystemReadDirectoryOutputSchema,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,

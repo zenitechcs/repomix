@@ -7,10 +7,22 @@ import {
   execGitShallowClone,
   execGitVersion,
   execLsRemote,
+  execLsRemoteHead,
 } from '../../../src/core/git/gitCommand.js';
 import { logger } from '../../../src/shared/logger.js';
 
 vi.mock('../../../src/shared/logger');
+
+const expectGitRemoteOpts = expect.objectContaining({
+  timeout: 30000,
+  env: expect.objectContaining({ GIT_TERMINAL_PROMPT: '0' }),
+});
+
+// The automatic existence probe uses a short timeout and suppresses credential prompts.
+const expectGitProbeOpts = expect.objectContaining({
+  timeout: 5000,
+  env: expect.objectContaining({ GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'never' }),
+});
 
 describe('gitCommand', () => {
   beforeEach(() => {
@@ -122,7 +134,11 @@ file2.ts
 
       await execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync });
 
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', '--', url, directory]);
+      expect(mockFileExecAsync).toHaveBeenCalledWith(
+        'git',
+        ['clone', '--depth', '1', '--', url, directory],
+        expectGitRemoteOpts,
+      );
     });
 
     test('should throw error when git clone fails', async () => {
@@ -135,7 +151,11 @@ file2.ts
         execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
       ).rejects.toThrow('Authentication failed');
 
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', ['clone', '--depth', '1', '--', url, directory]);
+      expect(mockFileExecAsync).toHaveBeenCalledWith(
+        'git',
+        ['clone', '--depth', '1', '--', url, directory],
+        expectGitRemoteOpts,
+      );
     });
 
     test('should execute commands correctly when branch is specified', async () => {
@@ -158,15 +178,12 @@ file2.ts
         'origin',
         url,
       ]);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(3, 'git', [
-        '-C',
-        directory,
-        'fetch',
-        '--depth',
-        '1',
-        'origin',
-        remoteBranch,
-      ]);
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(
+        3,
+        'git',
+        ['-C', directory, 'fetch', '--depth', '1', 'origin', '--end-of-options', remoteBranch],
+        expectGitRemoteOpts,
+      );
       expect(mockFileExecAsync).toHaveBeenNthCalledWith(4, 'git', ['-C', directory, 'checkout', 'FETCH_HEAD']);
     });
 
@@ -195,15 +212,11 @@ file2.ts
         'origin',
         url,
       ]);
-      expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', [
-        '-C',
-        directory,
-        'fetch',
-        '--depth',
-        '1',
-        'origin',
-        remoteBranch,
-      ]);
+      expect(mockFileExecAsync).toHaveBeenLastCalledWith(
+        'git',
+        ['-C', directory, 'fetch', '--depth', '1', 'origin', '--end-of-options', remoteBranch],
+        expectGitRemoteOpts,
+      );
     });
 
     test('should handle short SHA correctly', async () => {
@@ -233,17 +246,25 @@ file2.ts
         'origin',
         url,
       ]);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(3, 'git', [
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(
+        3,
+        'git',
+        ['-C', directory, 'fetch', '--depth', '1', 'origin', '--end-of-options', shortSha],
+        expectGitRemoteOpts,
+      );
+      expect(mockFileExecAsync).toHaveBeenNthCalledWith(
+        4,
+        'git',
+        ['-C', directory, 'fetch', 'origin'],
+        expectGitRemoteOpts,
+      );
+      expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', [
         '-C',
         directory,
-        'fetch',
-        '--depth',
-        '1',
-        'origin',
+        'checkout',
+        '--end-of-options',
         shortSha,
       ]);
-      expect(mockFileExecAsync).toHaveBeenNthCalledWith(4, 'git', ['-C', directory, 'fetch', 'origin']);
-      expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', ['-C', directory, 'checkout', shortSha]);
     });
 
     test("should throw error when remote ref is not found, and it's not due to short SHA", async () => {
@@ -272,15 +293,27 @@ file2.ts
         'origin',
         url,
       ]);
-      expect(mockFileExecAsync).toHaveBeenLastCalledWith('git', [
-        '-C',
-        directory,
-        'fetch',
-        '--depth',
-        '1',
-        'origin',
-        remoteBranch,
-      ]);
+      expect(mockFileExecAsync).toHaveBeenLastCalledWith(
+        'git',
+        ['-C', directory, 'fetch', '--depth', '1', 'origin', '--end-of-options', remoteBranch],
+        expectGitRemoteOpts,
+      );
+    });
+
+    test.each([
+      ['--upload-pack', '--upload-pack=touch /tmp/pwned'],
+      ['--config option', '--config=core.sshCommand=evil'],
+      ['leading dash', '-evil'],
+    ])('should reject branch/ref that could be a git option (%s)', async (_desc, remoteBranch) => {
+      const mockFileExecAsync = vi.fn();
+      const url = 'https://github.com/user/repo.git';
+      const directory = '/tmp/repo';
+
+      await expect(
+        execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
+      ).rejects.toThrow("Invalid branch or ref name. Name must not start with '-'");
+
+      expect(mockFileExecAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -361,18 +394,23 @@ file.txt`;
     });
   });
 
-  test('should reject URLs with dangerous parameters', async () => {
-    const mockFileExecAsync = vi.fn();
+  describe('validateGitUrl security checks', () => {
+    test.each([
+      ['--upload-pack', 'https://github.com/user/repo.git --upload-pack=evil-command'],
+      ['--receive-pack', 'https://github.com/user/repo.git --receive-pack=evil-command'],
+      ['--config', 'https://github.com/user/repo.git --config=core.sshCommand=evil-command'],
+      ['--exec', 'https://github.com/user/repo.git --exec=evil-command'],
+    ])('should reject URLs with %s parameter', async (_param, url) => {
+      const mockFileExecAsync = vi.fn();
+      const directory = '/tmp/repo';
+      const remoteBranch = undefined;
 
-    const url = 'https://github.com/user/repo.git --upload-pack=evil-command';
-    const directory = '/tmp/repo';
-    const remoteBranch = undefined;
+      await expect(
+        execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
+      ).rejects.toThrow('Invalid repository URL. URL contains potentially dangerous parameters');
 
-    await expect(
-      execGitShallowClone(url, directory, remoteBranch, { execFileAsync: mockFileExecAsync }),
-    ).rejects.toThrow('Invalid repository URL. URL contains potentially dangerous parameters');
-
-    expect(mockFileExecAsync).not.toHaveBeenCalled();
+      expect(mockFileExecAsync).not.toHaveBeenCalled();
+    });
   });
 
   describe('execLsRemote', () => {
@@ -387,13 +425,11 @@ c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8\trefs/tags/v1.0.0
       const result = await execLsRemote('https://github.com/user/repo.git', { execFileAsync: mockFileExecAsync });
 
       expect(result).toBe(mockOutput);
-      expect(mockFileExecAsync).toHaveBeenCalledWith('git', [
-        'ls-remote',
-        '--heads',
-        '--tags',
-        '--',
-        'https://github.com/user/repo.git',
-      ]);
+      expect(mockFileExecAsync).toHaveBeenCalledWith(
+        'git',
+        ['ls-remote', '--heads', '--tags', '--', 'https://github.com/user/repo.git'],
+        expectGitRemoteOpts,
+      );
     });
 
     test('should throw error when git ls-remote fails', async () => {
@@ -403,6 +439,44 @@ c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8\trefs/tags/v1.0.0
         execLsRemote('https://github.com/user/repo.git', { execFileAsync: mockFileExecAsync }),
       ).rejects.toThrow('git command failed');
       expect(logger.trace).toHaveBeenCalledWith('Failed to execute git ls-remote:', 'git command failed');
+    });
+  });
+
+  describe('execLsRemoteHead', () => {
+    test('should query only HEAD instead of all refs', async () => {
+      const mockOutput = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6\tHEAD';
+      const mockFileExecAsync = vi.fn().mockResolvedValue({ stdout: mockOutput });
+
+      const result = await execLsRemoteHead('https://github.com/user/repo.git', {
+        execFileAsync: mockFileExecAsync,
+      });
+
+      expect(result).toBe(mockOutput);
+      expect(mockFileExecAsync).toHaveBeenCalledWith(
+        'git',
+        ['ls-remote', '--', 'https://github.com/user/repo.git', 'HEAD'],
+        expectGitProbeOpts,
+      );
+    });
+
+    test('should throw error when git ls-remote HEAD fails', async () => {
+      const mockFileExecAsync = vi.fn().mockRejectedValue(new Error('repository not found'));
+
+      await expect(
+        execLsRemoteHead('https://github.com/user/nonexistent.git', { execFileAsync: mockFileExecAsync }),
+      ).rejects.toThrow('repository not found');
+      expect(logger.trace).toHaveBeenCalledWith('Failed to execute git ls-remote HEAD:', 'repository not found');
+    });
+
+    test('should validate URL before executing', async () => {
+      const mockFileExecAsync = vi.fn();
+
+      await expect(
+        execLsRemoteHead('https://github.com/user/repo.git --upload-pack=evil-command', {
+          execFileAsync: mockFileExecAsync,
+        }),
+      ).rejects.toThrow('Invalid repository URL. URL contains potentially dangerous parameters');
+      expect(mockFileExecAsync).not.toHaveBeenCalled();
     });
   });
 });

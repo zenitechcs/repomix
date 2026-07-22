@@ -1,3 +1,8 @@
+---
+title: ユースケース
+description: AIコードレビュー、バグ調査、リファクタリング、ドキュメント、オンボーディング、セキュリティ監査、アーキテクチャ分析に役立つRepomixの実践的なワークフローを紹介します。
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ RepomixとSimon Willison's [llm CLI tool](https://github.com/simonw/llm)を組�
 ```
 このコードベースのパフォーマンスボトルネックを分析してください。非効率なアルゴリズム、不要なデータベースクエリ、メモリリーク、キャッシュや最適化の恩恵を受けられる領域を探してください。
 ```
+
+## 関連リソース
+
+- [プロンプト例](/ja/guide/prompt-examples) - AI分析用のプロンプトテンプレート
+- [出力フォーマット](/ja/guide/output) - AIモデルに最適な出力形式を選択
+- [カスタム指示](/ja/guide/custom-instructions) - AI分析にコンテキストを追加
+- [GitHubリポジトリの処理](/ja/guide/remote-repository-processing) - リモートリポジトリの分析

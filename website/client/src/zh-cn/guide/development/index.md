@@ -1,15 +1,20 @@
+---
+title: 参与 Repomix 开发
+description: 设置 Repomix 开发环境、运行测试和 lint、理解项目结构，并向开源项目贡献更改。
+---
+
 # 参与 Repomix 开发
 
-感谢您对 **Repomix** 的兴趣！🚀 我们非常欢迎您的帮助，让它变得更好。本指南将帮助您开始为项目做贡献。
+感谢你对 **Repomix** 的兴趣！🚀 我们非常欢迎你的帮助，让它变得更好。本指南将帮助你开始为项目做贡献。
 
 ## 如何贡献
 
-- **为仓库加星**: 通过[为仓库加星](https://github.com/yamadashy/repomix)来表示您的支持！
-- **创建问题**: 发现了bug？有新功能的想法？通过[创建问题](https://github.com/yamadashy/repomix/issues)让我们知道。
-- **提交拉取请求**: 找到了可以修复或改进的地方？提交PR吧！
-- **传播消息**: 在社交媒体、博客或技术社区中分享您使用Repomix的经验。
-- **使用Repomix**: 最有价值的反馈来自实际使用，请随时将Repomix集成到您自己的项目中！
-- **赞助**: 通过[成为赞助者](https://github.com/sponsors/yamadashy)来支持Repomix的开发。
+- **为仓库加星**: 通过[为仓库加星](https://github.com/yamadashy/repomix)来表示你的支持！
+- **创建问题**: 发现了 bug？有新功能的想法？通过[创建问题](https://github.com/yamadashy/repomix/issues)让我们知道。
+- **提交拉取请求**: 找到了可以修复或改进的地方？提交 PR 吧！
+- **传播消息**: 在社交媒体、博客或技术社区中分享你使用 Repomix 的经验。
+- **使用 Repomix**: 最有价值的反馈来自实际使用，请随时将 Repomix 集成到你自己的项目中！
+- **赞助**: 通过[成为赞助者](https://github.com/sponsors/yamadashy)来支持 Repomix 的开发。
 
 ## 快速开始
 
@@ -51,7 +56,7 @@ npm run lint
 
 ### 前提条件
 
-- Node.js ≥ 20.0.0
+- Node.js ≥ 22.0.0
 - Git
 - npm
 - Docker（可选，用于运行网站或容器化开发）
@@ -72,9 +77,28 @@ npm install
 npm run repomix
 ```
 
-### Docker开发
+### Nix 开发
 
-您也可以使用Docker运行Repomix：
+如果你启用了 [Nix](https://nixos.org/download) flakes，可以进入预装了 Node.js 24 和 Git 的可复现开发 shell：
+
+```bash
+nix develop
+```
+
+在 shell 中，标准的 `npm` 工作流可正常使用：
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+注意：此 shell 用于开发 Repomix 本身，不是用于将其作为 CLI 安装。
+
+### Docker 开发
+
+你也可以使用 Docker 运行 Repomix：
 
 ```bash
 # 构建镜像
@@ -118,7 +142,7 @@ npm run website
 # 在http://localhost:5173/访问网站
 ```
 
-更新文档时，您只需先更新英文版本。维护者将处理其他语言的翻译。
+更新文档时，你只需先更新英文版本。维护者将处理其他语言的翻译。
 
 ## 发布流程
 
@@ -140,7 +164,7 @@ npm run build
 npm publish
 ```
 
-新版本由维护者管理。如果您认为需要发布，请打开一个Issue进行讨论。
+新版本由维护者管理。如果你认为需要发布，请打开一个 Issue 进行讨论。
 
 ## 需要帮助？
 

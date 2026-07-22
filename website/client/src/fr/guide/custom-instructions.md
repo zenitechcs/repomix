@@ -1,3 +1,8 @@
+---
+title: "Instructions personnalisées"
+description: "Ajoutez des instructions propres au projet à la sortie Repomix afin que les assistants IA comprennent les standards de code, le contexte d'architecture, les objectifs de revue et les exigences de réponse."
+---
+
 # Instructions personnalisées
 
 Repomix vous permet de fournir des instructions personnalisées qui seront incluses dans le fichier de sortie. Cela peut être utile pour ajouter du contexte ou des directives spécifiques pour les systèmes d'IA traitant le dépôt.
@@ -37,3 +42,10 @@ Ce dépôt contient le code source de l'outil Repomix. Veuillez suivre ces direc
 3. Ignorez tous les fichiers dans le répertoire `tests`.
 </instruction>
 ```
+
+## Ressources associées
+
+- [Configuration](/fr/guide/configuration) - Définir `output.instructionFilePath` dans le fichier de configuration
+- [Formats de sortie](/fr/guide/output) - Découvrir les différents formats de sortie
+- [Exemples de prompts](/fr/guide/prompt-examples) - Exemples de prompts pour l'analyse IA
+- [Cas d'utilisation](/fr/guide/use-cases) - Exemples concrets d'utilisation de Repomix avec l'IA

@@ -1,10 +1,15 @@
+---
+title: 在 GitHub Actions 中使用 Repomix
+description: 在 GitHub Actions 中自动运行 Repomix，为 AI 分析、CI 流程、构件、代码审查和压缩输出打包仓库。
+---
+
 # 在 GitHub Actions 中使用 Repomix
 
 通过将 Repomix 集成到 GitHub Actions 工作流中，可以自动打包代码库以供 AI 分析。这对于持续集成（CI）、代码审查或为 LLM 工具做准备非常有用。
 
 ## 基本用法
 
-在工作流 YAML 文件中添加以下步骤以打包您的仓库：
+在工作流 YAML 文件中添加以下步骤以打包你的仓库：
 
 ```yaml
 - name: Pack repository with Repomix
@@ -23,6 +28,14 @@
   with:
     output: repomix-output.md
     style: markdown
+```
+
+```yaml
+- name: Pack repository with Repomix (JSON format)
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.json
+    style: json
 ```
 
 ## 多目录与压缩选项
@@ -53,7 +66,7 @@
     compress: true
 
 - name: Upload Repomix output
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v7
   with:
     name: repomix-output
     path: repomix-output.xml
@@ -67,7 +80,7 @@
 | `include`           | 包含的 glob 模式（逗号分隔）           | `""`           |
 | `ignore`            | 排除的 glob 模式（逗号分隔）           | `""`           |
 | `output`            | 输出文件路径                            | `repomix-output.xml`    |
-| `style`             | 输出样式（xml、markdown、plain）        | `xml`            |
+| `style`             | 输出样式（xml、markdown、json、plain）        | `xml`            |
 | `compress`          | 启用智能压缩                            | `true`           |
 | `additional-args`   | 传递给 repomix CLI 的额外参数           | `""`           |
 | `repomix-version`   | 要安装的 npm 包版本                     | `latest`         |
@@ -97,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
@@ -105,7 +118,7 @@ jobs:
           output: repomix-output.xml
 
       - name: Upload Repomix output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repomix-output.xml
           path: repomix-output.xml

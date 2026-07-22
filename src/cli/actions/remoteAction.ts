@@ -7,9 +7,13 @@ import { downloadGitHubArchive, isArchiveDownloadSupported } from '../../core/gi
 import { getRemoteRefs } from '../../core/git/gitRemoteHandle.js';
 import { isGitHubRepository, parseGitHubRepoInfo, parseRemoteValue } from '../../core/git/gitRemoteParse.js';
 import { isGitInstalled } from '../../core/git/gitRepositoryHandle.js';
+import { generateDefaultSkillNameFromUrl, generateProjectNameFromUrl } from '../../core/skill/skillUtils.js';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { Spinner } from '../cliSpinner.js';
+import { validateTokenBudget } from '../cliTokenBudget.js';
+import { confirmRemoteConfigTrust } from '../prompts/remoteConfigTrustPrompt.js';
+import { promptSkillLocation, resolveAndPrepareSkillDir } from '../prompts/skillPrompts.js';
 import type { CliOptions } from '../types.js';
 import { type DefaultActionRunnerResult, runDefaultAction } from './defaultAction.js';
 
@@ -25,8 +29,19 @@ export const runRemoteAction = async (
     isGitHubRepository,
     parseGitHubRepoInfo,
     isArchiveDownloadSupported,
+    confirmRemoteConfigTrust,
   },
 ): Promise<DefaultActionRunnerResult> => {
+  // Validate --config path before any expensive operations (download/clone):
+  // only absolute paths are allowed to prevent loading config from the cloned repository
+  if (cliOptions.config && !path.isAbsolute(cliOptions.config)) {
+    throw new RepomixError(
+      `In remote mode, --config must be an absolute path to avoid loading config from the cloned repository.\n` +
+        `  Provided: ${cliOptions.config}\n` +
+        `  Example:  repomix --remote <url> --config /home/user/repomix.config.json`,
+    );
+  }
+
   let tempDirPath = await createTempDirectory();
   let result: DefaultActionRunnerResult;
   let downloadMethod: 'archive' | 'git' = 'git';
@@ -88,15 +103,94 @@ export const runRemoteAction = async (
       downloadMethod = 'git';
     }
 
-    // Run the default action on the downloaded/cloned repository
-    result = await deps.runDefaultAction([tempDirPath], tempDirPath, cliOptions);
+    const trustRemoteConfig = cliOptions.remoteTrustConfig || process.env.REPOMIX_REMOTE_TRUST_CONFIG === 'true';
 
-    // Copy output file only when not in stdout mode
-    // In stdout mode, output is written directly to stdout without creating a file,
-    // so attempting to copy a non-existent file would cause an error and exit code 1
-    if (!cliOptions.stdout) {
-      await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
+    // When trusting a remote repo's config, confirm with the user first (unless
+    // --force / non-interactive / already trusted). Throws if the user declines.
+    // Asked before the skill-location prompt so a decline does not first make the
+    // user answer a question whose answer is then thrown away.
+    if (trustRemoteConfig) {
+      await deps.confirmRemoteConfigTrust({
+        repoDir: tempDirPath,
+        repoUrl,
+        force: cliOptions.force ?? false,
+        stdout: cliOptions.stdout ?? false,
+        hasExplicitConfig: Boolean(cliOptions.config),
+      });
     }
+
+    // For skill generation, prompt for location using current directory (not temp directory)
+    let skillName: string | undefined;
+    let skillDir: string | undefined;
+    let skillProjectName: string | undefined;
+    if (cliOptions.skillGenerate !== undefined) {
+      skillName =
+        typeof cliOptions.skillGenerate === 'string'
+          ? cliOptions.skillGenerate
+          : generateDefaultSkillNameFromUrl(repoUrl);
+
+      // Generate project name from URL for use in skill description
+      skillProjectName = generateProjectNameFromUrl(repoUrl);
+
+      if (cliOptions.skillOutput) {
+        // Validate --skill-output is not empty or whitespace only
+        if (!cliOptions.skillOutput.trim()) {
+          throw new RepomixError('--skill-output path cannot be empty');
+        }
+        // Non-interactive mode: use provided path directly
+        skillDir = await resolveAndPrepareSkillDir(cliOptions.skillOutput, process.cwd(), cliOptions.force ?? false);
+      } else {
+        // Interactive mode: prompt for skill location
+        const promptResult = await promptSkillLocation(skillName, process.cwd());
+        skillDir = promptResult.skillDir;
+      }
+    }
+
+    // Run the default action on the downloaded/cloned repository
+    // Pass the pre-computed skill name, directory, project name, and source URL
+    const skillSourceUrl = cliOptions.skillGenerate !== undefined ? repoUrl : undefined;
+
+    const optionsWithSkill = {
+      ...cliOptions,
+      skillName,
+      skillDir,
+      skillProjectName,
+      skillSourceUrl,
+      skipLocalConfig: !trustRemoteConfig,
+      // --force has already done its job here: it suppressed the trust confirmation
+      // above. runDefaultAction rejects --force without --skill-generate, so
+      // forwarding it would make the documented `--remote-trust-config --force`
+      // escape hatch always throw. When nothing consumed the flag, forward it so
+      // that validation still reports the misuse.
+      force: trustRemoteConfig && cliOptions.skillGenerate === undefined ? undefined : cliOptions.force,
+      // Never migrate a remote clone: it would rewrite legacy Repopack files in the
+      // temp dir into a repomix.config.* that the trust prompt never reviewed.
+      skipMigration: true,
+      // File processors from a cloned repo's config run arbitrary commands, so
+      // they are only honored when the user explicitly trusts remote config.
+      enableFileProcessors: (cliOptions.enableFileProcessors ?? false) && trustRemoteConfig,
+      // Defer the token-budget check so the output is copied out of the temp
+      // dir below before the guard can throw; we run validateTokenBudget here
+      // afterwards. Otherwise an over-budget remote run would throw inside
+      // runDefaultAction and the temp dir (with the output) would be cleaned up.
+      deferTokenBudgetCheck: true,
+    };
+    result = await deps.runDefaultAction([tempDirPath], tempDirPath, optionsWithSkill);
+
+    // Copy output to current directory (only for non-skill generation)
+    // Skip copy for stdout mode (output goes directly to stdout)
+    // For skill generation, the skill is already written directly to the target directory
+    // (either via --skill-output path or via promptSkillLocation which uses process.cwd())
+    if (!cliOptions.stdout && result.config.skillGenerate === undefined) {
+      const outputFiles = result.packResult.outputFiles ?? [result.config.output.filePath];
+      for (const outputFile of outputFiles) {
+        await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), outputFile);
+      }
+    }
+
+    // Enforce the token budget now that the output has been delivered (copied
+    // to the current directory, or written to stdout). Deferred above.
+    validateTokenBudget(result.packResult.totalTokens, result.config.output.tokenBudget);
 
     logger.trace(`Repository obtained via ${downloadMethod} method`);
   } finally {
@@ -191,6 +285,13 @@ export const copyOutputToCurrentDirectory = async (
   const sourcePath = path.resolve(sourceDir, outputFileName);
   const targetPath = path.resolve(targetDir, outputFileName);
 
+  // Skip copy if source and target are the same
+  // This can happen when an absolute path is specified for the output file
+  if (sourcePath === targetPath) {
+    logger.trace(`Source and target are the same (${sourcePath}), skipping copy`);
+    return;
+  }
+
   try {
     logger.trace(`Copying output file from: ${sourcePath} to: ${targetPath}`);
 
@@ -199,6 +300,21 @@ export const copyOutputToCurrentDirectory = async (
 
     await fs.copyFile(sourcePath, targetPath);
   } catch (error) {
+    const nodeError = error as NodeJS.ErrnoException;
+
+    // Provide helpful message for permission errors
+    if (nodeError.code === 'EPERM' || nodeError.code === 'EACCES') {
+      throw new RepomixError(
+        `Failed to copy output file to ${targetPath}: Permission denied.
+
+The current directory may be protected or require elevated permissions.
+Please try one of the following:
+  • Run from a different directory (e.g., your home directory or Documents folder)
+  • Use the --output flag to specify a writable location: --output ~/repomix-output.xml
+  • Use --stdout to print output directly to the console`,
+      );
+    }
+
     throw new RepomixError(`Failed to copy output file: ${(error as Error).message}`);
   }
 };

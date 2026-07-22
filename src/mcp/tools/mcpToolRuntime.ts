@@ -1,22 +1,63 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 import { generateTreeString } from '../../core/file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
+import { getRepomixTmpDir } from '../../shared/tmpDir.js';
+
+/**
+ * Shared MCP input schema for per-file inclusion levels (output.patterns).
+ * Lets an agent build a packing scenario per call, mirroring the config-file
+ * `output.patterns` option. Shape matches the `OutputPattern` config type so it
+ * can be passed straight through to CliOptions.outputPatterns.
+ */
+export const outputPatternsSchema = z
+  .array(
+    z.object({
+      pattern: z.string().min(1).describe('fast-glob pattern, matched the same way as includePatterns/ignorePatterns'),
+      compress: z.boolean().optional().describe('Compress matching files via Tree-sitter instead of full content'),
+      directoryStructureOnly: z
+        .boolean()
+        .optional()
+        .describe('List matching files in the directory structure only, omitting their content'),
+    }),
+  )
+  .optional()
+  .describe(
+    'Per-file inclusion levels. Patterns are evaluated in order and the first match wins; ' +
+      'directoryStructureOnly takes precedence over compress, and a match with neither flag forces FULL content ' +
+      '(use this to exempt specific files from a global compress). Files matching no pattern fall back to the ' +
+      "global compress setting. Overrides any output.patterns from the target repository's repomix.config.json. " +
+      'Example: set compress=true and outputPatterns=[{"pattern":"src/core/**"}] to keep src/core at full detail while compressing everything else.',
+  );
+
+interface OutputFileEntry {
+  filePath: string;
+  // Whether the file was registered from an untrusted path (attach_packed_output).
+  // Such files must be secret-scanned each time their content is served, since the
+  // file is outside Repomix's own packing pipeline and may change after attach.
+  requiresSecretScan: boolean;
+}
 
 // Map to store generated output files
-const outputFileRegistry = new Map<string, string>();
+const outputFileRegistry = new Map<string, OutputFileEntry>();
 
 // Register an output file
-export const registerOutputFile = (id: string, filePath: string): void => {
-  outputFileRegistry.set(id, filePath);
+export const registerOutputFile = (id: string, filePath: string, requiresSecretScan = false): void => {
+  outputFileRegistry.set(id, { filePath, requiresSecretScan });
 };
 
 // Get file path from output ID
 export const getOutputFilePath = (id: string): string | undefined => {
-  return outputFileRegistry.get(id);
+  return outputFileRegistry.get(id)?.filePath;
+};
+
+// Whether the output file was registered from an untrusted attach path and must
+// be secret-scanned before its content is served.
+export const requiresSecretScan = (id: string): boolean => {
+  return outputFileRegistry.get(id)?.requiresSecretScan ?? false;
 };
 
 export interface McpToolMetrics {
@@ -48,7 +89,7 @@ type McpToolStructuredContent = (BaseMcpToolResponse & Record<string, unknown>) 
  */
 export const createToolWorkspace = async (): Promise<string> => {
   try {
-    const tmpBaseDir = path.join(os.tmpdir(), 'repomix', 'mcp-outputs');
+    const tmpBaseDir = path.join(getRepomixTmpDir(), 'mcp-outputs');
     await fs.mkdir(tmpBaseDir, { recursive: true });
     const tempDir = await fs.mkdtemp(`${tmpBaseDir}/`);
     return tempDir;
@@ -73,10 +114,11 @@ export const formatPackToolResponse = async (
   metrics: McpToolMetrics,
   outputFilePath: string,
   topFilesLen = 5,
+  requiresSecretScan = false,
 ): Promise<CallToolResult> => {
   // Generate output ID and register the file
   const outputId = generateOutputId();
-  registerOutputFile(outputId, outputFilePath);
+  registerOutputFile(outputId, outputFilePath, requiresSecretScan);
 
   // Calculate total lines from the output file
   const outputContent = await fs.readFile(outputFilePath, 'utf8');
@@ -242,5 +284,7 @@ export const buildMcpToolErrorResponse = (structuredContent: McpToolStructuredCo
         text: textContent,
       },
     ],
+    // structuredContent is intentionally omitted for error responses
+    // Error messages have different schema than success responses and may cause validation issues
   };
 };

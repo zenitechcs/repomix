@@ -1,3 +1,8 @@
+---
+title: 사용 사례
+description: "AI 코드 리뷰, 버그 조사, 리팩터링, 문서화, 온보딩, 보안 감사, 아키텍처 분석을 위한 실용적인 Repomix 워크플로를 살펴봅니다."
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ API 문서, 설정 지침 및 개발자 가이드를 포함하여 이 코드베�
 ```
 이 코드베이스의 성능 병목 현상을 분석해 주세요. 비효율적인 알고리즘, 불필요한 데이터베이스 쿼리, 메모리 누수 및 캐싱이나 최적화의 이점을 받을 수 있는 영역을 찾아보세요.
 ```
+
+## 관련 리소스
+
+- [프롬프트 예시](/ko/guide/prompt-examples) - AI 분석을 위한 더 많은 프롬프트 템플릿
+- [출력 형식](/ko/guide/output) - AI 모델에 가장 적합한 형식 선택
+- [사용자 정의 지시사항](/ko/guide/custom-instructions) - AI 분석을 안내하는 컨텍스트 추가
+- [GitHub 저장소 처리](/ko/guide/remote-repository-processing) - 원격 저장소 분석

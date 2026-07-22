@@ -1,3 +1,8 @@
+---
+title: Cài đặt
+description: Cài đặt Repomix bằng npx, npm, Yarn, Bun, Homebrew, Docker, extension VS Code hoặc extension trình duyệt, rồi xác minh thiết lập CLI.
+---
+
 # Cài đặt
 
 Có nhiều cách để cài đặt và sử dụng Repomix. Chọn phương pháp phù hợp nhất với quy trình làm việc của bạn.
@@ -16,35 +21,23 @@ Lệnh này sẽ tải và chạy phiên bản mới nhất của Repomix trực
 
 Để sử dụng Repomix từ bất kỳ đâu trong hệ thống của bạn, bạn có thể cài đặt nó toàn cục:
 
-### Sử dụng npm
-
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Sử dụng yarn
-
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Sử dụng pnpm
-
-```bash
+```bash [pnpm]
 pnpm add -g repomix
 ```
-
-### Sử dụng Bun
-
-```bash
+```bash [bun]
 bun add -g repomix
 ```
-
-### Sử dụng Homebrew (macOS/Linux)
-
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 Sau khi cài đặt toàn cục, bạn có thể chạy Repomix từ bất kỳ thư mục nào:
 
@@ -128,8 +121,8 @@ repomix --version
 
 Lệnh này sẽ hiển thị phiên bản Repomix hiện được cài đặt.
 
-## Tiếp theo là gì?
+## Tài nguyên liên quan
 
-- [Sử dụng cơ bản](usage.md): Tìm hiểu cách sử dụng Repomix
-- [Cấu hình](configuration.md): Tùy chỉnh Repomix cho nhu cầu của bạn
-- [Tùy chọn dòng lệnh](command-line-options.md): Khám phá tất cả các tùy chọn có sẵn
+- [Sử dụng cơ bản](/vi/guide/usage) - Tìm hiểu cách sử dụng Repomix
+- [Cấu hình](/vi/guide/configuration) - Tùy chỉnh Repomix cho nhu cầu của bạn
+- [Tùy chọn dòng lệnh](/vi/guide/command-line-options) - Tham chiếu CLI đầy đủ

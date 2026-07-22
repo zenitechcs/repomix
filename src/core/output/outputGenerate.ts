@@ -1,19 +1,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { XMLBuilder } from 'fast-xml-parser';
 import Handlebars from 'handlebars';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { RepomixError } from '../../shared/errorHandle.js';
-import { type FileSearchResult, searchFiles } from '../file/fileSearch.js';
-import { generateTreeString } from '../file/fileTreeGenerate.js';
+import { listDirectories, listFiles, searchFiles } from '../file/fileSearch.js';
+import { type FilesByRoot, generateTreeString, generateTreeStringWithRoots } from '../file/fileTreeGenerate.js';
 import type { ProcessedFile } from '../file/fileTypes.js';
 import type { GitDiffResult } from '../git/gitDiffHandle.js';
 import type { GitLogResult } from '../git/gitLogHandle.js';
+import { buildFileDisplayPath } from '../packager/rootDisplayPath.js';
 import type { OutputGeneratorContext, RenderContext } from './outputGeneratorTypes.js';
 import { sortOutputFiles } from './outputSort.js';
 import {
   generateHeader,
   generateSummaryFileFormat,
+  generateSummaryFileFormatJson,
   generateSummaryNotes,
   generateSummaryPurpose,
   generateSummaryUsageGuidelines,
@@ -22,14 +23,65 @@ import { getMarkdownTemplate } from './outputStyles/markdownStyle.js';
 import { getPlainTemplate } from './outputStyles/plainStyle.js';
 import { getXmlTemplate } from './outputStyles/xmlStyle.js';
 
-const calculateMarkdownDelimiter = (files: ReadonlyArray<ProcessedFile>): string => {
-  const maxBackticks = files
-    .flatMap((file) => file.content.match(/`+/g) ?? [])
+// Cache for compiled Handlebars templates to avoid recompilation on every call
+const compiledTemplateCache = new Map<string, Handlebars.TemplateDelegate>();
+
+const getCompiledTemplate = (style: string): Handlebars.TemplateDelegate => {
+  const cached = compiledTemplateCache.get(style);
+  if (cached) {
+    return cached;
+  }
+
+  let template: string;
+  switch (style) {
+    case 'xml':
+      template = getXmlTemplate();
+      break;
+    case 'markdown':
+      template = getMarkdownTemplate();
+      break;
+    case 'plain':
+      template = getPlainTemplate();
+      break;
+    default:
+      throw new RepomixError(`Unsupported output style for handlebars template: ${style}`);
+  }
+
+  const compiled = Handlebars.compile(template);
+  compiledTemplateCache.set(style, compiled);
+  return compiled;
+};
+
+// The Markdown template wraps file contents, the directory structure, and git
+// diffs in the same code fence, so the delimiter has to be longer than the
+// longest backtick run across all of them. A diff of a Markdown file, for
+// example, carries bare ``` context lines that would otherwise close the fence
+// early and corrupt the output.
+const calculateMarkdownDelimiter = (contents: ReadonlyArray<string | undefined>): string => {
+  const maxBackticks = contents
+    .flatMap((content) => content?.match(/`+/g) ?? [])
     .reduce((max, match) => Math.max(max, match.length), 0);
   return '`'.repeat(Math.max(3, maxBackticks + 1));
 };
 
-const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
+const calculateFileLineCounts = (processedFiles: ProcessedFile[]): Record<string, number> => {
+  const lineCounts: Record<string, number> = {};
+  for (const file of processedFiles) {
+    // Count lines: empty files have 0 lines, otherwise count newlines + 1
+    // (unless the content ends with a newline, in which case the last "line" is empty)
+    const content = file.content;
+    if (content.length === 0) {
+      lineCounts[file.path] = 0;
+    } else {
+      // Count actual lines (text editor style: number of \n + 1, but trailing \n doesn't add extra line)
+      const newlineCount = (content.match(/\n/g) || []).length;
+      lineCounts[file.path] = content.endsWith('\n') ? newlineCount : newlineCount + 1;
+    }
+  }
+  return lineCounts;
+};
+
+export const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): RenderContext => {
   return {
     generationHeader: generateHeader(outputGeneratorContext.config, outputGeneratorContext.generationDate),
     summaryPurpose: generateSummaryPurpose(outputGeneratorContext.config),
@@ -43,11 +95,17 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
     instruction: outputGeneratorContext.instruction,
     treeString: outputGeneratorContext.treeString,
     processedFiles: outputGeneratorContext.processedFiles,
+    fileLineCounts: calculateFileLineCounts(outputGeneratorContext.processedFiles),
     fileSummaryEnabled: outputGeneratorContext.config.output.fileSummary,
     directoryStructureEnabled: outputGeneratorContext.config.output.directoryStructure,
     filesEnabled: outputGeneratorContext.config.output.files,
     escapeFileContent: outputGeneratorContext.config.output.parsableStyle,
-    markdownCodeBlockDelimiter: calculateMarkdownDelimiter(outputGeneratorContext.processedFiles),
+    markdownCodeBlockDelimiter: calculateMarkdownDelimiter([
+      ...outputGeneratorContext.processedFiles.map((file) => file.content),
+      outputGeneratorContext.treeString,
+      outputGeneratorContext.gitDiffResult?.workTreeDiffContent,
+      outputGeneratorContext.gitDiffResult?.stagedDiffContent,
+    ]),
     gitDiffEnabled: outputGeneratorContext.config.output.git?.includeDiffs,
     gitDiffWorkTree: outputGeneratorContext.gitDiffResult?.workTreeDiffContent,
     gitDiffStaged: outputGeneratorContext.gitDiffResult?.stagedDiffContent,
@@ -58,7 +116,9 @@ const createRenderContext = (outputGeneratorContext: OutputGeneratorContext): Re
 };
 
 const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<string> => {
-  const xmlBuilder = new XMLBuilder({ ignoreAttributes: false });
+  // Lazy-load fast-xml-builder (~3ms) — only used for parsable XML output (non-default)
+  const FastXmlBuilder = (await import('fast-xml-builder')).default;
+  const xmlBuilder = new FastXmlBuilder({ ignoreAttributes: false });
   const xmlDocument = {
     repomix: {
       file_summary: renderContext.fileSummaryEnabled
@@ -112,28 +172,67 @@ const generateParsableXmlOutput = async (renderContext: RenderContext): Promise<
   }
 };
 
+const generateParsableJsonOutput = async (renderContext: RenderContext): Promise<string> => {
+  const jsonDocument = {
+    ...(renderContext.fileSummaryEnabled && {
+      fileSummary: {
+        generationHeader: renderContext.generationHeader,
+        purpose: renderContext.summaryPurpose,
+        fileFormat: generateSummaryFileFormatJson(),
+        usageGuidelines: renderContext.summaryUsageGuidelines,
+        notes: renderContext.summaryNotes,
+      },
+    }),
+    ...(renderContext.headerText && {
+      userProvidedHeader: renderContext.headerText,
+    }),
+    ...(renderContext.directoryStructureEnabled && {
+      directoryStructure: renderContext.treeString,
+    }),
+    ...(renderContext.filesEnabled && {
+      files: renderContext.processedFiles.reduce(
+        (acc, file) => {
+          acc[file.path] = file.content;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
+    }),
+    ...(renderContext.gitDiffEnabled && {
+      gitDiffs: {
+        workTree: renderContext.gitDiffWorkTree,
+        staged: renderContext.gitDiffStaged,
+      },
+    }),
+    ...(renderContext.gitLogEnabled && {
+      gitLogs: renderContext.gitLogCommits?.map((commit) => ({
+        date: commit.date,
+        message: commit.message,
+        files: commit.files,
+      })),
+    }),
+    ...(renderContext.instruction && {
+      instruction: renderContext.instruction,
+    }),
+  };
+
+  try {
+    return JSON.stringify(jsonDocument, null, 2);
+  } catch (error) {
+    throw new RepomixError(
+      `Failed to generate JSON output: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      error instanceof Error ? { cause: error } : undefined,
+    );
+  }
+};
+
 const generateHandlebarOutput = async (
   config: RepomixConfigMerged,
   renderContext: RenderContext,
   processedFiles?: ProcessedFile[],
 ): Promise<string> => {
-  let template: string;
-  switch (config.output.style) {
-    case 'xml':
-      template = getXmlTemplate();
-      break;
-    case 'markdown':
-      template = getMarkdownTemplate();
-      break;
-    case 'plain':
-      template = getPlainTemplate();
-      break;
-    default:
-      throw new RepomixError(`Unknown output style: ${config.output.style}`);
-  }
-
   try {
-    const compiledTemplate = Handlebars.compile(template);
+    const compiledTemplate = getCompiledTemplate(config.output.style);
     return `${compiledTemplate(renderContext).trim()}\n`;
   } catch (error) {
     if (error instanceof RangeError && error.message === 'Invalid string length') {
@@ -170,10 +269,13 @@ export const generateOutput = async (
   allFilePaths: string[],
   gitDiffResult: GitDiffResult | undefined = undefined,
   gitLogResult: GitLogResult | undefined = undefined,
+  filePathsByRoot?: FilesByRoot[],
+  emptyDirPaths?: string[],
   deps = {
     buildOutputGeneratorContext,
     generateHandlebarOutput,
     generateParsableXmlOutput,
+    generateParsableJsonOutput,
     sortOutputFiles,
   },
 ): Promise<string> => {
@@ -187,17 +289,23 @@ export const generateOutput = async (
     sortedProcessedFiles,
     gitDiffResult,
     gitLogResult,
+    filePathsByRoot,
+    emptyDirPaths,
   );
   const renderContext = createRenderContext(outputGeneratorContext);
 
-  if (!config.output.parsableStyle) return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
   switch (config.output.style) {
     case 'xml':
-      return deps.generateParsableXmlOutput(renderContext);
+      return config.output.parsableStyle
+        ? deps.generateParsableXmlOutput(renderContext)
+        : deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
+    case 'json':
+      return deps.generateParsableJsonOutput(renderContext);
     case 'markdown':
+    case 'plain':
       return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
     default:
-      return deps.generateHandlebarOutput(config, renderContext, sortedProcessedFiles);
+      throw new RepomixError(`Unsupported output style: ${config.output.style}`);
   }
 };
 
@@ -208,6 +316,13 @@ export const buildOutputGeneratorContext = async (
   processedFiles: ProcessedFile[],
   gitDiffResult: GitDiffResult | undefined = undefined,
   gitLogResult: GitLogResult | undefined = undefined,
+  filePathsByRoot?: FilesByRoot[],
+  emptyDirPaths?: string[],
+  deps = {
+    listDirectories,
+    listFiles,
+    searchFiles,
+  },
 ): Promise<OutputGeneratorContext> => {
   let repositoryInstruction = '';
 
@@ -220,27 +335,106 @@ export const buildOutputGeneratorContext = async (
     }
   }
 
-  let emptyDirPaths: string[] = [];
-  if (config.output.includeEmptyDirectories) {
+  // Determine if full-tree mode applies (only when directory structure is rendered)
+  const shouldUseFullTree =
+    config.output.directoryStructure === true &&
+    !!config.output.includeFullDirectoryStructure &&
+    (config.include?.length ?? 0) > 0;
+
+  // Paths to include in the directory tree visualization
+  let directoryPathsForTree: string[] = [];
+  let filePathsForTree: string[] = allFilePaths;
+
+  // Only prefix with the per-root label for genuine multi-root packs. For a single
+  // root, filePathsByRoot still carries a basename fallback label, but pack() leaves
+  // single-root file paths unprefixed — so prefixing the full-tree directories here
+  // would desync them from the included files and add a spurious root branch.
+  const toOutputDisplayPath = (rootDir: string, filePath: string, index: number): string =>
+    buildFileDisplayPath({
+      rootDir,
+      filePath,
+      cwd: config.cwd,
+      filePathStyle: config.output.filePathStyle,
+      rootLabel: rootDirs.length > 1 ? filePathsByRoot?.[index]?.rootLabel : undefined,
+    });
+
+  if (shouldUseFullTree) {
     try {
-      emptyDirPaths = (await Promise.all(rootDirs.map((rootDir) => searchFiles(rootDir, config)))).reduce(
-        (acc: FileSearchResult, curr: FileSearchResult) =>
-          ({
-            filePaths: [...acc.filePaths, ...curr.filePaths],
-            emptyDirPaths: [...acc.emptyDirPaths, ...curr.emptyDirPaths],
-          }) as FileSearchResult,
-        { filePaths: [], emptyDirPaths: [] },
-      ).emptyDirPaths;
+      // Collect all directories and all files from all roots
+      const [allDirectoriesByRoot, allFilesByRoot] = await Promise.all([
+        Promise.all(rootDirs.map((rootDir) => deps.listDirectories(rootDir, config))),
+        Promise.all(rootDirs.map((rootDir) => deps.listFiles(rootDir, config))),
+      ]);
+
+      // Merge, deduplicate, and sort for deterministic output
+      const allDirectories = Array.from(
+        new Set(
+          allDirectoriesByRoot.flatMap((directories, index) => {
+            const rootDir = rootDirs[index];
+            if (!rootDir) return [];
+            return directories.map((directoryPath) => toOutputDisplayPath(rootDir, directoryPath, index));
+          }),
+        ),
+      ).sort();
+      const allRepoFiles = Array.from(
+        new Set(
+          allFilesByRoot.flatMap((files, index) => {
+            const rootDir = rootDirs[index];
+            if (!rootDir) return [];
+            return files.map((filePath) => toOutputDisplayPath(rootDir, filePath, index));
+          }),
+        ),
+      );
+
+      // Merge in any files that weren't part of the included files so they appear in the tree
+      const includedSet = new Set(allFilePaths);
+      const additionalFiles = allRepoFiles.filter((p) => !includedSet.has(p));
+
+      directoryPathsForTree = allDirectories;
+      // additionalFiles is already disjoint from allFilePaths (filtered above), so no dedup needed
+      filePathsForTree = allFilePaths.concat(additionalFiles);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new RepomixError(`Failed to search for empty directories: ${error.message}`);
+      throw new RepomixError(
+        `Failed to build full directory structure: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? { cause: error } : undefined,
+      );
+    }
+  } else if (config.output.directoryStructure && config.output.includeEmptyDirectories) {
+    // Reuse pre-computed emptyDirPaths from the initial searchFiles call when available,
+    // avoiding a redundant full directory scan.
+    if (emptyDirPaths) {
+      directoryPathsForTree = emptyDirPaths;
+    } else {
+      try {
+        const results = await Promise.all(rootDirs.map((rootDir) => deps.searchFiles(rootDir, config)));
+        const merged = results.flatMap((result, index) => {
+          const rootDir = rootDirs[index];
+          if (!rootDir) return [];
+          return result.emptyDirPaths.map((emptyDirPath) => toOutputDisplayPath(rootDir, emptyDirPath, index));
+        });
+        directoryPathsForTree = [...new Set(merged)].sort();
+      } catch (error) {
+        throw new RepomixError(
+          `Failed to search for empty directories: ${error instanceof Error ? error.message : String(error)}`,
+          error instanceof Error ? { cause: error } : undefined,
+        );
       }
     }
   }
 
+  // Generate tree string - use multi-root format if filePathsByRoot is provided
+  // generateTreeStringWithRoots handles single root case internally
+  let treeString: string;
+  if (filePathsByRoot) {
+    treeString = generateTreeStringWithRoots(filePathsByRoot, directoryPathsForTree);
+  } else {
+    // Fallback for when root info is not available
+    treeString = generateTreeString(filePathsForTree, directoryPathsForTree);
+  }
+
   return {
     generationDate: new Date().toISOString(),
-    treeString: generateTreeString(allFilePaths, emptyDirPaths),
+    treeString,
     processedFiles,
     config,
     instruction: repositoryInstruction,

@@ -1,3 +1,8 @@
+---
+title: Basic Usage
+description: Use Repomix CLI to pack directories, remote repositories, selected files, git diffs, commit logs, split outputs, token counts, and compressed code.
+---
+
 # Basic Usage
 
 ## Quick Start
@@ -25,6 +30,24 @@ repomix --include "src/**/*.ts,**/*.md"
 repomix --ignore "**/*.log,tmp/"
 ```
 
+### Split Output Into Multiple Files
+
+When working with large codebases, the packed output may exceed file size limits imposed by some AI tools (e.g., Google AI Studio's 1MB limit). Use `--split-output` to automatically split the output into multiple files:
+
+```bash
+repomix --split-output 1mb
+```
+
+This generates numbered files like:
+- `repomix-output.1.xml`
+- `repomix-output.2.xml`
+- `repomix-output.3.xml`
+
+Size can be specified with units: `500kb`, `1mb`, `2mb`, `1.5mb`, etc. Decimal values are supported.
+
+> [!NOTE]
+> Files are grouped by top-level directory to maintain context. A single file or directory will never be split across multiple output files.
+
 ### Remote Repositories
 ```bash
 # Using GitHub URL
@@ -32,6 +55,9 @@ repomix --remote https://github.com/user/repo
 
 # Using shorthand
 repomix --remote user/repo
+
+# Using shorthand without --remote (auto-detected)
+repomix user/repo
 
 # Specific branch/tag/commit
 repomix --remote user/repo --remote-branch main
@@ -84,7 +110,9 @@ When using `--stdin`, the specified files are effectively added to the include p
 > [!NOTE]
 > When using `--stdin`, file paths can be relative or absolute, and Repomix will automatically handle path resolution and deduplication.
 
-### Code Compression
+### Code Compression {#code-compression}
+
+Reduce token count while preserving code structure. See the [Code Compression guide](/guide/code-compress) for details.
 
 ```bash
 repomix --compress
@@ -163,6 +191,11 @@ repomix --style xml
 repomix --style markdown
 ```
 
+### JSON
+```bash
+repomix --style json
+```
+
 ### Plain Text
 ```bash
 repomix --style plain
@@ -171,6 +204,9 @@ repomix --style plain
 ## Additional Options
 
 ### Remove Comments
+
+See [Comment Removal](/guide/comment-removal) for supported languages and details.
+
 ```bash
 repomix --remove-comments
 ```
@@ -186,6 +222,9 @@ repomix --copy
 ```
 
 ### Disable Security Check
+
+See [Security](/guide/security) for details on what Repomix detects.
+
 ```bash
 repomix --no-security-check
 ```
@@ -198,3 +237,10 @@ repomix --init
 ```
 
 See [Configuration Guide](/guide/configuration) for detailed options.
+
+## Related Resources
+
+- [Output Formats](/guide/output) - Learn about XML, Markdown, JSON, and plain text formats
+- [Command Line Options](/guide/command-line-options) - Full CLI reference
+- [Prompt Examples](/guide/prompt-examples) - Example prompts for AI analysis
+- [Use Cases](/guide/use-cases) - Real-world examples and workflows

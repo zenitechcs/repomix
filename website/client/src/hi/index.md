@@ -1,6 +1,7 @@
 ---
 layout: home
 title: Repomix
+description: Claude, ChatGPT, Gemini, MCP और कोड रिव्यू workflows के लिए local या remote repositories को AI-friendly XML, Markdown, JSON या plain text में पैक करें।
 titleTemplate: अपने कोडबेस को AI-फ्रेंडली फॉर्मेट में पैकेज करें
 aside: false
 editLink: false
@@ -187,6 +188,9 @@ repomix --style xml
 
 # मार्कडाउन फॉर्मेट
 repomix --style markdown
+
+# JSON फॉर्मेट
+repomix --style json
 
 # प्लेन टेक्स्ट फॉर्मेट
 repomix --style plain

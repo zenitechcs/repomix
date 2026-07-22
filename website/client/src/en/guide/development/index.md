@@ -1,3 +1,8 @@
+---
+title: Contributing to Repomix
+description: Set up the Repomix development environment, run tests, lint code, understand the project structure, and contribute changes to the open source project.
+---
+
 # Contributing to Repomix
 
 Thank you for your interest in **Repomix**! 🚀 We'd love your help to make it even better. This guide will help you get started with contributing to the project.
@@ -15,7 +20,7 @@ Thank you for your interest in **Repomix**! 🚀 We'd love your help to make it 
 
 ### Prerequisites
 
-- Node.js ≥ 20.0.0
+- Node.js ≥ 22.0.0
 - Git
 - npm
 - Docker (optional, for running the website or containerized development)
@@ -35,6 +40,25 @@ npm install
 # Run CLI
 npm run repomix
 ```
+
+### Nix Development
+
+If you have [Nix](https://nixos.org/download) with flakes enabled, you can enter a reproducible development shell with Node.js 24 and Git pre-installed:
+
+```bash
+nix develop
+```
+
+Inside the shell, the standard `npm` workflow works as expected:
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+Note: This shell is for working on Repomix itself, not for installing it as a CLI.
 
 ### Docker Development
 

@@ -1,6 +1,7 @@
 ---
 layout: home
 title: Repomix
+description: Kemas repositori lokal atau remote ke XML, Markdown, JSON, atau teks biasa yang ramah AI untuk Claude, ChatGPT, Gemini, MCP, dan alur kerja code review.
 titleTemplate: Kemas basis kode Anda ke dalam format yang ramah AI
 aside: false
 editLink: false
@@ -187,6 +188,9 @@ repomix --style xml
 
 # Format Markdown
 repomix --style markdown
+
+# Format JSON
+repomix --style json
 
 # Format teks biasa
 repomix --style plain

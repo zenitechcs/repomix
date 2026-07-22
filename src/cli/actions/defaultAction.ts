@@ -1,20 +1,26 @@
 import path from 'node:path';
+import * as v from 'valibot';
 import { loadFileConfig, mergeConfigs } from '../../config/configLoad.js';
 import {
   type RepomixConfigCli,
   type RepomixConfigFile,
   type RepomixConfigMerged,
+  type RepomixOutputFilePathStyle,
   type RepomixOutputStyle,
   repomixConfigCliSchema,
 } from '../../config/configSchema.js';
+import { logFileProcessorStatus } from '../../core/file/fileProcessorRun.js';
 import { readFilePathsFromStdin } from '../../core/file/fileStdin.js';
 import { type PackResult, pack } from '../../core/packager.js';
-import { RepomixError } from '../../shared/errorHandle.js';
-import { rethrowValidationErrorIfZodError } from '../../shared/errorHandle.js';
+import { generateDefaultSkillName } from '../../core/skill/skillUtils.js';
+import { RepomixError, rethrowValidationErrorIfSchemaError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
 import { splitPatterns } from '../../shared/patternUtils.js';
+import type { RepomixProgressCallback } from '../../shared/types.js';
 import { reportResults } from '../cliReport.js';
 import { Spinner } from '../cliSpinner.js';
+import { validateTokenBudget } from '../cliTokenBudget.js';
+import { promptSkillLocation, resolveAndPrepareSkillDir } from '../prompts/skillPrompts.js';
 import type { CliOptions } from '../types.js';
 import { runMigrationAction } from './migrationAction.js';
 
@@ -23,18 +29,28 @@ export interface DefaultActionRunnerResult {
   config: RepomixConfigMerged;
 }
 
-export const runDefaultAction = async (
-  directories: string[],
-  cwd: string,
-  cliOptions: CliOptions,
-): Promise<DefaultActionRunnerResult> => {
-  logger.trace('Loaded CLI options:', cliOptions);
+/**
+ * Builds the merged Repomix config from CLI options: runs pending migrations,
+ * loads the file config, parses the CLI options, and merges them. Shared by the
+ * default and watch actions so the config pipeline lives in one place.
+ */
+export const buildMergedConfig = async (cwd: string, cliOptions: CliOptions): Promise<RepomixConfigMerged> => {
+  // Migration rewrites legacy Repopack files in place, so it only makes sense for
+  // the user's own project. A remote clone is a throwaway temp dir whose legacy
+  // files are attacker-controlled: migrating them would write a repomix.config.*
+  // that the trust prompt never showed (or introduce one where the repo had none),
+  // turning consent for a rename into consent to run unreviewed config. Remote runs
+  // therefore opt out entirely, independently of whether the config is trusted.
+  // skipLocalConfig is kept in the condition as a backstop: any caller that opts out
+  // of reading a directory's config has no business rewriting files in it either.
+  if (!cliOptions.skipMigration && !cliOptions.skipLocalConfig) {
+    await runMigrationAction(cwd);
+  }
 
-  // Run migration before loading config
-  await runMigrationAction(cwd);
-
-  // Load the config file
-  const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, cliOptions.config ?? null);
+  // Load the config file in main process
+  const fileConfig: RepomixConfigFile = await loadFileConfig(cwd, cliOptions.config ?? null, {
+    skipLocalConfig: cliOptions.skipLocalConfig,
+  });
   logger.trace('Loaded file config:', fileConfig);
 
   // Parse the CLI options into a config
@@ -45,89 +61,126 @@ export const runDefaultAction = async (
   const config: RepomixConfigMerged = mergeConfigs(cwd, fileConfig, cliConfig);
   logger.trace('Merged config:', config);
 
-  // Initialize spinner that can be shared across operations
+  // Surface configured file processors (active or disabled) for visibility, since
+  // they run arbitrary commands. Runs for every entry point (local, watch, remote).
+  logFileProcessorStatus(config);
+
+  return config;
+};
+
+export const runDefaultAction = async (
+  directories: string[],
+  cwd: string,
+  cliOptions: CliOptions,
+  progressCallback?: RepomixProgressCallback,
+): Promise<DefaultActionRunnerResult> => {
+  logger.trace('Loaded CLI options:', cliOptions);
+
+  // Build the merged config (migration + file config + CLI options)
+  const config = await buildMergedConfig(cwd, cliOptions);
+
+  // Validate conflicting options
+  validateConflictingOptions(config);
+
+  // Validate --skill-output and --force require --skill-generate
+  if (cliOptions.skillOutput && config.skillGenerate === undefined) {
+    throw new RepomixError('--skill-output can only be used with --skill-generate');
+  }
+  if (cliOptions.force && config.skillGenerate === undefined) {
+    throw new RepomixError('--force can only be used with --skill-generate');
+  }
+  if (cliOptions.skillProjectName !== undefined && config.skillGenerate === undefined) {
+    throw new RepomixError('--skill-project-name can only be used with --skill-generate');
+  }
+
+  // Validate --skill-output is not empty or whitespace only
+  if (cliOptions.skillOutput !== undefined && !cliOptions.skillOutput.trim()) {
+    throw new RepomixError('--skill-output path cannot be empty');
+  }
+  if (cliOptions.skillProjectName !== undefined && !cliOptions.skillProjectName.trim()) {
+    throw new RepomixError('--skill-project-name cannot be empty');
+  }
+
+  // Validate skill generation options and prompt for location
+  if (config.skillGenerate !== undefined) {
+    // Resolve skill name: use pre-computed name (from remoteAction) or generate from directory
+    cliOptions.skillName ??=
+      typeof config.skillGenerate === 'string'
+        ? config.skillGenerate
+        : generateDefaultSkillName(directories.map((d) => path.resolve(cwd, d)));
+
+    // Determine skill directory
+    if (cliOptions.skillOutput && !cliOptions.skillDir) {
+      // Non-interactive mode: use provided path directly
+      cliOptions.skillDir = await resolveAndPrepareSkillDir(cliOptions.skillOutput, cwd, cliOptions.force ?? false);
+    } else if (!cliOptions.skillDir) {
+      // Interactive mode: prompt for skill location
+      const promptResult = await promptSkillLocation(cliOptions.skillName, cwd);
+      cliOptions.skillDir = promptResult.skillDir;
+    }
+  }
+
+  // Handle stdin processing
+  let stdinFilePaths: string[] | undefined;
+  if (cliOptions.stdin) {
+    // Validate directory arguments for stdin mode
+    const firstDir = directories[0] ?? '.';
+    if (directories.length > 1 || firstDir !== '.') {
+      throw new RepomixError(
+        'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
+      );
+    }
+
+    const stdinResult = await readFilePathsFromStdin(cwd);
+    stdinFilePaths = stdinResult.filePaths;
+    logger.trace(`Read ${stdinFilePaths.length} file paths from stdin`);
+  }
+
+  // Run pack() directly in the main process instead of spawning a child process.
+  // The child process startup cost (~250ms for Node.js init + module re-loading) was
+  // pure overhead since the spinner and pack ran in the same child process anyway.
   const spinner = new Spinner('Initializing...', cliOptions);
   spinner.start();
 
-  const result = cliOptions.stdin
-    ? await handleStdinProcessing(directories, cwd, config, spinner)
-    : await handleDirectoryProcessing(directories, cwd, config, spinner);
-
-  spinner.succeed('Packing completed successfully!');
-
-  const packResult = result.packResult;
-
-  reportResults(cwd, packResult, config);
-
-  return {
-    packResult,
-    config,
-  };
-};
-
-/**
- * Handles stdin processing workflow for file paths input.
- */
-export const handleStdinProcessing = async (
-  directories: string[],
-  cwd: string,
-  config: RepomixConfigMerged,
-  spinner: Spinner,
-): Promise<DefaultActionRunnerResult> => {
-  // Validate directory arguments for stdin mode
-  const firstDir = directories[0] ?? '.';
-  if (directories.length > 1 || firstDir !== '.') {
-    throw new RepomixError(
-      'When using --stdin, do not specify directory arguments. File paths will be read from stdin.',
-    );
-  }
-
   let packResult: PackResult;
 
   try {
-    const stdinResult = await readFilePathsFromStdin(cwd);
+    const { skillName, skillDir, skillProjectName, skillSourceUrl } = cliOptions;
+    const packOptions = { skillName, skillDir, skillProjectName, skillSourceUrl };
 
-    // Use pack with predefined files from stdin
-    packResult = await pack(
-      [cwd],
-      config,
-      (message) => {
-        spinner.update(message);
-      },
-      {},
-      stdinResult.filePaths,
-    );
-  } catch (error) {
-    spinner.fail('Error reading from stdin or during packing');
-    throw error;
-  }
+    const targetPaths = stdinFilePaths ? [cwd] : directories.map((directory) => path.resolve(cwd, directory));
 
-  return {
-    packResult,
-    config,
-  };
-};
-
-/**
- * Handles normal directory processing workflow.
- */
-export const handleDirectoryProcessing = async (
-  directories: string[],
-  cwd: string,
-  config: RepomixConfigMerged,
-  spinner: Spinner,
-): Promise<DefaultActionRunnerResult> => {
-  const targetPaths = directories.map((directory) => path.resolve(cwd, directory));
-
-  let packResult: PackResult;
-
-  try {
-    packResult = await pack(targetPaths, config, (message) => {
+    const handleProgress: RepomixProgressCallback = (message) => {
       spinner.update(message);
-    });
+      if (progressCallback) {
+        try {
+          Promise.resolve(progressCallback(message)).catch((error) => {
+            logger.trace('progressCallback error:', error);
+          });
+        } catch (error) {
+          logger.trace('progressCallback error:', error);
+        }
+      }
+    };
+
+    packResult = await pack(targetPaths, config, handleProgress, {}, stdinFilePaths, packOptions);
+
+    spinner.succeed('Packing completed successfully!');
   } catch (error) {
     spinner.fail('Error during packing');
     throw error;
+  }
+
+  // Report results
+  reportResults(cwd, packResult, config, cliOptions);
+
+  // Enforce the token budget as the last step. The output has already been
+  // produced (and written) by this point, so this is a guard that fails the
+  // run with a non-zero exit code, not an in-pack fail-fast. Remote runs defer
+  // this check (see deferTokenBudgetCheck) so they can copy the output out of
+  // the temp dir before the guard throws.
+  if (!cliOptions.deferTokenBudgetCheck) {
+    validateTokenBudget(packResult.totalTokens, config.output.tokenBudget);
   }
 
   return {
@@ -161,6 +214,10 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.gitignore === false) {
     cliConfig.ignore = { ...cliConfig.ignore, useGitignore: options.gitignore };
   }
+  // Only apply dotIgnore setting if explicitly set to false
+  if (options.dotIgnore === false) {
+    cliConfig.ignore = { ...cliConfig.ignore, useDotIgnore: options.dotIgnore };
+  }
   // Only apply defaultPatterns setting if explicitly set to false
   if (options.defaultPatterns === false) {
     cliConfig.ignore = {
@@ -187,6 +244,12 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.output = {
       ...cliConfig.output,
       style: options.style.toLowerCase() as RepomixOutputStyle,
+    };
+  }
+  if (options.outputFilePathStyle) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      filePathStyle: options.outputFilePathStyle.toLowerCase() as RepomixOutputFilePathStyle,
     };
   }
   if (options.parsableStyle !== undefined) {
@@ -251,6 +314,10 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
   if (options.compress !== undefined) {
     cliConfig.output = { ...cliConfig.output, compress: options.compress };
   }
+  // Internal MCP-only field: whole-array override of output.patterns from the config file.
+  if (options.outputPatterns !== undefined) {
+    cliConfig.output = { ...cliConfig.output, patterns: options.outputPatterns };
+  }
 
   if (options.tokenCountEncoding) {
     cliConfig.tokenCount = { encoding: options.tokenCountEncoding };
@@ -265,6 +332,20 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     cliConfig.output = {
       ...cliConfig.output,
       includeEmptyDirectories: options.includeEmptyDirectories,
+    };
+  }
+
+  if (options.includeFullDirectoryStructure) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      includeFullDirectoryStructure: options.includeFullDirectoryStructure,
+    };
+  }
+
+  if (options.splitOutput !== undefined) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      splitOutput: options.splitOutput,
     };
   }
 
@@ -310,10 +391,70 @@ export const buildCliConfig = (options: CliOptions): RepomixConfigCli => {
     };
   }
 
+  if (options.tokenBudget !== undefined) {
+    cliConfig.output = {
+      ...cliConfig.output,
+      tokenBudget: options.tokenBudget,
+    };
+  }
+
+  // Skill generation
+  if (options.skillGenerate !== undefined) {
+    cliConfig.skillGenerate = options.skillGenerate;
+  }
+
+  // Internal gate: only the real CLI entry point sets this (see commanderActionEndpoint).
+  if (options.enableFileProcessors !== undefined) {
+    cliConfig.enableFileProcessors = options.enableFileProcessors;
+  }
+
   try {
-    return repomixConfigCliSchema.parse(cliConfig);
+    return v.parse(repomixConfigCliSchema, cliConfig);
   } catch (error) {
-    rethrowValidationErrorIfZodError(error, 'Invalid cli arguments');
+    rethrowValidationErrorIfSchemaError(error, 'Invalid cli arguments');
     throw error;
+  }
+};
+
+/**
+ * Validates that conflicting CLI options are not used together.
+ * Throws RepomixError if incompatible options are detected.
+ */
+const validateConflictingOptions = (config: RepomixConfigMerged): void => {
+  const isStdoutMode = config.output.stdout || config.output.filePath === '-';
+
+  // Define option states for conflict checking
+  const options = {
+    splitOutput: {
+      enabled: config.output.splitOutput !== undefined,
+      name: '--split-output',
+    },
+    skillGenerate: {
+      enabled: config.skillGenerate !== undefined,
+      name: '--skill-generate',
+    },
+    stdout: {
+      enabled: isStdoutMode,
+      name: '--stdout',
+    },
+    copy: {
+      enabled: config.output.copyToClipboard,
+      name: '--copy',
+    },
+  };
+
+  // Define conflicts: [optionA, optionB, errorMessage]
+  const conflicts: [keyof typeof options, keyof typeof options, string][] = [
+    ['splitOutput', 'stdout', 'Split output requires writing to filesystem.'],
+    ['splitOutput', 'skillGenerate', 'Skill output is a directory.'],
+    ['splitOutput', 'copy', 'Split output generates multiple files.'],
+    ['skillGenerate', 'stdout', 'Skill output requires writing to filesystem.'],
+    ['skillGenerate', 'copy', 'Skill output is a directory and cannot be copied to clipboard.'],
+  ];
+
+  for (const [optionA, optionB, message] of conflicts) {
+    if (options[optionA].enabled && options[optionB].enabled) {
+      throw new RepomixError(`${options[optionA].name} cannot be used with ${options[optionB].name}. ${message}`);
+    }
   }
 };

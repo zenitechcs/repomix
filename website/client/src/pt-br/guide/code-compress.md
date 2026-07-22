@@ -1,3 +1,8 @@
+---
+title: "Compressão de Código"
+description: "Use a compressão de código baseada em Tree-sitter no Repomix para reduzir o uso de tokens preservando imports, exports, classes, funções, interfaces e estrutura."
+---
+
 # Compressão de Código
 
 A compressão de código é um recurso poderoso que extrai estruturas essenciais do código de forma inteligente enquanto remove detalhes de implementação. Isso é particularmente útil para reduzir a contagem de tokens enquanto mantém informações estruturais importantes sobre sua base de código.
@@ -107,6 +112,12 @@ A compressão de código é particularmente útil quando:
 ## Opções Relacionadas
 
 Você pode combinar a compressão com outras opções:
-- `--remove-comments`: Remover comentários do código
+- `--remove-comments`: Remover comentários do código (ver [Remoção de Comentários](/pt-br/guide/comment-removal))
 - `--remove-empty-lines`: Remover linhas vazias
 - `--output-show-line-numbers`: Adicionar números de linha à saída
+
+## Recursos relacionados
+
+- [Remoção de Comentários](/pt-br/guide/comment-removal) - Remover comentários para reduzir ainda mais os tokens
+- [Configuração](/pt-br/guide/configuration) - Definir `output.compress` no arquivo de configuração
+- [Opções de Linha de Comando](/pt-br/guide/command-line-options) - Referência completa da CLI

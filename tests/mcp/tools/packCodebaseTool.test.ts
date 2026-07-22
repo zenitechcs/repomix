@@ -28,6 +28,7 @@ describe('PackCodebaseTool', () => {
     compress?: boolean;
     includePatterns?: string;
     ignorePatterns?: string;
+    outputPatterns?: { pattern: string; compress?: boolean; directoryStructureOnly?: boolean }[];
     topFilesLength?: number;
   }) => Promise<CallToolResult>;
 
@@ -62,7 +63,7 @@ describe('PackCodebaseTool', () => {
     });
 
     // runCliのデフォルト動作
-    vi.mocked(runCli).mockImplementation(async (directories, cwd, opts = {}) => ({
+    vi.mocked(runCli).mockImplementation(async (_directories, cwd, opts = {}) => ({
       packResult: defaultPackResult,
       config: createMockConfig({
         input: {
@@ -138,6 +139,26 @@ describe('PackCodebaseTool', () => {
     );
   });
 
+  test('should pass outputPatterns through to runCli', async () => {
+    const testDir = '/test/project';
+    const outputPatterns = [
+      { pattern: 'src/core/**' },
+      { pattern: 'docs/**/*', compress: true },
+      { pattern: 'website/**/*', directoryStructureOnly: true },
+    ];
+
+    await toolHandler({ directory: testDir, compress: true, outputPatterns });
+
+    expect(runCli).toHaveBeenCalledWith(
+      ['.'],
+      testDir,
+      expect.objectContaining({
+        compress: true,
+        outputPatterns,
+      }),
+    );
+  });
+
   test('should handle CLI execution failure', async () => {
     const testDir = '/test/project';
     vi.mocked(runCli).mockResolvedValue(undefined);
@@ -146,7 +167,9 @@ describe('PackCodebaseTool', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text as string);
+    const content = result.content[0];
+    expect(content.type).toBe('text');
+    const parsedResult = JSON.parse((content as { type: 'text'; text: string }).text);
     expect(parsedResult.errorMessage).toBe('Failed to return a result');
   });
 
@@ -159,7 +182,9 @@ describe('PackCodebaseTool', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text as string);
+    const content = result.content[0];
+    expect(content.type).toBe('text');
+    const parsedResult = JSON.parse((content as { type: 'text'; text: string }).text);
     expect(parsedResult.errorMessage).toBe('Pack failed');
   });
 
@@ -172,7 +197,9 @@ describe('PackCodebaseTool', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content).toHaveLength(1);
-    const parsedResult = JSON.parse(result.content[0].text as string);
+    const content = result.content[0];
+    expect(content.type).toBe('text');
+    const parsedResult = JSON.parse((content as { type: 'text'; text: string }).text);
     expect(parsedResult.errorMessage).toBe('Workspace creation failed');
   });
 });

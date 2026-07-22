@@ -1,79 +1,90 @@
+---
+title: Penggunaan Dasar
+description: Gunakan Repomix CLI untuk mengemas direktori, repositori remote, file terpilih, git diff, log commit, output terpisah, jumlah token, dan kode terkompresi.
+---
+
 # Penggunaan Dasar
 
+## Mulai Cepat
 
-Repomix dirancang untuk menjadi alat yang mudah digunakan dengan antarmuka command-line yang sederhana. Berikut adalah panduan penggunaan dasar.
-
-## Perintah Dasar
-
-Untuk mengemas seluruh repositori Anda:
-
+Kemas seluruh repositori Anda:
 ```bash
 repomix
 ```
 
-Ini akan menghasilkan file `repomix-output.xml` di direktori saat ini, berisi seluruh repositori Anda dalam format yang ramah AI.
+## Kasus Penggunaan Umum
 
-## Mengemas Direktori Tertentu
-
-Untuk mengemas direktori tertentu:
-
+### Mengemas Direktori Tertentu
 ```bash
 repomix path/to/directory
 ```
 
-## Menggunakan Pola Glob
-
-Untuk mengemas file atau direktori tertentu menggunakan [pola glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax):
-
+### Menyertakan File Tertentu
+Gunakan [pola glob](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax):
 ```bash
 repomix --include "src/**/*.ts,**/*.md"
 ```
 
-## Mengecualikan File atau Direktori
-
-Untuk mengecualikan file atau direktori tertentu:
-
+### Mengecualikan File
 ```bash
 repomix --ignore "**/*.log,tmp/"
 ```
 
-## Mengemas Repositori Jarak Jauh
+### Membagi Output Menjadi Beberapa File
 
-Repomix dapat mengemas repositori GitHub publik:
+Saat bekerja dengan basis kode besar, output yang dikemas dapat melebihi batas ukuran file yang diberlakukan oleh beberapa alat AI (misalnya, batas 1MB Google AI Studio). Gunakan `--split-output` untuk membagi output menjadi beberapa file secara otomatis:
 
 ```bash
-# Menggunakan format singkat
-npx repomix --remote yamadashy/repomix
-
-# Menggunakan URL lengkap (mendukung cabang dan jalur tertentu)
-npx repomix --remote https://github.com/yamadashy/repomix
-npx repomix --remote https://github.com/yamadashy/repomix/tree/main
-
-# Menggunakan URL commit
-npx repomix --remote https://github.com/yamadashy/repomix/commit/836abcd7335137228ad77feb28655d85712680f1
+repomix --split-output 1mb
 ```
 
-## Input Daftar File (stdin)
+Ini menghasilkan file bernomor seperti:
+- `repomix-output.1.xml`
+- `repomix-output.2.xml`
+- `repomix-output.3.xml`
 
-Masukkan jalur file melalui stdin untuk fleksibilitas maksimum:
+Ukuran dapat ditentukan dengan satuan: `500kb`, `1mb`, `2mb`, `1.5mb`, dll. Nilai desimal didukung.
+
+> [!NOTE]
+> File dikelompokkan berdasarkan direktori tingkat atas untuk mempertahankan konteks. Satu file atau direktori tidak akan pernah dibagi ke beberapa file output.
+
+### Repositori Remote
+```bash
+# Menggunakan URL GitHub
+repomix --remote https://github.com/user/repo
+
+# Menggunakan singkatan
+repomix --remote user/repo
+
+# Menggunakan singkatan tanpa --remote (terdeteksi otomatis)
+repomix user/repo
+
+# Branch/tag/commit tertentu
+repomix --remote user/repo --remote-branch main
+repomix --remote user/repo --remote-branch 935b695
+```
+
+### Input Daftar File (stdin)
+
+Berikan path file melalui stdin untuk fleksibilitas maksimal:
 
 ```bash
 # Menggunakan perintah find
 find src -name "*.ts" -type f | repomix --stdin
 
-# Menggunakan git untuk mendapatkan file yang terlacak
+# Menggunakan git untuk mendapatkan file yang dilacak
 git ls-files "*.ts" | repomix --stdin
 
-# Menggunakan grep untuk mencari file yang berisi konten tertentu
-grep -l "TODO" **/*.ts | repomix --stdin
-
-# Menggunakan ripgrep untuk mencari file dengan konten tertentu
-rg -l "TODO|FIXME" --type ts | repomix --stdin
-
-# Menggunakan ripgrep (rg) untuk mencari file
+# Menggunakan ripgrep (rg) untuk menemukan file
 rg --files --type ts | repomix --stdin
 
-# Menggunakan sharkdp/fd untuk mencari file
+# Menggunakan grep untuk menemukan file yang berisi konten tertentu
+grep -l "TODO" **/*.ts | repomix --stdin
+
+# Menggunakan ripgrep untuk menemukan file dengan konten tertentu
+rg -l "TODO|FIXME" --type ts | repomix --stdin
+
+# Menggunakan sharkdp/fd untuk menemukan file
 fd -e ts | repomix --stdin
 
 # Menggunakan fzf untuk memilih dari semua file
@@ -85,26 +96,28 @@ find . -name "*.ts" -type f | fzf -m | repomix --stdin
 # Menggunakan ls dengan pola glob
 ls src/**/*.ts | repomix --stdin
 
-# Dari file yang berisi jalur file
+# Dari file yang berisi path file
 cat file-list.txt | repomix --stdin
 
 # Input langsung dengan echo
 echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 ```
 
-Opsi `--stdin` memungkinkan Anda untuk mem-pipe daftar jalur file ke Repomix, memberikan fleksibilitas maksimum dalam memilih file mana yang akan dikemas.
+Opsi `--stdin` memungkinkan Anda menyalurkan daftar path file ke Repomix, memberi Anda fleksibilitas maksimal dalam memilih file mana yang akan dikemas.
 
-Saat menggunakan `--stdin`, file yang ditentukan secara efektif ditambahkan ke pola include. Ini berarti perilaku include dan ignore normal masih berlaku - file yang ditentukan melalui stdin masih akan dikecualikan jika cocok dengan pola ignore.
+Saat menggunakan `--stdin`, file yang ditentukan secara efektif ditambahkan ke pola include. Ini berarti perilaku include dan ignore normal tetap berlaku: file yang ditentukan melalui stdin akan tetap dikecualikan jika cocok dengan pola ignore.
 
 > [!NOTE]
-> Saat menggunakan `--stdin`, jalur file dapat berupa jalur relatif atau absolut, dan Repomix akan menangani resolusi jalur dan deduplikasi secara otomatis.
+> Saat menggunakan `--stdin`, path file dapat berupa relatif atau absolut, dan Repomix akan secara otomatis menangani resolusi path dan deduplikasi.
 
-### Kompresi Kode
+### Kompresi Kode {#code-compression}
+
+Mengurangi jumlah token sambil mempertahankan struktur kode. Lihat [panduan Kompresi Kode](/id/guide/code-compress) untuk detailnya.
 
 ```bash
 repomix --compress
 
-# Anda juga dapat menggunakannya dengan repositori jarak jauh:
+# Anda juga dapat menggunakannya dengan repositori remote:
 repomix --remote yamadashy/repomix --compress
 ```
 
@@ -113,7 +126,7 @@ repomix --remote yamadashy/repomix --compress
 Sertakan informasi Git untuk memberikan konteks pengembangan bagi analisis AI:
 
 ```bash
-# Sertakan diff git (perubahan yang belum di-commit)
+# Sertakan git diff (perubahan yang belum di-commit)
 repomix --include-diffs
 
 # Sertakan log commit git (50 commit terakhir secara default)
@@ -127,20 +140,20 @@ repomix --include-diffs --include-logs
 ```
 
 Ini menambahkan konteks berharga tentang:
-- **Perubahan terbaru**: Diff Git menunjukkan modifikasi yang belum di-commit
-- **Pola pengembangan**: Log Git mengungkapkan file mana yang biasanya diubah bersamaan
+- **Perubahan terbaru**: Git diff menunjukkan modifikasi yang belum di-commit
+- **Pola pengembangan**: Git log mengungkapkan file mana yang biasanya diubah bersama
 - **Riwayat commit**: Pesan commit terbaru memberikan wawasan tentang fokus pengembangan
 - **Hubungan file**: Memahami file mana yang dimodifikasi dalam commit yang sama
 
-### Optimisasi Jumlah Token
+### Optimasi Jumlah Token
 
-Memahami distribusi token dari basis kode Anda sangat penting untuk mengoptimalkan interaksi AI. Gunakan opsi `--token-count-tree` untuk memvisualisasikan penggunaan token di seluruh proyek Anda:
+Memahami distribusi token basis kode Anda sangat penting untuk mengoptimalkan interaksi AI. Gunakan opsi `--token-count-tree` untuk memvisualisasikan penggunaan token di seluruh proyek Anda:
 
 ```bash
 repomix --token-count-tree
 ```
 
-Ini menampilkan tampilan hierarkis dari basis kode Anda dengan jumlah token:
+Ini menampilkan tampilan hierarkis basis kode Anda dengan jumlah token:
 
 ```
 🔢 Token Count Tree:
@@ -154,17 +167,17 @@ Ini menampilkan tampilan hierarkis dari basis kode Anda dengan jumlah token:
         └── output/ (5,808 tokens)
 ```
 
-Anda juga dapat menetapkan ambang batas minimum token untuk fokus pada file yang lebih besar:
+Anda juga dapat menetapkan ambang batas token minimum untuk fokus pada file yang lebih besar:
 
 ```bash
 repomix --token-count-tree 1000  # Hanya tampilkan file/direktori dengan 1000+ token
 ```
 
 Ini membantu Anda:
-- **Mengidentifikasi file yang berat token** - yang mungkin melebihi batas konteks AI
-- **Mengoptimalkan pemilihan file** - menggunakan pola `--include` dan `--ignore`
-- **Merencanakan strategi kompresi** - menargetkan kontributor terbesar
-- **Menyeimbangkan konten vs konteks** - saat mempersiapkan kode untuk analisis AI
+- **Mengidentifikasi file dengan banyak token** yang mungkin melebihi batas konteks AI
+- **Mengoptimalkan pemilihan file** menggunakan pola `--include` dan `--ignore`
+- **Merencanakan strategi kompresi** dengan menargetkan kontributor terbesar
+- **Menyeimbangkan konten vs. konteks** saat menyiapkan kode untuk analisis AI
 
 ## Format Output
 
@@ -178,7 +191,12 @@ repomix --style xml
 repomix --style markdown
 ```
 
-### Plain Text
+### JSON
+```bash
+repomix --style json
+```
+
+### Teks Biasa
 ```bash
 repomix --style plain
 ```
@@ -186,6 +204,9 @@ repomix --style plain
 ## Opsi Tambahan
 
 ### Hapus Komentar
+
+Lihat [Penghapusan Komentar](/id/guide/comment-removal) untuk bahasa yang didukung dan detailnya.
+
 ```bash
 repomix --remove-comments
 ```
@@ -201,41 +222,25 @@ repomix --copy
 ```
 
 ### Nonaktifkan Pemeriksaan Keamanan
+
+Lihat [Keamanan](/id/guide/security) untuk detail tentang apa yang dideteksi Repomix.
+
 ```bash
 repomix --no-security-check
 ```
 
 ## Konfigurasi
 
-Untuk menginisialisasi file konfigurasi baru (`repomix.config.json`):
-
+Inisialisasi file konfigurasi:
 ```bash
 repomix --init
 ```
 
-Untuk informasi lebih lanjut tentang konfigurasi, lihat [Panduan Konfigurasi](configuration.md).
+Lihat [Panduan Konfigurasi](/id/guide/configuration) untuk opsi terperinci.
 
-## Penggunaan Docker
+## Sumber Daya Terkait
 
-Anda juga dapat menjalankan Repomix menggunakan Docker:
-
-```bash
-docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix
-```
-
-Untuk mengemas direktori tertentu:
-```bash
-docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix path/to/directory
-```
-
-Memproses repositori jarak jauh dan output ke direktori `output`:
-
-```bash
-docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://github.com/yamadashy/repomix
-```
-
-## Langkah Selanjutnya
-
-Setelah Anda menghasilkan file yang dikemas, Anda dapat menggunakannya dengan alat AI Generatif seperti Claude, ChatGPT, dan Gemini.
-
-Untuk informasi lebih lanjut tentang opsi baris perintah, lihat [Opsi Baris Perintah](command-line-options.md).
+- [Format Output](/id/guide/output) - Pelajari tentang format XML, Markdown, JSON, dan teks biasa
+- [Opsi Baris Perintah](/id/guide/command-line-options) - Referensi CLI lengkap
+- [Contoh Prompt](/id/guide/prompt-examples) - Contoh prompt untuk analisis AI
+- [Kasus Penggunaan](/id/guide/use-cases) - Contoh dan alur kerja dunia nyata

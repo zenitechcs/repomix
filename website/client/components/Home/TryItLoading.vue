@@ -1,11 +1,44 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import type { DisplayProgressStage } from '../api/client';
+
+interface Props {
+  stage?: DisplayProgressStage | null;
+  message?: string | null;
+}
+
+const props = defineProps<Props>();
+
+const stageMessages: Record<DisplayProgressStage, string> = {
+  verifying: 'Verifying request...',
+  'cache-check': 'Checking cache...',
+  cloning: 'Cloning repository...',
+  'repository-fetch': 'Fetching repository...',
+  extracting: 'Extracting files...',
+  processing: 'Processing files...',
+};
+
+const MAX_DETAIL_LENGTH = 60;
+
+const detailMessage = computed(() => {
+  const text = props.message || (props.stage && stageMessages[props.stage]) || '...';
+  if (text.length <= MAX_DETAIL_LENGTH) return text;
+  return `${text.slice(0, MAX_DETAIL_LENGTH)}...`;
+});
+</script>
+
 <template>
   <div class="loading">
-    <div class="spinner"></div>
-    <p>Processing repository...</p>
+    <div class="loading-header">
+      <div class="spinner"></div>
+      <p>Processing repository...</p>
+    </div>
+    <p class="loading-detail">{{ detailMessage }}</p>
     <div class="sponsor-section">
       <p class="sponsor-header">Special thanks to:</p>
       <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
-        <img alt="Warp sponsorship" width="400" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Sponsor/Warp-Github-LG-01.png">
+        <!-- jsDelivr mirror of the sponsor's repo: auto-updates with long-lived cache headers. -->
+        <img alt="Warp sponsorship" width="400" height="225" src="https://cdn.jsdelivr.net/gh/warpdotdev/brand-assets/Github/Sponsor/Warp-Github-LG-01.png">
       </a>
       <p class="sponsor-title">
         <a href="https://go.warp.dev/repomix" target="_blank" rel="noopener noreferrer">
@@ -23,15 +56,32 @@
 
 <style scoped>
 .loading {
-  padding: 36px;
+  padding: 24px;
   text-align: center;
 }
 
+.loading-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loading-header p {
+  margin: 0;
+}
+
+.loading-detail {
+  margin: 4px 0 0;
+  font-size: 0.8em;
+  color: var(--vp-c-text-3);
+}
+
 .spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 16px;
-  border: 3px solid var(--vp-c-brand-1);
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vp-c-brand-1);
   border-radius: 50%;
   border-top-color: transparent;
   animation: spin 1s linear infinite;

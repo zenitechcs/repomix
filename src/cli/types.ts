@@ -1,5 +1,5 @@
 import type { OptionValues } from 'commander';
-import type { RepomixOutputStyle } from '../config/configSchema.js';
+import type { OutputPattern, RepomixOutputFilePathStyle, RepomixOutputStyle } from '../config/configSchema.js';
 
 export interface CliOptions extends OptionValues {
   // Basic Options
@@ -9,8 +9,12 @@ export interface CliOptions extends OptionValues {
   output?: string;
   stdout?: boolean;
   style?: RepomixOutputStyle;
+  outputFilePathStyle?: RepomixOutputFilePathStyle;
   parsableStyle?: boolean;
   compress?: boolean;
+  // Internal: per-file inclusion levels (output.patterns). Not exposed as a CLI flag;
+  // set programmatically by the MCP tools so an agent can build a packing scenario per call.
+  outputPatterns?: OutputPattern[];
   outputShowLineNumbers?: boolean;
   copy?: boolean;
   fileSummary?: boolean;
@@ -22,6 +26,8 @@ export interface CliOptions extends OptionValues {
   headerText?: string;
   instructionFilePath?: string;
   includeEmptyDirectories?: boolean;
+  includeFullDirectoryStructure?: boolean;
+  splitOutput?: number; // bytes
   gitSortByChanges?: boolean;
   includeDiffs?: boolean;
   includeLogs?: boolean;
@@ -31,12 +37,18 @@ export interface CliOptions extends OptionValues {
   include?: string;
   ignore?: string;
   gitignore?: boolean;
+  dotIgnore?: boolean;
   defaultPatterns?: boolean;
   stdin?: boolean;
 
   // Remote Repository Options
   remote?: string;
   remoteBranch?: string;
+  remoteTrustConfig?: boolean;
+  skipLocalConfig?: boolean; // Internal flag: skip loading config files from the working directory (e.g., untrusted remote repos)
+  skipMigration?: boolean; // Internal flag: never run the Repopack migration (e.g., a throwaway remote clone whose legacy files are attacker-controlled)
+  enableFileProcessors?: boolean; // Internal flag: allow input.processors to run external commands. Injected only by the real CLI entry point (auto-on for local runs; gated by --remote-trust-config for remote)
+  deferTokenBudgetCheck?: boolean; // Internal flag: skip the token-budget check inside runDefaultAction so the caller can enforce it after delivering output (e.g., remote runs copy out of the temp dir first)
 
   // Configuration Options
   config?: string;
@@ -49,9 +61,22 @@ export interface CliOptions extends OptionValues {
   // Token Count Options
   tokenCountEncoding?: string;
   tokenCountTree?: boolean | number;
+  tokenBudget?: number;
 
   // MCP
   mcp?: boolean;
+
+  // Skill Generation
+  skillGenerate?: string | boolean;
+  skillName?: string; // Pre-computed skill name (used internally for remote repos)
+  skillDir?: string; // Pre-computed skill directory (used internally for remote repos)
+  skillProjectName?: string; // Project name for generated skill descriptions
+  skillSourceUrl?: string; // Source URL for skill (used internally for remote repos only)
+  skillOutput?: string; // Output path for skill (skips location prompt)
+  force?: boolean; // Skip all confirmation prompts
+
+  // Watch Mode
+  watch?: boolean;
 
   // Other Options
   topFilesLen?: number;

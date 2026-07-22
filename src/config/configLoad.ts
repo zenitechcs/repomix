@@ -1,21 +1,33 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import JSON5 from 'json5';
 import pc from 'picocolors';
-import { RepomixError, rethrowValidationErrorIfZodError } from '../shared/errorHandle.js';
+import * as v from 'valibot';
+import { RepomixError, rethrowValidationErrorIfSchemaError } from '../shared/errorHandle.js';
 import { logger } from '../shared/logger.js';
 import {
+  defaultConfig,
+  defaultFilePathMap,
   type RepomixConfigCli,
   type RepomixConfigFile,
   type RepomixConfigMerged,
-  defaultConfig,
-  defaultFilePathMap,
   repomixConfigFileSchema,
   repomixConfigMergedSchema,
 } from './configSchema.js';
 import { getGlobalDirectory } from './globalDirectory.js';
 
-const defaultConfigPaths = ['repomix.config.json5', 'repomix.config.jsonc', 'repomix.config.json'];
+const defaultConfigPaths = [
+  'repomix.config.ts',
+  'repomix.config.mts',
+  'repomix.config.cts',
+  'repomix.config.js',
+  'repomix.config.mjs',
+  'repomix.config.cjs',
+  'repomix.config.json5',
+  'repomix.config.jsonc',
+  'repomix.config.json',
+];
 
 const getGlobalConfigPaths = () => {
   const globalDir = getGlobalDirectory();
@@ -45,26 +57,64 @@ const findConfigFile = async (configPaths: string[], logPrefix: string): Promise
   return null;
 };
 
-export const loadFileConfig = async (rootDir: string, argConfigPath: string | null): Promise<RepomixConfigFile> => {
+/**
+ * Returns the absolute path of the local repomix config file under `rootDir`,
+ * or null if none exists. Uses the same name/priority order as config loading,
+ * so callers (e.g. the remote-config trust prompt) resolve exactly the file
+ * that would be loaded.
+ */
+export const findLocalConfigPath = async (rootDir: string): Promise<string | null> => {
+  const localConfigPaths = defaultConfigPaths.map((configPath) => path.resolve(rootDir, configPath));
+  return findConfigFile(localConfigPaths, 'local');
+};
+
+// Default jiti import implementation for loading JS/TS config files
+// Lazy-loads jiti to avoid importing its heavy TypeScript toolchain
+// when using JSON/JSON5 config files or default config (the common case).
+// We deliberately do not pass `interopDefault`; the call site below handles
+// the ESM namespace `{ default: config }` unwrap explicitly so the behavior
+// is the same for .ts / .mts / .js / .mjs / .cjs inputs.
+const defaultJitiImport = async (fileUrl: string): Promise<unknown> => {
+  const { createJiti } = await import('jiti');
+  const jiti = createJiti(import.meta.url, {
+    moduleCache: false, // Disable cache to ensure fresh config loads
+  });
+  return await jiti.import(fileUrl);
+};
+
+export const loadFileConfig = async (
+  rootDir: string,
+  argConfigPath: string | null,
+  options: { skipLocalConfig?: boolean } = {},
+  deps = {
+    jitiImport: defaultJitiImport,
+  },
+): Promise<RepomixConfigFile> => {
   if (argConfigPath) {
-    // If a specific config path is provided, use it directly
+    // Explicit --config flag is always respected (user's intentional choice)
     const fullPath = path.resolve(rootDir, argConfigPath);
     logger.trace('Loading local config from:', fullPath);
 
     const isLocalFileExists = await checkFileExists(fullPath);
 
     if (isLocalFileExists) {
-      return await loadAndValidateConfig(fullPath);
+      return await loadAndValidateConfig(fullPath, deps);
     }
     throw new RepomixError(`Config file not found at ${argConfigPath}`);
   }
 
   // Try to find a local config file using the priority order
-  const localConfigPaths = defaultConfigPaths.map((configPath) => path.resolve(rootDir, configPath));
-  const localConfigPath = await findConfigFile(localConfigPaths, 'local');
+  const localConfigPath = await findLocalConfigPath(rootDir);
 
   if (localConfigPath) {
-    return await loadAndValidateConfig(localConfigPath);
+    if (!options.skipLocalConfig) {
+      return await loadAndValidateConfig(localConfigPath, deps);
+    }
+    // Log when config files are skipped for security (remote mode)
+    logger.note(
+      `Skipping config file found in remote repository for security: ${path.basename(localConfigPath)}\n` +
+        'Use --remote-trust-config to trust and load it.',
+    );
   }
 
   // Try to find a global config file using the priority order
@@ -72,26 +122,86 @@ export const loadFileConfig = async (rootDir: string, argConfigPath: string | nu
   const globalConfigPath = await findConfigFile(globalConfigPaths, 'global');
 
   if (globalConfigPath) {
-    return await loadAndValidateConfig(globalConfigPath);
+    return await loadAndValidateConfig(globalConfigPath, deps);
   }
 
-  logger.log(
-    pc.dim(
-      `No custom config found at ${defaultConfigPaths.join(', ')} or global config at ${globalConfigPaths.join(', ')}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.`,
-    ),
-  );
+  if (!options.skipLocalConfig) {
+    logger.log(
+      pc.dim(
+        `No custom config found at ${defaultConfigPaths.join(', ')} or global config at ${globalConfigPaths.join(', ')}.\nYou can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.`,
+      ),
+    );
+  }
   return {};
 };
 
-const loadAndValidateConfig = async (filePath: string): Promise<RepomixConfigFile> => {
+const getFileExtension = (filePath: string): string => {
+  const match = filePath.match(/\.(ts|mts|cts|js|mjs|cjs|json5|jsonc|json)$/);
+  return match ? match[1] : '';
+};
+
+// Config extensions that are executed on load (via jiti) rather than parsed as data.
+const EXECUTABLE_CONFIG_EXTENSIONS: readonly string[] = ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs'];
+
+/**
+ * Whether loading this config file runs its code. The remote-config trust prompt
+ * uses this to decide whether to warn that the config is executable, so it has to
+ * describe exactly the set this module actually hands to jiti.
+ */
+export const isExecutableConfigPath = (filePath: string): boolean =>
+  EXECUTABLE_CONFIG_EXTENSIONS.includes(getFileExtension(filePath));
+
+// Dependency injection allows mocking jiti in tests to prevent double instrumentation.
+// Without this, jiti transforms src/ files that are already instrumented by Vitest,
+// causing coverage instability (results varied by ~2% on each test run).
+const loadAndValidateConfig = async (
+  filePath: string,
+  deps = {
+    jitiImport: defaultJitiImport,
+  },
+): Promise<RepomixConfigFile> => {
   try {
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const config = JSON5.parse(fileContent);
-    return repomixConfigFileSchema.parse(config);
+    let config: unknown;
+    const ext = getFileExtension(filePath);
+
+    switch (EXECUTABLE_CONFIG_EXTENSIONS.includes(ext) ? 'executable' : ext) {
+      case 'executable': {
+        // Use jiti for TypeScript and JavaScript files
+        // This provides consistent behavior and avoids Node.js module cache issues
+        const imported = await deps.jitiImport(pathToFileURL(filePath).href);
+        // jiti.import returns a `{ default: ... }` wrapper for `export default {...}`
+        // (both ESM Module namespaces and jiti's TS interop). Unwrap only when
+        // `default` is itself an object — this preserves a CJS config that
+        // legitimately exports `{ default: 'plain', ...rest }` as-is.
+        // Known limitation: a CJS module exporting `{ default: { ... }, otherKey: ... }`
+        // would still be treated as an ESM wrapper and `otherKey` would be discarded.
+        // No known user hits this pattern; RepomixConfig has no `default` field.
+        const defaultExport =
+          imported && typeof imported === 'object' && 'default' in imported
+            ? (imported as { default: unknown }).default
+            : undefined;
+        config = defaultExport && typeof defaultExport === 'object' ? defaultExport : imported;
+        break;
+      }
+
+      case 'json5':
+      case 'jsonc':
+      case 'json': {
+        // Use JSON5 for JSON/JSON5/JSONC files
+        const fileContent = await fs.readFile(filePath, 'utf-8');
+        config = JSON5.parse(fileContent);
+        break;
+      }
+
+      default:
+        throw new RepomixError(`Unsupported config file format: ${filePath}`);
+    }
+
+    return v.parse(repomixConfigFileSchema, config);
   } catch (error) {
-    rethrowValidationErrorIfZodError(error, 'Invalid config schema');
+    rethrowValidationErrorIfSchemaError(error, 'Invalid config schema');
     if (error instanceof SyntaxError) {
-      throw new RepomixError(`Invalid JSON5 in config file ${filePath}: ${error.message}`);
+      throw new RepomixError(`Invalid syntax in config file ${filePath}: ${error.message}`);
     }
     if (error instanceof Error) {
       throw new RepomixError(`Error loading config from ${filePath}: ${error.message}`);
@@ -109,14 +219,6 @@ export const mergeConfigs = (
 
   const baseConfig = defaultConfig;
 
-  // If the output file path is not provided in the config file or CLI, use the default file path for the style
-  if (cliConfig.output?.filePath == null && fileConfig.output?.filePath == null) {
-    const style = cliConfig.output?.style || fileConfig.output?.style || baseConfig.output.style;
-    baseConfig.output.filePath = defaultFilePathMap[style];
-
-    logger.trace('Default output file path is set to:', baseConfig.output.filePath);
-  }
-
   const mergedConfig = {
     cwd,
     input: {
@@ -124,11 +226,32 @@ export const mergeConfigs = (
       ...fileConfig.input,
       ...cliConfig.input,
     },
-    output: {
-      ...baseConfig.output,
-      ...fileConfig.output,
-      ...cliConfig.output,
-    },
+    output: (() => {
+      const mergedOutput = {
+        ...baseConfig.output,
+        ...fileConfig.output,
+        ...cliConfig.output,
+        git: {
+          ...baseConfig.output.git,
+          ...fileConfig.output?.git,
+          ...cliConfig.output?.git,
+        },
+      };
+
+      // Auto-adjust filePath extension to match style when filePath is not explicitly set
+      const style = mergedOutput.style ?? baseConfig.output.style;
+      const filePathExplicitlySet = Boolean(fileConfig.output?.filePath || cliConfig.output?.filePath);
+
+      if (!filePathExplicitlySet) {
+        const desiredPath = defaultFilePathMap[style];
+        if (mergedOutput.filePath !== desiredPath) {
+          mergedOutput.filePath = desiredPath;
+          logger.trace('Adjusted output file path to match style:', mergedOutput.filePath);
+        }
+      }
+
+      return mergedOutput;
+    })(),
     include: [...(baseConfig.include || []), ...(fileConfig.include || []), ...(cliConfig.include || [])],
     ignore: {
       ...baseConfig.ignore,
@@ -145,12 +268,21 @@ export const mergeConfigs = (
       ...fileConfig.security,
       ...cliConfig.security,
     },
+    tokenCount: {
+      ...baseConfig.tokenCount,
+      ...fileConfig.tokenCount,
+      ...cliConfig.tokenCount,
+    },
+    // Skill generation (CLI only)
+    ...(cliConfig.skillGenerate !== undefined && { skillGenerate: cliConfig.skillGenerate }),
+    // File processors gate (CLI/entry-point only; never set from a config file)
+    ...(cliConfig.enableFileProcessors !== undefined && { enableFileProcessors: cliConfig.enableFileProcessors }),
   };
 
   try {
-    return repomixConfigMergedSchema.parse(mergedConfig);
+    return v.parse(repomixConfigMergedSchema, mergedConfig);
   } catch (error) {
-    rethrowValidationErrorIfZodError(error, 'Invalid merged config');
+    rethrowValidationErrorIfSchemaError(error, 'Invalid merged config');
     throw error;
   }
 };

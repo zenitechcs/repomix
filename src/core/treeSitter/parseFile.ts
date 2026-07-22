@@ -1,8 +1,29 @@
+/**
+ * File parsing using tree-sitter for the compress feature.
+ *
+ * Why we use web-tree-sitter (WASM) instead of node-tree-sitter (native bindings):
+ *
+ * 1. Cross-platform compatibility: WASM works identically across all platforms
+ *    without requiring native compilation.
+ *
+ * 2. Easy installation: No build tools (Python, C++ compiler, node-gyp) required.
+ *    Users can install Repomix with just `npm install` on any environment.
+ *
+ * 3. Fewer dependencies: All language parsers are bundled in a single package
+ *    (@repomix/tree-sitter-wasms) instead of 15+ separate native packages.
+ *
+ * 4. Reliability: Native modules can fail to build on certain Node.js versions
+ *    (e.g., Node.js v23 has known issues with node-tree-sitter).
+ *
+ * The performance overhead of WASM is acceptable for the compress feature's use case.
+ */
+
+import type { Tree } from 'web-tree-sitter';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
-import type { SupportedLang } from './lang2Query.js';
+import type { SupportedLang } from './languageConfig.js';
 import { LanguageParser } from './languageParser.js';
-import { type ParseContext, createParseStrategy } from './parseStrategies/ParseStrategy.js';
+import type { ParseContext } from './parseStrategies/BaseParseStrategy.js';
 
 interface CapturedChunk {
   content: string;
@@ -14,33 +35,44 @@ let languageParserSingleton: LanguageParser | null = null;
 
 export const CHUNK_SEPARATOR = '⋮----';
 
-// TODO: Do something with config: RepomixConfigMerged, it is not used (yet)
-export const parseFile = async (fileContent: string, filePath: string, config: RepomixConfigMerged) => {
-  const languageParser = await getLanguageParserSingleton();
-
+// Compression is best-effort: this function never throws. On any failure it
+// returns undefined so callers can fall back to the uncompressed content. This
+// matters because tree-sitter runs on WASM, where a pathological file can
+// trigger a runtime abort; without this, a single bad file would crash the
+// whole pack. The success path is fully wrapped so a partially-built result is
+// never returned on error.
+export const parseFile = async (
+  fileContent: string,
+  filePath: string,
+  config: RepomixConfigMerged,
+): Promise<string | undefined> => {
   // Split the file content into individual lines
   const lines = fileContent.split('\n');
-  if (lines.length < 1) {
-    return '';
-  }
 
-  const lang: SupportedLang | undefined = languageParser.guessTheLang(filePath);
-  if (lang === undefined) {
-    // Language not supported
-    return undefined;
-  }
-
-  const query = await languageParser.getQueryForLang(lang);
-  const parser = await languageParser.getParserForLang(lang);
-  const processedChunks = new Set<string>();
-  const capturedChunks: CapturedChunk[] = [];
-
+  let tree: Tree | null | undefined;
   try {
+    const languageParser = await getLanguageParserSingleton();
+
+    const lang: SupportedLang | undefined = languageParser.guessTheLang(filePath);
+    if (lang === undefined) {
+      // Language not supported: fall back to uncompressed content quietly.
+      return undefined;
+    }
+
+    const query = await languageParser.getQueryForLang(lang);
+    const parser = await languageParser.getParserForLang(lang);
+    const processedChunks = new Set<string>();
+    const capturedChunks: CapturedChunk[] = [];
+
     // Parse the file content into an Abstract Syntax Tree (AST)
-    const tree = parser.parse(fileContent);
+    tree = parser.parse(fileContent);
+    if (!tree) {
+      logger.debug(`Failed to parse file: ${filePath}`);
+      return undefined;
+    }
 
     // Get the appropriate parse strategy for the language
-    const parseStrategy = createParseStrategy(lang);
+    const parseStrategy = await languageParser.getStrategyForLang(lang);
 
     // Create parse context
     const context: ParseContext = {
@@ -67,23 +99,42 @@ export const parseFile = async (fileContent: string, filePath: string, config: R
         });
       }
     }
+
+    const filteredChunks = filterDuplicatedChunks(capturedChunks);
+    const mergedChunks = mergeAdjacentChunks(filteredChunks);
+
+    return mergedChunks
+      .map((chunk) => chunk.content)
+      .join(`\n${CHUNK_SEPARATOR}\n`)
+      .trim();
   } catch (error: unknown) {
-    logger.log(`Error parsing file: ${error}\n`);
+    // Any failure here (language preparation, parsing, or a WASM runtime abort)
+    // degrades to uncompressed content instead of aborting the whole pack.
+    //
+    // Note on hard WASM aborts (e.g. "table index is out of bounds"): such an
+    // abort can leave this worker's shared tree-sitter runtime degraded. The
+    // parser singleton is reused for the worker's lifetime, so later files routed
+    // to the same worker may also fall back to uncompressed output. This is
+    // bounded per worker and surfaced by the warning below. Recovering the
+    // runtime would require recycling the worker, which is out of scope here; the
+    // init-failure path is already retried by getLanguageParserSingleton.
+    const message = error instanceof Error ? error.message : String(error);
+    logger.warn(`Failed to compress ${filePath}, using uncompressed content: ${message}`);
+    return undefined;
+  } finally {
+    tree?.delete();
   }
-
-  const filteredChunks = filterDuplicatedChunks(capturedChunks);
-  const mergedChunks = mergeAdjacentChunks(filteredChunks);
-
-  return mergedChunks
-    .map((chunk) => chunk.content)
-    .join(`\n${CHUNK_SEPARATOR}\n`)
-    .trim();
 };
 
 const getLanguageParserSingleton = async () => {
   if (!languageParserSingleton) {
-    languageParserSingleton = new LanguageParser();
-    await languageParserSingleton.init();
+    // Assign only after init() succeeds. Otherwise a failed init would leave an
+    // uninitialized parser cached for the rest of the worker's lifetime, so
+    // every subsequent file would throw "not initialized" and silently lose
+    // compression. Keeping the singleton null lets the next call retry init.
+    const parser = new LanguageParser();
+    await parser.init();
+    languageParserSingleton = parser;
   }
   return languageParserSingleton;
 };
@@ -131,20 +182,32 @@ const mergeAdjacentChunks = (chunks: CapturedChunk[]): CapturedChunk[] => {
     return chunks;
   }
 
-  const merged: CapturedChunk[] = [chunks[0]];
+  const merged: CapturedChunk[] = [];
+  // Use array accumulation instead of string += to avoid O(k²) copying.
+  // Each += creates a new string copying all previous content; accumulating
+  // content parts and joining once is O(k) total.
+  let contentParts: string[] = [chunks[0].content];
+  let startRow = chunks[0].startRow;
+  let endRow = chunks[0].endRow;
 
   for (let i = 1; i < chunks.length; i++) {
     const current = chunks[i];
-    const previous = merged[merged.length - 1];
 
-    // Merge the current chunk with the previous one
-    if (previous.endRow + 1 === current.startRow) {
-      previous.content += `\n${current.content}`;
-      previous.endRow = current.endRow;
+    if (endRow + 1 === current.startRow) {
+      // Adjacent: accumulate content part
+      contentParts.push(current.content);
+      endRow = current.endRow;
     } else {
-      merged.push(current);
+      // Gap: finalize previous merged chunk and start a new one
+      merged.push({ content: contentParts.join('\n'), startRow, endRow });
+      contentParts = [current.content];
+      startRow = current.startRow;
+      endRow = current.endRow;
     }
   }
+
+  // Finalize the last merged chunk
+  merged.push({ content: contentParts.join('\n'), startRow, endRow });
 
   return merged;
 };

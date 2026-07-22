@@ -13,6 +13,7 @@ function hasResult(obj: unknown): obj is { result: string } {
     typeof (obj as Record<string, unknown>).result === 'string'
   );
 }
+
 import {
   buildMcpToolErrorResponse,
   buildMcpToolSuccessResponse,
@@ -62,7 +63,10 @@ describe('mcpToolRuntime', () => {
       const tempDir = await createToolWorkspace();
 
       expect(os.tmpdir).toHaveBeenCalled();
-      expect(path.join).toHaveBeenCalledWith('/tmp', 'repomix', 'mcp-outputs');
+      // path.join is now invoked twice: once inside shared/tmpDir.getRepomixTmpDir
+      // to build the umbrella, then again here to append the mcp-outputs subdir.
+      expect(path.join).toHaveBeenCalledWith('/tmp', 'repomix');
+      expect(path.join).toHaveBeenCalledWith('/tmp/repomix', 'mcp-outputs');
       expect(fs.mkdir).toHaveBeenCalledWith('/tmp/repomix/mcp-outputs', { recursive: true });
       expect(fs.mkdtemp).toHaveBeenCalledWith('/tmp/repomix/mcp-outputs/');
       expect(tempDir).toBe('/tmp/repomix/mcp-outputs/temp-dir');
@@ -96,7 +100,7 @@ describe('mcpToolRuntime', () => {
       vi.mocked(crypto.randomBytes).mockImplementation(() => ({
         toString: () => 'abcdef1234567890',
       }));
-      vi.mocked(fs.readFile).mockResolvedValue('Line 1\nLine 2\nLine 3\nLine 4\nLine 5' as unknown as Buffer);
+      vi.mocked(fs.readFile).mockResolvedValue('Line 1\nLine 2\nLine 3\nLine 4\nLine 5');
     });
 
     it('should format a tool response with directory context', async () => {
@@ -296,7 +300,6 @@ describe('mcpToolRuntime', () => {
             text: JSON.stringify(errorContent, null, 2),
           },
         ],
-        // structuredContent: errorContent,
       });
     });
 
@@ -316,7 +319,6 @@ describe('mcpToolRuntime', () => {
             text: JSON.stringify(errorContent, null, 2),
           },
         ],
-        // structuredContent: errorContent,
       });
     });
 

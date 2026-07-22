@@ -38,7 +38,6 @@ describe('processContent', () => {
     const result = await processContent(rawFile, config);
     expect(result).toBe('const x = 1;\n\nconst y = 2;');
     expect(mockManipulator.removeComments).not.toHaveBeenCalled();
-    expect(mockManipulator.removeEmptyLines).not.toHaveBeenCalled();
   });
 
   it('should remove comments when configured', async () => {
@@ -58,25 +57,6 @@ describe('processContent', () => {
     const result = await processContent(rawFile, config);
     expect(mockManipulator.removeComments).toHaveBeenCalledWith(rawFile.content);
     expect(result).toBe('const x = 1; \nconst y = 2;');
-  });
-
-  it('should remove empty lines when configured', async () => {
-    const rawFile: RawFile = {
-      path: 'test.ts',
-      content: 'const x = 1;\n\n\nconst y = 2;',
-    };
-    const config: RepomixConfigMerged = {
-      output: {
-        removeComments: false,
-        removeEmptyLines: true,
-        compress: false,
-        showLineNumbers: false,
-      },
-    } as RepomixConfigMerged;
-
-    const result = await processContent(rawFile, config);
-    expect(mockManipulator.removeEmptyLines).toHaveBeenCalledWith(rawFile.content);
-    expect(result).toBe('const x = 1;\nconst y = 2;');
   });
 
   it('should compress content using Tree-sitter when configured', async () => {
@@ -118,7 +98,10 @@ describe('processContent', () => {
     expect(result).toBe(rawFile.content);
   });
 
-  it('should handle Tree-sitter parse error', async () => {
+  it('should fall back to uncompressed content when parseFile throws', async () => {
+    // Safety net: even though parseFile is designed not to throw, a thrown error
+    // (e.g. a tree-sitter WASM abort) must not abort the whole pack. The file
+    // degrades to its uncompressed content instead.
     const rawFile: RawFile = {
       path: 'test.ts',
       content: 'const x = 1;\nconst y = 2;',
@@ -135,25 +118,31 @@ describe('processContent', () => {
     const error = new Error('Parse error');
     vi.mocked(parseFile).mockRejectedValue(error);
 
-    await expect(processContent(rawFile, config)).rejects.toThrow('Parse error');
+    const result = await processContent(rawFile, config);
+    expect(result).toBe(rawFile.content);
   });
 
-  it('should add line numbers when configured', async () => {
+  it('should fall back to comment-stripped content when compression fails after removeComments', async () => {
     const rawFile: RawFile = {
       path: 'test.ts',
-      content: 'const x = 1;\nconst y = 2;\nconst z = 3;',
+      content: 'const x = 1; // comment\nconst y = 2;',
     };
     const config: RepomixConfigMerged = {
       output: {
-        removeComments: false,
+        removeComments: true,
         removeEmptyLines: false,
-        compress: false,
-        showLineNumbers: true,
+        compress: true,
+        showLineNumbers: false,
       },
     } as RepomixConfigMerged;
 
+    // Compression fails, so the fallback should be the already comment-stripped
+    // content (the best available content at this stage), not the raw original.
+    vi.mocked(parseFile).mockResolvedValue(undefined);
+
     const result = await processContent(rawFile, config);
-    expect(result).toBe('1: const x = 1;\n2: const y = 2;\n3: const z = 3;');
+    expect(mockManipulator.removeComments).toHaveBeenCalledWith(rawFile.content);
+    expect(result).toBe('const x = 1; \nconst y = 2;');
   });
 
   it('should handle files without a manipulator', async () => {
@@ -164,7 +153,7 @@ describe('processContent', () => {
     const config: RepomixConfigMerged = {
       output: {
         removeComments: true,
-        removeEmptyLines: true,
+        removeEmptyLines: false,
         compress: false,
         showLineNumbers: false,
       },
@@ -174,5 +163,62 @@ describe('processContent', () => {
 
     const result = await processContent(rawFile, config);
     expect(result).toBe('some content');
+  });
+
+  it('should compress based on the passed level even when global compress is off', async () => {
+    const rawFile: RawFile = {
+      path: 'test.ts',
+      content: 'const x = 1;',
+    };
+    const config: RepomixConfigMerged = {
+      output: {
+        removeComments: false,
+        removeEmptyLines: false,
+        compress: false,
+        showLineNumbers: false,
+      },
+    } as RepomixConfigMerged;
+
+    const result = await processContent(rawFile, config, 'compress');
+    expect(parseFile).toHaveBeenCalledWith(rawFile.content, rawFile.path, config);
+    expect(result).toBe('parsed content');
+  });
+
+  it('should not compress when the passed level is "full" even if global compress is on', async () => {
+    const rawFile: RawFile = {
+      path: 'test.ts',
+      content: 'const x = 1;',
+    };
+    const config: RepomixConfigMerged = {
+      output: {
+        removeComments: false,
+        removeEmptyLines: false,
+        compress: true,
+        showLineNumbers: false,
+      },
+    } as RepomixConfigMerged;
+
+    const result = await processContent(rawFile, config, 'full');
+    expect(parseFile).not.toHaveBeenCalled();
+    expect(result).toBe('const x = 1;');
+  });
+
+  it('should fall back to resolving the level from config when none is passed', async () => {
+    const rawFile: RawFile = {
+      path: 'test.ts',
+      content: 'const x = 1;',
+    };
+    const config: RepomixConfigMerged = {
+      output: {
+        removeComments: false,
+        removeEmptyLines: false,
+        compress: true,
+        showLineNumbers: false,
+      },
+    } as RepomixConfigMerged;
+
+    const result = await processContent(rawFile, config);
+    expect(parseFile).toHaveBeenCalledWith(rawFile.content, rawFile.path, config);
+    expect(result).toBe('parsed content');
   });
 });

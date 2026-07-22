@@ -1,3 +1,8 @@
+---
+title: Repomixとは
+description: Repomixを使ってリポジトリをChatGPT、Claude、Gemini、Grok、DeepSeek、PerplexityなどのLLM向けAIフレンドリーなコンテキストに変換する方法を紹介します。
+---
+
 # Repomixとは
 
 <script setup>
@@ -60,8 +65,10 @@ Repomixの強みは、ChatGPT、Claude、Gemini、Grokなどのお好きなサ�
 
 - [インストールガイド](installation.md): Repomixをインストールするにはこちら
 - [使用方法](usage.md): 基本的な使い方から高度な使い方まで
+- [出力フォーマット](output.md): AIモデルに最適な出力形式を選択
 - [設定](configuration.md): Repomixをカスタマイズするにはこちら
 - [セキュリティ機能](security.md): セキュリティチェックの詳細はこちら
+- [MCPサーバー](mcp-server.md): AIアシスタントとRepomixを直接連携
 
 ## コミュニティ
 

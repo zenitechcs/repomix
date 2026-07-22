@@ -1,15 +1,26 @@
+import fs from 'node:fs/promises';
 import process from 'node:process';
-import { XMLParser } from 'fast-xml-parser';
-import { describe, expect, test, vi } from 'vitest';
+import { DOMParser } from '@xmldom/xmldom';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import { generateOutput } from '../../../src/core/output/outputGenerate.js';
+import { buildOutputGeneratorContext, generateOutput } from '../../../src/core/output/outputGenerate.js';
+import { RepomixError } from '../../../src/shared/errorHandle.js';
 import { createMockConfig } from '../../testing/testUtils.js';
+
+const createStrictXmlParser = () => {
+  return new DOMParser({
+    onError: (_level, msg) => {
+      throw new Error(msg);
+    },
+  });
+};
 
 describe('outputGenerate', () => {
   const mockDeps = {
     buildOutputGeneratorContext: vi.fn(),
     generateHandlebarOutput: vi.fn(),
     generateParsableXmlOutput: vi.fn(),
+    generateParsableJsonOutput: vi.fn(),
     sortOutputFiles: vi.fn(),
   };
   test('generateOutput should use sortOutputFiles before generating content', async () => {
@@ -47,6 +58,8 @@ describe('outputGenerate', () => {
       [],
       undefined,
       undefined,
+      undefined,
+      undefined,
       mockDeps,
     );
 
@@ -56,6 +69,8 @@ describe('outputGenerate', () => {
       mockConfig,
       [],
       sortedFiles,
+      undefined,
+      undefined,
       undefined,
       undefined,
     );
@@ -106,20 +121,18 @@ describe('outputGenerate', () => {
 
     const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
 
-    const parser = new XMLParser({ ignoreAttributes: false });
-    const parsedOutput = parser.parse(output);
+    const doc = createStrictXmlParser().parseFromString(output, 'text/xml');
+    const repomix = doc.documentElement;
+    if (!repomix) throw new Error('documentElement is null');
 
-    expect(parsedOutput.repomix.file_summary).not.toBeUndefined();
-    expect(parsedOutput.repomix.files.file).toEqual([
-      {
-        '#text': mockProcessedFiles[0].content,
-        '@_path': mockProcessedFiles[0].path,
-      },
-      {
-        '#text': mockProcessedFiles[1].content,
-        '@_path': mockProcessedFiles[1].path,
-      },
-    ]);
+    expect(repomix.getElementsByTagName('file_summary').length).toBe(1);
+
+    const fileElements = repomix.getElementsByTagName('file');
+    expect(fileElements.length).toBe(2);
+    expect(fileElements[0].getAttribute('path')).toBe(mockProcessedFiles[0].path);
+    expect(fileElements[0].textContent).toBe(mockProcessedFiles[0].content);
+    expect(fileElements[1].getAttribute('path')).toBe(mockProcessedFiles[1].path);
+    expect(fileElements[1].textContent).toBe(mockProcessedFiles[1].content);
   });
 
   test('generateOutput should write correct content to file (parsable markdown style)', async () => {
@@ -175,10 +188,12 @@ describe('outputGenerate', () => {
     });
     const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: '<div>foo</div>' }];
     const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
-    const parser = new XMLParser({ ignoreAttributes: false });
-    const parsedOutput = parser.parse(output);
-    expect(parsedOutput.repomix['#text']).toBeUndefined();
-    expect(parsedOutput.repomix.user_provided_header).toBe('XML HEADER');
+    const doc = createStrictXmlParser().parseFromString(output, 'text/xml');
+    const repomix = doc.documentElement;
+    if (!repomix) throw new Error('documentElement is null');
+    expect(repomix.getElementsByTagName('file_summary').length).toBe(0);
+    const header = repomix.getElementsByTagName('user_provided_header')[0];
+    expect(header.textContent).toBe('XML HEADER');
   });
 
   test('generateOutput (markdown) omits generationHeader when fileSummaryEnabled is false, but always includes headerText', async () => {
@@ -195,5 +210,345 @@ describe('outputGenerate', () => {
     const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
     expect(output).not.toContain('This file is a merged representation');
     expect(output).toContain('MARKDOWN HEADER');
+  });
+
+  test('generateOutput should include git diffs when enabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        git: { includeDiffs: true },
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+    const mockGitDiffResult = {
+      workTreeDiffContent: 'diff --git a/file.txt',
+      stagedDiffContent: 'diff --git b/staged.txt',
+    };
+
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, [], mockGitDiffResult);
+
+    expect(output).toContain('Git Diffs');
+    expect(output).toContain('diff --git a/file.txt');
+    expect(output).toContain('diff --git b/staged.txt');
+  });
+
+  test('generateOutput (markdown) widens the code fence so backticks in a git diff cannot close it early', async () => {
+    const fence = '```';
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.md',
+        style: 'markdown',
+        git: { includeDiffs: true },
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+    // A unified diff of a Markdown file carries bare ``` context lines (space-prefixed),
+    // which are valid Markdown closing fences and would break a plain ```diff block.
+    const mockGitDiffResult = {
+      workTreeDiffContent: `diff --git a/README.md b/README.md\n@@ -1,3 +1,3 @@\n ${fence}\n-old\n+new\n ${fence}`,
+      stagedDiffContent: '',
+    };
+
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, [], mockGitDiffResult);
+
+    // The diff fence must be longer than the ``` inside it, so the whole diff stays in one block.
+    const section = output.slice(output.indexOf('## Git Diffs Working Tree'));
+    const openFence = section.match(/^(`+)diff$/m);
+    expect(openFence).not.toBeNull();
+    expect(openFence?.[1].length ?? 0).toBeGreaterThan(fence.length);
+    expect(section).toContain('-old');
+    expect(section).toContain('+new');
+  });
+
+  test('generateOutput should include git logs when enabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        git: { includeLogs: true },
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+    const mockGitLogResult = {
+      logContent: 'commit abc123\nAuthor: test',
+      commits: [
+        {
+          date: '2024-01-01',
+          message: 'Initial commit',
+          files: ['file1.txt'],
+        },
+      ],
+    };
+
+    const output = await generateOutput(
+      [process.cwd()],
+      mockConfig,
+      mockProcessedFiles,
+      [],
+      undefined,
+      mockGitLogResult,
+    );
+
+    expect(output).toContain('Git Logs');
+    expect(output).toContain('Initial commit');
+    expect(output).toContain('2024-01-01');
+  });
+
+  test('generateOutput should write correct content to file (json style)', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.json',
+        style: 'json',
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [
+      { path: 'file1.txt', content: 'content1' },
+      { path: 'file2.txt', content: 'content2' },
+    ];
+
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
+
+    const parsed = JSON.parse(output);
+    expect(parsed).toHaveProperty('files');
+    expect(parsed.files).toHaveProperty('file1.txt');
+    expect(parsed.files).toHaveProperty('file2.txt');
+    expect(parsed.files['file1.txt']).toBe('content1');
+    expect(parsed.files['file2.txt']).toBe('content2');
+  });
+
+  test('generateOutput should exclude files section when files output is disabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        files: false,
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, []);
+
+    expect(output).not.toContain('File: file1.txt');
+    expect(output).not.toContain('content1');
+  });
+
+  test('generateOutput should exclude directory structure when disabled', async () => {
+    const mockConfig = createMockConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: false,
+      },
+    });
+    const mockProcessedFiles: ProcessedFile[] = [{ path: 'file1.txt', content: 'content1' }];
+
+    const output = await generateOutput([process.cwd()], mockConfig, mockProcessedFiles, ['file1.txt']);
+
+    expect(output).not.toContain('Directory Structure');
+  });
+
+  test('generateOutput throws RepomixError for unsupported style', async () => {
+    const mockConfig = createMockConfig({
+      output: { filePath: 'output.txt', style: 'unsupported' as 'plain' },
+    });
+
+    await expect(generateOutput([process.cwd()], mockConfig, [], [])).rejects.toBeInstanceOf(RepomixError);
+  });
+});
+
+describe('buildOutputGeneratorContext', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const baseConfig = (overrides = {}) =>
+    createMockConfig({
+      cwd: '/repo',
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: false,
+      },
+      ...overrides,
+    });
+
+  test('reads the instruction file when configured', async () => {
+    vi.spyOn(fs, 'readFile').mockResolvedValue('be helpful');
+    const config = baseConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: false,
+        instructionFilePath: 'INSTRUCTIONS.md',
+      },
+    });
+
+    const ctx = await buildOutputGeneratorContext(['/repo'], config, [], []);
+
+    expect(ctx.instruction).toBe('be helpful');
+  });
+
+  test('throws RepomixError when instruction file is missing', async () => {
+    vi.spyOn(fs, 'readFile').mockRejectedValue(new Error('ENOENT'));
+    const config = baseConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: false,
+        instructionFilePath: 'missing.md',
+      },
+    });
+
+    const promise = buildOutputGeneratorContext(['/repo'], config, [], []);
+    await expect(promise).rejects.toBeInstanceOf(RepomixError);
+    await expect(promise).rejects.toThrow(/Instruction file not found/);
+  });
+
+  test('uses pre-computed emptyDirPaths when includeEmptyDirectories is on', async () => {
+    const config = baseConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: true,
+        includeEmptyDirectories: true,
+      },
+    });
+    const searchFiles = vi.fn();
+
+    const ctx = await buildOutputGeneratorContext(
+      ['/repo'],
+      config,
+      [],
+      [],
+      undefined,
+      undefined,
+      undefined,
+      ['empty-dir'],
+      {
+        listDirectories: vi.fn(),
+        listFiles: vi.fn(),
+        searchFiles,
+      },
+    );
+
+    // Pre-computed paths win — searchFiles should not be called.
+    expect(searchFiles).not.toHaveBeenCalled();
+    expect(ctx.treeString).toContain('empty-dir');
+  });
+
+  test('falls back to searchFiles when emptyDirPaths is not provided', async () => {
+    const config = baseConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: true,
+        includeEmptyDirectories: true,
+      },
+    });
+    const searchFiles = vi.fn().mockResolvedValue({ filePaths: [], emptyDirPaths: ['scanned-dir'] });
+
+    const ctx = await buildOutputGeneratorContext(
+      ['/repo'],
+      config,
+      [],
+      [],
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {
+        listDirectories: vi.fn(),
+        listFiles: vi.fn(),
+        searchFiles,
+      },
+    );
+
+    expect(searchFiles).toHaveBeenCalledWith('/repo', config);
+    expect(ctx.treeString).toContain('scanned-dir');
+  });
+
+  test('wraps searchFiles failure in RepomixError', async () => {
+    const config = baseConfig({
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: true,
+        includeEmptyDirectories: true,
+      },
+    });
+
+    const promise = buildOutputGeneratorContext(['/repo'], config, [], [], undefined, undefined, undefined, undefined, {
+      listDirectories: vi.fn(),
+      listFiles: vi.fn(),
+      searchFiles: vi.fn().mockRejectedValue(new Error('boom')),
+    });
+    await expect(promise).rejects.toBeInstanceOf(RepomixError);
+    await expect(promise).rejects.toThrow(/Failed to search for empty directories.*boom/);
+  });
+
+  test('includes the full directory tree when includeFullDirectoryStructure is on', async () => {
+    const config = baseConfig({
+      include: ['src/**/*.ts'],
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: true,
+        includeFullDirectoryStructure: true,
+      },
+    });
+    const listDirectories = vi.fn().mockResolvedValue(['src', 'src/feature']);
+    const listFiles = vi.fn().mockResolvedValue(['src/index.ts', 'src/feature/extra.ts']);
+
+    const ctx = await buildOutputGeneratorContext(
+      ['/repo'],
+      config,
+      ['src/index.ts'],
+      [],
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {
+        listDirectories,
+        listFiles,
+        searchFiles: vi.fn(),
+      },
+    );
+
+    expect(listDirectories).toHaveBeenCalledWith('/repo', config);
+    expect(listFiles).toHaveBeenCalledWith('/repo', config);
+    // The extra file from listFiles (not in allFilePaths) should be merged into the tree.
+    expect(ctx.treeString).toContain('extra.ts');
+  });
+
+  test('wraps full-tree listing failure in RepomixError', async () => {
+    const config = baseConfig({
+      include: ['src/**/*.ts'],
+      output: {
+        filePath: 'output.txt',
+        style: 'plain',
+        directoryStructure: true,
+        includeFullDirectoryStructure: true,
+      },
+    });
+
+    const promise = buildOutputGeneratorContext(
+      ['/repo'],
+      config,
+      ['src/index.ts'],
+      [],
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {
+        listDirectories: vi.fn().mockRejectedValue(new Error('list failed')),
+        listFiles: vi.fn().mockResolvedValue([]),
+        searchFiles: vi.fn(),
+      },
+    );
+    await expect(promise).rejects.toBeInstanceOf(RepomixError);
+    await expect(promise).rejects.toThrow(/Failed to build full directory structure.*list failed/);
   });
 });

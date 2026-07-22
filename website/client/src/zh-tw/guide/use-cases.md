@@ -1,3 +1,8 @@
+---
+title: 使用案例
+description: 探索 Repomix 在 AI 程式碼審查、錯誤調查、重構、文件、入門導覽、安全稽核與架構分析中的實用流程。
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Repomix 的優勢在於能夠與任何訂閱服務如 ChatGPT、Claude、Gemini�
 ```
 分析這個程式碼庫的效能瓶頸。尋找低效率的演算法、不必要的資料庫查詢、記憶體洩漏和可能受益於快取或最佳化的區域。
 ```
+
+## 相關資源
+
+- [提示範例](/zh-tw/guide/prompt-examples) - 更多 AI 分析的提示範本
+- [輸出格式](/zh-tw/guide/output) - 為 AI 模型選擇最合適的格式
+- [自定義指令](/zh-tw/guide/custom-instructions) - 添加上下文以指導 AI 分析
+- [GitHub 倉庫處理](/zh-tw/guide/remote-repository-processing) - 分析遠端倉庫

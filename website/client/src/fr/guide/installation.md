@@ -1,3 +1,8 @@
+---
+title: "Installation"
+description: "Installez Repomix avec npx, npm, Yarn, Bun, Homebrew, Docker, des extensions VS Code ou navigateur, puis vérifiez la configuration de la CLI."
+---
+
 # Installation
 
 ## Utilisation avec npx (Sans installation requise)
@@ -8,29 +13,23 @@ npx repomix@latest
 
 ## Installation globale
 
-### npm
-
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn
-
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun
-
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew (macOS/Linux)
-
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Installation avec Docker
 
@@ -73,7 +72,7 @@ Accédez instantanément à Repomix directement depuis n'importe quel dépôt Gi
 
 ## Configuration requise
 
-- Node.js: ≥ 20.0.0
+- Node.js: ≥ 22.0.0
 - Git: Requis pour le traitement des dépôts distants
 
 ## Vérification
@@ -84,3 +83,9 @@ Après l'installation, vérifiez que Repomix fonctionne:
 repomix --version
 repomix --help
 ```
+
+## Ressources associées
+
+- [Utilisation de base](/fr/guide/usage) - Apprendre à utiliser Repomix
+- [Configuration](/fr/guide/configuration) - Personnaliser Repomix selon vos besoins
+- [Options de ligne de commande](/fr/guide/command-line-options) - Référence complète de la CLI

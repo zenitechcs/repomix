@@ -22,6 +22,7 @@ export const configEnUs = defineConfig({
             { text: 'Basic Usage', link: '/guide/usage' },
             { text: 'Prompt Examples', link: '/guide/prompt-examples' },
             { text: 'Use Cases', link: '/guide/use-cases' },
+            { text: 'FAQ and Troubleshooting', link: '/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configEnUs = defineConfig({
           items: [
             { text: 'Output Formats', link: '/guide/output' },
             { text: 'Command Line Options', link: '/guide/command-line-options' },
+            { text: 'Watch Mode', link: '/guide/watch-mode' },
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Custom Instructions', link: '/guide/custom-instructions' },
             { text: 'GitHub Repository Processing', link: '/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configEnUs = defineConfig({
           text: 'Advanced',
           items: [
             { text: 'MCP Server', link: '/guide/mcp-server' },
+            { text: 'Claude Code Plugins', link: '/guide/claude-code-plugins' },
+            { text: 'Agent Skills Generation', link: '/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/guide/github-actions' },
             { text: 'Using Repomix as a Library', link: '/guide/development/using-repomix-as-a-library' },
             { text: 'AI-Assisted Development Tips', link: '/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configEnUs = defineConfig({
             { text: 'Community Projects', link: '/guide/community-projects' },
             { text: 'Contributing to Repomix', link: '/guide/development/' },
             { text: 'Sponsors', link: '/guide/sponsors' },
+            { text: 'Privacy Policy', link: '/guide/privacy' },
           ],
         },
       ],

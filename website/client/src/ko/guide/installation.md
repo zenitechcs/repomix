@@ -1,3 +1,8 @@
+---
+title: 설치
+description: "npx, npm, Yarn, Bun, Homebrew, Docker, VS Code 확장, 브라우저 확장으로 Repomix를 설치하고 CLI 설정을 확인합니다."
+---
+
 # 설치
 
 ## npx 사용 (설치 불필요)
@@ -8,25 +13,23 @@ npx repomix@latest
 
 ## 전역 설치
 
-### npm
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew (macOS/Linux)
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Docker 설치
 
@@ -71,7 +74,7 @@ GitHub 저장소에서 직접 Repomix에 액세스하세요! Chrome 확장 프�
 
 ## 시스템 요구 사항
 
-- Node.js: 20.0.0 이상
+- Node.js: 22.0.0 이상
 - Git: 원격 저장소 처리 시 필요
 
 ## 설치 확인
@@ -82,3 +85,9 @@ GitHub 저장소에서 직접 Repomix에 액세스하세요! Chrome 확장 프�
 repomix --version
 repomix --help
 ```
+
+## 관련 리소스
+
+- [기본 사용법](/ko/guide/usage) - Repomix 사용 방법 알아보기
+- [설정](/ko/guide/configuration) - 필요에 맞게 Repomix 사용자 정의
+- [명령행 옵션](/ko/guide/command-line-options) - 전체 CLI 레퍼런스

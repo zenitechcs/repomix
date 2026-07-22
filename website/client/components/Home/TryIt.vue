@@ -2,23 +2,38 @@
   <div class="container">
     <form class="try-it-container" @submit.prevent="handleSubmit($event)">
       <div class="input-row">
-        <div class="tab-container">
+        <div class="tab-container" role="tablist" aria-label="Repository input source">
           <button
+            id="tab-url"
             type="button"
+            role="tab"
+            aria-label="Remote repository URL"
+            aria-controls="tabpanel-input"
+            :aria-selected="mode === 'url'"
             :class="{ active: mode === 'url' }"
             @click="setMode('url')"
           >
             <Link2 size="20" class="icon" />
           </button>
           <button
+            id="tab-folder"
             type="button"
+            role="tab"
+            aria-label="Upload local folder"
+            aria-controls="tabpanel-input"
+            :aria-selected="mode === 'folder'"
             :class="{ active: mode === 'folder' }"
             @click="setMode('folder')"
           >
             <FolderOpen size="20" class="icon" />
           </button>
           <button
+            id="tab-file"
             type="button"
+            role="tab"
+            aria-label="Upload ZIP archive"
+            aria-controls="tabpanel-input"
+            :aria-selected="mode === 'file'"
             :class="{ active: mode === 'file' }"
             @click="setMode('file')"
           >
@@ -26,7 +41,12 @@
           </button>
         </div>
 
-        <div class="input-field">
+        <div
+          id="tabpanel-input"
+          class="input-field"
+          role="tabpanel"
+          :aria-labelledby="`tab-${mode}`"
+        >
           <TryItFileUpload
             v-if="mode === 'file'"
             @upload="handleFileUpload"
@@ -45,6 +65,7 @@
             :loading="loading"
             @keydown="handleKeydown"
             @submit="handleSubmit"
+            @user-input="markUserTouched"
             :show-button="false"
           />
         </div>
@@ -53,6 +74,7 @@
           <PackButton
             :loading="loading"
             :isValid="isSubmitValid"
+            @cancel="handleCancel"
           />
           <div
             v-if="shouldShowReset"
@@ -84,7 +106,7 @@
         v-model:show-line-numbers="packOptions.showLineNumbers"
         v-model:output-parsable="packOptions.outputParsable"
         v-model:compress="packOptions.compress"
-
+        @user-input="markUserTouched"
       />
 
       <div v-if="hasExecuted">
@@ -92,10 +114,19 @@
           :result="result"
           :loading="loading"
           :error="error"
+          :error-type="errorType"
           :repository-url="inputRepositoryUrl"
+          :pack-options="packOptions"
+          :progress-stage="progressStage"
+          :progress-message="progressMessage"
           @repack="handleRepack"
         />
       </div>
+
+      <!-- Cloudflare Turnstile (invisible). Rendered into this element by
+           useTurnstile so the script tag and widget instance live alongside
+           the form that needs them. -->
+      <div ref="turnstileContainer" class="turnstile-container" />
     </form>
   </div>
 </template>
@@ -104,6 +135,7 @@
 import { FolderArchive, FolderOpen, Link2, RotateCcw } from 'lucide-vue-next';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { usePackRequest } from '../../composables/usePackRequest';
+import { isBot } from '../../utils/botDetect';
 import { hasNonDefaultValues, parseUrlParameters, updateUrlParameters } from '../../utils/urlParams';
 import type { FileInfo } from '../api/client';
 import { isValidRemoteValue } from '../utils/validation';
@@ -129,8 +161,11 @@ const {
   // Request states
   loading,
   error,
+  errorType,
   result,
   hasExecuted,
+  progressStage,
+  progressMessage,
 
   // Computed
   isSubmitValid,
@@ -141,7 +176,16 @@ const {
   submitRequest,
   repackWithSelectedFiles,
   resetOptions,
+  cancelRequest,
+  setTurnstileContainer,
+  markUserTouched,
 } = usePackRequest();
+
+// Wire the template ref into useTurnstile so the widget renders into the
+// element below the form. Using a ref function lets us pass the DOM node to
+// the composable without exposing the ref to the rest of the component.
+const turnstileContainer = ref<HTMLElement | null>(null);
+watch(turnstileContainer, (el) => setTurnstileContainer(el));
 
 // Check if reset button should be shown
 const shouldShowReset = computed(() => {
@@ -179,6 +223,12 @@ function updateUrlFromCurrentState() {
 }
 
 async function handleSubmit(event?: SubmitEvent) {
+  // Prevent form submission when already loading
+  if (loading.value) {
+    event?.preventDefault();
+    return;
+  }
+
   // Prevent accidental form submissions from unintended buttons
   if (event?.submitter && !isSubmitValid.value) {
     const submitter = event.submitter as HTMLElement;
@@ -213,6 +263,10 @@ function handleRepack(selectedFiles: FileInfo[]) {
   repackWithSelectedFiles(selectedFiles);
 }
 
+function handleCancel() {
+  cancelRequest();
+}
+
 // Watch for changes in packOptions and inputUrl to update URL in real-time
 watch(
   [packOptions, inputUrl],
@@ -227,7 +281,9 @@ onMounted(() => {
   const urlParams = parseUrlParameters();
 
   // If repository parameter exists and is valid, trigger packing automatically
-  if (urlParams.repo && isValidRemoteValue(urlParams.repo.trim())) {
+  // Skip auto-execution for bots/crawlers to prevent unintended API calls
+  // (e.g., Applebot executing JS on permalink URLs causes mass pack requests)
+  if (urlParams.repo && isValidRemoteValue(urlParams.repo.trim()) && !isBot()) {
     // Use nextTick to ensure all reactive values are properly initialized
     nextTick(async () => {
       try {
@@ -307,6 +363,12 @@ onMounted(() => {
 .tab-container button.active {
   background: var(--vp-c-brand-1);
   color: white;
+}
+
+.tab-container button:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: -2px;
+  z-index: 1;
 }
 
 .tab-container button.active::before {
@@ -414,6 +476,18 @@ onMounted(() => {
   border-width: 8px;
   border-style: solid;
   border-color: #333 transparent transparent transparent;
+}
+
+/* The Turnstile widget is executed programmatically via execution: 'execute'.
+   The container must remain in the DOM (removing it prevents widget rendering)
+   but should not affect page layout or be visible. */
+.turnstile-container {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 </style>

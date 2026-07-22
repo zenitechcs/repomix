@@ -3,10 +3,10 @@ import path from 'node:path';
 import * as prompts from '@clack/prompts';
 import pc from 'picocolors';
 import {
-  type RepomixConfigFile,
-  type RepomixOutputStyle,
   defaultConfig,
   defaultFilePathMap,
+  type RepomixConfigFile,
+  type RepomixOutputStyle,
 } from '../../config/configSchema.js';
 import { getGlobalDirectory } from '../../config/globalDirectory.js';
 import { logger } from '../../shared/logger.js';
@@ -83,6 +83,7 @@ export const createConfigFile = async (rootDir: string, isGlobal: boolean): Prom
           options: [
             { value: 'xml', label: 'XML', hint: 'Structured XML format' },
             { value: 'markdown', label: 'Markdown', hint: 'Markdown format' },
+            { value: 'json', label: 'JSON', hint: 'Machine-readable JSON format' },
             { value: 'plain', label: 'Plain', hint: 'Simple text format' },
           ],
           initialValue: defaultConfig.output.style,

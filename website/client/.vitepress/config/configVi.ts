@@ -22,6 +22,7 @@ export const configVi = defineConfig({
             { text: 'Sử dụng cơ bản', link: '/vi/guide/usage' },
             { text: 'Ví dụ Prompt', link: '/vi/guide/prompt-examples' },
             { text: 'Trường Hợp Sử Dụng', link: '/vi/guide/use-cases' },
+            { text: 'FAQ và khắc phục sự cố', link: '/vi/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configVi = defineConfig({
           items: [
             { text: 'Định dạng đầu ra', link: '/vi/guide/output' },
             { text: 'Tùy chọn dòng lệnh', link: '/vi/guide/command-line-options' },
+            { text: 'Chế độ theo dõi', link: '/vi/guide/watch-mode' },
             { text: 'Cấu hình', link: '/vi/guide/configuration' },
             { text: 'Hướng dẫn tùy chỉnh', link: '/vi/guide/custom-instructions' },
             { text: 'Xử lý kho lưu trữ GitHub', link: '/vi/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configVi = defineConfig({
           text: 'Nâng cao',
           items: [
             { text: 'Máy chủ MCP', link: '/vi/guide/mcp-server' },
+            { text: 'Plugin Claude Code', link: '/vi/guide/claude-code-plugins' },
+            { text: 'Tạo Agent Skills', link: '/vi/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/vi/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/vi/guide/github-actions' },
             {
               text: 'Sử dụng Repomix như một thư viện',
@@ -55,6 +60,7 @@ export const configVi = defineConfig({
             { text: 'Dự án Cộng đồng', link: '/vi/guide/community-projects' },
             { text: 'Đóng góp cho Repomix', link: '/vi/guide/development/' },
             { text: 'Nhà tài trợ', link: '/vi/guide/sponsors' },
+            { text: 'Chính sách Bảo mật', link: '/vi/guide/privacy' },
           ],
         },
       ],

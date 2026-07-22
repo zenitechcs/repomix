@@ -18,7 +18,7 @@ interface TopFile {
 
 interface FileInfo {
   path: string;
-  tokenCount: number;
+  charCount: number;
   selected?: boolean;
 }
 
@@ -26,6 +26,11 @@ interface PackSummary {
   totalFiles: number;
   totalCharacters: number;
   totalTokens: number;
+}
+
+export interface SuspiciousFile {
+  filePath: string;
+  messages: string[];
 }
 
 export interface PackResult {
@@ -37,9 +42,20 @@ export interface PackResult {
     summary?: PackSummary;
     topFiles?: TopFile[];
     allFiles?: FileInfo[];
+    suspiciousFiles?: SuspiciousFile[];
   };
+}
+
+export interface ProcessPackResult {
+  result: PackResult;
+  cached: boolean;
 }
 
 export interface ErrorResponse {
   error: string;
 }
+
+// Progress streaming types
+export type PackProgressStage = 'cache-check' | 'cloning' | 'repository-fetch' | 'extracting' | 'processing';
+
+export type PackProgressCallback = (stage: PackProgressStage, message?: string) => void | Promise<void>;

@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
-import { TokenCounter } from '../../../src/core/metrics/TokenCounter.js';
 import { calculateMetrics } from '../../../src/core/metrics/calculateMetrics.js';
+import { TokenCounter } from '../../../src/core/metrics/TokenCounter.js';
 import { createMockConfig } from '../../testing/testUtils.js';
 
 // Mock the TokenCounter
 vi.mock('../../../src/core/metrics/TokenCounter.js', () => ({
+  TOKEN_ENCODINGS: ['o200k_base', 'cl100k_base', 'p50k_base', 'p50k_edit', 'r50k_base'],
   TokenCounter: vi.fn(),
 }));
 
@@ -14,18 +15,17 @@ describe('Diff Token Count Calculation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    // Setup TokenCounter mock
-    vi.mocked(TokenCounter).mockReturnValue({
-      countTokens: vi.fn((content) => {
-        // Simple token counting for testing
-        return content.split(/\s+/).length;
-      }),
-      free: vi.fn(),
-      encoding: {
-        encode: vi.fn(),
-        free: vi.fn(),
-      },
-    } as unknown as TokenCounter);
+    // Setup TokenCounter mock using mockImplementation for class constructor
+    vi.mocked(TokenCounter).mockImplementation(
+      () =>
+        ({
+          countTokens: vi.fn((content: string) => {
+            // Simple token counting for testing
+            return content.split(/\s+/).length;
+          }),
+          free: vi.fn(),
+        }) as unknown as TokenCounter,
+    );
   });
 
   test('should calculate diff token count when diffs are included', async () => {
@@ -88,12 +88,16 @@ index 123..456 100644
     });
 
     // Mock dependency functions
+    const mockTaskRunner = {
+      run: vi.fn(),
+      cleanup: vi.fn(),
+    };
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
     const result = await calculateMetrics(
       processedFiles,
-      output,
+      Promise.resolve(output),
       vi.fn(), // Progress callback
       config,
       {
@@ -102,10 +106,11 @@ index 123..456 100644
       },
       undefined,
       {
-        calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
+        calculateFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(25),
         calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
+        taskRunner: mockTaskRunner,
       },
     );
 
@@ -166,21 +171,26 @@ index 123..456 100644
     });
 
     // Mock dependency functions
+    const mockTaskRunner = {
+      run: vi.fn(),
+      cleanup: vi.fn(),
+    };
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
     const result = await calculateMetrics(
       processedFiles,
-      output,
+      Promise.resolve(output),
       vi.fn(), // Progress callback
       config,
       undefined, // No diff content
       undefined,
       {
-        calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
+        calculateFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
         calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
+        taskRunner: mockTaskRunner,
       },
     );
 
@@ -239,21 +249,26 @@ index 123..456 100644
     });
 
     // Mock dependency functions
+    const mockTaskRunner = {
+      run: vi.fn(),
+      cleanup: vi.fn(),
+    };
 
     const mockCalculateOutputMetrics = vi.fn().mockResolvedValue(15);
 
     const result = await calculateMetrics(
       processedFiles,
-      output,
+      Promise.resolve(output),
       vi.fn(), // Progress callback
       config,
       undefined, // No diff content
       undefined,
       {
-        calculateSelectiveFileMetrics: vi.fn().mockResolvedValue([]),
+        calculateFileMetrics: vi.fn().mockResolvedValue([]),
         calculateOutputMetrics: mockCalculateOutputMetrics,
         calculateGitDiffMetrics: vi.fn().mockResolvedValue(0),
         calculateGitLogMetrics: vi.fn().mockResolvedValue({ gitLogTokenCount: 0 }),
+        taskRunner: mockTaskRunner,
       },
     );
 

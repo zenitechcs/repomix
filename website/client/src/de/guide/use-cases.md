@@ -1,3 +1,8 @@
+---
+title: "Anwendungsfälle"
+description: "Entdecken Sie praktische Repomix-Workflows für KI-Code-Reviews, Fehlersuche, Refactoring, Dokumentation, Onboarding, Sicherheitsaudits und Architekturanalysen."
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Identifizieren Sie Performance-Engpässe und erhalten Sie Optimierungsempfehlung
 ```
 Analysieren Sie diese Codebase auf Performance-Engpässe. Suchen Sie nach ineffizienten Algorithmen, unnötigen Datenbankabfragen, Memory-Leaks und Bereichen, die von Caching oder Optimierung profitieren könnten.
 ```
+
+## Verwandte Ressourcen
+
+- [Prompt-Beispiele](/de/guide/prompt-examples) - Weitere Prompt-Vorlagen für KI-Analyse
+- [Ausgabeformate](/de/guide/output) - Das beste Format für Ihr KI-Modell wählen
+- [Benutzerdefinierte Anweisungen](/de/guide/custom-instructions) - Kontext zur KI-Analyse hinzufügen
+- [GitHub-Repository-Verarbeitung](/de/guide/remote-repository-processing) - Remote-Repositories analysieren

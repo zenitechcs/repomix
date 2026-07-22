@@ -29,8 +29,8 @@ export const registerFileSystemReadFileTool = (mcpServer: McpServer) => {
       title: 'Read File',
       description:
         'Read a file from the local file system using an absolute path. Includes built-in security validation to detect and prevent access to files containing sensitive information (API keys, passwords, secrets).',
-      inputSchema: fileSystemReadFileInputSchema.shape,
-      outputSchema: fileSystemReadFileOutputSchema.shape,
+      inputSchema: fileSystemReadFileInputSchema,
+      outputSchema: fileSystemReadFileOutputSchema,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,

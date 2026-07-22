@@ -1,3 +1,8 @@
+---
+title: 自定義指令
+description: 向 Repomix 輸出加入專案專屬指令，協助 AI 助手理解編碼規範、架構背景、審查目標與回覆要求。
+---
+
 # 自定義指令
 
 Repomix 允許你提供自定義指令，這些指令將被包含在輸出文件中。這對於為處理程式碼庫的 AI 系統提供上下文或特定指導非常有用。
@@ -76,3 +81,10 @@ Repomix 允許你提供自定義指令，這些指令將被包含在輸出文件
 - 定期更新指令以反映專案的變化
 - 確保指令與專案的其他文檔保持一致
 - 使用清晰的層次結構組織內容
+
+## 相關資源
+
+- [設定](/zh-tw/guide/configuration) - 在設定檔中設定 `output.instructionFilePath`
+- [輸出格式](/zh-tw/guide/output) - 了解不同的輸出格式
+- [提示範例](/zh-tw/guide/prompt-examples) - AI 分析的示例提示
+- [使用案例](/zh-tw/guide/use-cases) - 使用 Repomix 搭配 AI 的實際案例

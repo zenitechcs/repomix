@@ -123,12 +123,23 @@ index 123..456 100644
     };
 
     // Call generateOutput with mocked deps
-    const _output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], gitDiffResult, undefined, {
-      buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
-      generateHandlebarOutput: mockGenerateHandlebarOutput,
-      generateParsableXmlOutput: mockGenerateParsableXmlOutput,
-      sortOutputFiles: mockSortOutputFiles,
-    });
+    const _output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      processedFiles,
+      ['file1.js'],
+      gitDiffResult,
+      undefined,
+      undefined,
+      undefined,
+      {
+        buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
+        generateHandlebarOutput: mockGenerateHandlebarOutput,
+        generateParsableXmlOutput: mockGenerateParsableXmlOutput,
+        generateParsableJsonOutput: vi.fn(),
+        sortOutputFiles: mockSortOutputFiles,
+      },
+    );
 
     // Check that the output was generated with the correct template
     expect(mockBuildOutputGeneratorContext).toHaveBeenCalled();
@@ -172,7 +183,7 @@ index 123..456 100644
       };
     });
 
-    const mockGenerateHandlebarOutput = vi.fn().mockImplementation(async (config, renderContext: RenderContext) => {
+    const mockGenerateHandlebarOutput = vi.fn().mockImplementation(async (_config, renderContext: RenderContext) => {
       // Check that renderContext has gitDiffs for markdown template
       expect(renderContext.gitDiffWorkTree).toBe(sampleDiff);
       return `# Markdown output with diffs\n\`\`\`diff\n${sampleDiff}\n\`\`\``;
@@ -186,12 +197,23 @@ index 123..456 100644
     };
 
     // Call generateOutput with mocked deps
-    const _output = await generateOutput(rootDirs, mockConfig, processedFiles, ['file1.js'], gitDiffResult, undefined, {
-      buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
-      generateHandlebarOutput: mockGenerateHandlebarOutput,
-      generateParsableXmlOutput: mockGenerateParsableXmlOutput,
-      sortOutputFiles: mockSortOutputFiles,
-    });
+    const _output = await generateOutput(
+      rootDirs,
+      mockConfig,
+      processedFiles,
+      ['file1.js'],
+      gitDiffResult,
+      undefined,
+      undefined,
+      undefined,
+      {
+        buildOutputGeneratorContext: mockBuildOutputGeneratorContext,
+        generateHandlebarOutput: mockGenerateHandlebarOutput,
+        generateParsableXmlOutput: mockGenerateParsableXmlOutput,
+        generateParsableJsonOutput: vi.fn(),
+        sortOutputFiles: mockSortOutputFiles,
+      },
+    );
 
     // For markdown output, should use Handlebars
     expect(mockGenerateHandlebarOutput).toHaveBeenCalled();

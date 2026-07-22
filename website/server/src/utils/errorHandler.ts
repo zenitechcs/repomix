@@ -4,8 +4,9 @@ export class AppError extends Error {
   constructor(
     message: string,
     public readonly statusCode: ContentfulStatusCode = 500,
+    options?: ErrorOptions,
   ) {
-    super(message);
+    super(message, options);
     this.name = 'AppError';
   }
 }
@@ -41,7 +42,7 @@ export function handlePackError(error: unknown): AppError {
 
 export function safeJSONStringify(obj: unknown): string {
   const cache = new Set();
-  return JSON.stringify(obj, (key, value) => {
+  return JSON.stringify(obj, (_key, value) => {
     if (typeof value === 'object' && value !== null) {
       if (cache.has(value)) {
         return '[Circular Reference]';

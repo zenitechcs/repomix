@@ -20,6 +20,7 @@ export const configJa = defineConfig({
             { text: '基本的な使い方', link: '/ja/guide/usage' },
             { text: 'プロンプト例', link: '/ja/guide/prompt-examples' },
             { text: 'ユースケース', link: '/ja/guide/use-cases' },
+            { text: 'FAQとトラブルシューティング', link: '/ja/guide/faq' },
           ],
         },
         {
@@ -27,6 +28,7 @@ export const configJa = defineConfig({
           items: [
             { text: '出力フォーマット', link: '/ja/guide/output' },
             { text: 'コマンドラインオプション', link: '/ja/guide/command-line-options' },
+            { text: 'ウォッチモード', link: '/ja/guide/watch-mode' },
             { text: '設定', link: '/ja/guide/configuration' },
             { text: 'カスタム指示', link: '/ja/guide/custom-instructions' },
             { text: 'GitHubリポジトリの処理', link: '/ja/guide/remote-repository-processing' },
@@ -39,6 +41,9 @@ export const configJa = defineConfig({
           text: '高度な使い方',
           items: [
             { text: 'MCPサーバー', link: '/ja/guide/mcp-server' },
+            { text: 'Claude Codeプラグイン', link: '/ja/guide/claude-code-plugins' },
+            { text: 'Agent Skills生成', link: '/ja/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/ja/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/ja/guide/github-actions' },
             { text: 'ライブラリとしての使用', link: '/ja/guide/development/using-repomix-as-a-library' },
             { text: 'AI支援開発のヒント', link: '/ja/guide/tips/best-practices' },
@@ -50,6 +55,7 @@ export const configJa = defineConfig({
             { text: 'コミュニティプロジェクト', link: '/ja/guide/community-projects' },
             { text: 'Repomixに貢献する', link: '/ja/guide/development/' },
             { text: 'スポンサー', link: '/ja/guide/sponsors' },
+            { text: 'プライバシーポリシー', link: '/ja/guide/privacy' },
           ],
         },
       ],

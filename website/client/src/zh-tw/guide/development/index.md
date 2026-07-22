@@ -1,3 +1,8 @@
+---
+title: 參與 Repomix 開發
+description: 設定 Repomix 開發環境、執行測試與 lint、了解專案結構，並向開源專案貢獻變更。
+---
+
 # 參與 Repomix 開發
 
 感謝您對 **Repomix** 的興趣！🚀 我們非常歡迎您的幫助，讓它變得更好。本指南將幫助您開始為專案做貢獻。
@@ -51,7 +56,7 @@ npm run lint
 
 ### 前提條件
 
-- Node.js ≥ 20.0.0
+- Node.js ≥ 22.0.0
 - Git
 - npm
 - Docker（可選，用於運行網站或容器化開發）
@@ -71,6 +76,25 @@ npm install
 # 運行CLI
 npm run repomix
 ```
+
+### Nix開發
+
+如果您啟用了 [Nix](https://nixos.org/download) flakes，可以進入預裝了 Node.js 24 和 Git 的可重現開發 shell：
+
+```bash
+nix develop
+```
+
+在 shell 中，標準的 `npm` 工作流可以正常使用：
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+注意：此 shell 用於開發 Repomix 本身，不是用於將其作為 CLI 安裝。
 
 ### Docker開發
 

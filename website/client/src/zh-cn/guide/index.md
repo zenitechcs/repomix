@@ -1,3 +1,8 @@
+---
+title: Repomix 入门指南
+description: 开始使用 Repomix，将仓库打包为适用于 ChatGPT、Claude、Gemini、Grok、DeepSeek、Perplexity 等 LLM 的 AI 友好上下文。
+---
+
 # Repomix 入门指南
 
 <script setup>
@@ -44,14 +49,14 @@ AI 将分析你的整个代码库并提供全面的见解：
 
 ## 为什么选择 Repomix？
 
-Repomix的强项在于可以与ChatGPT、Claude、Gemini、Grok等订阅服务配合使用而无需担心成本，同时提供完整的代码库上下文，消除了文件探索的需要——使分析更快速，往往也更准确。
+Repomix 的优势在于能够搭配 ChatGPT、Claude、Gemini、Grok 等任何订阅服务使用，无需额外费用。它提供完整的代码库上下文，省去了逐个查看文件的麻烦，让分析更快速、更准确。
 
-通过将整个代码库作为上下文，Repomix支持广泛的应用场景，包括实现规划、错误调查、第三方库安全检查、文档生成等等。
+有了整个代码库作为上下文，Repomix 可以应用于各种场景，包括方案设计、Bug 排查、第三方库安全审计、文档生成等。
 
 ## 核心功能
 
 - **AI 优化**：以 AI 易于理解的格式整理代码库
-- **令牌计数**：为 LLM 上下文限制提供令牌使用统计
+- **Token 计数**：统计 Token 使用量，方便管理 LLM 上下文窗口
 - **Git 感知**：自动识别并遵循 `.gitignore` 和 `.git/info/exclude` 文件
 - **注重安全**：使用 Secretlint 进行敏感信息检测
 - **多种输出格式**：可选纯文本、XML 或 Markdown 格式
@@ -62,6 +67,8 @@ Repomix的强项在于可以与ChatGPT、Claude、Gemini、Grok等订阅服务�
 - [使用指南](usage.md)：学习基本和高级功能
 - [配置](configuration.md)：根据需求自定义 Repomix
 - [安全功能](security.md)：了解安全检查详情
+- [输出格式](output.md)：为 AI 模型选择最合适的输出格式
+- [MCP 服务器](mcp-server.md)：将 Repomix 与 AI 助手直接集成
 
 ## 社区
 

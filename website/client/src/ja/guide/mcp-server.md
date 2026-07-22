@@ -1,3 +1,8 @@
+---
+title: MCPサーバー
+description: RepomixをModel Context Protocolサーバーとして実行し、AIアシスタントがローカルまたはリモートのコードベースを直接パック、検索、読み取りできるようにします。
+---
+
 # MCPサーバー
 
 Repomixは[Model Context Protocol (MCP)](https://modelcontextprotocol.io)をサポートしており、AIアシスタントがコードベースと直接対話できるようになります。MCPサーバーとして実行すると、Repomixはローカルまたはリモートリポジトリを手動でファイル準備することなく、AI分析用にパッケージ化するツールを提供します。
@@ -74,6 +79,8 @@ Cursorでは、`Cursor Settings` > `MCP` > `+ Add new global MCP server`からCl
 claude mcp add repomix -- npx -y repomix --mcp
 ```
 
+または、より便利な体験のために**公式Repomixプラグイン**を使用することもできます。プラグインは自然言語コマンドと簡単なセットアップを提供します。詳細は[Claude Codeプラグイン](/ja/guide/claude-code-plugins)のドキュメントをご覧ください。
+
 ### npxの代わりにDockerを使用
 
 Dockerを使用してRepomixをMCPサーバーとして実行できます：
@@ -104,41 +111,61 @@ MCPサーバーとして実行すると、Repomixは以下のツールを提供�
 このツールはローカルのコードディレクトリをAI分析用のXMLファイルにパッケージ化します。コードベース構造を分析し、関連するコード内容を抽出し、メトリクス、ファイルツリー、フォーマットされたコード内容を含む包括的なレポートを生成します。
 
 **パラメータ：**
-- `directory`: (必須) パッケージ化するディレクトリの絶対パス
-- `compress`: (オプション、デフォルト: false) 実装の詳細を削除しながら、重要なコードシグネチャと構造を抽出するTree-sitter圧縮を有効にします。セマンティックな意味を保持しながらトークン使用量を約70%削減します。grep_repomix_outputが段階的なコンテンツ取得を可能にするため、通常は不要です。大きなリポジトリのコードベース全体の内容が特に必要な場合のみ使用してください。
-- `includePatterns`: (オプション) fast-globパターンを使用して含めるファイルを指定します。複数のパターンはカンマ区切りで指定できます（例："**/*.{js,ts}", "src/**,docs/**"）。マッチするファイルのみが処理されます。
-- `ignorePatterns`: (オプション) fast-globパターンを使用して除外する追加ファイルを指定します。複数のパターンはカンマ区切りで指定できます（例："test/**,*.spec.js", "node_modules/**,dist/**"）。これらのパターンは.gitignoreと組み込み除外を補完します。
-- `topFilesLength`: (オプション、デフォルト: 10) コードベース分析のメトリクス要約に表示する最大ファイル数（サイズ順）。
+
+| パラメータ | 必須 | デフォルト | 説明 |
+|-----------|------|----------|------|
+| `directory` | はい | — | パッケージ化するディレクトリの絶対パス |
+| `compress` | いいえ | `false` | 実装の詳細を削除しながら、重要なコードシグネチャと構造を抽出するTree-sitter圧縮を有効化。セマンティックな意味を保持しながらトークン使用量を約70%削減。`grep_repomix_output`が段階的なコンテンツ取得を可能にするため、通常は不要。 |
+| `includePatterns` | いいえ | — | fast-globパターンを使用して含めるファイル。カンマ区切り（例：`"**/*.{js,ts}"`、`"src/**,docs/**"`） |
+| `ignorePatterns` | いいえ | — | fast-globパターンを使用して除外する追加ファイル。カンマ区切り（例：`"test/**,*.spec.js"`）。`.gitignore`と組み込み除外を補完。 |
+| `outputPatterns` | いいえ | — | 設定ファイルの[`output.patterns`](./configuration.md)オプションに相当する、ファイルごとの含有レベル。`{ "pattern": string, "compress"?: boolean, "directoryStructureOnly"?: boolean }`形式のエントリの配列。最初に一致したパターンが優先され、`directoryStructureOnly`は`compress`より優先。どちらのフラグも指定しない一致はフルコンテンツを強制（グローバルな`compress`から特定ファイルを除外する際に有用）。対象リポジトリの`repomix.config.json`内の`output.patterns`を上書き。 |
+| `topFilesLength` | いいえ | `10` | メトリクス要約に表示する最大ファイル数（サイズ順） |
+| `style` | いいえ | `xml` | 出力フォーマットスタイル：`xml`、`markdown`、`json`、または`plain` |
 
 **例：**
 ```json
 {
   "directory": "/path/to/your/project",
-  "compress": false,
+  "compress": true,
   "includePatterns": "src/**/*.ts,**/*.md",
   "ignorePatterns": "**/*.log,tmp/",
+  "outputPatterns": [
+    { "pattern": "src/core/**" },
+    { "pattern": "docs/**/*", "directoryStructureOnly": true }
+  ],
   "topFilesLength": 10
 }
 ```
+
+上記の例では（`compress: true`が、いずれのパターンにも一致しないファイルに対するキャッチオールとして機能します）、`src/core/`配下のファイルはフルコンテンツのまま保持され、`docs/`配下のファイルはディレクトリ構造のみが表示され、それ以外は圧縮されます。
 
 ### pack_remote_repository
 
 このツールはGitHubリポジトリを取得、クローン、パッケージ化してAI分析用のXMLファイルを作成します。リモートリポジトリを自動的にクローンし、その構造を分析し、包括的なレポートを生成します。
 
 **パラメータ：**
-- `remote`: (必須) GitHubリポジトリURLまたはuser/repo形式（例："yamadashy/repomix", "https://github.com/user/repo", または "https://github.com/user/repo/tree/branch"）
-- `compress`: (オプション、デフォルト: false) 実装の詳細を削除しながら、重要なコードシグネチャと構造を抽出するTree-sitter圧縮を有効にします。セマンティックな意味を保持しながらトークン使用量を約70%削減します。grep_repomix_outputが段階的なコンテンツ取得を可能にするため、通常は不要です。大きなリポジトリのコードベース全体の内容が特に必要な場合のみ使用してください。
-- `includePatterns`: (オプション) fast-globパターンを使用して含めるファイルを指定します。複数のパターンはカンマ区切りで指定できます（例："**/*.{js,ts}", "src/**,docs/**"）。マッチするファイルのみが処理されます。
-- `ignorePatterns`: (オプション) fast-globパターンを使用して除外する追加ファイルを指定します。複数のパターンはカンマ区切りで指定できます（例："test/**,*.spec.js", "node_modules/**,dist/**"）。これらのパターンは.gitignoreと組み込み除外を補完します。
-- `topFilesLength`: (オプション、デフォルト: 10) コードベース分析のメトリクス要約に表示する最大ファイル数（サイズ順）。
+
+| パラメータ | 必須 | デフォルト | 説明 |
+|-----------|------|----------|------|
+| `remote` | はい | — | GitHubリポジトリURLまたは`user/repo`形式（例：`"yamadashy/repomix"`、`"https://github.com/user/repo"`、または`"https://github.com/user/repo/tree/branch"`） |
+| `compress` | いいえ | `false` | 実装の詳細を削除しながら、重要なコードシグネチャと構造を抽出するTree-sitter圧縮を有効化。セマンティックな意味を保持しながらトークン使用量を約70%削減。`grep_repomix_output`が段階的なコンテンツ取得を可能にするため、通常は不要。 |
+| `includePatterns` | いいえ | — | fast-globパターンを使用して含めるファイル。カンマ区切り（例：`"**/*.{js,ts}"`、`"src/**,docs/**"`） |
+| `ignorePatterns` | いいえ | — | fast-globパターンを使用して除外する追加ファイル。カンマ区切り（例：`"test/**,*.spec.js"`）。`.gitignore`と組み込み除外を補完。 |
+| `outputPatterns` | いいえ | — | 設定ファイルの[`output.patterns`](./configuration.md)オプションに相当する、ファイルごとの含有レベル。`{ "pattern": string, "compress"?: boolean, "directoryStructureOnly"?: boolean }`形式のエントリの配列。最初に一致したパターンが優先され、`directoryStructureOnly`は`compress`より優先。どちらのフラグも指定しない一致はフルコンテンツを強制（グローバルな`compress`から特定ファイルを除外する際に有用）。 |
+| `topFilesLength` | いいえ | `10` | メトリクス要約に表示する最大ファイル数（サイズ順） |
+| `style` | いいえ | `xml` | 出力フォーマットスタイル：`xml`、`markdown`、`json`、または`plain` |
 
 **例：**
 ```json
 {
   "remote": "yamadashy/repomix",
-  "compress": false,
+  "compress": true,
   "includePatterns": "src/**/*.ts,**/*.md",
   "ignorePatterns": "**/*.log,tmp/",
+  "outputPatterns": [
+    { "pattern": "src/core/**" },
+    { "pattern": "docs/**/*", "directoryStructureOnly": true }
+  ],
   "topFilesLength": 10
 }
 ```
@@ -148,9 +175,12 @@ MCPサーバーとして実行すると、Repomixは以下のツールを提供�
 このツールはRepomixで生成された出力ファイルの内容を読み込みます。大きなファイルに対する行範囲指定による部分読み込みをサポートします。このツールは直接ファイルシステムアクセスが制限された環境向けに設計されています。
 
 **パラメータ：**
-- `outputId`: (必須) 読み込むRepomix出力ファイルのID
-- `startLine`: (オプション) 開始行番号（1ベース、包含）。指定しない場合は最初から読み込みます。
-- `endLine`: (オプション) 終了行番号（1ベース、包含）。指定しない場合は最後まで読み込みます。
+
+| パラメータ | 必須 | デフォルト | 説明 |
+|-----------|------|----------|------|
+| `outputId` | はい | — | 読み込むRepomix出力ファイルのID |
+| `startLine` | いいえ | ファイルの先頭 | 開始行番号（1ベース、包含） |
+| `endLine` | いいえ | ファイルの末尾 | 終了行番号（1ベース、包含） |
 
 **機能：**
 - ウェブベース環境やサンドボックスアプリケーション向けに特別に設計
@@ -172,12 +202,15 @@ MCPサーバーとして実行すると、Repomixは以下のツールを提供�
 このツールはJavaScript RegExp構文を使用したgrep風の機能でRepomix出力ファイル内のパターンを検索します。マッチした行の前後にオプションのコンテキスト行を含めて返します。
 
 **パラメータ：**
-- `outputId`: (必須) 検索するRepomix出力ファイルのID
-- `pattern`: (必須) 検索パターン（JavaScript RegExp正規表現構文）
-- `contextLines`: (オプション、デフォルト: 0) 各マッチの前後に表示するコンテキスト行数。beforeLines/afterLinesが指定された場合はそちらが優先されます。
-- `beforeLines`: (オプション) 各マッチの前に表示するコンテキスト行数（grep -Bのように）。contextLinesより優先されます。
-- `afterLines`: (オプション) 各マッチの後に表示するコンテキスト行数（grep -Aのように）。contextLinesより優先されます。
-- `ignoreCase`: (オプション、デフォルト: false) 大文字小文字を区別しないマッチングを実行
+
+| パラメータ | 必須 | デフォルト | 説明 |
+|-----------|------|----------|------|
+| `outputId` | はい | — | 検索するRepomix出力ファイルのID |
+| `pattern` | はい | — | 検索パターン（JavaScript RegExp構文） |
+| `contextLines` | いいえ | `0` | 各マッチの前後に表示するコンテキスト行数。`beforeLines`/`afterLines`が指定された場合はそちらが優先。 |
+| `beforeLines` | いいえ | — | 各マッチの前に表示する行数（`grep -B`のように）。`contextLines`より優先。 |
+| `afterLines` | いいえ | — | 各マッチの後に表示する行数（`grep -A`のように）。`contextLines`より優先。 |
+| `ignoreCase` | いいえ | `false` | 大文字小文字を区別しないマッチングを実行 |
 
 **機能：**
 - 強力なパターンマッチングのためのJavaScript RegExp構文を使用
@@ -250,3 +283,10 @@ RepomixをMCPサーバーとして使用すると、いくつかの利点があ�
 4. **高度な機能**: コード圧縮、トークンカウント、セキュリティチェックなど、Repomixのすべての機能を活用できます。
 
 設定が完了すると、AIアシスタントはRepomixの機能を直接使用してコードベースを分析できるようになり、コード分析ワークフローがより効率的になります。
+
+## 関連リソース
+
+- [Claude Codeプラグイン](/ja/guide/claude-code-plugins) - Claude Code向けの便利なプラグイン連携
+- [設定](/ja/guide/configuration) - Repomixの動作をカスタマイズ
+- [コマンドラインオプション](/ja/guide/command-line-options) - CLIリファレンス
+- [出力フォーマット](/ja/guide/output) - 利用可能な出力形式について

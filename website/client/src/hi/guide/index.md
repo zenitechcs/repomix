@@ -1,3 +1,8 @@
+---
+title: Repomix के साथ शुरुआत करना
+description: ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity और अन्य LLMs के लिए repository को AI-friendly context में pack करने के लिए Repomix शुरू करें।
+---
+
 # Repomix के साथ शुरुआत करना
 
 <script setup>
@@ -62,6 +67,8 @@ Repomix की शक्ति इसकी ChatGPT, Claude, Gemini, Grok जै
 - [उपयोग गाइड](usage.md): बुनियादी और उन्नत सुविधाओं के बारे में जानें
 - [कॉन्फिगरेशन](configuration.md): अपनी आवश्यकताओं के लिए Repomix को अनुकूलित करें
 - [सुरक्षा सुविधाएं](security.md): सुरक्षा जांच के बारे में जानें
+- [आउटपुट फॉर्मेट](output.md): अपने AI मॉडल के लिए सर्वोत्तम फॉर्मेट चुनें
+- [MCP सर्वर](mcp-server.md): Repomix को AI असिस्टेंट्स के साथ सीधे इंटीग्रेट करें
 
 ## समुदाय
 

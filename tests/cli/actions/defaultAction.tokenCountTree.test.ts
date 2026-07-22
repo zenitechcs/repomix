@@ -1,4 +1,4 @@
-import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, type Mock, type MockedFunction, test, vi } from 'vitest';
 import { runDefaultAction } from '../../../src/cli/actions/defaultAction.js';
 import * as cliReport from '../../../src/cli/cliReport.js';
 import type { CliOptions } from '../../../src/cli/types.js';
@@ -11,6 +11,23 @@ vi.mock('../../../src/cli/cliReport.js');
 vi.mock('../../../src/cli/actions/migrationAction.js', () => ({
   runMigrationAction: vi.fn(),
 }));
+
+const mockSpinner = {
+  start: vi.fn() as MockedFunction<() => void>,
+  update: vi.fn() as MockedFunction<(message: string) => void>,
+  succeed: vi.fn() as MockedFunction<(message: string) => void>,
+  fail: vi.fn() as MockedFunction<(message: string) => void>,
+};
+
+vi.mock('../../../src/cli/cliSpinner', () => {
+  const MockSpinner = class {
+    start = mockSpinner.start;
+    update = mockSpinner.update;
+    succeed = mockSpinner.succeed;
+    fail = mockSpinner.fail;
+  };
+  return { Spinner: MockSpinner };
+});
 
 describe('defaultAction with tokenCountTree', () => {
   const mockLoadFileConfig = configLoad.loadFileConfig as Mock;
@@ -83,6 +100,7 @@ describe('defaultAction with tokenCountTree', () => {
           tokenCountTree: true,
         }),
       }),
+      expect.any(Object),
     );
   });
 
@@ -99,6 +117,7 @@ describe('defaultAction with tokenCountTree', () => {
           tokenCountTree: false,
         }),
       }),
+      expect.any(Object),
     );
   });
 
@@ -129,6 +148,7 @@ describe('defaultAction with tokenCountTree', () => {
           tokenCountTree: true,
         }),
       }),
+      expect.any(Object),
     );
   });
 
@@ -159,6 +179,7 @@ describe('defaultAction with tokenCountTree', () => {
           tokenCountTree: 50,
         }),
       }),
+      expect.any(Object),
     );
   });
 });

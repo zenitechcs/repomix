@@ -1,3 +1,8 @@
+---
+title: Repomix में योगदान
+description: Repomix development environment set up करें, tests चलाएं, code lint करें, project structure समझें और open source project में योगदान दें।
+---
+
 # Repomix में योगदान
 
 Repomix एक ओपन सोर्स प्रोजेक्ट है और हम योगदान का स्वागत करते हैं! यह गाइड आपको Repomix के विकास में शामिल होने के लिए आवश्यक जानकारी प्रदान करेगी।
@@ -6,7 +11,7 @@ Repomix एक ओपन सोर्स प्रोजेक्ट है औ�
 
 ### आवश्यकताएँ
 
-- Node.js (v20 या उच्चतर)
+- Node.js (v22 या उच्चतर)
 - npm, yarn, या pnpm
 - Git
 
@@ -42,6 +47,25 @@ yarn dev
 # या pnpm का उपयोग करके
 pnpm dev
 ```
+
+### Nix के साथ विकास
+
+यदि आपके पास flakes सक्षम वाला [Nix](https://nixos.org/download) है, तो आप Node.js 24 और Git पहले से इंस्टॉल किए हुए पुनरुत्पादनीय विकास शेल में प्रवेश कर सकते हैं:
+
+```bash
+nix develop
+```
+
+शेल के अंदर, मानक `npm` वर्कफ़्लो अपेक्षानुसार काम करता है:
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+नोट: यह शेल Repomix पर काम करने के लिए है, इसे CLI के रूप में इंस्टॉल करने के लिए नहीं।
 
 ## प्रोजेक्ट संरचना
 

@@ -1,60 +1,108 @@
+---
+title: "Opciones de línea de comandos"
+description: "Consulta todas las opciones de la CLI de Repomix para entrada, salida, selección de archivos, repositorios remotos, configuración, seguridad, conteo de tokens, MCP y Agent Skills."
+---
+
 # Opciones de línea de comandos
 
 ## Opciones básicas
 - `-v, --version`: Mostrar versión de la herramienta
 
 ## Opciones de entrada/salida CLI
-- `--verbose`: Habilitar registro detallado
-- `--quiet`: Deshabilitar toda salida a stdout
-- `--stdout`: Salida a stdout en lugar de escribir a un archivo (no se puede usar con la opción `--output`)
-- `--stdin`: Leer rutas de archivos desde stdin en lugar de descubrir archivos automáticamente
-- `--copy`: Copiar adicionalmente la salida generada al portapapeles del sistema
-- `--token-count-tree [threshold]`: Mostrar árbol de archivos con resúmenes de conteo de tokens (opcional: umbral mínimo de conteo de tokens). Útil para identificar archivos grandes y optimizar el uso de tokens para límites de contexto de IA
-- `--top-files-len <number>`: Número de archivos más grandes a mostrar en el resumen (por defecto: 5, ej: --top-files-len 20)
+
+| Opción | Descripción |
+|--------|-------------|
+| `--verbose` | Habilitar registro detallado de depuración (muestra procesamiento de archivos, conteo de tokens y detalles de configuración) |
+| `--quiet` | Suprimir toda salida de consola excepto errores (útil para scripting) |
+| `--stdout` | Escribir salida empaquetada directamente a stdout en lugar de un archivo (suprime todo el registro) |
+| `--stdin` | Leer rutas de archivos desde stdin, una por línea (los archivos especificados se procesan directamente) |
+| `--copy` | Copiar la salida generada al portapapeles del sistema después del procesamiento |
+| `--token-count-tree [threshold]` | Mostrar árbol de archivos con conteo de tokens; umbral opcional para mostrar solo archivos con ≥N tokens (ej: `--token-count-tree 100`) |
+| `--top-files-len <number>` | Número de archivos más grandes a mostrar en el resumen (por defecto: `5`) |
 
 ## Opciones de salida de Repomix
-- `-o, --output <file>`: Ruta del archivo de salida (por defecto: repomix-output.xml, usar "-" para stdout)
-- `--style <type>`: Formato de salida: xml, markdown o plain (por defecto: xml)
-- `--parsable-style`: Habilitar salida parseable basada en el esquema de estilo elegido. Ten en cuenta que esto puede aumentar el conteo de tokens.
-- `--compress`: Realizar extracción inteligente de código, enfocándose en firmas esenciales de funciones y clases para reducir el conteo de tokens
-- `--output-show-line-numbers`: Mostrar números de línea en la salida
-- `--no-file-summary`: Deshabilitar salida de sección de resumen de archivos
-- `--no-directory-structure`: Deshabilitar salida de sección de estructura de directorios
-- `--no-files`: Deshabilitar salida de contenido de archivos (modo solo metadatos)
-- `--remove-comments`: Remover comentarios de tipos de archivos soportados
-- `--remove-empty-lines`: Remover líneas vacías de la salida
-- `--truncate-base64`: Habilitar truncamiento de cadenas de datos base64
-- `--header-text <text>`: Texto personalizado para incluir en el encabezado del archivo
-- `--instruction-file-path <path>`: Ruta a un archivo que contiene instrucciones personalizadas detalladas
-- `--include-empty-directories`: Incluir directorios vacíos en la salida
-- `--include-diffs`: Incluir diffs de git en la salida (incluye cambios del árbol de trabajo y cambios en stage por separado)
-- `--include-logs`: Incluir logs de git en la salida (incluye historial de commits con fechas, mensajes y rutas de archivos)
-- `--include-logs-count <count>`: Número de commits de log de git a incluir (predeterminado: 50)
-- `--no-git-sort-by-changes`: Deshabilitar ordenamiento de archivos por conteo de cambios de git (habilitado por defecto)
+
+| Opción | Descripción |
+|--------|-------------|
+| `-o, --output <file>` | Ruta del archivo de salida (por defecto: `repomix-output.xml`, usar `"-"` para stdout) |
+| `--style <style>` | Formato de salida: `xml`, `markdown`, `json` o `plain` (por defecto: `xml`) |
+| `--output-file-path-style <style>` | Cómo se muestran las rutas de archivos en la salida: `target-relative` o `cwd-relative` (por defecto: `target-relative`) |
+| `--parsable-style` | Escapar caracteres especiales para garantizar XML/Markdown válido (necesario cuando la salida contiene código que rompe el formato) |
+| `--compress` | Extraer la estructura esencial del código (clases, funciones, interfaces) usando análisis Tree-sitter |
+| `--output-show-line-numbers` | Agregar número de línea a cada línea en la salida |
+| `--no-file-summary` | Omitir la sección de resumen de archivos de la salida |
+| `--no-directory-structure` | Omitir la visualización del árbol de directorios de la salida |
+| `--no-files` | Generar solo metadatos sin contenido de archivos (útil para análisis de repositorio) |
+| `--remove-comments` | Eliminar todos los comentarios del código antes de empaquetar |
+| `--remove-empty-lines` | Eliminar líneas en blanco de todos los archivos |
+| `--truncate-base64` | Truncar cadenas largas de datos base64 para reducir el tamaño de la salida |
+| `--header-text <text>` | Texto personalizado para incluir al inicio de la salida |
+| `--instruction-file-path <path>` | Ruta a un archivo que contiene instrucciones personalizadas para incluir en la salida |
+| `--split-output <size>` | Dividir la salida en múltiples archivos numerados (ej: `repomix-output.1.xml`); tamaño como `500kb`, `2mb` o `1.5mb` |
+| `--include-empty-directories` | Incluir carpetas sin archivos en la estructura de directorios |
+| `--include-full-directory-structure` | Mostrar el árbol completo del repositorio en la sección Estructura de Directorios, incluso al usar patrones `--include` |
+| `--no-git-sort-by-changes` | No ordenar archivos por frecuencia de cambios en git (por defecto: los archivos más modificados primero) |
+| `--include-diffs` | Agregar sección de git diff mostrando cambios del árbol de trabajo y cambios en stage |
+| `--include-logs` | Agregar historial de commits de git con mensajes y archivos modificados |
+| `--include-logs-count <count>` | Número de commits recientes a incluir con `--include-logs` (por defecto: `50`) |
 
 ## Opciones de selección de archivos
-- `--include <patterns>`: Lista de patrones de inclusión (separados por comas)
-- `-i, --ignore <patterns>`: Patrones de ignorar adicionales (separados por comas)
-- `--no-gitignore`: Deshabilitar uso de archivo .gitignore
-- `--no-default-patterns`: Deshabilitar patrones por defecto
+
+| Opción | Descripción |
+|--------|-------------|
+| `--include <patterns>` | Incluir solo archivos que coincidan con estos patrones glob (separados por comas, ej: `"src/**/*.js,*.md"`) |
+| `-i, --ignore <patterns>` | Patrones adicionales a excluir (separados por comas, ej: `"*.test.js,docs/**"`) |
+| `--no-gitignore` | No usar reglas `.gitignore` para filtrar archivos |
+| `--no-dot-ignore` | No usar reglas `.ignore` para filtrar archivos |
+| `--no-default-patterns` | No aplicar patrones de exclusión integrados (`node_modules`, `.git`, directorios de compilación, etc.) |
 
 ## Opciones de repositorio remoto
-- `--remote <url>`: Procesar repositorio remoto
-- `--remote-branch <name>`: Especificar nombre de rama remota, etiqueta o hash de commit (por defecto a la rama por defecto del repositorio)
+
+| Opción | Descripción |
+|--------|-------------|
+| `--remote <url>` | Clonar y empaquetar un repositorio remoto (URL de GitHub o formato `user/repo`) |
+| `--remote-branch <name>` | Rama, etiqueta o commit específico a usar (por defecto: la rama por defecto del repositorio) |
+| `--remote-trust-config` | Confiar y cargar archivos de configuración de repositorios remotos. Una configuración de confianza puede ejecutar comandos y leer archivos locales, así que úsala solo para repositorios en los que confíes plenamente (deshabilitado por defecto por seguridad). En una terminal interactiva, se muestra la configuración y se pide confirmación |
 
 ## Opciones de configuración
-- `-c, --config <path>`: Ruta de archivo de configuración personalizada
-- `--init`: Crear archivo de configuración
-- `--global`: Usar configuración global
+
+| Opción | Descripción |
+|--------|-------------|
+| `-c, --config <path>` | Usar archivo de configuración personalizado en lugar de `repomix.config.json` |
+| `--init` | Crear un nuevo archivo `repomix.config.json` con valores por defecto |
+| `--global` | Con `--init`, crear configuración en el directorio home en lugar del directorio actual |
 
 ## Opciones de seguridad
 - `--no-security-check`: Omitir escaneo de datos sensibles como claves API y contraseñas
 
 ## Opciones de conteo de tokens
 - `--token-count-encoding <encoding>`: Modelo tokenizador para conteo: o200k_base (GPT-4o), cl100k_base (GPT-3.5/4), etc. (por defecto: o200k_base)
+- `--token-budget <number>`: Fallar con un código de salida distinto de cero cuando la salida empaquetada supera N tokens. Útil como protección en pipelines de CI y flujos de trabajo de agentes para mantener la salida dentro de la ventana de contexto de un modelo objetivo. La salida se sigue generando; solo el código de salida señala el desbordamiento.
 
 ## Opciones MCP
 - `--mcp`: Ejecutar como servidor Model Context Protocol para integración de herramientas de IA
+
+## Opciones de generación de Agent Skills
+
+| Opción | Descripción |
+|--------|-------------|
+| `--skill-generate [name]` | Generar salida en formato Claude Agent Skills en el directorio `.claude/skills/<name>/` (nombre autogenerado si se omite) |
+| `--skill-project-name <name>` | Sobrescribir el nombre del proyecto usado en las descripciones de Skills generadas |
+| `--skill-output <path>` | Especificar la ruta del directorio de salida de skills directamente (omite la solicitud de ubicación) |
+| `-f, --force` | Omitir todas las solicitudes de confirmación (sobrescritura del directorio de skills, confianza en la configuración remota) |
+
+## Opciones del modo de observación
+
+- `-w, --watch`: Observa los cambios en los archivos y vuelve a empaquetar automáticamente. Se detectan los archivos nuevos, modificados y eliminados, los cambios rápidos se agrupan mediante debounce (300 ms) y se imprime una marca de tiempo después de cada reconstrucción. Pulsa `Ctrl+C` para detener.
+
+El modo de observación solo funciona con directorios locales, por lo que no se puede combinar con `--remote`, una URL de repositorio remoto pasada como argumento posicional, `--stdout`, `--stdin`, `--split-output`, `--skill-generate` o `--copy`. Estas restricciones se aplican tanto si la opción se establece en la línea de comandos como en tu archivo de configuración.
+
+## Recursos relacionados
+
+- [Configuración](/es/guide/configuration) - Establecer opciones en el archivo de configuración en lugar de flags CLI
+- [Formatos de salida](/es/guide/output) - Detalles sobre formatos XML, Markdown, JSON y texto plano
+- [Compresión de código](/es/guide/code-compress) - Cómo funciona `--compress` con Tree-sitter
+- [Seguridad](/es/guide/security) - Qué desactiva `--no-security-check`
 
 ## Ejemplos
 
@@ -86,6 +134,9 @@ repomix --remote https://github.com/user/repo/commit/836abcd7335137228ad77feb286
 # Repositorio remoto con forma abreviada
 repomix --remote user/repo
 
+# Repositorio remoto con forma abreviada (detectado automáticamente, sin --remote)
+repomix user/repo
+
 # Lista de archivos usando stdin
 find src -name "*.ts" -type f | repomix --stdin
 git ls-files "*.js" | repomix --stdin
@@ -100,5 +151,9 @@ repomix --include-diffs --include-logs  # Incluir tanto diffs como logs
 # Análisis de conteo de tokens
 repomix --token-count-tree
 repomix --token-count-tree 1000  # Solo mostrar archivos/directorios con 1000+ tokens
+
+# Modo de observación: volver a empaquetar automáticamente al cambiar los archivos
+repomix --watch
+repomix -w --include "src/**/*.ts"
 ```
 

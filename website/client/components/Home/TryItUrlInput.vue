@@ -14,6 +14,12 @@ const emit = defineEmits<{
   'update:url': [value: string];
   submit: [];
   keydown: [event: KeyboardEvent];
+  cancel: [];
+  // Emitted on real DOM input — typing, paste, IME compose end, datalist
+  // selection. Used by usePackRequest to gate the Turnstile pre-mint so
+  // URL-parameter hydration / form restoration don't trigger background
+  // challenges.
+  userInput: [];
 }>();
 
 const isValidUrl = computed(() => {
@@ -67,6 +73,7 @@ function saveUrlToHistory(url: string) {
 function handleUrlInput(event: Event) {
   const input = event.target as HTMLInputElement;
   emit('update:url', input.value);
+  emit('userInput');
 }
 
 // Process and save valid URL
@@ -114,7 +121,7 @@ function handleKeydown(event: KeyboardEvent) {
       <span>Please enter a valid GitHub repository URL (e.g., yamadashy/repomix)</span>
     </div>
     <div v-if="showButton" class="pack-button-container">
-      <PackButton :isValid="isValidUrl" :loading="loading" @click="handleSubmit"/>
+      <PackButton :isValid="isValidUrl" :loading="loading" @click="handleSubmit" @cancel="$emit('cancel')"/>
     </div>
   </div>
 </template>

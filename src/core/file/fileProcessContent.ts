@@ -1,62 +1,55 @@
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import { logger } from '../../shared/logger.js';
 import { parseFile } from '../treeSitter/parseFile.js';
+import { type FileInclusionLevel, resolveFileLevel } from './fileLevelResolve.js';
 import { getFileManipulator } from './fileManipulate.js';
 import type { RawFile } from './fileTypes.js';
-import { truncateBase64Content } from './truncateBase64.js';
 
 /**
- * Process the content of a file according to the configuration
- * Applies various transformations based on the config:
- * - Remove comments
- * - Remove empty lines
- * - Truncate base64 encoded data
+ * Process the content of a file for CPU-intensive operations.
+ * Only handles heavy transformations that benefit from worker threads:
+ * - Remove comments (language-specific AST manipulation)
  * - Compress content using Tree-sitter
- * - Add line numbers
  *
- * @param rawFile Raw file data containing path and content
- * @param config Repomix configuration
- * @returns Processed content string
+ * Lightweight transforms (truncateBase64, removeEmptyLines, trim, showLineNumbers)
+ * are applied separately on the main thread by processFiles().
  */
-export const processContent = async (rawFile: RawFile, config: RepomixConfigMerged): Promise<string> => {
+export const processContent = async (
+  rawFile: RawFile,
+  config: RepomixConfigMerged,
+  level?: FileInclusionLevel,
+): Promise<string> => {
   const processStartAt = process.hrtime.bigint();
   let processedContent = rawFile.content;
   const manipulator = getFileManipulator(rawFile.path);
 
   logger.trace(`Processing file: ${rawFile.path}`);
 
-  if (config.output.truncateBase64) {
-    processedContent = truncateBase64Content(processedContent);
-  }
-
   if (manipulator && config.output.removeComments) {
     processedContent = manipulator.removeComments(processedContent);
   }
 
-  if (config.output.removeEmptyLines && manipulator) {
-    processedContent = manipulator.removeEmptyLines(processedContent);
-  }
-
-  processedContent = processedContent.trim();
-
-  if (config.output.compress) {
+  // Compress when this file resolves to the 'compress' level. The level is
+  // normally precomputed in the main thread and threaded through; fall back to
+  // resolving it here when it is not supplied. This honors per-file
+  // output.patterns overrides and the global output.compress setting.
+  const effectiveLevel = level ?? resolveFileLevel(rawFile.path, config.output);
+  if (effectiveLevel === 'compress') {
+    // Compression is best-effort. parseFile returns undefined when it cannot
+    // compress a file (unsupported language, parse failure, or a tree-sitter
+    // WASM abort on a pathological file); in that case we keep the uncompressed
+    // content so a single file's failure never aborts the entire pack. The
+    // catch is a safety net: parseFile is designed not to throw.
     try {
       const parsedContent = await parseFile(processedContent, rawFile.path, config);
       if (parsedContent === undefined) {
-        logger.trace(`Failed to parse ${rawFile.path} in compressed mode. Using original content.`);
+        logger.trace(`Could not compress ${rawFile.path}. Using uncompressed content.`);
       }
       processedContent = parsedContent ?? processedContent;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      logger.error(`Error parsing ${rawFile.path} in compressed mode: ${message}`);
-      //re-throw error
-      throw error;
+      logger.warn(`Failed to compress ${rawFile.path}, using uncompressed content: ${message}`);
     }
-  } else if (config.output.showLineNumbers) {
-    const lines = processedContent.split('\n');
-    const padding = lines.length.toString().length;
-    const numberedLines = lines.map((line, i) => `${(i + 1).toString().padStart(padding)}: ${line}`);
-    processedContent = numberedLines.join('\n');
   }
 
   const processEndAt = process.hrtime.bigint();

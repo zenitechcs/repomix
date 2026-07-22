@@ -1,3 +1,8 @@
+---
+title: Các Trường Hợp Sử Dụng
+description: Khám phá các workflow Repomix thực tế cho AI code review, điều tra bug, refactoring, tài liệu, onboarding, audit bảo mật và phân tích kiến trúc.
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Xác định các bottleneck hiệu suất và nhận khuyến nghị tối ưu 
 ```
 Phân tích codebase này để tìm các bottleneck hiệu suất. Tìm kiếm các thuật toán không hiệu quả, các query database không cần thiết, rò rỉ bộ nhớ và các khu vực có thể được hưởng lợi từ caching hoặc tối ưu hóa.
 ```
+
+## Tài nguyên liên quan
+
+- [Ví dụ prompt](/vi/guide/prompt-examples) - Thêm mẫu prompt cho phân tích AI
+- [Định dạng đầu ra](/vi/guide/output) - Chọn định dạng tốt nhất cho mô hình AI của bạn
+- [Hướng dẫn tùy chỉnh](/vi/guide/custom-instructions) - Thêm ngữ cảnh để hướng dẫn phân tích AI
+- [Xử lý kho lưu trữ GitHub](/vi/guide/remote-repository-processing) - Phân tích kho lưu trữ từ xa

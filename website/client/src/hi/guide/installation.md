@@ -1,3 +1,8 @@
+---
+title: इंस्टॉलेशन
+description: npx, npm, Yarn, Bun, Homebrew, Docker, VS Code extensions या browser extensions से Repomix install करें और CLI setup verify करें।
+---
+
 # इंस्टॉलेशन
 
 Repomix को कई तरीकों से इंस्टॉल किया जा सकता है। अपनी आवश्यकताओं के अनुसार सबसे उपयुक्त विधि चुनें।
@@ -14,35 +19,23 @@ npx repomix@latest
 
 ## ग्लोबल इंस्टॉलेशन
 
-### npm के साथ
-
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### yarn के साथ
-
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### pnpm के साथ
-
-```bash
+```bash [pnpm]
 pnpm add -g repomix
 ```
-
-### Bun
-
-```bash
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew के साथ (macOS और Linux)
-
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## प्रोजेक्ट-स्पेसिफिक इंस्टॉलेशन
 
@@ -102,8 +95,8 @@ repomix --version
 
 यह Repomix का वर्तमान वर्जन प्रदर्शित करेगा।
 
-## अगला क्या है?
+## संबंधित संसाधन
 
-- [बुनियादी उपयोग](usage.md) के साथ शुरू करें
-- [कॉन्फिगरेशन विकल्पों](configuration.md) के बारे में जानें
-- [कमांड लाइन विकल्पों](command-line-options.md) का अन्वेषण करें
+- [बुनियादी उपयोग](/hi/guide/usage) - Repomix का उपयोग करना सीखें
+- [कॉन्फिगरेशन](/hi/guide/configuration) - अपनी आवश्यकताओं के लिए Repomix को अनुकूलित करें
+- [कमांड लाइन विकल्प](/hi/guide/command-line-options) - पूर्ण CLI संदर्भ
