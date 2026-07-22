@@ -1,3 +1,8 @@
+---
+title: "Verwendung von Repomix mit GitHub Actions"
+description: "Automatisieren Sie Repomix in GitHub Actions, um Repositories für KI-Analysen, CI-Workflows, Artefakte, Code-Reviews und komprimierte Ausgaben zu packen."
+---
+
 # Verwendung von Repomix mit GitHub Actions
 
 Sie können den Verpackungsprozess Ihres Codebases für die KI-Analyse automatisieren, indem Sie Repomix in Ihre GitHub Actions Workflows integrieren. Dies ist nützlich für Continuous Integration (CI), Code-Reviews oder die Vorbereitung für LLM-Tools.
@@ -23,6 +28,14 @@ Sie können verschiedene Ausgabeformate mit dem Parameter `style` festlegen (Sta
   with:
     output: repomix-output.md
     style: markdown
+```
+
+```yaml
+- name: Pack repository with Repomix (JSON format)
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.json
+    style: json
 ```
 
 ## Mehrere Verzeichnisse mit Komprimierung verpacken
@@ -53,7 +66,7 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
     compress: true
 
 - name: Upload Repomix output
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v7
   with:
     name: repomix-output
     path: repomix-output.xml
@@ -67,7 +80,7 @@ Um die verpackte Datei für nachfolgende Schritte oder zum Download bereitzustel
 | `include`          | Einzuschließende Glob-Patterns (kommagetrennt) | `""`         |
 | `ignore`           | Auszuschließende Glob-Patterns (kommagetrennt) | `""`         |
 | `output`           | Pfad der Ausgabedatei                         | `repomix-output.xml`     |
-| `style`            | Ausgabestil (xml, markdown, plain)            | `xml`             |
+| `style`            | Ausgabestil (xml, markdown, json, plain)            | `xml`             |
 | `compress`         | Intelligente Komprimierung aktivieren          | `true`            |
 | `additional-args`  | Zusätzliche Argumente für repomix CLI          | `""`         |
 | `repomix-version`  | Zu installierende npm-Paketversion             | `latest`          |
@@ -99,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
@@ -107,7 +120,7 @@ jobs:
           output: repomix-output.xml
 
       - name: Upload Repomix output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repomix-output.xml
           path: repomix-output.xml

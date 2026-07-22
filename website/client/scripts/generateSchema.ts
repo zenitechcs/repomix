@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { toJsonSchema } from '@valibot/to-json-schema';
 import { repomixConfigFileSchema } from '../../../src/config/configSchema.js';
+import { normalizeObjectNode } from './normalizeJsonSchema.js';
 
 const getPackageVersion = async (): Promise<string> => {
   const packageJsonPath = path.resolve('./package.json');
@@ -15,11 +16,10 @@ const generateSchema = async () => {
   const versionParts = version.split('.');
   const majorMinorVersion = `${versionParts[0]}.${versionParts[1]}.${versionParts[2]}`;
 
-  const jsonSchema = zodToJsonSchema(repomixConfigFileSchema, {
-    $refStrategy: 'none',
-    definitionPath: 'definitions',
-    markdownDescription: true,
+  const jsonSchema = toJsonSchema(repomixConfigFileSchema, {
+    target: 'draft-07',
   });
+  normalizeObjectNode(jsonSchema);
 
   const schemaWithMeta = {
     $schema: 'http://json-schema.org/draft-07/schema#',

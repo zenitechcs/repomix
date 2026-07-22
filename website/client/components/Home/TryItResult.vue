@@ -1,17 +1,33 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, defineAsyncComponent, ref } from 'vue';
+import type { PackOptions } from '../../composables/usePackOptions';
 import type { TabType } from '../../types/ui';
-import type { FileInfo, PackResult } from '../api/client';
+import type { DisplayProgressStage, FileInfo, PackResult } from '../api/client';
+import SupportMessage from './SupportMessage.vue';
 import TryItFileSelection from './TryItFileSelection.vue';
 import TryItLoading from './TryItLoading.vue';
-import TryItResultContent from './TryItResultContent.vue';
 import TryItResultErrorContent from './TryItResultErrorContent.vue';
+
+// Defer loading the Ace-editor-based result view (vue3-ace-editor + ace-builds
+// total ~480 KB) until a pack result actually needs to render. `delay: 200`
+// avoids a loading flicker on fast networks; `timeout: 10000` surfaces stalled
+// chunk fetches instead of leaving the panel blank indefinitely.
+const TryItResultContent = defineAsyncComponent({
+  loader: () => import('./TryItResultContent.vue'),
+  loadingComponent: TryItLoading,
+  delay: 200,
+  timeout: 10000,
+});
 
 interface Props {
   result?: PackResult | null;
   loading?: boolean;
   error?: string | null;
+  errorType?: 'error' | 'warning';
   repositoryUrl?: string;
+  packOptions?: PackOptions;
+  progressStage?: DisplayProgressStage | null;
+  progressMessage?: string | null;
 }
 
 interface Emits {
@@ -46,25 +62,38 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
 
 <template>
   <div class="result-viewer">
-    <TryItLoading v-if="loading && !result" />
+    <template v-if="loading && !result">
+      <TryItLoading :stage="progressStage" :message="progressMessage" />
+      <SupportMessage />
+    </template>
     <TryItResultErrorContent
       v-else-if="error"
       :message="error"
+      :error-type="errorType"
       :repository-url="repositoryUrl"
+      :pack-options="packOptions"
     />
     <div v-else-if="result" class="result-content">
       <!-- Tab Navigation -->
-      <div v-if="hasFileSelection" class="tab-navigation">
-        <button 
+      <div v-if="hasFileSelection" class="tab-navigation" role="tablist" aria-label="Pack result view">
+        <button
+          id="tab-result"
           type="button"
+          role="tab"
+          aria-controls="tabpanel-result"
+          :aria-selected="activeTab === 'result'"
           class="tab-button"
           :class="{ active: activeTab === 'result' }"
           @click="handleTabClick('result')"
         >
           Result
         </button>
-        <button 
+        <button
+          id="tab-files"
           type="button"
+          role="tab"
+          aria-controls="tabpanel-files"
+          :aria-selected="activeTab === 'files'"
           class="tab-button"
           :class="{ active: activeTab === 'files' }"
           @click="handleTabClick('files')"
@@ -74,10 +103,20 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
       </div>
 
       <!-- Tab Content -->
-      <div v-show="activeTab === 'result' || !hasFileSelection">
-        <TryItResultContent :result="result" />
+      <div
+        id="tabpanel-result"
+        role="tabpanel"
+        aria-labelledby="tab-result"
+        v-show="activeTab === 'result' || !hasFileSelection"
+      >
+        <TryItResultContent :result="result" :pack-options="packOptions" />
       </div>
-      <div v-show="activeTab === 'files' && hasFileSelection">
+      <div
+        id="tabpanel-files"
+        role="tabpanel"
+        aria-labelledby="tab-files"
+        v-show="activeTab === 'files' && hasFileSelection"
+      >
         <TryItFileSelection
           v-if="hasFileSelection"
           :all-files="result.metadata!.allFiles!"
@@ -124,6 +163,11 @@ const handleRepack = (selectedFiles: FileInfo[]) => {
 .tab-button:hover {
   background: var(--vp-c-bg-alt);
   color: var(--vp-c-text-1);
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: -2px;
 }
 
 .tab-button.active {

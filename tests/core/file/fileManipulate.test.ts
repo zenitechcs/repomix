@@ -295,11 +295,16 @@ describe('fileManipulate', () => {
         Another docstring
         """
       `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
 
         def test():
 
+
+
           return True
+
+
 
 `,
     },
@@ -314,10 +319,13 @@ describe('fileManipulate', () => {
         docstring
         """
       `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
         var = """
         string variable
         """
+
+
 
 `,
     },
@@ -373,7 +381,12 @@ describe('fileManipulate', () => {
         '''
         """
       `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
+
+
+
+
 
 `,
     },
@@ -391,8 +404,15 @@ describe('fileManipulate', () => {
         """
         return True
     `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
       def func():
+
+
+
+
+
+
 
         return True
 `,
@@ -461,11 +481,16 @@ describe('fileManipulate', () => {
         # Another comment
         return x
     `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
 
       def func():
 
+
+
         x = 5
+
+
 
 
         return x
@@ -554,8 +579,12 @@ describe('fileManipulate', () => {
         """
         return True
     `,
+      // preserveNewlines keeps newlines for line number preservation
       expected: `
       def func():
+
+
+
 
         return True
 `,
@@ -1007,5 +1036,74 @@ r2 := '\\\\'`,
   test('Unsupported file type', () => {
     const manipulator = getFileManipulator('test.unsupported');
     expect(manipulator).toBeNull();
+  });
+
+  describe('JS/TS module extension variants', () => {
+    // .mjs/.cjs/.mjsx/.mts/.cts/.mtsx are ESM/CommonJS variants of .js/.ts and are
+    // treated as JavaScript/TypeScript everywhere else (tree-sitter languageConfig,
+    // skill stats), so comment stripping must resolve a manipulator for them too.
+    test.each(['.mjs', '.cjs', '.mjsx', '.mts', '.cts', '.mtsx'])('resolves a manipulator for %s', (ext) => {
+      expect(getFileManipulator(`test${ext}`)).not.toBeNull();
+    });
+
+    test('strips comments from a .mjs file', () => {
+      const manipulator = getFileManipulator('eslint.config.mjs');
+      const input = 'const a = 1; // inline\n/* block */\nexport default a;';
+      expect(manipulator?.removeComments(input)).toBe('const a = 1;\n\nexport default a;');
+    });
+  });
+
+  describe('case-insensitive extension matching', () => {
+    // Extensions are matched case-insensitively, so files with uppercase or
+    // mixed-case extensions still resolve to a manipulator. Without this,
+    // removeComments and removeEmptyLines silently no-op on such files.
+    test.each([
+      '.JS',
+      '.Js',
+      '.PY',
+      '.CSS',
+      '.C',
+      '.HTML',
+      '.Vue',
+    ])('resolves a manipulator for uppercase extension %s', (ext) => {
+      expect(getFileManipulator(`test${ext}`)).not.toBeNull();
+    });
+
+    test('strips comments from a file with an uppercase extension', () => {
+      const manipulator = getFileManipulator('Main.JS');
+      const input = 'const a = 1; // inline\n/* block */\nconst b = 2;';
+      expect(manipulator?.removeComments(input)).toBe('const a = 1;\n\nconst b = 2;');
+    });
+
+    test('still returns null for unsupported uppercase extensions', () => {
+      expect(getFileManipulator('test.UNSUPPORTED')).toBeNull();
+    });
+  });
+
+  describe('removeEmptyLines', () => {
+    // BaseManipulator.removeEmptyLines is inherited by every concrete manipulator.
+    // It runs after comment stripping in fileProcess to clean up the blanks left behind.
+    test('drops empty lines and whitespace-only lines', () => {
+      const manipulator = getFileManipulator('test.js');
+      const input = 'const a = 1;\n\n   \nconst b = 2;\n\nconst c = 3;\n';
+      expect(manipulator?.removeEmptyLines(input)).toBe('const a = 1;\nconst b = 2;\nconst c = 3;');
+    });
+
+    test('returns content unchanged when no empty lines exist', () => {
+      const manipulator = getFileManipulator('test.js');
+      const input = 'line1\nline2\nline3';
+      expect(manipulator?.removeEmptyLines(input)).toBe(input);
+    });
+
+    test('returns empty string when input is all blank lines', () => {
+      const manipulator = getFileManipulator('test.js');
+      expect(manipulator?.removeEmptyLines('\n\n   \n')).toBe('');
+    });
+
+    test('works for composite manipulators (.vue)', () => {
+      const manipulator = getFileManipulator('test.vue');
+      const input = 'a\n\nb';
+      expect(manipulator?.removeEmptyLines(input)).toBe('a\nb');
+    });
   });
 });

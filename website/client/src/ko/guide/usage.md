@@ -1,3 +1,8 @@
+---
+title: 기본 사용법
+description: "Repomix CLI로 디렉터리, 원격 저장소, 선택한 파일, git diff, 커밋 로그, 분할 출력, 토큰 수, 압축 코드를 다루는 기본 사용법을 설명합니다."
+---
+
 # 기본 사용법
 
 ## 빠른 시작
@@ -25,6 +30,24 @@ repomix --include "src/**/*.ts,**/*.md"
 repomix --ignore "**/*.log,tmp/"
 ```
 
+### 출력을 여러 파일로 분할
+
+대규모 코드베이스로 작업할 때 패키징된 출력이 일부 AI 도구의 파일 크기 제한을 초과할 수 있습니다 (예: Google AI Studio의 1MB 제한). `--split-output`을 사용하여 출력을 자동으로 여러 파일로 분할합니다:
+
+```bash
+repomix --split-output 1mb
+```
+
+이렇게 하면 다음과 같은 번호가 매겨진 파일이 생성됩니다:
+- `repomix-output.1.xml`
+- `repomix-output.2.xml`
+- `repomix-output.3.xml`
+
+크기는 단위와 함께 지정할 수 있습니다: `500kb`, `1mb`, `2mb`, `1.5mb` 등. 소수점 값도 지원됩니다.
+
+> [!NOTE]
+> 컨텍스트를 유지하기 위해 파일은 최상위 디렉토리별로 그룹화됩니다. 단일 파일이나 디렉토리는 여러 출력 파일로 분할되지 않습니다.
+
 ### 원격 저장소 처리
 ```bash
 # GitHub URL 사용
@@ -32,6 +55,9 @@ repomix --remote https://github.com/user/repo
 
 # 단축형 사용
 repomix --remote user/repo
+
+# --remote 없이 단축형 사용 (자동 감지)
+repomix user/repo
 
 # 특정 브랜치/태그/커밋
 repomix --remote user/repo --remote-branch main
@@ -84,7 +110,9 @@ echo -e "src/index.ts\nsrc/utils.ts" | repomix --stdin
 > [!NOTE]
 > `--stdin`을 사용할 때 파일 경로는 상대 경로 또는 절대 경로가 될 수 있으며, Repomix가 자동으로 경로 해석과 중복 제거를 처리합니다.
 
-### 코드 압축
+### 코드 압축 {#code-compression}
+
+자세한 내용은 [코드 압축 가이드](/ko/guide/code-compress)를 참조하세요.
 
 ```bash
 repomix --compress
@@ -163,6 +191,11 @@ repomix --style xml
 repomix --style markdown
 ```
 
+### JSON
+```bash
+repomix --style json
+```
+
 ### 일반 텍스트
 ```bash
 repomix --style plain
@@ -171,6 +204,9 @@ repomix --style plain
 ## 추가 옵션
 
 ### 주석 제거
+
+지원되는 언어와 자세한 내용은 [주석 제거](/ko/guide/comment-removal)를 참조하세요.
+
 ```bash
 repomix --remove-comments
 ```
@@ -186,6 +222,9 @@ repomix --copy
 ```
 
 ### 보안 검사 비활성화
+
+Repomix가 감지하는 항목에 대한 자세한 내용은 [보안](/ko/guide/security)을 참조하세요.
+
 ```bash
 repomix --no-security-check
 ```
@@ -198,3 +237,10 @@ repomix --init
 ```
 
 더 자세한 설정 옵션은 [설정 가이드](/ko/guide/configuration)를 참조하세요.
+
+## 관련 리소스
+
+- [출력 형식](/ko/guide/output) - XML, Markdown, JSON, 일반 텍스트 형식 알아보기
+- [명령행 옵션](/ko/guide/command-line-options) - 전체 CLI 레퍼런스
+- [프롬프트 예시](/ko/guide/prompt-examples) - AI 분석을 위한 예시 프롬프트
+- [사용 사례](/ko/guide/use-cases) - 실제 예시와 워크플로우

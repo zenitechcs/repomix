@@ -1,3 +1,8 @@
+---
+title: ライブラリとしての使用
+description: RepomixをNode.jsライブラリとして使い、ローカルディレクトリやリモートリポジトリのパック、コアAPIの利用、AI対応コードベース出力のアプリ統合を行います。
+---
+
 # ライブラリとしての使用
 
 RepomixはCLIツールとしてだけでなく、Node.jsアプリケーションに直接組み込んで機能を利用することもできます。
@@ -52,10 +57,13 @@ async function processRemoteRepo(repoUrl) {
     output: 'output.xml',
     compress: true
   } as CliOptions;
-  
+
   return await runCli(['.'], process.cwd(), options);
 }
 ```
+
+> [!NOTE]
+> セキュリティ上の理由から、リモートリポジトリ内の設定ファイルはデフォルトでは読み込まれません。リモートリポジトリの設定を信頼する場合は、オプションに `remoteTrustConfig: true` を追加するか、環境変数 `REPOMIX_REMOTE_TRUST_CONFIG=true` を設定してください。
 
 ## コアコンポーネントの使用
 
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## バンドル
+
+RolldownやesbuildなどのツールでRepomixをバンドルする場合、一部の依存関係はexternalにする必要があり、WASMファイルのコピーも必要です：
+
+**external必須の依存関係（バンドル不可）：**
+- `tinypool` - ファイルパスを使用してワーカースレッドを起動
+
+**コピーが必要なWASMファイル：**
+- `web-tree-sitter.wasm` → バンドルされたJSと同じディレクトリ（コード圧縮機能に必要）
+- Tree-sitter言語ファイル → `REPOMIX_WASM_DIR`環境変数で指定したディレクトリ
+
+実際の例は[website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs)を参照してください。
 
 ## 実世界の例
 

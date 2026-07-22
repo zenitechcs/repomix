@@ -1,6 +1,7 @@
 ---
 layout: home
 title: Repomix
+description: ローカルまたはリモートのリポジトリをClaude、ChatGPT、Gemini、MCP、コードレビュー向けのAIフレンドリーなXML、Markdown、JSON、プレーンテキストに変換します。
 titleTemplate: コードベースをAIフレンドリーな形式にパッケージング
 aside: false
 editLink: false
@@ -178,7 +179,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote https://
 
 ### 出力フォーマット
 
-出力フォーマットは3種類あり、`xml`, `markdown`, `plain` を選択できます。
+出力フォーマットは4種類あり、`xml`, `markdown`, `json`, `plain` を選択できます。
 LLMによっては得意・不得意があるので、適切なフォーマットを選択してください。
 
 ```bash
@@ -187,6 +188,9 @@ repomix --style xml
 
 # Markdownフォーマット
 repomix --style markdown
+
+# JSONフォーマット
+repomix --style json
 
 # プレーンテキストフォーマット
 repomix --style plain

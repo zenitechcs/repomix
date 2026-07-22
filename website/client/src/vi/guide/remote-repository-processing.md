@@ -1,143 +1,126 @@
+---
+title: Xử lý kho lưu trữ GitHub
+description: Đóng gói các kho lưu trữ GitHub bằng Repomix với URL đầy đủ, dạng viết tắt user/repo, nhánh, tag, commit, Docker và các kiểm soát tin cậy cấu hình từ xa.
+---
+
 # Xử lý kho lưu trữ GitHub
 
-Repomix có thể xử lý các kho lưu trữ từ xa mà không cần clone chúng cục bộ, giúp bạn dễ dàng đóng gói và phân tích các dự án mã nguồn mở.
+## Cách sử dụng cơ bản
 
-## Tổng quan
-
-Tính năng xử lý kho lưu trữ từ xa cho phép bạn:
-
-- Đóng gói các kho lưu trữ GitHub công khai
-- Chỉ định nhánh, thẻ hoặc commit cụ thể
-- Xử lý các đường dẫn cụ thể trong kho lưu trữ
-- Phân tích các dự án mã nguồn mở mà không cần clone chúng
-
-## Cú pháp cơ bản
-
-Để xử lý một kho lưu trữ từ xa, sử dụng tùy chọn `--remote`:
-
+Xử lý các kho lưu trữ công khai:
 ```bash
-repomix --remote <url_or_shorthand>
+# Sử dụng URL đầy đủ
+repomix --remote https://github.com/user/repo
+
+# Sử dụng dạng viết tắt của GitHub
+repomix --remote user/repo
 ```
 
-## Định dạng URL được hỗ trợ
-
-Repomix hỗ trợ nhiều định dạng URL khác nhau:
-
-### Định dạng rút gọn
+Bạn cũng có thể truyền trực tiếp dạng viết tắt `owner/repo` mà không cần `--remote`:
 
 ```bash
-repomix --remote owner/repo
+repomix yamadashy/repomix
 ```
 
-Ví dụ:
+Vì `owner/repo` cũng trông giống như một đường dẫn cục bộ tương đối, Repomix chỉ coi nó là kho lưu trữ từ xa khi không tồn tại tệp hoặc thư mục cục bộ nào có tên đó và kho lưu trữ có thể truy cập được trên GitHub. Một đường dẫn cục bộ trùng khớp luôn được ưu tiên; để buộc xử lý cục bộ cho một đường dẫn có dạng `owner/repo`, hãy thêm tiền tố `./` (ví dụ, `repomix ./owner/repo`). Nếu đối số khớp với mẫu nhưng không thể truy cập kho lưu trữ (ví dụ, kho lưu trữ riêng tư hoặc lỗi đánh máy), Repomix sẽ quay lại xử lý nó như một đường dẫn cục bộ.
+
+## Lựa chọn nhánh và commit
 
 ```bash
-repomix --remote yamadashy/repomix
+# Nhánh cụ thể
+repomix --remote user/repo --remote-branch main
+
+# Tag
+repomix --remote user/repo --remote-branch v1.0.0
+
+# Mã hash của commit
+repomix --remote user/repo --remote-branch 935b695
 ```
 
-### URL đầy đủ
+## Yêu cầu
+
+- Phải cài đặt Git
+- Kết nối Internet
+- Quyền đọc kho lưu trữ
+
+## Kiểm soát đầu ra
 
 ```bash
-repomix --remote https://github.com/owner/repo
+# Vị trí đầu ra tùy chỉnh
+repomix --remote user/repo -o custom-output.xml
+
+# Với định dạng XML
+repomix --remote user/repo --style xml
+
+# Xóa các comment
+repomix --remote user/repo --remove-comments
 ```
 
-Ví dụ:
+## Sử dụng Docker
 
 ```bash
-repomix --remote https://github.com/yamadashy/repomix
+# Xử lý và xuất ra thư mục hiện tại
+docker run -v .:/app -it --rm ghcr.io/yamadashy/repomix \
+  --remote user/repo
+
+# Xuất ra thư mục cụ thể
+docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix \
+  --remote user/repo
 ```
 
-### URL nhánh cụ thể
+## Bảo mật
+
+Vì lý do bảo mật, các tệp cấu hình (`repomix.config.*`) trong các kho lưu trữ từ xa không được tải theo mặc định. Điều này ngăn các kho lưu trữ không đáng tin cậy thực thi mã thông qua các tệp cấu hình như `repomix.config.ts`.
+
+Cấu hình toàn cục và các tùy chọn CLI của bạn vẫn được áp dụng.
+
+Để tin cậy cấu hình của một kho lưu trữ từ xa:
 
 ```bash
-repomix --remote https://github.com/owner/repo/tree/branch
+# Sử dụng cờ CLI
+repomix --remote user/repo --remote-trust-config
+
+# Sử dụng biến môi trường
+REPOMIX_REMOTE_TRUST_CONFIG=true repomix --remote user/repo
 ```
 
-Ví dụ:
+::: warning
+`--remote-trust-config` cấp cho cấu hình của kho lưu trữ từ xa mức độ tin cậy ngang với máy của chính bạn. Một cấu hình đáng tin cậy có thể (thông qua `input.processors`) **thực thi các lệnh tùy ý** và (ví dụ thông qua `output.instructionFilePath` hoặc các mẫu include sử dụng `../`) **đọc các tệp cục bộ nằm ngoài kho lưu trữ**. Chỉ sử dụng tùy chọn này cho các kho lưu trữ mà bạn hoàn toàn tin tưởng và đã kiểm tra kỹ, với sự thận trọng tương tự như trước khi chạy `npm install` hoặc `Makefile` từ một nguồn không quen thuộc.
+:::
+
+### Lời nhắc xác nhận
+
+Khi bạn tin tưởng cấu hình của một kho lưu trữ trong terminal tương tác, repomix sẽ hiển thị cấu hình sắp được chạy và yêu cầu bạn xác nhận trước khi tải nó:
+
+- **Có, chỉ lần này**: chỉ tin tưởng lần chạy này.
+- **Có, và không hỏi lại cho kho lưu trữ này**: được ghi nhớ cho đến khi các tệp tạm thời của bạn bị xóa, và chỉ khi tệp cấu hình đó không thay đổi (tệp cấu hình bị chỉnh sửa sẽ khiến lời nhắc xuất hiện lại). Lưu ý rằng điều này chỉ áp dụng cho chính tệp cấu hình: một cấu hình `.ts` / `.js` có thể import các tệp khác, và những tệp đó không nằm trong phạm vi kiểm tra này.
+- **Không**: hủy bỏ mà không chạy cấu hình.
+
+Lời nhắc này sẽ được bỏ qua khi bạn truyền `--force`, trong các shell không tương tác như CI (cấu hình vẫn được tin tưởng như trước, giúp các quy trình tự động hiện có tiếp tục hoạt động), hoặc khi bạn đã chọn luôn tin tưởng kho lưu trữ đó.
+
+Để biết đầy đủ mô hình tin cậy — cấu hình đáng tin cậy có thể làm gì, cách cấu hình hiển thị được bảo vệ khỏi bị giả mạo, và quyết định "không hỏi lại" được lưu trữ ở đâu — xem [Bảo mật](/vi/guide/security#remote-repository-config-trust).
+
+Khi sử dụng `--config` với `--remote`, bắt buộc phải có đường dẫn tuyệt đối:
 
 ```bash
-repomix --remote https://github.com/yamadashy/repomix/tree/main
+repomix --remote user/repo --config /home/user/repomix.config.json
 ```
 
-### Chỉ định commit cụ thể
+## Các vấn đề thường gặp
 
-Để xử lý một commit cụ thể, sử dụng tùy chọn `--remote-branch` với mã hash commit:
+### Vấn đề truy cập
+- Đảm bảo kho lưu trữ là công khai
+- Kiểm tra việc cài đặt Git
+- Xác minh kết nối Internet
 
-```bash
-repomix --remote owner/repo --remote-branch commit_hash
-```
+### Kho lưu trữ lớn
+- Sử dụng `--include` để chọn các đường dẫn cụ thể
+- Bật `--remove-comments`
+- Xử lý các nhánh riêng biệt
 
-Ví dụ:
+## Tài nguyên liên quan
 
-```bash
-repomix --remote yamadashy/repomix --remote-branch 836abcd7335137228ad77feb28655d85712680f1
-```
-
-### URL đường dẫn cụ thể
-
-```bash
-repomix --remote https://github.com/owner/repo/tree/branch/path/to/directory
-```
-
-Ví dụ:
-
-```bash
-repomix --remote https://github.com/yamadashy/repomix/tree/main/src
-```
-
-## Ví dụ sử dụng
-
-### Đóng gói kho lưu trữ từ xa với định dạng mặc định
-
-```bash
-repomix --remote yamadashy/repomix
-```
-
-### Đóng gói kho lưu trữ từ xa với định dạng Markdown
-
-```bash
-repomix --remote yamadashy/repomix --style markdown
-```
-
-### Đóng gói một nhánh cụ thể
-
-```bash
-repomix --remote https://github.com/yamadashy/repomix/tree/develop
-```
-
-### Đóng gói một thư mục cụ thể trong kho lưu trữ
-
-```bash
-repomix --remote https://github.com/yamadashy/repomix/tree/main/src
-```
-
-### Đóng gói một commit cụ thể
-
-```bash
-repomix --remote yamadashy/repomix --remote-branch 836abcd7335137228ad77feb28655d85712680f1
-```
-
-## Giới hạn và lưu ý
-
-Khi sử dụng tính năng xử lý kho lưu trữ từ xa, hãy lưu ý những điểm sau:
-
-- **Chỉ hỗ trợ kho lưu trữ công khai**: Tính năng này chỉ hoạt động với các kho lưu trữ GitHub công khai.
-- **Giới hạn kích thước**: Các kho lưu trữ rất lớn có thể gặp vấn đề do giới hạn API GitHub.
-- **Không có hỗ trợ .gitignore**: Khi xử lý kho lưu trữ từ xa, Repomix không thể tôn trọng các tệp .gitignore vì nó không có quyền truy cập vào cấu hình Git cục bộ.
-- **Giới hạn API**: Có thể áp dụng giới hạn tốc độ API GitHub.
-
-## Sử dụng với Docker
-
-Bạn cũng có thể xử lý các kho lưu trữ từ xa bằng cách sử dụng hình ảnh Docker của Repomix:
-
-```bash
-docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadashy/repomix
-```
-
-Lệnh này sẽ đóng gói kho lưu trữ từ xa và lưu đầu ra vào thư mục `output` cục bộ của bạn.
-
-## Tiếp theo là gì?
-
-- [Tùy chọn dòng lệnh](command-line-options.md): Xem tất cả các tùy chọn dòng lệnh có sẵn
-- [Cấu hình](configuration.md): Tìm hiểu về tệp cấu hình
-- [GitHub Actions](github-actions.md): Tìm hiểu về tích hợp GitHub Actions
+- [Tùy chọn dòng lệnh](/vi/guide/command-line-options) - Tài liệu tham khảo CLI đầy đủ bao gồm các tùy chọn `--remote`
+- [Cấu hình](/vi/guide/configuration) - Thiết lập các tùy chọn mặc định cho xử lý từ xa
+- [Nén mã](/vi/guide/code-compress) - Giảm kích thước đầu ra cho các kho lưu trữ lớn
+- [Bảo mật](/vi/guide/security) - Cách Repomix xử lý việc phát hiện dữ liệu nhạy cảm

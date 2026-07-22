@@ -1,3 +1,8 @@
+---
+title: "Usar Repomix como Biblioteca"
+description: "Usa Repomix como biblioteca de Node.js para empaquetar directorios locales o repositorios remotos, acceder a APIs principales e integrar salidas de código listas para IA en aplicaciones."
+---
+
 # Usar Repomix como Biblioteca
 
 Además de usar Repomix como herramienta CLI, puedes integrar su funcionalidad directamente en tus aplicaciones Node.js.
@@ -57,6 +62,9 @@ async function processRemoteRepo(repoUrl) {
 }
 ```
 
+> [!NOTE]
+> Por seguridad, los archivos de configuración de los repositorios remotos no se cargan de forma predeterminada. Para confiar en la configuración de un repositorio remoto, añade `remoteTrustConfig: true` a las opciones, o establece la variable de entorno `REPOMIX_REMOTE_TRUST_CONFIG=true`.
+
 ## Uso de Componentes Principales
 
 Para un mayor control, puedes usar las APIs de bajo nivel de Repomix directamente:
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## Empaquetado
+
+Al empaquetar repomix con herramientas como Rolldown o esbuild, algunas dependencias deben permanecer externas y los archivos WASM deben copiarse:
+
+**Dependencias externas (no se pueden empaquetar):**
+- `tinypool` - Genera hilos de trabajo usando rutas de archivos
+
+**Archivos WASM a copiar:**
+- `web-tree-sitter.wasm` → Mismo directorio que el JS empaquetado (requerido para la función de compresión de código)
+- Archivos de lenguaje Tree-sitter → Directorio especificado por la variable de entorno `REPOMIX_WASM_DIR`
+
+Para un ejemplo funcional, consulta [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs).
 
 ## Ejemplo del Mundo Real
 

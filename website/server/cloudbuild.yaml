@@ -10,7 +10,9 @@ steps:
       - '$_REGION-docker.pkg.dev/$PROJECT_ID/repomix/server:latest'
       - '--build-arg'
       - 'NODE_ENV=production'
-      - '.'
+      - '-f'
+      - 'website/server/Dockerfile'
+      - 'website/server'
 
   # Push the container image
   - name: 'gcr.io/cloud-builders/docker'
@@ -38,18 +40,20 @@ steps:
       - '--memory'
       - '1024Mi'
       - '--cpu'
-      - '1'
+      - '2'
       - '--min-instances'
       - '0'
       - '--max-instances'
       - '10'
       - '--timeout'
-      - '31s'
+      - '35s'
       - '--ingress'
       - 'all'
       - '--allow-unauthenticated'
       - '--set-env-vars'
       - 'NODE_ENV=production'
+      - '--set-secrets'
+      - 'UPSTASH_REDIS_REST_URL=upstash-redis-rest-url:latest,UPSTASH_REDIS_REST_TOKEN=upstash-redis-rest-token:latest,CLOUDFLARE_ORIGIN_SECRET=cloudflare-origin-secret:latest,TURNSTILE_SECRET_KEY=turnstile-secret-key:latest'
 
   # Tag the image as latest
   - name: 'gcr.io/cloud-builders/docker'

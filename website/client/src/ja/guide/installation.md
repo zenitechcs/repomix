@@ -1,3 +1,8 @@
+---
+title: インストール
+description: npx、npm、Yarn、Bun、Homebrew、Docker、VS Code拡張機能、ブラウザ拡張機能でRepomixをインストールし、CLI設定を確認します。
+---
+
 # インストール
 
 ## npx を使用する方法 (インストール不要)
@@ -8,25 +13,23 @@ npx repomix@latest
 
 ## グローバルインストール
 
-### npm
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew（macOS/Linux）
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Dockerを使用する方法
 
@@ -71,7 +74,7 @@ GitHubリポジトリから直接Repomixにアクセスできます！Chrome拡�
 
 ## システム要件
 
-- Node.js: 20.0.0 以上
+- Node.js: 22.0.0 以上
 - Git: リモートリポジトリを処理する場合はインストールしてください
 
 ## インストールの確認
@@ -82,3 +85,9 @@ GitHubリポジトリから直接Repomixにアクセスできます！Chrome拡�
 repomix --version
 repomix --help
 ```
+
+## 関連リソース
+
+- [基本的な使い方](/ja/guide/usage) - Repomixの使い方を学ぶ
+- [設定](/ja/guide/configuration) - Repomixをカスタマイズ
+- [コマンドラインオプション](/ja/guide/command-line-options) - CLIリファレンス

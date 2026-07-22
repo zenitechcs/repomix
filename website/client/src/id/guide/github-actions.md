@@ -1,3 +1,8 @@
+---
+title: GitHub Actions
+description: Otomatiskan Repomix di GitHub Actions untuk mengemas repositori bagi analisis AI, workflow CI, artifact, code review, dan output terkompresi.
+---
+
 # GitHub Actions
 
 
@@ -21,7 +26,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -31,7 +36,7 @@ jobs:
           output-path: './repomix-output.xml'
           
       - name: Upload Repomix File
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: repomix-output
           path: ./repomix-output.xml
@@ -44,7 +49,7 @@ GitHub Action Repomix mendukung semua opsi yang tersedia di CLI. Berikut adalah 
 | Opsi | Deskripsi | Default |
 |------|-----------|---------|
 | `output-path` | Jalur file output | `./repomix-output.xml` |
-| `style` | Format output (`xml`, `markdown`, `plain`) | `xml` |
+| `style` | Format output (`xml`, `markdown`, `json`, `plain`) | `xml` |
 | `ignore` | Pola glob untuk mengabaikan file | - |
 | `include` | Pola glob untuk menyertakan file | - |
 | `remove-comments` | Menghapus komentar dari kode sumber | `false` |
@@ -68,7 +73,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -80,6 +85,13 @@ jobs:
           ignore: 'node_modules/**,*.log,tmp/**'
           remove-comments: 'true'
           compress: 'true'
+          
+      - name: Generate JSON Repomix File
+        uses: yamadashy/repomix-action@v1
+        with:
+          output-path: './docs/repomix-output.json'
+          style: 'json'
+          ignore: 'node_modules/**,*.log,tmp/**'
           
       - name: Commit and Push
         run: |

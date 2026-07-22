@@ -1,3 +1,8 @@
+---
+title: Bảo mật
+description: Tìm hiểu cách Repomix dùng Secretlint và safety check để phát hiện secret, API key, token, credential và nội dung repository nhạy cảm trước khi đóng gói.
+---
+
 # Bảo mật
 
 Repomix tích hợp các tính năng bảo mật mạnh mẽ để giúp ngăn chặn việc vô tình tiết lộ thông tin nhạy cảm khi chia sẻ codebase của bạn với các mô hình ngôn ngữ lớn (LLMs).
@@ -125,6 +130,85 @@ config/secrets.yml
 credentials/
 ```
 
+## Độ tin cậy cấu hình kho lưu trữ từ xa {#remote-repository-config-trust}
+
+Khi bạn đóng gói một kho lưu trữ từ xa bằng `--remote`, Repomix coi cấu hình của kho lưu trữ đó là mã không đáng tin cậy.
+
+### Vì sao tệp cấu hình là mã (code)
+
+Một tệp `repomix.config.*` không chỉ là dữ liệu:
+
+- `repomix.config.ts` / `.js` / `.mjs` được **thực thi** khi được tải.
+- `input.processors` chạy các lệnh bên ngoài trên các tệp phù hợp.
+- `output.instructionFilePath` và các mẫu include sử dụng `../` đọc các tệp nằm ngoài kho lưu trữ.
+
+Vì vậy, việc tải một cấu hình chưa được xem xét từ một kho lưu trữ không quen thuộc cũng tương đương với việc chạy `Makefile` của kho lưu trữ đó, hoặc chạy `npm install` trên một package có lifecycle script.
+
+### Mặc định: cấu hình từ xa không bao giờ được tải
+
+Repomix bỏ qua cấu hình của kho lưu trữ đã được clone trừ khi bạn yêu cầu rõ ràng. Cấu hình toàn cục và các tùy chọn CLI của bạn vẫn được áp dụng. Nếu bạn không bao giờ truyền cờ dưới đây, không có gì trong phần này có thể ảnh hưởng đến bạn.
+
+### Bật tin cậy
+
+```bash
+# Sử dụng cờ CLI
+repomix --remote user/repo --remote-trust-config
+
+# Sử dụng biến môi trường
+REPOMIX_REMOTE_TRUST_CONFIG=true repomix --remote user/repo
+```
+
+Điều này cấp cho cấu hình từ xa mức độ tin cậy tương tự như một cấu hình do chính bạn viết. Chỉ sử dụng tùy chọn này cho các kho lưu trữ mà bạn tin tưởng và đã xem xét.
+
+### Lời nhắc xác nhận
+
+Trên terminal tương tác, Repomix hiển thị cấu hình sắp được chạy và yêu cầu xác nhận trước khi tải nó:
+
+| Lựa chọn | Hiệu ứng |
+| --- | --- |
+| **Có, chỉ lần này** | Chỉ tin tưởng lần chạy này. |
+| **Có, và không hỏi lại cho kho lưu trữ này** | Ghi nhớ quyết định (xem bên dưới). |
+| **Không** (lựa chọn mặc định) | Hủy bỏ mà không tải cấu hình. |
+
+Cấu hình được hiển thị cho bạn do tác giả của kho lưu trữ viết ra, vì vậy Repomix đảm bảo rằng phần hiển thị không thể bị thao túng:
+
+- **Các ký tự điều khiển và chuỗi ANSI được escape**, để cấu hình không thể vẽ lại terminal hoặc cuộn cảnh báo ra khỏi tầm nhìn.
+- **Các ký tự hai chiều (bidirectional) và ký tự ẩn được escape**, để văn bản bạn đọc chính là văn bản được thực thi ([Trojan Source](https://trojansource.codes/)).
+- **Đầu ra bị giới hạn** cả về số dòng lẫn kích thước byte, để một cấu hình bị đệm thêm không thể đẩy cảnh báo ra khỏi màn hình.
+- **Mỗi dòng cấu hình đều có tiền tố**, để cấu hình không thể giả mạo các dấu phân cách hoặc thông báo riêng của Repomix.
+- **Symlink bị từ chối.** Git giữ lại symlink, vì vậy một kho lưu trữ có thể chứa tệp `repomix.config.json` trỏ ra ngoài bản clone. Repomix yêu cầu cấu hình phải là một tệp thông thường bên trong cây thư mục đã clone — nếu không, các byte bạn đã xem xét sẽ không phải là các byte được thực thi.
+
+### Ghi nhớ một quyết định
+
+Chọn "không hỏi lại" sẽ lưu một dấu hiệu trong thư mục tạm của bạn (`$TMPDIR/repomix/trusted-remotes/`), chỉ tài khoản người dùng của bạn mới có quyền đọc và ghi.
+
+Dấu hiệu này được **gắn với nội dung (content-pinned)**: nó ghi lại hash của cấu hình bạn đã chấp thuận. Nếu sau đó kho lưu trữ cung cấp một cấu hình khác, hash sẽ không còn khớp và **bạn sẽ được hỏi lại** — cùng mô hình như `direnv allow`.
+
+::: warning Phạm vi của việc gắn hash
+Hash chỉ bao phủ tệp cấu hình chính (entry). Một cấu hình `.ts` / `.js` có thể `import` các tệp khác, và `input.processors` có thể gọi các script bên ngoài; cả hai đều không được hash. Một kho lưu trữ mà bạn đã tin tưởng có thể thay đổi những phần đó trong khi tệp chính vẫn giữ nguyên. Đây là lý do các cấu hình có thể thực thi được gắn nhãn như vậy trong lời nhắc — hãy xem "không hỏi lại" là sự tin tưởng vào kho lưu trữ, chứ không chỉ vào tệp bạn đã đọc.
+:::
+
+Các dấu hiệu này nằm trong thư mục tạm, nên các quyết định sẽ hết hạn khi hệ điều hành của bạn xóa thư mục đó. Đây là chủ đích: hết hạn theo hướng "hỏi lại" là hướng an toàn.
+
+### Khi nào lời nhắc bị bỏ qua
+
+| Tình huống | Hành vi |
+| --- | --- |
+| Có truyền `--force` | Được tin tưởng mà không hỏi. Cờ này có nghĩa là bạn chấp nhận hậu quả; một thông báo được in ra stderr. |
+| Shell không tương tác (CI, pipe) | Được tin tưởng mà không hỏi, giữ cho các quy trình tự động hiện có tiếp tục hoạt động. Một thông báo được in ra stderr. |
+| Kho lưu trữ đã được tin tưởng | Được tải mà không hỏi, miễn là cấu hình không thay đổi. |
+| Sử dụng `--config` tuyệt đối | Cấu hình riêng của kho lưu trữ đã clone không bao giờ được tải, nên không có gì cần xác nhận. |
+| Bản clone không có tệp cấu hình | Không có gì để tin tưởng. |
+
+Khi dùng `--stdout`, hoặc khi stdout bị chuyển hướng, lời nhắc không thể hiển thị được. Thay vì âm thầm tin tưởng cấu hình, Repomix báo lỗi kèm hướng dẫn.
+
+### Khuyến nghị
+
+1. Không bật `--remote-trust-config` trừ khi bạn cần dùng cấu hình riêng của kho lưu trữ.
+2. Đọc cấu hình trong lời nhắc trước khi trả lời, đặc biệt là `input.processors` và bất kỳ đường dẫn `../` nào.
+3. Ưu tiên chọn "Có, chỉ lần này" đối với các kho lưu trữ mà bạn không kiểm soát.
+4. Trong CI, hãy nhớ rằng lời nhắc không thể bảo vệ bạn — hãy ghim (pin) phiên bản bạn đóng gói và xem xét nó trước.
+
 ## Xử lý cảnh báo bảo mật
 
 Khi Repomix phát hiện thông tin nhạy cảm, bạn có một số tùy chọn:
@@ -134,8 +218,9 @@ Khi Repomix phát hiện thông tin nhạy cảm, bạn có một số tùy ch�
 3. **Tiếp tục với rủi ro**: Tiếp tục quá trình đóng gói (không được khuyến nghị)
 4. **Tùy chỉnh quy tắc**: Điều chỉnh cấu hình Secretlint để giảm cảnh báo sai
 
-## Tiếp theo là gì?
+## Tài nguyên liên quan
 
-- [Cấu hình](configuration.md): Tìm hiểu về tệp cấu hình
-- [Tùy chọn dòng lệnh](command-line-options.md): Xem tất cả các tùy chọn dòng lệnh có sẵn
-- [Máy chủ MCP](mcp-server.md): Tìm hiểu về tính năng máy chủ MCP
+- [Xử lý kho lưu trữ GitHub](/vi/guide/remote-repository-processing) - Đóng gói các kho lưu trữ mà bạn chưa tự clone
+- [Cấu hình](/vi/guide/configuration) - Cấu hình kiểm tra bảo mật qua `security.enableSecurityCheck`
+- [Tùy chọn dòng lệnh](/vi/guide/command-line-options) - Sử dụng cờ `--no-security-check`
+- [Chính sách quyền riêng tư](/vi/guide/privacy) - Tìm hiểu về cách Repomix xử lý dữ liệu

@@ -1,3 +1,8 @@
+---
+title: उपयोग के मामले
+description: AI code review, bug investigation, refactoring, documentation, onboarding, security audits और architecture analysis के लिए practical Repomix workflows explore करें।
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Repomix की शक्ति इसकी क्षमता में है 
 ```
 इस कोडबेस का प्रदर्शन अड़चनों के लिए विश्लेषण करें। अक्षम एल्गोरिदम, अनावश्यक डेटाबेस क्वेरी, मेमोरी लीक और कैशिंग या अनुकूलन से लाभ उठा सकने वाले क्षेत्रों की तलाश करें।
 ```
+
+## संबंधित संसाधन
+
+- [प्रॉम्प्ट उदाहरण](/hi/guide/prompt-examples) - AI विश्लेषण के लिए और अधिक प्रॉम्प्ट टेम्पलेट
+- [आउटपुट फॉर्मेट](/hi/guide/output) - अपने AI मॉडल के लिए सर्वोत्तम फॉर्मेट चुनें
+- [कस्टम निर्देश](/hi/guide/custom-instructions) - AI विश्लेषण को निर्देशित करने के लिए संदर्भ जोड़ें
+- [GitHub रिपॉजिटरी प्रोसेसिंग](/hi/guide/remote-repository-processing) - रिमोट रिपॉजिटरी का विश्लेषण करें

@@ -1,3 +1,8 @@
+---
+title: "Utiliser Repomix comme bibliothèque"
+description: "Utilisez Repomix comme bibliothèque Node.js pour empaqueter des dossiers locaux ou dépôts distants, accéder aux API principales et intégrer une sortie de code prête pour l'IA dans vos applications."
+---
+
 # Utiliser Repomix comme bibliothèque
 
 En plus d'utiliser Repomix comme outil CLI, vous pouvez intégrer ses fonctionnalités directement dans vos applications Node.js.
@@ -57,6 +62,9 @@ async function processRemoteRepo(repoUrl) {
 }
 ```
 
+> [!NOTE]
+> Par mesure de sécurité, les fichiers de configuration des dépôts distants ne sont pas chargés par défaut. Pour faire confiance à la configuration d'un dépôt distant, ajoutez `remoteTrustConfig: true` aux options, ou définissez la variable d'environnement `REPOMIX_REMOTE_TRUST_CONFIG=true`.
+
 ## Utilisation des composants principaux
 
 Pour un contrôle plus précis, vous pouvez utiliser directement les API de bas niveau de Repomix :
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## Bundling
+
+Lors du bundling de repomix avec des outils comme Rolldown ou esbuild, certaines dépendances doivent rester externes et les fichiers WASM doivent être copiés :
+
+**Dépendances externes (ne peuvent pas être bundlées) :**
+- `tinypool` - Lance des threads de travail en utilisant des chemins de fichiers
+
+**Fichiers WASM à copier :**
+- `web-tree-sitter.wasm` → Même répertoire que le JS bundlé (requis pour la fonctionnalité de compression de code)
+- Fichiers de langage Tree-sitter → Répertoire spécifié par la variable d'environnement `REPOMIX_WASM_DIR`
+
+Pour un exemple fonctionnel, consultez [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs).
 
 ## Exemple concret
 

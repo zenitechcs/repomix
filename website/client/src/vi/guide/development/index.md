@@ -1,3 +1,8 @@
+---
+title: Đóng góp cho Repomix
+description: Thiết lập môi trường phát triển Repomix, chạy test, lint code, hiểu cấu trúc dự án và đóng góp thay đổi cho dự án open source.
+---
+
 # Đóng góp cho Repomix
 
 Repomix là một dự án mã nguồn mở và chúng tôi hoan nghênh đóng góp từ cộng đồng. Trang này cung cấp thông tin về cách bạn có thể đóng góp cho dự án.
@@ -6,7 +11,7 @@ Repomix là một dự án mã nguồn mở và chúng tôi hoan nghênh đóng 
 
 ### Yêu cầu
 
-- Node.js (phiên bản 20 trở lên)
+- Node.js (phiên bản 22 trở lên)
 - npm hoặc yarn
 - Git
 
@@ -46,6 +51,25 @@ npm run test
 ```bash
 npm run lint
 ```
+
+### Phát triển với Nix
+
+Nếu bạn có [Nix](https://nixos.org/download) với flakes được bật, bạn có thể vào một shell phát triển có thể tái tạo với Node.js 24 và Git được cài đặt sẵn:
+
+```bash
+nix develop
+```
+
+Trong shell, quy trình `npm` tiêu chuẩn hoạt động như mong đợi:
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+Lưu ý: shell này dùng để phát triển Repomix, không phải để cài đặt như một CLI.
 
 ## Cấu trúc dự án
 

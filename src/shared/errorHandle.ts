@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { inspect } from 'node:util';
 import { REPOMIX_DISCORD_URL, REPOMIX_ISSUES_URL } from './constants.js';
 import { logger, repomixLogLevels } from './logger.js';
 
@@ -16,10 +16,24 @@ export class RepomixConfigValidationError extends RepomixError {
   }
 }
 
+export class OperationCancelledError extends RepomixError {
+  constructor(message = 'Operation cancelled') {
+    super(message);
+    this.name = 'OperationCancelledError';
+  }
+}
+
 export const handleError = (error: unknown): void => {
+  // A cancellation is an answer, not a failure. The prompt that raised it has
+  // already told the user what was cancelled, so the error banner, the --verbose
+  // hint and the "file an issue / join Discord" footer would frame a deliberate
+  // choice as a crash. The caller still exits non-zero: the requested operation
+  // did not happen, and a wrapper script must not read that as success.
+  if (isOperationCancelledError(error)) return;
+
   logger.log('');
 
-  if (error instanceof RepomixError) {
+  if (isRepomixError(error)) {
     logger.error(`✖ ${error.message}`);
     if (logger.getLogLevel() < repomixLogLevels.DEBUG) {
       logger.log('');
@@ -31,7 +45,7 @@ export const handleError = (error: unknown): void => {
     if (error.cause) {
       logger.debug('Caused by:', error.cause);
     }
-  } else if (error instanceof Error) {
+  } else if (isError(error)) {
     logger.error(`✖ Unexpected error: ${error.message}`);
     // If unexpected error, show stack trace by default
     logger.note('Stack trace:', error.stack);
@@ -43,6 +57,21 @@ export const handleError = (error: unknown): void => {
   } else {
     // Unknown errors
     logger.error('✖ An unknown error occurred');
+    // Safely serialize unknown error objects
+    try {
+      logger.note(
+        'Error details:',
+        inspect(error, {
+          depth: 3,
+          colors: false,
+          maxArrayLength: 10,
+          maxStringLength: 200,
+          breakLength: Number.POSITIVE_INFINITY,
+        }),
+      );
+    } catch {
+      logger.note('Error details: [Error object could not be serialized]');
+    }
 
     if (logger.getLogLevel() < repomixLogLevels.DEBUG) {
       logger.log('');
@@ -57,11 +86,91 @@ export const handleError = (error: unknown): void => {
   logger.info(`• Join our Discord community: ${REPOMIX_DISCORD_URL}`);
 };
 
-export const rethrowValidationErrorIfZodError = (error: unknown, message: string): void => {
-  if (error instanceof z.ZodError) {
-    const zodErrorText = error.errors.map((err) => `[${err.path.join('.')}] ${err.message}`).join('\n  ');
-    throw new RepomixConfigValidationError(
-      `${message}\n\n  ${zodErrorText}\n\n  Please check the config file and try again.`,
-    );
+/**
+ * Checks if an unknown value is an OperationCancelledError.
+ * Matches on the name so a cancellation raised in a worker is still recognized.
+ */
+const isOperationCancelledError = (error: unknown): boolean =>
+  error instanceof OperationCancelledError ||
+  (typeof error === 'object' &&
+    error !== null &&
+    (error as Record<string, unknown>).name === OperationCancelledError.name);
+
+/**
+ * Checks if an unknown value is an Error-like object.
+ * Uses duck typing for errors serialized across worker process boundaries.
+ */
+const isError = (error: unknown): error is Error => {
+  if (error instanceof Error) return true;
+
+  if (typeof error !== 'object' || error === null) return false;
+
+  const obj = error as Record<string, unknown>;
+  return (
+    typeof obj.message === 'string' &&
+    // stack is optional across boundaries
+    (!('stack' in obj) || typeof obj.stack === 'string') &&
+    (!('name' in obj) || typeof obj.name === 'string')
+  );
+};
+
+/**
+ * Checks if an unknown value is a RepomixError-like object.
+ * Uses error name property for serialized RepomixError across worker boundaries.
+ */
+const isRepomixError = (error: unknown): error is RepomixError => {
+  if (error instanceof RepomixError) return true;
+
+  if (typeof error !== 'object' || error === null) return false;
+
+  const obj = error as Record<string, unknown>;
+  return (
+    typeof obj.message === 'string' &&
+    'name' in obj &&
+    (obj.name === RepomixError.name ||
+      obj.name === RepomixConfigValidationError.name ||
+      obj.name === OperationCancelledError.name)
+  );
+};
+
+/**
+ * Rethrows schema validation errors (Zod or Valibot) as RepomixConfigValidationError
+ * using duck typing to avoid eagerly importing either library.
+ *
+ * - ZodError: `name === 'ZodError'`, `issues[].path` is `Array<string | number>`
+ * - ValiError: `name === 'ValiError'`, `issues[].path` is `Array<{ key: string | number | symbol }>`
+ */
+export const rethrowValidationErrorIfSchemaError = (error: unknown, message: string): void => {
+  // Duck-type instead of `instanceof Error` so errors round-tripped through
+  // worker boundaries (which keep only plain { name, message, issues }) are
+  // still recognized. Aligns with isError / isRepomixError above.
+  if (!error || typeof error !== 'object') return;
+  const err = error as { name?: unknown; issues?: unknown };
+  if ((err.name !== 'ZodError' && err.name !== 'ValiError') || !Array.isArray(err.issues)) {
+    return;
   }
+
+  const issues = err.issues as Array<{ path?: unknown; message: string }>;
+  const errorText = issues
+    .map((issue) => {
+      const segments = Array.isArray(issue.path)
+        ? (issue.path as unknown[])
+            .map((segment) => {
+              // Zod: path segments are primitives. Valibot: { key } objects.
+              if (segment && typeof segment === 'object') {
+                if ('key' in segment) return String((segment as { key: unknown }).key);
+                return '';
+              }
+              return String(segment);
+            })
+            .filter((segment) => segment !== '')
+        : [];
+      // Omit the bracketed path entirely when there are no usable segments, so
+      // a root-level / path-less issue reads as `message` instead of `[] message`.
+      return segments.length === 0 ? issue.message : `[${segments.join('.')}] ${issue.message}`;
+    })
+    .join('\n  ');
+  throw new RepomixConfigValidationError(
+    `${message}\n\n  ${errorText}\n\n  Please check the config file and try again.`,
+  );
 };

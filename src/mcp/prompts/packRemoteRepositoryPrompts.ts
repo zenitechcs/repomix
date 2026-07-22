@@ -25,7 +25,6 @@ export const registerPackRemoteRepositoryPrompt = (mcpServer: McpServer) => {
         ),
     },
     async ({ repository, includePatterns, ignorePatterns }) => {
-      // Convert compress string to boolean
       return {
         messages: [
           {

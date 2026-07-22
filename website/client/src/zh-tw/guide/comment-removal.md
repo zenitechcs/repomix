@@ -1,3 +1,8 @@
+---
+title: 註釋移除
+description: 從 Repomix 輸出中移除程式碼註解，降低雜訊與 token 用量，同時保留原始檔案與支援語言的行為。
+---
+
 # 註釋移除
 
 Repomix 可以在生成輸出文件時自動移除程式碼中的註釋。這有助於減少干擾，讓程式碼更加簡潔。
@@ -66,3 +71,9 @@ function test() {
 3. **效能考慮**：
   - 移除註釋可以減少輸出文件大小
   - 對於大型程式碼庫特別有用
+
+## 相關資源
+
+- [程式碼壓縮](/zh-tw/guide/code-compress) - 透過提取程式碼結構進一步減少令牌數量
+- [設定](/zh-tw/guide/configuration) - 在設定檔中設定 `output.removeComments`
+- [命令列選項](/zh-tw/guide/command-line-options) - 使用 `--remove-comments` 旗標

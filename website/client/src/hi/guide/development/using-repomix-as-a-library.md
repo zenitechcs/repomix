@@ -1,3 +1,8 @@
+---
+title: Repomix को लाइब्रेरी के रूप में उपयोग करना
+description: Local directories या remote repositories pack करने, core APIs access करने और applications में AI-ready codebase output integrate करने के लिए Repomix को Node.js library की तरह उपयोग करें।
+---
+
 # Repomix को लाइब्रेरी के रूप में उपयोग करना
 
 Repomix को एक स्टैंडअलोन CLI टूल के रूप में उपयोग करने के अलावा, आप इसे अपने JavaScript या TypeScript प्रोजेक्ट में एक लाइब्रेरी के रूप में भी उपयोग कर सकते हैं।
@@ -107,6 +112,9 @@ async function processRemoteRepo() {
 }
 ```
 
+> [!NOTE]
+> सुरक्षा के लिए, रिमोट रिपॉजिटरी में मौजूद कॉन्फिग फाइलें डिफॉल्ट रूप से लोड नहीं की जाती हैं। रिमोट रिपॉजिटरी की कॉन्फिग पर भरोसा करने के लिए, विकल्पों में `remoteTrustConfig: true` जोड़ें, या `REPOMIX_REMOTE_TRUST_CONFIG=true` एनवायरनमेंट वेरिएबल सेट करें।
+
 ### आउटपुट स्ट्रिंग के रूप में प्राप्त करना
 
 ```typescript
@@ -204,6 +212,19 @@ async function processInBrowser() {
   return result.output;
 }
 ```
+
+## बंडलिंग
+
+Rolldown या esbuild जैसे टूल्स के साथ repomix को बंडल करते समय, कुछ डिपेंडेंसी को external रखना होगा और WASM फाइलों को कॉपी करना होगा:
+
+**External डिपेंडेंसी (बंडल नहीं की जा सकती):**
+- `tinypool` - फाइल पाथ का उपयोग करके वर्कर थ्रेड्स स्पॉन करता है
+
+**कॉपी करने के लिए WASM फाइलें:**
+- `web-tree-sitter.wasm` → बंडल किए गए JS के समान डायरेक्टरी (कोड कंप्रेशन फीचर के लिए आवश्यक)
+- Tree-sitter लैंग्वेज फाइलें → `REPOMIX_WASM_DIR` एनवायरनमेंट वेरिएबल द्वारा निर्दिष्ट डायरेक्टरी
+
+एक कार्यशील उदाहरण के लिए, [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs) देखें।
 
 ## अगला क्या है?
 

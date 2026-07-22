@@ -2,9 +2,9 @@ import pc from 'picocolors';
 import type { RepomixConfigMerged } from '../../config/configSchema.js';
 import type { ProcessedFile } from '../../core/file/fileTypes.js';
 import {
-  type FileWithTokens,
-  type TreeNode,
   buildTokenCountTree,
+  type FileWithTokens,
+  type TokenCountTreeNode,
 } from '../../core/tokenCount/buildTokenCountStructure.js';
 import { logger } from '../../shared/logger.js';
 
@@ -38,21 +38,12 @@ export const reportTokenCountTree = (
   displayNode(tree, '', true, minTokenCount);
 };
 
-const displayNode = (node: TreeNode, prefix: string, isRoot: boolean, minTokenCount: number): void => {
-  // Get all directory entries (excluding _files and _tokenSum)
-  const allEntries = Object.entries(node).filter(
-    ([key, value]) => !key.startsWith('_') && value && typeof value === 'object' && !Array.isArray(value),
-  );
-
-  // Filter directories by minimum token count
-  const entries = allEntries.filter(([, value]) => {
-    const tokenSum = (value as TreeNode)._tokenSum || 0;
-    return tokenSum >= minTokenCount;
-  });
+const displayNode = (node: TokenCountTreeNode, prefix: string, isRoot: boolean, minTokenCount: number): void => {
+  // Get child directories that meet the minimum token count
+  const entries = [...node.children].filter(([, child]) => child.tokenSum >= minTokenCount);
 
   // Get files in this directory and filter by minimum token count
-  const allFiles = node._files || [];
-  const files = allFiles.filter((file) => file.tokens >= minTokenCount);
+  const files = node.files.filter((file) => file.tokens >= minTokenCount);
 
   // Sort entries alphabetically
   entries.sort(([a], [b]) => a.localeCompare(b));
@@ -75,8 +66,7 @@ const displayNode = (node: TreeNode, prefix: string, isRoot: boolean, minTokenCo
   entries.forEach(([name, childNode], index) => {
     const isLastEntry = index === entries.length - 1;
     const connector = isLastEntry ? '└── ' : '├── ';
-    const tokenSum = (childNode as TreeNode)._tokenSum || 0;
-    const tokenInfo = pc.dim(`(${tokenSum.toLocaleString()} tokens)`);
+    const tokenInfo = pc.dim(`(${childNode.tokenSum.toLocaleString()} tokens)`);
 
     if (isRoot && prefix === '') {
       logger.log(`${connector}${name}/ ${tokenInfo}`);
@@ -88,7 +78,7 @@ const displayNode = (node: TreeNode, prefix: string, isRoot: boolean, minTokenCo
     const childPrefix =
       isRoot && prefix === '' ? (isLastEntry ? '    ' : '│   ') : prefix + (isLastEntry ? '    ' : '│   ');
 
-    displayNode(childNode as TreeNode, childPrefix, false, minTokenCount);
+    displayNode(childNode, childPrefix, false, minTokenCount);
   });
 
   // If this is the root and it's empty, show a message

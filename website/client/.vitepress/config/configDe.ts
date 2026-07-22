@@ -2,7 +2,7 @@ import { type DefaultTheme, defineConfig } from 'vitepress';
 
 export const configDe = defineConfig({
   lang: 'de',
-  description: 'Paketieren Sie Ihre Codebasis in KI-freundliche Formate',
+  description: 'Ihre Codebasis in KI-freundliche Formate verpacken',
   themeConfig: {
     nav: [
       { text: 'Anleitung', link: '/de/guide/', activeMatch: '^/de/guide/' },
@@ -22,6 +22,7 @@ export const configDe = defineConfig({
             { text: 'Grundlegende Verwendung', link: '/de/guide/usage' },
             { text: 'Prompt-Beispiele', link: '/de/guide/prompt-examples' },
             { text: 'Anwendungsfälle', link: '/de/guide/use-cases' },
+            { text: 'FAQ und Fehlerbehebung', link: '/de/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configDe = defineConfig({
           items: [
             { text: 'Ausgabeformate', link: '/de/guide/output' },
             { text: 'Kommandozeilenoptionen', link: '/de/guide/command-line-options' },
+            { text: 'Watch-Modus', link: '/de/guide/watch-mode' },
             { text: 'Konfiguration', link: '/de/guide/configuration' },
             { text: 'Benutzerdefinierte Anweisungen', link: '/de/guide/custom-instructions' },
             { text: 'GitHub-Repository-Verarbeitung', link: '/de/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configDe = defineConfig({
           text: 'Fortgeschritten',
           items: [
             { text: 'MCP-Server', link: '/de/guide/mcp-server' },
+            { text: 'Claude Code Plugins', link: '/de/guide/claude-code-plugins' },
+            { text: 'Agent Skills Generierung', link: '/de/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/de/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/de/guide/github-actions' },
             { text: 'Repomix als Bibliothek verwenden', link: '/de/guide/development/using-repomix-as-a-library' },
             { text: 'KI-unterstützte Entwicklungstipps', link: '/de/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configDe = defineConfig({
             { text: 'Community-Projekte', link: '/de/guide/community-projects' },
             { text: 'Zu Repomix beitragen', link: '/de/guide/development/' },
             { text: 'Sponsoren', link: '/de/guide/sponsors' },
+            { text: 'Datenschutzrichtlinie', link: '/de/guide/privacy' },
           ],
         },
       ],

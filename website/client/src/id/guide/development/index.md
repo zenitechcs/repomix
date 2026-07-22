@@ -1,3 +1,8 @@
+---
+title: Berkontribusi ke Repomix
+description: Siapkan lingkungan pengembangan Repomix, jalankan test, lint kode, pahami struktur proyek, dan kontribusikan perubahan ke proyek open source.
+---
+
 # Berkontribusi ke Repomix
 
 
@@ -9,7 +14,7 @@ Kami sangat menghargai kontribusi dari komunitas! Halaman ini memberikan panduan
 
 Untuk berkontribusi ke Repomix, Anda akan memerlukan:
 
-- [Node.js](https://nodejs.org/) (versi 20 atau lebih baru)
+- [Node.js](https://nodejs.org/) (versi 22 atau lebih baru)
 - [Git](https://git-scm.com/)
 - Editor kode (kami merekomendasikan [Visual Studio Code](https://code.visualstudio.com/))
 
@@ -25,6 +30,25 @@ cd repomix
 # Instal dependensi
 npm install
 ```
+
+### Pengembangan dengan Nix
+
+Jika Anda memiliki [Nix](https://nixos.org/download) dengan flakes diaktifkan, Anda dapat memasuki shell pengembangan yang dapat direproduksi dengan Node.js 24 dan Git terinstal sebelumnya:
+
+```bash
+nix develop
+```
+
+Di dalam shell, alur kerja `npm` standar berfungsi seperti yang diharapkan:
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+Catatan: shell ini untuk mengerjakan Repomix itu sendiri, bukan untuk menginstalnya sebagai CLI.
 
 ## Struktur Proyek
 

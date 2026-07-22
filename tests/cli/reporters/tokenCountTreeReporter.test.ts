@@ -1,4 +1,4 @@
-import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
 import { reportTokenCountTree } from '../../../src/cli/reporters/tokenCountTreeReporter.js';
 import type { RepomixConfigMerged } from '../../../src/config/configSchema.js';
 import type { ProcessedFile } from '../../../src/core/file/fileTypes.js';
@@ -50,6 +50,29 @@ describe('reportTokenCountTree', () => {
     expect(calls.some((call) => call.includes('src/'))).toBe(true);
     expect(calls.some((call) => call.includes('file1.js'))).toBe(true);
     expect(calls.some((call) => call.includes('file2.js'))).toBe(true);
+  });
+
+  test('should display directories whose name starts with an underscore', () => {
+    const processedFiles: ProcessedFile[] = [
+      { path: 'src/__tests__/foo.test.js', content: 'test("example", () => {});' },
+      { path: 'src/index.js', content: 'const a = 1;' },
+    ];
+
+    const fileTokenCounts = {
+      'src/__tests__/foo.test.js': 100,
+      'src/index.js': 50,
+    };
+
+    const config = {
+      output: { tokenCountTree: true },
+    } as RepomixConfigMerged;
+
+    reportTokenCountTree(processedFiles, fileTokenCounts, config);
+
+    const calls = mockLogger.mock.calls.map((call: unknown[]) => call[0] as string);
+    // The __tests__ directory must appear, and src must sum both children (150).
+    expect(calls.some((call) => call.includes('__tests__/'))).toBe(true);
+    expect(calls.some((call) => call.includes('src/') && call.includes('150'))).toBe(true);
   });
 
   test('should handle empty file list', () => {

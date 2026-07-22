@@ -1,3 +1,8 @@
+---
+title: Menggunakan Repomix sebagai Library
+description: Gunakan Repomix sebagai library Node.js untuk mengemas direktori lokal atau repositori remote, mengakses API inti, dan mengintegrasikan output codebase siap AI ke aplikasi.
+---
+
 # Menggunakan Repomix sebagai Library
 
 
@@ -110,6 +115,30 @@ async function main() {
 
 main().catch(console.error);
 ```
+
+## Pemrosesan Repositori Remote
+
+Anda dapat mengkloning dan memproses repositori remote:
+
+```typescript
+import { Repomix } from 'repomix';
+
+async function processRemoteRepo(repoUrl: string) {
+  const repomix = new Repomix();
+  const result = await repomix.pack({
+    remote: repoUrl,
+    output: {
+      style: 'xml',
+      filePath: 'output.xml',
+    },
+  });
+
+  return result;
+}
+```
+
+> [!NOTE]
+> Demi keamanan, file konfigurasi di dalam repositori remote tidak dimuat secara default. Untuk memercayai konfigurasi repositori remote, tambahkan `remoteTrustConfig: true` ke opsi, atau atur variabel lingkungan `REPOMIX_REMOTE_TRUST_CONFIG=true`.
 
 ## Kasus Penggunaan
 
@@ -245,3 +274,16 @@ interface PackResult {
 ```
 
 Untuk informasi lebih lanjut tentang API, lihat [kode sumber Repomix](https://github.com/yamadashy/repomix).
+
+## Bundling
+
+Saat membundle repomix dengan tools seperti Rolldown atau esbuild, beberapa dependency harus tetap external dan file WASM perlu disalin:
+
+**Dependency external (tidak dapat dibundle):**
+- `tinypool` - Memulai worker thread menggunakan path file
+
+**File WASM yang perlu disalin:**
+- `web-tree-sitter.wasm` → Direktori yang sama dengan JS yang dibundle (diperlukan untuk fitur kompresi kode)
+- File bahasa Tree-sitter → Direktori yang ditentukan oleh variabel lingkungan `REPOMIX_WASM_DIR`
+
+Untuk contoh yang berfungsi, lihat [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs).

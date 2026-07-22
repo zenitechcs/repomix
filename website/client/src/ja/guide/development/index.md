@@ -1,3 +1,8 @@
+---
+title: Repomixへの貢献
+description: Repomixの開発環境をセットアップし、テストとlintを実行し、プロジェクト構造を理解してオープンソースプロジェクトへ変更を貢献する方法を説明します。
+---
+
 # Repomixへの貢献
 
 Repomixにご興味をお持ちいただきありがとうございます！🚀 より良いものにするためのあなたの協力をお待ちしています。このガイドでは、プロジェクトへの貢献を始めるための手順を説明します。
@@ -15,7 +20,7 @@ Repomixにご興味をお持ちいただきありがとうございます！🚀
 
 ### 前提条件
 
-- Node.js ≥ 20.0.0
+- Node.js ≥ 22.0.0
 - Git
 - npm
 - Docker（オプション、ウェブサイトの実行やコンテナ化された開発用）
@@ -35,6 +40,25 @@ npm install
 # CLIの実行
 npm run repomix
 ```
+
+### Nix開発
+
+[Nix](https://nixos.org/download)（flakes有効）を使用している場合、Node.js 24とGitがプリインストールされた再現可能な開発シェルに入ることができます：
+
+```bash
+nix develop
+```
+
+シェル内では、標準の`npm`ワークフローが期待通りに動作します：
+
+```bash
+npm ci
+npm run build
+npm run test
+npm run lint
+```
+
+注意: このシェルはRepomix自体の開発用で、CLIとしてインストールするためのものではありません。
 
 ### Docker開発
 

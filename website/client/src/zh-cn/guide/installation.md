@@ -1,3 +1,8 @@
+---
+title: 安装
+description: 使用 npx、npm、Yarn、Bun、Homebrew、Docker、VS Code 扩展或浏览器扩展安装 Repomix，并验证 CLI 设置。
+---
+
 # 安装
 
 ## 使用 npx（无需安装）
@@ -8,25 +13,23 @@ npx repomix@latest
 
 ## 全局安装
 
-### npm 安装
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn 安装
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun 安装
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew 安装（macOS/Linux）
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Docker 安装
 
@@ -45,7 +48,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 ## VSCode 扩展
 
-通过社区维护的 [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) 扩展，您可以直接在 VSCode 中运行 Repomix。
+通过社区维护的 [Repomix Runner](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner) 扩展，你可以直接在 VSCode 中运行 Repomix。
 
 功能：
 - 只需点击几下即可打包任何文件夹
@@ -71,7 +74,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 ## 系统要求
 
-- Node.js: ≥ 20.0.0
+- Node.js: ≥ 22.0.0
 - Git: 处理远程仓库时需要
 
 ## 验证安装
@@ -82,3 +85,9 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 repomix --version
 repomix --help
 ```
+
+## 相关资源
+
+- [基本使用](/zh-cn/guide/usage) - 了解如何使用 Repomix
+- [配置](/zh-cn/guide/configuration) - 根据需求自定义 Repomix
+- [命令行选项](/zh-cn/guide/command-line-options) - 完整的 CLI 参考

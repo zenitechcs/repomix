@@ -1,3 +1,8 @@
+---
+title: コード圧縮
+description: "Tree-sitterベースのRepomixコード圧縮を使い、imports、exports、クラス、関数、インターフェース、構造を保ちながらトークン使用量を削減します。"
+---
+
 # コード圧縮
 コード圧縮は、実装の詳細を省きながら、コードの本質的な構造を抽出する強力な機能です。トークン数を削減しながらコードベースの重要な構造情報を維持したい場合に特に有用です。
 
@@ -106,6 +111,12 @@ interface Item {
 ## 関連オプション
 
 圧縮は以下のオプションと組み合わせることができます：
-- `--remove-comments`: コードコメントを削除
+- `--remove-comments`: コードコメントを削除（[コメント削除](/ja/guide/comment-removal)を参照）
 - `--remove-empty-lines`: 空行を削除
 - `--output-show-line-numbers`: 出力に行番号を追加
+
+## 関連リソース
+
+- [コメント削除](/ja/guide/comment-removal) - コメント除去によるさらなるトークン数削減
+- [設定](/ja/guide/configuration) - 設定ファイルで`output.compress`を設定
+- [コマンドラインオプション](/ja/guide/command-line-options) - CLIリファレンス

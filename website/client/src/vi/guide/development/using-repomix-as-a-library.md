@@ -1,3 +1,8 @@
+---
+title: Sử dụng Repomix như một thư viện
+description: Dùng Repomix như thư viện Node.js để đóng gói thư mục local hoặc repository remote, truy cập core API và tích hợp output codebase sẵn sàng cho AI vào ứng dụng.
+---
+
 # Sử dụng Repomix như một thư viện
 
 Ngoài việc sử dụng Repomix như một công cụ dòng lệnh, bạn cũng có thể tích hợp nó trực tiếp vào các ứng dụng JavaScript hoặc TypeScript của mình như một thư viện.
@@ -179,6 +184,9 @@ async function packRemoteRepo() {
 packRemoteRepo();
 ```
 
+> [!NOTE]
+> Để đảm bảo an toàn, các tệp cấu hình trong kho lưu trữ từ xa sẽ không được tải theo mặc định. Để tin tưởng cấu hình của kho lưu trữ từ xa, thêm `remoteTrustConfig: true` vào các tùy chọn, hoặc đặt biến môi trường `REPOMIX_REMOTE_TRUST_CONFIG=true`.
+
 ### Tùy chọn đầu ra tùy chỉnh
 
 ```typescript
@@ -303,6 +311,19 @@ async function safelyPackRepo() {
   }
 }
 ```
+
+## Bundling
+
+Khi đóng gói repomix bằng các công cụ như Rolldown hoặc esbuild, một số dependency phải giữ là external và các tệp WASM cần được sao chép:
+
+**Dependency external (không thể đóng gói):**
+- `tinypool` - Sinh worker thread sử dụng đường dẫn tệp
+
+**Tệp WASM cần sao chép:**
+- `web-tree-sitter.wasm` → Cùng thư mục với JS đã đóng gói (cần thiết cho tính năng nén mã)
+- Tệp ngôn ngữ Tree-sitter → Thư mục được chỉ định bởi biến môi trường `REPOMIX_WASM_DIR`
+
+Để xem ví dụ thực tế, tham khảo [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs).
 
 ## Tiếp theo là gì?
 

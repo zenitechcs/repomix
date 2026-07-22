@@ -1,3 +1,8 @@
+---
+title: "Usar Repomix con GitHub Actions"
+description: "Automatiza Repomix en GitHub Actions para empaquetar repositorios destinados a análisis de IA, flujos de CI, artefactos, revisiones de código y salidas comprimidas."
+---
+
 # Usar Repomix con GitHub Actions
 
 Puedes automatizar el empaquetado de tu base de código para análisis por IA integrando Repomix en tus flujos de trabajo de GitHub Actions. Esto es útil para integración continua (CI), revisión de código o preparación para herramientas LLM.
@@ -23,6 +28,14 @@ Puedes especificar diferentes formatos de salida utilizando el parámetro `style
   with:
     output: repomix-output.md
     style: markdown
+```
+
+```yaml
+- name: Pack repository with Repomix (JSON format)
+  uses: yamadashy/repomix/.github/actions/repomix@main
+  with:
+    output: repomix-output.json
+    style: json
 ```
 
 ## Empaquetar múltiples directorios con compresión
@@ -53,7 +66,7 @@ Para que el archivo empaquetado esté disponible para pasos posteriores o para d
     compress: true
 
 - name: Upload Repomix output
-  uses: actions/upload-artifact@v4
+  uses: actions/upload-artifact@v7
   with:
     name: repomix-output
     path: repomix-output.xml
@@ -68,7 +81,7 @@ Para que el archivo empaquetado esté disponible para pasos posteriores o para d
 | `ignore`           | Patrones glob a excluir (separados por coma) | `""`         |
 | `output`           | Ruta del archivo de salida                   | `repomix-output.xml`     |
 | `compress`         | Habilitar compresión inteligente             | `true`            |
-| `style`            | Formato de salida (xml, markdown, plain)     | `xml`             |
+| `style`            | Formato de salida (xml, markdown, json, plain)     | `xml`             |
 | `additional-args`  | Argumentos extra para repomix CLI            | `""`         |
 | `repomix-version`  | Versión del paquete npm a instalar           | `latest`          |
 
@@ -97,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Pack repository with Repomix
         uses: yamadashy/repomix/.github/actions/repomix@main
@@ -105,7 +118,7 @@ jobs:
           output: repomix-output.xml
 
       - name: Upload Repomix output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repomix-output.xml
           path: repomix-output.xml

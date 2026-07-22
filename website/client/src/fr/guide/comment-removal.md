@@ -1,3 +1,8 @@
+---
+title: "Suppression des commentaires"
+description: "Supprimez les commentaires de code de la sortie Repomix pour réduire le bruit et l'usage des tokens, tout en préservant les fichiers sources et le comportement des langages pris en charge."
+---
+
 # Suppression des commentaires
 
 Repomix peut automatiquement supprimer les commentaires de votre base de code lors de la génération du fichier de sortie. Cela peut aider à réduire le bruit et à se concentrer sur le code réel.
@@ -52,3 +57,9 @@ function test() {
 
 - La suppression des commentaires est effectuée avant les autres étapes de traitement, comme l'ajout de numéros de ligne.
 - Certains commentaires, comme les commentaires JSDoc, peuvent être préservés selon le langage et le contexte.
+
+## Ressources associées
+
+- [Compression de code](/fr/guide/code-compress) - Réduire davantage le nombre de tokens en extrayant la structure du code
+- [Configuration](/fr/guide/configuration) - Définir `output.removeComments` dans le fichier de configuration
+- [Options de ligne de commande](/fr/guide/command-line-options) - Utiliser le flag `--remove-comments`

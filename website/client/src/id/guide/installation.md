@@ -1,3 +1,8 @@
+---
+title: Instalasi
+description: Instal Repomix dengan npx, npm, Yarn, Bun, Homebrew, Docker, ekstensi VS Code, atau ekstensi browser, lalu verifikasi setup CLI.
+---
+
 # Instalasi
 
 
@@ -17,35 +22,23 @@ Ini akan mengunduh dan menjalankan Repomix secara langsung di direktori proyek A
 
 Untuk penggunaan berulang, Anda dapat menginstal Repomix secara global:
 
-### Menggunakan npm
-
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Menggunakan yarn
-
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Menggunakan pnpm
-
-```bash
+```bash [pnpm]
 pnpm add -g repomix
 ```
-
-### Menggunakan Bun
-
-```bash
+```bash [bun]
 bun add -g repomix
 ```
-
-### Menggunakan Homebrew (macOS/Linux)
-
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Menggunakan Docker
 
@@ -77,6 +70,8 @@ Setelah instalasi, Anda dapat memverifikasi bahwa Repomix telah diinstal dengan 
 repomix --version
 ```
 
-## Langkah Selanjutnya
+## Sumber Daya Terkait
 
-Setelah Anda menginstal Repomix, lihat [Panduan Penggunaan](usage.md) untuk mempelajari cara menggunakannya.
+- [Penggunaan Dasar](/id/guide/usage) - Pelajari cara menggunakan Repomix
+- [Konfigurasi](/id/guide/configuration) - Kustomisasi Repomix untuk kebutuhan Anda
+- [Opsi Baris Perintah](/id/guide/command-line-options) - Referensi CLI lengkap

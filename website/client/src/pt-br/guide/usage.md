@@ -1,3 +1,8 @@
+---
+title: "Uso Básico"
+description: "Use a CLI do Repomix para empacotar diretórios, repositórios remotos, arquivos selecionados, diffs do git, logs de commits, saídas divididas, contagens de tokens e código comprimido."
+---
+
 # Uso Básico
 
 ## Início Rápido
@@ -25,6 +30,24 @@ repomix --include "src/**/*.ts,**/*.md"
 repomix --ignore "**/*.log,tmp/"
 ```
 
+### Dividir Saída em Múltiplos Arquivos
+
+Ao trabalhar com grandes bases de código, a saída empacotada pode exceder os limites de tamanho de arquivo impostos por algumas ferramentas de IA (por exemplo, o limite de 1MB do Google AI Studio). Use `--split-output` para dividir automaticamente a saída em múltiplos arquivos:
+
+```bash
+repomix --split-output 1mb
+```
+
+Isso gera arquivos numerados como:
+- `repomix-output.1.xml`
+- `repomix-output.2.xml`
+- `repomix-output.3.xml`
+
+O tamanho pode ser especificado com unidades: `500kb`, `1mb`, `2mb`, `1.5mb`, etc. Valores decimais são suportados.
+
+> [!NOTE]
+> Arquivos são agrupados por diretório de nível superior para manter o contexto. Um único arquivo ou diretório nunca será dividido entre múltiplos arquivos de saída.
+
 ### Repositórios Remotos
 ```bash
 # Usando URL do GitHub
@@ -32,6 +55,9 @@ repomix --remote https://github.com/user/repo
 
 # Usando abreviação
 repomix --remote user/repo
+
+# Usando atalho sem --remote (detectado automaticamente)
+repomix user/repo
 
 # Branch/tag/commit específico
 repomix --remote user/repo --remote-branch main
@@ -84,7 +110,9 @@ Ao usar `--stdin`, os arquivos especificados são efetivamente adicionados aos p
 > [!NOTE]
 > Ao usar `--stdin`, os caminhos de arquivos podem ser relativos ou absolutos, e o Repomix tratará automaticamente da resolução de caminhos e deduplicação.
 
-### Compressão de Código
+### Compressão de Código {#code-compression}
+
+Reduza a contagem de tokens preservando a estrutura do código. Consulte o [guia de Compressão de Código](/pt-br/guide/code-compress) para detalhes.
 
 ```bash
 repomix --compress
@@ -163,6 +191,11 @@ repomix --style xml
 repomix --style markdown
 ```
 
+### JSON
+```bash
+repomix --style json
+```
+
 ### Texto Simples
 ```bash
 repomix --style plain
@@ -171,6 +204,9 @@ repomix --style plain
 ## Opções Adicionais
 
 ### Remover Comentários
+
+Consulte [Remoção de Comentários](/pt-br/guide/comment-removal) para linguagens suportadas e detalhes.
+
 ```bash
 repomix --remove-comments
 ```
@@ -186,6 +222,9 @@ repomix --copy
 ```
 
 ### Desativar Verificação de Segurança
+
+Consulte [Segurança](/pt-br/guide/security) para detalhes sobre o que o Repomix detecta.
+
 ```bash
 repomix --no-security-check
 ```
@@ -198,3 +237,10 @@ repomix --init
 ```
 
 Veja o [Guia de Configuração](/pt-br/guide/configuration) para opções detalhadas.
+
+## Recursos relacionados
+
+- [Formatos de Saída](/pt-br/guide/output) - Conheça os formatos XML, Markdown, JSON e texto simples
+- [Opções de Linha de Comando](/pt-br/guide/command-line-options) - Referência completa da CLI
+- [Exemplos de Prompts](/pt-br/guide/prompt-examples) - Exemplos de prompts para análise de IA
+- [Casos de Uso](/pt-br/guide/use-cases) - Exemplos reais e fluxos de trabalho

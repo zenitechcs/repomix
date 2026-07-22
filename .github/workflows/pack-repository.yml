@@ -7,20 +7,25 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   pack-repo:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # ratchet:actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Pack repository with Repomix
-        uses: yamadashy/repomix/.github/actions/repomix@dbf406cd7f1651ec410a722eb9ebf2b1a1255b34 # ratchet:yamadashy/repomix/.github/actions/repomix@main
+        uses: ./.github/actions/repomix
         with:
           output: repomix-output.xml
 
       - name: Upload Repomix output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: repomix-output.xml
           path: repomix-output.xml

@@ -1,5 +1,10 @@
+---
+title: 代码压缩
+description: "使用基于 Tree-sitter 的 Repomix 代码压缩，在保留 imports、exports、类、函数、接口和结构的同时减少令牌用量。"
+---
+
 # 代码压缩
-代码压缩是一个强大的功能，它能够在移除实现细节的同时智能提取关键代码结构。在需要减少令牌数量的同时保持代码库的重要结构信息时，这个功能特别有用。
+代码压缩是一个强大的功能，它能够在移除实现细节的同时智能提取关键代码结构。在需要减少 Token 数量的同时保持代码库的重要结构信息时，这个功能特别有用。
 
 > [!NOTE]
 > 这是一个实验性功能，我们将根据用户反馈和实际使用情况积极改进。
@@ -98,7 +103,7 @@ interface Item {
 
 代码压缩在以下情况特别有用：
 - 分析代码结构和架构
-- 减少用于 LLM 处理的令牌数量
+- 减少用于 LLM 处理的 token 数量
 - 创建高层次文档
 - 理解代码模式和签名
 - 共享 API 和接口设计
@@ -106,6 +111,12 @@ interface Item {
 ## 相关选项
 
 你可以将压缩与其他选项结合使用：
-- `--remove-comments`: 移除代码注释
+- `--remove-comments`: 移除代码注释（参见[注释移除](/zh-cn/guide/comment-removal)）
 - `--remove-empty-lines`: 移除空行
 - `--output-show-line-numbers`: 在输出中添加行号
+
+## 相关资源
+
+- [注释移除](/zh-cn/guide/comment-removal) - 移除注释以进一步减少 Token 数量
+- [配置](/zh-cn/guide/configuration) - 在配置文件中设置 `output.compress`
+- [命令行选项](/zh-cn/guide/command-line-options) - 完整的 CLI 参考

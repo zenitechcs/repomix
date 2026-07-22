@@ -3,12 +3,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { unzip } from 'fflate';
 import { type CliOptions, runDefaultAction, setLogLevel } from 'repomix';
-import type { PackOptions, PackResult } from '../../types.js';
+import type { PackOptions, PackProgressCallback, PackResult, ProcessPackResult } from '../../types.js';
 import { AppError } from '../../utils/errorHandler.js';
 import { logMemoryUsage } from '../../utils/logger.js';
-import { generateCacheKey } from './utils/cache.js';
 import { cleanupTempDirectory, copyOutputToCurrentDirectory, createTempDirectory } from './utils/fileUtils.js';
-import { cache } from './utils/sharedInstance.js';
 
 // Enhanced ZIP extraction limits
 const ZIP_SECURITY_LIMITS = {
@@ -22,17 +20,14 @@ const ZIP_SECURITY_LIMITS = {
 /**
  * Process an uploaded ZIP file
  */
-export async function processZipFile(file: File, format: string, options: PackOptions): Promise<PackResult> {
+export async function processZipFile(
+  file: File,
+  format: string,
+  options: PackOptions,
+  onProgress?: PackProgressCallback,
+): Promise<ProcessPackResult> {
   if (!file) {
     throw new AppError('File is required for file processing', 400);
-  }
-
-  const cacheKey = generateCacheKey(`${file.name}-${file.size}-${file.lastModified}`, format, options, 'file');
-
-  // Check if the result is already cached
-  const cachedResult = await cache.get(cacheKey);
-  if (cachedResult) {
-    return cachedResult;
   }
 
   const outputFilePath = `repomix-output-${randomUUID()}.txt`;
@@ -48,7 +43,7 @@ export async function processZipFile(file: File, format: string, options: PackOp
     fileSummary: options.fileSummary,
     directoryStructure: options.directoryStructure,
     compress: options.compress,
-    securityCheck: false,
+    securityCheck: true,
     topFilesLen: 10,
     include: options.includePatterns,
     ignore: options.ignorePatterns,
@@ -68,15 +63,29 @@ export async function processZipFile(file: File, format: string, options: PackOp
     });
 
     // Extract the ZIP file to the temporary directory with enhanced security checks
+    await onProgress?.('extracting');
     await extractZipWithSecurity(file, tempDirPath);
 
     // Execute default action on the extracted directory
-    const result = await runDefaultAction([tempDirPath], tempDirPath, cliOptions);
+    await onProgress?.('processing');
+    const packProgressCallback = (message: string) => {
+      return onProgress?.('processing', message);
+    };
+    const result = await runDefaultAction([tempDirPath], tempDirPath, cliOptions, packProgressCallback);
     await copyOutputToCurrentDirectory(tempDirPath, process.cwd(), result.config.output.filePath);
     const { packResult } = result;
 
     // Read the generated file
     const content = await fs.readFile(outputFilePath, 'utf-8');
+
+    // Map suspicious files results
+    const suspiciousFiles =
+      packResult.suspiciousFilesResults.length > 0
+        ? packResult.suspiciousFilesResults.map((suspiciousResult) => ({
+            filePath: suspiciousResult.filePath,
+            messages: suspiciousResult.messages,
+          }))
+        : undefined;
 
     // Create pack result
     const packResultData: PackResult = {
@@ -98,11 +107,9 @@ export async function processZipFile(file: File, format: string, options: PackOp
           }))
           .sort((a, b) => b.charCount - a.charCount)
           .slice(0, cliOptions.topFilesLen),
+        suspiciousFiles,
       },
     };
-
-    // Save the result to cache
-    await cache.set(cacheKey, packResultData);
 
     // Log memory usage after processing
     logMemoryUsage('ZIP file processing completed', {
@@ -112,7 +119,9 @@ export async function processZipFile(file: File, format: string, options: PackOp
       totalTokens: packResult.totalTokens,
     });
 
-    return packResultData;
+    // Uploaded ZIPs are never cached — each upload is a unique payload, unlike
+    // remote repos where URL + options form a cache key.
+    return { result: packResultData, cached: false };
   } catch (error) {
     console.error('Error processing uploaded file:', error);
     if (error instanceof AppError) {

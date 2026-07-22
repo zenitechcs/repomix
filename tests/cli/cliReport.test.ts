@@ -9,7 +9,6 @@ import { createMockConfig } from '../testing/testUtils.js';
 vi.mock('../../src/shared/logger');
 vi.mock('picocolors', () => ({
   default: {
-    white: (str: string) => `WHITE:${str}`,
     dim: (str: string) => `DIM:${str}`,
     green: (str: string) => `GREEN:${str}`,
     yellow: (str: string) => `YELLOW:${str}`,
@@ -49,9 +48,189 @@ describe('cliReport', () => {
         skippedFiles: [],
       };
 
-      reportSummary(packResult, config);
+      reportSummary('/test/project', packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 suspicious file(s) detected and excluded'));
+    });
+
+    test('should print summary with git diffs included', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+        output: { git: { includeDiffs: true } },
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 50,
+        gitLogTokenCount: 0,
+        skippedFiles: [],
+      };
+
+      reportSummary('/test/project', packResult, config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Git diffs included'));
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('50 tokens'));
+    });
+
+    test('should print summary with no git diffs', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+        output: { git: { includeDiffs: true } },
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
+        skippedFiles: [],
+      };
+
+      reportSummary('/test/project', packResult, config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('No git diffs included'));
+    });
+
+    test('should print summary with git logs included', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+        output: { git: { includeLogs: true } },
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 0,
+        gitLogTokenCount: 30,
+        skippedFiles: [],
+      };
+
+      reportSummary('/test/project', packResult, config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Git logs included'));
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('30 tokens'));
+    });
+
+    test('should print summary with no git logs', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+        output: { git: { includeLogs: true } },
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
+        skippedFiles: [],
+      };
+
+      reportSummary('/test/project', packResult, config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('No git logs included'));
+    });
+
+    test('should print skill directory output when skillGenerate is configured', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+        skillGenerate: true,
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
+        skippedFiles: [],
+      };
+
+      // Use path.join so the expected substring uses the OS-native separator
+      // — getDisplayPath calls path.relative, which yields backslashes on Windows.
+      const cwd = path.join('/test', 'project');
+      const skillDir = path.join(cwd, '.claude', 'skills', 'test-skill');
+      const expectedRelative = path.join('.claude', 'skills', 'test-skill');
+
+      reportSummary(cwd, packResult, config, { skillDir });
+
+      // Both substrings must appear on the SAME log line, not just somewhere across
+      // separate logger.log calls — otherwise an unrelated line could satisfy each.
+      const calls = (logger.log as ReturnType<typeof vi.fn>).mock.calls.map((c) => String(c[0]));
+      const outputLine = calls.find((line) => line.includes('skill directory'));
+      expect(outputLine).toBeDefined();
+      expect(outputLine).toContain(expectedRelative);
+    });
+
+    test('should print first…last paths and part count for split outputs', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+      });
+
+      const packResult: PackResult = {
+        totalFiles: 10,
+        totalCharacters: 1000,
+        totalTokens: 200,
+        fileCharCounts: { 'file1.txt': 100 },
+        fileTokenCounts: { 'file1.txt': 50 },
+        suspiciousFilesResults: [],
+        suspiciousGitDiffResults: [],
+        suspiciousGitLogResults: [],
+        processedFiles: [],
+        safeFilePaths: [],
+        gitDiffTokenCount: 0,
+        gitLogTokenCount: 0,
+        skippedFiles: [],
+        outputFiles: ['repomix-output.1.xml', 'repomix-output.2.xml', 'repomix-output.3.xml'],
+      };
+
+      reportSummary('/test/project', packResult, config);
+
+      // first … last (3 parts)
+      const calls = (logger.log as ReturnType<typeof vi.fn>).mock.calls.map((c) => String(c[0]));
+      const outputLine = calls.find((line) => line.includes('repomix-output.1.xml'));
+      expect(outputLine).toBeDefined();
+      expect(outputLine).toContain('repomix-output.3.xml');
+      expect(outputLine).toContain('3 parts');
     });
 
     test('should print summary with security check disabled', () => {
@@ -75,7 +254,7 @@ describe('cliReport', () => {
         skippedFiles: [],
       };
 
-      reportSummary(packResult, config);
+      reportSummary('/test/project', packResult, config);
 
       expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Security check disabled'));
     });
@@ -98,9 +277,9 @@ describe('cliReport', () => {
 
       reportSecurityCheck('/root', [], [], [], config);
 
-      expect(logger.log).toHaveBeenCalledWith('WHITE:🔎 Security Check:');
+      expect(logger.log).toHaveBeenCalledWith('🔎 Security Check:');
       expect(logger.log).toHaveBeenCalledWith('DIM:──────────────────');
-      expect(logger.log).toHaveBeenCalledWith('GREEN:✔ WHITE:No suspicious files detected.');
+      expect(logger.log).toHaveBeenCalledWith('GREEN:✔ No suspicious files detected.');
     });
 
     test('should print details of suspicious files when found', () => {
@@ -119,10 +298,68 @@ describe('cliReport', () => {
       reportSecurityCheck('/root', suspiciousFiles, [], [], config);
 
       expect(logger.log).toHaveBeenCalledWith('YELLOW:1 suspicious file(s) detected and excluded from the output:');
-      expect(logger.log).toHaveBeenCalledWith(`WHITE:1. WHITE:${configRelativePath}`);
+      expect(logger.log).toHaveBeenCalledWith(`1. ${configRelativePath}`);
       expect(logger.log).toHaveBeenCalledWith('DIM:   - 2 security issues detected');
       expect(logger.log).toHaveBeenCalledWith(
         expect.stringContaining('Please review these files for potential sensitive information.'),
+      );
+    });
+
+    test('should print details of single security issue correctly', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+      });
+      const suspiciousFiles: SuspiciousFileResult[] = [
+        {
+          filePath: path.join('/root', 'secret.txt'),
+          messages: ['Contains API key'],
+          type: 'file',
+        },
+      ];
+
+      reportSecurityCheck('/root', suspiciousFiles, [], [], config);
+
+      expect(logger.log).toHaveBeenCalledWith('DIM:   - 1 security issue detected');
+    });
+
+    test('should print details of suspicious git diffs when found', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+      });
+      const suspiciousGitDiffResults: SuspiciousFileResult[] = [
+        {
+          filePath: 'work_tree',
+          messages: ['Contains API key'],
+          type: 'gitDiff',
+        },
+      ];
+
+      reportSecurityCheck('/root', [], suspiciousGitDiffResults, [], config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 security issue(s) found in Git diffs:'));
+      expect(logger.log).toHaveBeenCalledWith(
+        expect.stringContaining('Note: Git diffs with security issues are still included'),
+      );
+    });
+
+    test('should print details of suspicious git logs when found', () => {
+      const config = createMockConfig({
+        security: { enableSecurityCheck: true },
+      });
+      const suspiciousGitLogResults: SuspiciousFileResult[] = [
+        {
+          filePath: 'commit_log',
+          messages: ['Contains password', 'Contains secret'],
+          type: 'gitLog',
+        },
+      ];
+
+      reportSecurityCheck('/root', [], [], suspiciousGitLogResults, config);
+
+      expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('1 security issue(s) found in Git logs:'));
+      expect(logger.log).toHaveBeenCalledWith('DIM:   - 2 security issues detected');
+      expect(logger.log).toHaveBeenCalledWith(
+        expect.stringContaining('Note: Git logs with security issues are still included'),
       );
     });
   });
@@ -160,7 +397,7 @@ describe('cliReport', () => {
       reportCompletion();
 
       expect(logger.log).toHaveBeenCalledWith('GREEN:🎉 All Done!');
-      expect(logger.log).toHaveBeenCalledWith('WHITE:Your repository has been successfully packed.');
+      expect(logger.log).toHaveBeenCalledWith('Your repository has been successfully packed.');
     });
   });
 });

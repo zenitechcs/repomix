@@ -1,3 +1,8 @@
+---
+title: Kasus Penggunaan
+description: Jelajahi workflow Repomix praktis untuk AI code review, investigasi bug, refactoring, dokumentasi, onboarding, audit keamanan, dan analisis arsitektur.
+---
+
 <script setup>
 import YouTubeVideo from '../../../components/YouTubeVideo.vue';
 </script>
@@ -150,3 +155,10 @@ Identifikasi bottleneck performa dan terima rekomendasi optimasi.
 ```
 Analisis codebase ini untuk bottleneck performa. Cari algoritma yang tidak efisien, query database yang tidak perlu, memory leak, dan area yang bisa mendapat manfaat dari caching atau optimasi.
 ```
+
+## Sumber Daya Terkait
+
+- [Contoh Prompt](/id/guide/prompt-examples) - Lebih banyak template prompt untuk analisis AI
+- [Format Output](/id/guide/output) - Pilih format terbaik untuk model AI Anda
+- [Instruksi Khusus](/id/guide/custom-instructions) - Tambahkan konteks untuk memandu analisis AI
+- [Pemrosesan Repositori GitHub](/id/guide/remote-repository-processing) - Analisis repositori remote

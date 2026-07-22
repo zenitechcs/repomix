@@ -1,6 +1,11 @@
+---
+title: MCP服务器
+description: 将 Repomix 作为 Model Context Protocol 服务器运行，让 AI 助手可以直接打包、搜索和读取本地或远程代码库。
+---
+
 # MCP服务器
 
-Repomix 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.io)，允许 AI 助手直接与您的代码库交互。当作为 MCP 服务器运行时，Repomix 提供了工具，使 AI 助手能够在无需手动准备文件的情况下打包本地或远程仓库进行分析。
+Repomix 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.io)，允许 AI 助手直接与你的代码库交互。当作为 MCP 服务器运行时，Repomix 提供了工具，使 AI 助手能够在无需手动准备文件的情况下打包本地或远程仓库进行分析。
 
 > [!NOTE]  
 > 这是一个实验性功能，我们将根据用户反馈和实际使用情况积极改进
@@ -17,11 +22,11 @@ repomix --mcp
 
 ## 配置 MCP 服务器
 
-要将 Repomix 作为 MCP 服务器与 Claude 等 AI 助手一起使用，您需要配置 MCP 设置：
+要将 Repomix 作为 MCP 服务器与 Claude 等 AI 助手一起使用，你需要配置 MCP 设置：
 
 ### 对于 VS Code
 
-您可以使用以下方法之一在 VS Code 中安装 Repomix MCP 服务器：
+你可以使用以下方法之一在 VS Code 中安装 Repomix MCP 服务器：
 
 1. **使用安装徽章：**
 
@@ -74,9 +79,11 @@ repomix --mcp
 claude mcp add repomix -- npx -y repomix --mcp
 ```
 
+或者，你可以使用**官方Repomix插件**获得更便捷的体验。插件提供自然语言命令和更简单的设置。详情请参阅[Claude Code插件](/zh-cn/guide/claude-code-plugins)文档。
+
 ### 使用 Docker 代替 npx
 
-您可以使用 Docker 代替 npx 来运行 Repomix 作为 MCP 服务器：
+你可以使用 Docker 代替 npx 来运行 Repomix 作为 MCP 服务器：
 
 ```json
 {
@@ -104,41 +111,61 @@ claude mcp add repomix -- npx -y repomix --mcp
 此工具将本地代码目录打包成一个用于 AI 分析的 XML 文件。它分析代码库结构，提取相关代码内容，并生成包含指标、文件树和格式化代码内容的综合报告。
 
 **参数：**
-- `directory`：（必需）要打包的目录的绝对路径
-- `compress`：（可选，默认值：false）启用 Tree-sitter 压缩以提取基本代码签名和结构，同时删除实现细节。在保持语义含义的同时减少约 70% 的令牌使用量。由于 grep_repomix_output 允许增量内容检索，通常不需要。仅在您特别需要大型仓库的整个代码库内容时使用。
-- `includePatterns`：（可选）使用 fast-glob 模式指定要包含的文件。多个模式可以用逗号分隔（例如，"**/*.{js,ts}", "src/**,docs/**"）。只有匹配的文件会被处理。
-- `ignorePatterns`：（可选）使用 fast-glob 模式指定要排除的其他文件。多个模式可以用逗号分隔（例如，"test/**,*.spec.js", "node_modules/**,dist/**"）。这些模式补充 .gitignore 和内置排除。
-- `topFilesLength`：（可选，默认值：10）在代码库分析的指标摘要中显示的最大文件数（按大小排序）。
+
+| 参数 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `directory` | 是 | — | 要打包的目录的绝对路径 |
+| `compress` | 否 | `false` | 启用 Tree-sitter 压缩以提取基本代码签名和结构，同时删除实现细节。在保持语义信息的同时减少约 70% 的 token 用量。由于 `grep_repomix_output` 支持按需检索内容，一般不需要启用此选项。 |
+| `includePatterns` | 否 | — | 使用 fast-glob 模式指定要包含的文件。多个模式用逗号分隔（例如 `"**/*.{js,ts}"`、`"src/**,docs/**"`） |
+| `ignorePatterns` | 否 | — | 使用 fast-glob 模式指定要排除的其他文件。多个模式用逗号分隔（例如 `"test/**,*.spec.js"`）。补充 `.gitignore` 和内置排除。 |
+| `outputPatterns` | 否 | — | 按文件设置内容包含级别，与配置文件中的 [`output.patterns`](./configuration.md) 选项对应。一个由 `{ "pattern": string, "compress"?: boolean, "directoryStructureOnly"?: boolean }` 组成的数组。第一个匹配的模式优先；`directoryStructureOnly` 优先于 `compress`，未设置任一标志的匹配项将强制显示完整内容（可用于在全局启用 `compress` 时豁免特定文件）。会覆盖目标仓库 `repomix.config.json` 中的 `output.patterns` 设置。 |
+| `topFilesLength` | 否 | `10` | 在指标摘要中显示的最大文件数（按大小排序） |
+| `style` | 否 | `xml` | 输出格式样式：`xml`、`markdown`、`json` 或 `plain` |
 
 **示例：**
 ```json
 {
   "directory": "/path/to/your/project",
-  "compress": false,
+  "compress": true,
   "includePatterns": "src/**/*.ts,**/*.md",
   "ignorePatterns": "**/*.log,tmp/",
+  "outputPatterns": [
+    { "pattern": "src/core/**" },
+    { "pattern": "docs/**/*", "directoryStructureOnly": true }
+  ],
   "topFilesLength": 10
 }
 ```
+
+在上面的示例中（`compress: true` 作为未匹配文件的兜底设置），`src/core/` 下的文件将保留完整内容，`docs/` 下的文件仅在目录结构中列出，其余文件都会被压缩。
 
 ### pack_remote_repository
 
 此工具获取、克隆并将 GitHub 仓库打包成一个用于 AI 分析的 XML 文件。它自动克隆远程仓库，分析其结构，并生成综合报告。
 
 **参数：**
-- `remote`：（必需）GitHub 仓库 URL 或用户/仓库格式（例如，"yamadashy/repomix", "https://github.com/user/repo", 或 "https://github.com/user/repo/tree/branch"）
-- `compress`：（可选，默认值：false）启用 Tree-sitter 压缩以提取基本代码签名和结构，同时删除实现细节。在保持语义含义的同时减少约 70% 的令牌使用量。由于 grep_repomix_output 允许增量内容检索，通常不需要。仅在您特别需要大型仓库的整个代码库内容时使用。
-- `includePatterns`：（可选）使用 fast-glob 模式指定要包含的文件。多个模式可以用逗号分隔（例如，"**/*.{js,ts}", "src/**,docs/**"）。只有匹配的文件会被处理。
-- `ignorePatterns`：（可选）使用 fast-glob 模式指定要排除的其他文件。多个模式可以用逗号分隔（例如，"test/**,*.spec.js", "node_modules/**,dist/**"）。这些模式补充 .gitignore 和内置排除。
-- `topFilesLength`：（可选，默认值：10）在代码库分析的指标摘要中显示的最大文件数（按大小排序）。
+
+| 参数 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `remote` | 是 | — | GitHub 仓库 URL 或 `user/repo` 格式（例如 `"yamadashy/repomix"`、`"https://github.com/user/repo"` 或 `"https://github.com/user/repo/tree/branch"`） |
+| `compress` | 否 | `false` | 启用 Tree-sitter 压缩以提取基本代码签名和结构，同时删除实现细节。在保持语义信息的同时减少约 70% 的 token 用量。由于 `grep_repomix_output` 支持按需检索内容，一般不需要启用此选项。 |
+| `includePatterns` | 否 | — | 使用 fast-glob 模式指定要包含的文件。多个模式用逗号分隔（例如 `"**/*.{js,ts}"`、`"src/**,docs/**"`） |
+| `ignorePatterns` | 否 | — | 使用 fast-glob 模式指定要排除的其他文件。多个模式用逗号分隔（例如 `"test/**,*.spec.js"`）。补充 `.gitignore` 和内置排除。 |
+| `outputPatterns` | 否 | — | 按文件设置内容包含级别，与配置文件中的 [`output.patterns`](./configuration.md) 选项对应。一个由 `{ "pattern": string, "compress"?: boolean, "directoryStructureOnly"?: boolean }` 组成的数组。第一个匹配的模式优先；`directoryStructureOnly` 优先于 `compress`，未设置任一标志的匹配项将强制显示完整内容（可用于在全局启用 `compress` 时豁免特定文件）。 |
+| `topFilesLength` | 否 | `10` | 在指标摘要中显示的最大文件数（按大小排序） |
+| `style` | 否 | `xml` | 输出格式样式：`xml`、`markdown`、`json` 或 `plain` |
 
 **示例：**
 ```json
 {
   "remote": "yamadashy/repomix",
-  "compress": false,
+  "compress": true,
   "includePatterns": "src/**/*.ts,**/*.md",
   "ignorePatterns": "**/*.log,tmp/",
+  "outputPatterns": [
+    { "pattern": "src/core/**" },
+    { "pattern": "docs/**/*", "directoryStructureOnly": true }
+  ],
   "topFilesLength": 10
 }
 ```
@@ -148,9 +175,12 @@ claude mcp add repomix -- npx -y repomix --mcp
 此工具读取 Repomix 生成的输出文件的内容。支持对大文件进行行范围指定的部分读取。此工具专为直接文件系统访问受限的环境而设计。
 
 **参数：**
-- `outputId`：（必需）要读取的 Repomix 输出文件的 ID
-- `startLine`：（可选）起始行号（从 1 开始，包含）。如果未指定，则从开头读取。
-- `endLine`：（可选）结束行号（从 1 开始，包含）。如果未指定，则读取到末尾。
+
+| 参数 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `outputId` | 是 | — | 要读取的 Repomix 输出文件的 ID |
+| `startLine` | 否 | 文件开头 | 起始行号（从 1 开始，包含） |
+| `endLine` | 否 | 文件末尾 | 结束行号（从 1 开始，包含） |
 
 **功能：**
 - 专为基于 Web 的环境或沙箱应用程序设计
@@ -172,12 +202,15 @@ claude mcp add repomix -- npx -y repomix --mcp
 此工具使用 JavaScript RegExp 语法的类似 grep 的功能在 Repomix 输出文件中搜索模式。返回匹配行及其周围的可选上下文行。
 
 **参数：**
-- `outputId`：（必需）要搜索的 Repomix 输出文件的 ID
-- `pattern`：（必需）搜索模式（JavaScript RegExp 正则表达式语法）
-- `contextLines`：（可选，默认值：0）在每个匹配项前后显示的上下文行数。如果指定了 beforeLines/afterLines，则被覆盖。
-- `beforeLines`：（可选）在每个匹配项前显示的上下文行数（类似 grep -B）。优先于 contextLines。
-- `afterLines`：（可选）在每个匹配项后显示的上下文行数（类似 grep -A）。优先于 contextLines。
-- `ignoreCase`：（可选，默认值：false）执行不区分大小写的匹配
+
+| 参数 | 必需 | 默认值 | 说明 |
+|------|------|--------|------|
+| `outputId` | 是 | — | 要搜索的 Repomix 输出文件的 ID |
+| `pattern` | 是 | — | 搜索模式（JavaScript RegExp 语法） |
+| `contextLines` | 否 | `0` | 在每个匹配项前后显示的上下文行数。如果指定了 `beforeLines`/`afterLines`，则被覆盖。 |
+| `beforeLines` | 否 | — | 在每个匹配项前显示的行数（类似 `grep -B`）。优先于 `contextLines`。 |
+| `afterLines` | 否 | — | 在每个匹配项后显示的行数（类似 `grep -A`）。优先于 `contextLines`。 |
+| `ignoreCase` | 否 | `false` | 执行不区分大小写的匹配 |
 
 **功能：**
 - 使用 JavaScript RegExp 语法进行强大的模式匹配
@@ -244,9 +277,16 @@ const dirContent = await tools.file_system_read_directory({
 
 将 Repomix 作为 MCP 服务器使用提供了几个优势：
 
-1. **直接集成**：AI 助手可以直接分析您的代码库，无需手动文件准备。
+1. **直接集成**：AI 助手可以直接分析你的代码库，无需手动文件准备。
 2. **高效工作流**：通过消除手动生成和上传文件的需求，简化了代码分析过程。
 3. **一致输出**：确保 AI 助手以一致、优化的格式接收代码库。
-4. **高级功能**：利用 Repomix 的所有功能，如代码压缩、令牌计数和安全检查。
+4. **高级功能**：利用 Repomix 的所有功能，如代码压缩、token 计数和安全检查。
 
-配置完成后，您的 AI 助手可以直接使用 Repomix 的功能来分析代码库，使代码分析工作流更加高效。
+配置完成后，你的 AI 助手可以直接使用 Repomix 的功能来分析代码库，使代码分析工作流更加高效。
+
+## 相关资源
+
+- [Claude Code 插件](/zh-cn/guide/claude-code-plugins) - 便捷的 Claude Code 插件集成
+- [配置](/zh-cn/guide/configuration) - 自定义 Repomix 行为
+- [命令行选项](/zh-cn/guide/command-line-options) - 完整的 CLI 参考
+- [输出格式](/zh-cn/guide/output) - 了解可用的输出格式

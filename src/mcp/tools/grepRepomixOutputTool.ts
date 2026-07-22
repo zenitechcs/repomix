@@ -2,28 +2,30 @@ import fs from 'node:fs/promises';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
+import { createSecretLintConfig, runSecretLint } from '../../core/security/workers/securityCheckWorker.js';
 import { logger } from '../../shared/logger.js';
 import {
   buildMcpToolErrorResponse,
   buildMcpToolSuccessResponse,
   convertErrorToJson,
   getOutputFilePath,
+  requiresSecretScan,
 } from './mcpToolRuntime.js';
 
 const grepRepomixOutputInputSchema = z.object({
   outputId: z.string().describe('ID of the Repomix output file to search'),
   pattern: z.string().describe('Search pattern (JavaScript RegExp regular expression syntax)'),
-  contextLines: z
+  contextLines: z.coerce
     .number()
     .default(0)
     .describe(
       'Number of context lines to show before and after each match (default: 0). Overridden by beforeLines/afterLines if specified.',
     ),
-  beforeLines: z
+  beforeLines: z.coerce
     .number()
     .optional()
     .describe('Number of context lines to show before each match (like grep -B). Takes precedence over contextLines.'),
-  afterLines: z
+  afterLines: z.coerce
     .number()
     .optional()
     .describe('Number of context lines to show after each match (like grep -A). Takes precedence over contextLines.'),
@@ -84,8 +86,8 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
       title: 'Grep Repomix Output',
       description:
         'Search for patterns in a Repomix output file using grep-like functionality with JavaScript RegExp syntax. Returns matching lines with optional context lines around matches.',
-      inputSchema: grepRepomixOutputInputSchema.shape,
-      outputSchema: grepRepomixOutputOutputSchema.shape,
+      inputSchema: grepRepomixOutputInputSchema,
+      outputSchema: grepRepomixOutputOutputSchema,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -128,6 +130,22 @@ export const registerGrepRepomixOutputTool = (mcpServer: McpServer) => {
         }
 
         const content = await fs.readFile(filePath, 'utf8');
+
+        // For files attached from an untrusted path, run the same secret scan as
+        // file_system_read_file before serving any content, so search results
+        // cannot be used to read sensitive content through this path.
+        if (requiresSecretScan(outputId)) {
+          const securityCheckResult = await runSecretLint(filePath, content, 'file', createSecretLintConfig());
+          if (securityCheckResult !== null) {
+            return buildMcpToolErrorResponse({
+              errorMessage: `Error: Security check failed. The file at ${filePath} may contain sensitive information.`,
+              details: {
+                outputId,
+                reason: 'SECURITY_CHECK_FAILED',
+              },
+            });
+          }
+        }
 
         // Determine before and after lines
         const finalBeforeLines = beforeLines !== undefined ? beforeLines : contextLines;
@@ -209,7 +227,20 @@ export const searchInContent = (
     createRegexPattern,
   },
 ): SearchMatch[] => {
-  const lines = content.split('\n');
+  return searchInLines(content.split('\n'), options, deps);
+};
+
+/**
+ * Search for pattern matches in pre-split lines.
+ * Avoids redundant content.split('\n') when the caller already has the lines array.
+ */
+export const searchInLines = (
+  lines: string[],
+  options: SearchOptions,
+  deps = {
+    createRegexPattern,
+  },
+): SearchMatch[] => {
   const regex = deps.createRegexPattern(options.pattern, options.ignoreCase);
 
   const matches: SearchMatch[] = [];
@@ -267,18 +298,20 @@ export const formatSearchResults = (
 };
 
 /**
- * Perform grep-like search on content
+ * Perform grep-like search on content.
+ * Splits content into lines once and reuses the array for both search and formatting,
+ * avoiding a redundant O(n) split on large output files (3-5MB).
  */
 export const performGrepSearch = (
   content: string,
   options: SearchOptions,
   deps = {
-    searchInContent,
+    searchInLines,
     formatSearchResults,
   },
 ): SearchResult => {
-  const matches = deps.searchInContent(content, options);
   const lines = content.split('\n');
+  const matches = deps.searchInLines(lines, options);
   const formattedOutput = deps.formatSearchResults(lines, matches, options.beforeLines, options.afterLines);
 
   return {

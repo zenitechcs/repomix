@@ -1,3 +1,8 @@
+---
+title: 安裝
+description: 使用 npx、npm、Yarn、Bun、Homebrew、Docker、VS Code 擴充功能或瀏覽器擴充功能安裝 Repomix，並驗證 CLI 設定。
+---
+
 # 安裝
 
 ## 使用 npx（無需安裝）
@@ -8,25 +13,23 @@ npx repomix@latest
 
 ## 全局安裝
 
-### npm 安裝
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn 安裝
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun 安裝
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew 安裝（macOS/Linux）
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Docker 安裝
 
@@ -71,7 +74,7 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 
 ## 系統要求
 
-- Node.js: ≥ 20.0.0
+- Node.js: ≥ 22.0.0
 - Git: 處理遠端倉庫時需要
 
 ## 驗證安裝
@@ -82,3 +85,9 @@ docker run -v ./output:/app -it --rm ghcr.io/yamadashy/repomix --remote yamadash
 repomix --version
 repomix --help
 ```
+
+## 相關資源
+
+- [基本用法](/zh-tw/guide/usage) - 了解如何使用 Repomix
+- [設定](/zh-tw/guide/configuration) - 根據需求自訂 Repomix
+- [命令列選項](/zh-tw/guide/command-line-options) - 完整的 CLI 參考

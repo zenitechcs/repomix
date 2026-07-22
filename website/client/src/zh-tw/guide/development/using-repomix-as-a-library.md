@@ -1,3 +1,8 @@
+---
+title: 作為庫使用 Repomix
+description: 將 Repomix 作為 Node.js 函式庫使用，打包本機目錄或遠端儲存庫、存取核心 API，並將 AI 就緒的程式碼庫輸出整合到應用程式。
+---
+
 # 作為庫使用 Repomix
 
 除了作為 CLI 工具使用 Repomix 外，您還可以將其功能直接集成到 Node.js 應用程序中。
@@ -57,6 +62,9 @@ async function processRemoteRepo(repoUrl) {
 }
 ```
 
+> [!NOTE]
+> 基於安全考量，遠端倉庫中的設定檔預設不會被載入。如需信任遠端倉庫的設定，請在選項中加入 `remoteTrustConfig: true`，或設定環境變數 `REPOMIX_REMOTE_TRUST_CONFIG=true`。
+
 ## 使用核心組件
 
 要獲得更多控制，您可以直接使用 Repomix 的低級 API：
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## 打包
+
+使用 Rolldown 或 esbuild 等工具打包 repomix 時，某些依賴項必須保持為 external，並且需要複製 WASM 文件：
+
+**External 依賴項（無法打包）：**
+- `tinypool` - 使用文件路徑生成 worker 線程
+
+**需要複製的 WASM 文件：**
+- `web-tree-sitter.wasm` → 與打包後的 JS 相同的目錄（代碼壓縮功能需要）
+- Tree-sitter 語言文件 → `REPOMIX_WASM_DIR` 環境變數指定的目錄
+
+有關實際示例，請參閱 [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs)。
 
 ## 實際示例
 

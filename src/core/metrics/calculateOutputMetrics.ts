@@ -1,26 +1,20 @@
-import type { TiktokenEncoding } from 'tiktoken';
 import { logger } from '../../shared/logger.js';
-import { initTaskRunner } from '../../shared/processConcurrency.js';
-import type { OutputMetricsTask } from './workers/outputMetricsWorker.js';
+import { type MetricsTaskRunner, runTokenCount } from './metricsWorkerRunner.js';
+import type { TokenEncoding } from './TokenCounter.js';
 
-const CHUNK_SIZE = 1000;
-const MIN_CONTENT_LENGTH_FOR_PARALLEL = 1_000_000; // 1000KB
+// Target ~200K characters per chunk to balance tokenization throughput and worker round-trip overhead.
+// Benchmarks show 200K is the sweet spot: fewer round-trips than 100K with enough chunks
+// for good parallelism across available threads (e.g., 20 chunks for a 4M character output).
+const TARGET_CHARS_PER_CHUNK = 200_000;
+const MIN_CONTENT_LENGTH_FOR_PARALLEL = 1_000_000; // 1MB
 
 export const calculateOutputMetrics = async (
   content: string,
-  encoding: TiktokenEncoding,
-  path?: string,
-  deps = {
-    initTaskRunner,
-  },
+  encoding: TokenEncoding,
+  path: string | undefined,
+  deps: { taskRunner: MetricsTaskRunner },
 ): Promise<number> => {
   const shouldRunInParallel = content.length > MIN_CONTENT_LENGTH_FOR_PARALLEL;
-  const numOfTasks = shouldRunInParallel ? CHUNK_SIZE : 1;
-  const taskRunner = deps.initTaskRunner<OutputMetricsTask, number>({
-    numOfTasks,
-    workerPath: new URL('./workers/outputMetricsWorker.js', import.meta.url).href,
-    runtime: 'child_process',
-  });
 
   try {
     logger.trace(`Starting output token count for ${path || 'output'}`);
@@ -30,29 +24,32 @@ export const calculateOutputMetrics = async (
 
     if (shouldRunInParallel) {
       // Split content into chunks for parallel processing
-      const chunkSize = Math.ceil(content.length / CHUNK_SIZE);
       const chunks: string[] = [];
 
-      for (let i = 0; i < content.length; i += chunkSize) {
-        chunks.push(content.slice(i, i + chunkSize));
+      for (let i = 0; i < content.length; i += TARGET_CHARS_PER_CHUNK) {
+        chunks.push(content.slice(i, i + TARGET_CHARS_PER_CHUNK));
       }
 
       // Process chunks in parallel
       const chunkResults = await Promise.all(
-        chunks.map((chunk, index) =>
-          taskRunner.run({
+        chunks.map(async (chunk, index) => {
+          return runTokenCount(deps.taskRunner, {
             content: chunk,
             encoding,
             path: path ? `${path}-chunk-${index}` : undefined,
-          }),
-        ),
+          });
+        }),
       );
 
       // Sum up the results
       result = chunkResults.reduce((sum, count) => sum + count, 0);
     } else {
       // Process small content directly
-      result = await taskRunner.run({ content, encoding, path });
+      result = await runTokenCount(deps.taskRunner, {
+        content,
+        encoding,
+        path,
+      });
     }
 
     const endTime = process.hrtime.bigint();
@@ -63,8 +60,5 @@ export const calculateOutputMetrics = async (
   } catch (error) {
     logger.error('Error during token count:', error);
     throw error;
-  } finally {
-    // Always cleanup worker pool
-    await taskRunner.cleanup();
   }
 };

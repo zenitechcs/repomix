@@ -1,3 +1,4 @@
+import * as fs from 'node:fs/promises';
 import { program } from 'commander';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as defaultAction from '../../src/cli/actions/defaultAction.js';
@@ -6,8 +7,9 @@ import * as remoteAction from '../../src/cli/actions/remoteAction.js';
 import * as versionAction from '../../src/cli/actions/versionAction.js';
 import { run, runCli } from '../../src/cli/cliRun.js';
 import type { CliOptions } from '../../src/cli/types.js';
+import * as gitRemoteHandle from '../../src/core/git/gitRemoteHandle.js';
 import type { PackResult } from '../../src/core/packager.js';
-import { type RepomixLogLevel, logger, repomixLogLevels } from '../../src/shared/logger.js';
+import { logger, type RepomixLogLevel, repomixLogLevels } from '../../src/shared/logger.js';
 import { createMockConfig } from '../testing/testUtils.js';
 
 let logLevel: RepomixLogLevel;
@@ -40,11 +42,25 @@ vi.mock('../../src/shared/logger', () => ({
 vi.mock('../../src/cli/actions/defaultAction');
 vi.mock('../../src/cli/actions/initAction');
 vi.mock('../../src/cli/actions/remoteAction');
+vi.mock('../../src/core/git/gitRemoteHandle');
 vi.mock('../../src/cli/actions/versionAction');
+
+// Partial mock: `access` is spyable for shorthand-detection tests, everything else stays real.
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return {
+    ...actual,
+    access: vi.fn(actual.access),
+  };
+});
+
+const actualFs = await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises');
 
 describe('cliRun', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    // resetAllMocks clears the default implementation — restore real fs.access behavior.
+    vi.mocked(fs.access).mockImplementation(actualFs.access);
 
     vi.mocked(defaultAction.runDefaultAction).mockResolvedValue({
       config: createMockConfig({
@@ -209,6 +225,105 @@ describe('cliRun', () => {
       expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('yamadashy/repomix', expect.any(Object));
       expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
     });
+
+    test('should auto-detect HTTPS URL and execute remote action', async () => {
+      await runCli(['https://github.com/user/repo'], process.cwd(), {});
+
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('https://github.com/user/repo', expect.any(Object));
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+
+    test('should auto-detect git@ SSH URL and execute remote action', async () => {
+      await runCli(['git@github.com:user/repo.git'], process.cwd(), {});
+
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('git@github.com:user/repo.git', expect.any(Object));
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+
+    test('should auto-detect ssh:// URL and execute remote action', async () => {
+      await runCli(['ssh://git@github.com/user/repo.git'], process.cwd(), {});
+
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith(
+        'ssh://git@github.com/user/repo.git',
+        expect.any(Object),
+      );
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+
+    test('should auto-detect git:// URL and execute remote action', async () => {
+      await runCli(['git://github.com/user/repo.git'], process.cwd(), {});
+
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('git://github.com/user/repo.git', expect.any(Object));
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+
+    test('should auto-detect shorthand when no local path exists and the repository is reachable', async () => {
+      vi.mocked(gitRemoteHandle.checkRemoteRepoExists).mockResolvedValue(true);
+
+      await runCli(['user/repo'], process.cwd(), {});
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).toHaveBeenCalledWith('https://github.com/user/repo.git');
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('user/repo', expect.any(Object));
+      expect(defaultAction.runDefaultAction).not.toHaveBeenCalled();
+    });
+
+    test('should fall back to local handling when shorthand is not a reachable repository', async () => {
+      vi.mocked(gitRemoteHandle.checkRemoteRepoExists).mockResolvedValue(false);
+
+      await runCli(['user/repo'], process.cwd(), {});
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).toHaveBeenCalledWith('https://github.com/user/repo.git');
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['user/repo'], process.cwd(), expect.any(Object));
+      expect(remoteAction.runRemoteAction).not.toHaveBeenCalled();
+    });
+
+    test('should prefer existing local path over shorthand auto-detection', async () => {
+      // Simulate an existing local path that also matches the owner/repo pattern.
+      // Mocking fs.access keeps the test independent of the repository's own directory layout.
+      vi.mocked(fs.access).mockResolvedValue(undefined);
+
+      await runCli(['user/repo'], process.cwd(), {});
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).not.toHaveBeenCalled();
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['user/repo'], process.cwd(), expect.any(Object));
+      expect(remoteAction.runRemoteAction).not.toHaveBeenCalled();
+    });
+
+    test('should treat permission-denied local path as existing and skip the remote probe', async () => {
+      const accessError = Object.assign(new Error('permission denied'), { code: 'EACCES' });
+      vi.mocked(fs.access).mockRejectedValue(accessError);
+
+      await runCli(['user/repo'], process.cwd(), {});
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).not.toHaveBeenCalled();
+      expect(remoteAction.runRemoteAction).not.toHaveBeenCalled();
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['user/repo'], process.cwd(), expect.any(Object));
+    });
+
+    test('should not treat Windows-style absolute path as shorthand', async () => {
+      // `C:` contains a colon, which the owner/repo pattern rejects — no probe even when missing locally.
+      await runCli(['C:/project'], process.cwd(), {});
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).not.toHaveBeenCalled();
+      expect(remoteAction.runRemoteAction).not.toHaveBeenCalled();
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['C:/project'], process.cwd(), expect.any(Object));
+    });
+
+    test('should not probe shorthand in stdin mode', async () => {
+      await runCli(['user/repo'], process.cwd(), { stdin: true });
+
+      expect(gitRemoteHandle.checkRemoteRepoExists).not.toHaveBeenCalled();
+      expect(remoteAction.runRemoteAction).not.toHaveBeenCalled();
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(['user/repo'], process.cwd(), expect.any(Object));
+    });
+
+    test('should prioritize explicit --remote flag over auto-detected URL', async () => {
+      await runCli(['https://github.com/other/repo'], process.cwd(), {
+        remote: 'yamadashy/repomix',
+      });
+
+      expect(remoteAction.runRemoteAction).toHaveBeenCalledWith('yamadashy/repomix', expect.any(Object));
+    });
   });
 
   describe('parsable style flag', () => {
@@ -232,6 +347,24 @@ describe('cliRun', () => {
         process.cwd(),
         expect.objectContaining({
           parsableStyle: true,
+        }),
+      );
+    });
+  });
+
+  describe('skill generation options', () => {
+    test('should pass --skill-project-name to default action', async () => {
+      await runCli(['.'], process.cwd(), {
+        skillGenerate: true,
+        skillProjectName: 'Repomix',
+      });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        ['.'],
+        process.cwd(),
+        expect.objectContaining({
+          skillGenerate: true,
+          skillProjectName: 'Repomix',
         }),
       );
     });
@@ -322,6 +455,20 @@ describe('cliRun', () => {
         process.cwd(),
         expect.objectContaining({
           instructionFilePath: 'path/to/instruction.txt',
+        }),
+      );
+    });
+
+    test('should handle --output-file-path-style flag', async () => {
+      await runCli(['.'], process.cwd(), {
+        outputFilePathStyle: 'cwd-relative',
+      });
+
+      expect(defaultAction.runDefaultAction).toHaveBeenCalledWith(
+        ['.'],
+        process.cwd(),
+        expect.objectContaining({
+          outputFilePathStyle: 'cwd-relative',
         }),
       );
     });

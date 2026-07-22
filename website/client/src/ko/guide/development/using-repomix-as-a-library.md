@@ -1,3 +1,8 @@
+---
+title: Repomix를 라이브러리로 사용하기
+description: Repomix를 Node.js 라이브러리로 사용해 로컬 디렉터리나 원격 저장소를 패키징하고 core API에 접근하며 AI 친화적 코드베이스 출력을 애플리케이션에 통합합니다.
+---
+
 # Repomix를 라이브러리로 사용하기
 
 Repomix를 CLI 도구로 사용하는 것 외에도 Node.js 애플리케이션에 직접 기능을 통합할 수 있습니다.
@@ -57,6 +62,9 @@ async function processRemoteRepo(repoUrl) {
 }
 ```
 
+> [!NOTE]
+> 보안상의 이유로, 원격 저장소의 설정 파일은 기본적으로 로드되지 않습니다. 원격 저장소의 설정을 신뢰하려면 옵션에 `remoteTrustConfig: true`를 추가하거나, 환경 변수 `REPOMIX_REMOTE_TRUST_CONFIG=true`를 설정하세요.
+
 ## 핵심 컴포넌트 사용
 
 더 많은 제어를 위해 Repomix의 저수준 API를 직접 사용할 수 있습니다:
@@ -80,6 +88,19 @@ async function analyzeFiles(directory) {
   }));
 }
 ```
+
+## 번들링
+
+Rolldown이나 esbuild 같은 도구로 repomix를 번들링할 때, 일부 의존성은 external로 유지해야 하며 WASM 파일을 복사해야 합니다:
+
+**External 의존성 (번들 불가):**
+- `tinypool` - 파일 경로를 사용하여 워커 스레드 생성
+
+**복사해야 할 WASM 파일:**
+- `web-tree-sitter.wasm` → 번들된 JS와 동일한 디렉토리 (코드 압축 기능에 필요)
+- Tree-sitter 언어 파일 → `REPOMIX_WASM_DIR` 환경 변수로 지정된 디렉토리
+
+실제 예제는 [website/server/scripts/bundle.mjs](https://github.com/yamadashy/repomix/blob/main/website/server/scripts/bundle.mjs)를 참조하세요.
 
 ## 실제 사례
 

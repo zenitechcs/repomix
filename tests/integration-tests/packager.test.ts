@@ -2,45 +2,29 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 // Mock globby worker for integration tests to avoid worker file loading issues
-vi.mock('../../src/core/file/globbyExecute.js', () => ({
-  executeGlobbyInWorker: vi.fn(),
-}));
+
 import { loadFileConfig, mergeConfigs } from '../../src/config/configLoad.js';
 import type { RepomixConfigFile, RepomixConfigMerged, RepomixOutputStyle } from '../../src/config/configSchema.js';
 import { collectFiles } from '../../src/core/file/fileCollect.js';
+import { resolveFileLevel } from '../../src/core/file/fileLevelResolve.js';
+import { readRawFile } from '../../src/core/file/fileRead.js';
 import { searchFiles } from '../../src/core/file/fileSearch.js';
 import type { ProcessedFile } from '../../src/core/file/fileTypes.js';
-import { executeGlobbyInWorker } from '../../src/core/file/globbyExecute.js';
-import type { FileCollectTask } from '../../src/core/file/workers/fileCollectWorker.js';
-import fileCollectWorker from '../../src/core/file/workers/fileCollectWorker.js';
 import fileProcessWorker from '../../src/core/file/workers/fileProcessWorker.js';
 import type { GitDiffResult } from '../../src/core/git/gitDiffHandle.js';
-import { generateOutput } from '../../src/core/output/outputGenerate.js';
+import { produceOutput } from '../../src/core/packager/produceOutput.js';
 import { pack } from '../../src/core/packager.js';
-import { copyToClipboardIfEnabled } from '../../src/core/packager/copyToClipboardIfEnabled.js';
-import { writeOutputToDisk } from '../../src/core/packager/writeOutputToDisk.js';
 import { filterOutUntrustedFiles } from '../../src/core/security/filterOutUntrustedFiles.js';
 import { validateFileSafety } from '../../src/core/security/validateFileSafety.js';
-import type { WorkerOptions } from '../../src/shared/processConcurrency.js';
+
 import { isWindows } from '../testing/testUtils.js';
 
 const fixturesDir = path.join(__dirname, 'fixtures', 'packager');
 const inputsDir = path.join(fixturesDir, 'inputs');
 const outputsDir = path.join(fixturesDir, 'outputs');
-
-const mockCollectFileInitTaskRunner = <T, R>(_options: WorkerOptions) => {
-  return {
-    run: async (task: T) => {
-      return (await fileCollectWorker(task as FileCollectTask)) as R;
-    },
-    cleanup: async () => {
-      // Mock cleanup - no-op for tests
-    },
-  };
-};
 
 describe.runIf(!isWindows)('packager integration', () => {
   const testCases = [
@@ -68,6 +52,14 @@ describe.runIf(!isWindows)('packager integration', () => {
         output: { style: 'markdown', filePath: 'simple-project-output.md' },
       },
     },
+    {
+      desc: 'simple json style',
+      input: 'simple-project',
+      output: 'simple-project-output.json',
+      config: {
+        output: { style: 'json', filePath: 'simple-project-output.json' },
+      },
+    },
   ];
 
   let tempDir: string;
@@ -75,12 +67,6 @@ describe.runIf(!isWindows)('packager integration', () => {
   beforeEach(async () => {
     // Create a temporary directory for each test
     tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'repomix-test-'));
-
-    // Mock executeGlobbyInWorker to return the actual files in the test directory
-    vi.mocked(executeGlobbyInWorker).mockImplementation(async (patterns, options) => {
-      const { globby } = await import('globby');
-      return globby(patterns, options);
-    });
   });
 
   afterEach(async () => {
@@ -109,17 +95,17 @@ describe.runIf(!isWindows)('packager integration', () => {
         sortPaths: (filePaths) => filePaths,
         collectFiles: (filePaths, rootDir, config, progressCallback) => {
           return collectFiles(filePaths, rootDir, config, progressCallback, {
-            initTaskRunner: mockCollectFileInitTaskRunner,
+            readRawFile,
           });
         },
         processFiles: async (rawFiles, config, _progressCallback) => {
           const processedFiles: ProcessedFile[] = [];
           for (const rawFile of rawFiles) {
-            processedFiles.push(await fileProcessWorker({ rawFile, config }));
+            const level = resolveFileLevel(rawFile.path, config.output);
+            processedFiles.push(await fileProcessWorker({ rawFile, config, level }));
           }
           return processedFiles;
         },
-        generateOutput,
         validateFileSafety: (rawFiles, progressCallback, config) => {
           const gitDiffMock: GitDiffResult = {
             workTreeDiffContent: '',
@@ -130,8 +116,14 @@ describe.runIf(!isWindows)('packager integration', () => {
             filterOutUntrustedFiles,
           });
         },
-        writeOutputToDisk,
-        copyToClipboardIfEnabled,
+        produceOutput,
+        createMetricsTaskRunner: () => ({
+          taskRunner: {
+            run: async () => 0,
+            cleanup: async () => {},
+          },
+          warmupPromise: Promise.resolve(),
+        }),
         calculateMetrics: async (
           processedFiles,
           _output,
@@ -168,7 +160,6 @@ describe.runIf(!isWindows)('packager integration', () => {
 
       // Read the actual and expected outputs
       const actualOutput = await fs.readFile(actualOutputPath, 'utf-8');
-      const _expectedOutput = await fs.readFile(expectedOutputPath, 'utf-8');
 
       // Compare the outputs - styles (e.g., XML, plain, markdown) may differ
       expect(actualOutput).toContain('This file is a merged representation of the entire codebase');
@@ -209,6 +200,18 @@ describe.runIf(!isWindows)('packager integration', () => {
           expect(actualOutput).toContain('File: src/utils.js');
           expect(actualOutput).toContain('function greet(name) {');
           break;
+
+        case 'json': {
+          // Validate it's valid JSON
+          const jsonOutput = JSON.parse(actualOutput);
+          expect(jsonOutput.fileSummary).toBeDefined();
+          expect(jsonOutput.userProvidedHeader).toBeDefined();
+          expect(jsonOutput.directoryStructure).toBeDefined();
+          expect(jsonOutput.files).toBeDefined();
+          expect(jsonOutput.files['src/index.js']).toContain('function main() {');
+          expect(jsonOutput.files['src/utils.js']).toContain('function greet(name) {');
+          break;
+        }
 
         default:
           throw new Error(`Unsupported style: ${config.output?.style}`);

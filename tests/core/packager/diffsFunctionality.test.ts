@@ -15,6 +15,8 @@ vi.mock('../../../src/core/git/gitDiffHandle.js', () => ({
 
 vi.mock('../../../src/core/git/gitRepositoryHandle.js', () => ({
   isGitRepository: vi.fn(),
+  isGitInstalled: vi.fn().mockResolvedValue(false),
+  getFileChangeCount: vi.fn().mockResolvedValue({}),
 }));
 
 describe('Git Diffs Functionality', () => {
@@ -55,14 +57,14 @@ index 123..456 100644
     const mockSearchFiles = vi.fn().mockResolvedValue({ filePaths: [] });
     const mockCollectFiles = vi.fn().mockResolvedValue({ rawFiles: [], skippedFiles: [] });
     const mockProcessFiles = vi.fn().mockResolvedValue([]);
-    const mockGenerateOutput = vi.fn().mockResolvedValue('mocked output');
     const mockValidateFileSafety = vi.fn().mockResolvedValue({
       safeFilePaths: [],
       safeRawFiles: [],
       suspiciousFilesResults: [],
     });
-    const mockHandleOutput = vi.fn().mockResolvedValue(undefined);
-    const mockCopyToClipboard = vi.fn().mockResolvedValue(undefined);
+    const mockProduceOutput = vi.fn().mockResolvedValue({
+      outputForMetrics: 'mocked output',
+    });
     const mockCalculateMetrics = vi.fn().mockResolvedValue({
       totalFiles: 0,
       totalCharacters: 0,
@@ -71,6 +73,13 @@ index 123..456 100644
       fileTokenCounts: {},
     });
     const mockSortPaths = vi.fn().mockImplementation((paths) => paths);
+    const mockCreateMetricsTaskRunner = vi.fn().mockReturnValue({
+      taskRunner: {
+        run: vi.fn().mockResolvedValue(0),
+        cleanup: vi.fn().mockResolvedValue(undefined),
+      },
+      warmupPromise: Promise.resolve(),
+    });
 
     // Config with diffs disabled
     if (mockConfig.output.git) {
@@ -81,11 +90,10 @@ index 123..456 100644
       searchFiles: mockSearchFiles,
       collectFiles: mockCollectFiles,
       processFiles: mockProcessFiles,
-      generateOutput: mockGenerateOutput,
       validateFileSafety: mockValidateFileSafety,
-      writeOutputToDisk: mockHandleOutput,
-      copyToClipboardIfEnabled: mockCopyToClipboard,
+      produceOutput: mockProduceOutput,
       calculateMetrics: mockCalculateMetrics,
+      createMetricsTaskRunner: mockCreateMetricsTaskRunner,
       sortPaths: mockSortPaths,
     });
 
@@ -106,14 +114,14 @@ index 123..456 100644
     const mockSearchFiles = vi.fn().mockResolvedValue({ filePaths: ['test.js'] });
     const mockCollectFiles = vi.fn().mockResolvedValue({ rawFiles: processedFiles, skippedFiles: [] });
     const mockProcessFiles = vi.fn().mockResolvedValue(processedFiles);
-    const mockGenerateOutput = vi.fn().mockResolvedValue('Generated output with diffs included');
     const mockValidateFileSafety = vi.fn().mockResolvedValue({
       safeFilePaths: ['test.js'],
       safeRawFiles: processedFiles,
       suspiciousFilesResults: [],
     });
-    const mockHandleOutput = vi.fn().mockResolvedValue(undefined);
-    const mockCopyToClipboard = vi.fn().mockResolvedValue(undefined);
+    const mockProduceOutput = vi.fn().mockResolvedValue({
+      outputForMetrics: 'Generated output with diffs included',
+    });
     const mockCalculateMetrics = vi.fn().mockResolvedValue({
       totalFiles: 1,
       totalCharacters: 30,
@@ -123,6 +131,13 @@ index 123..456 100644
       gitDiffTokenCount: 15, // Mock diff token count
     });
     const mockSortPaths = vi.fn().mockImplementation((paths) => paths);
+    const mockCreateMetricsTaskRunner = vi.fn().mockReturnValue({
+      taskRunner: {
+        run: vi.fn().mockResolvedValue(0),
+        cleanup: vi.fn().mockResolvedValue(undefined),
+      },
+      warmupPromise: Promise.resolve(),
+    });
 
     // Config with diffs enabled
     if (mockConfig.output.git) {
@@ -133,11 +148,10 @@ index 123..456 100644
       searchFiles: mockSearchFiles,
       collectFiles: mockCollectFiles,
       processFiles: mockProcessFiles,
-      generateOutput: mockGenerateOutput,
       validateFileSafety: mockValidateFileSafety,
-      writeOutputToDisk: mockHandleOutput,
-      copyToClipboardIfEnabled: mockCopyToClipboard,
+      produceOutput: mockProduceOutput,
       calculateMetrics: mockCalculateMetrics,
+      createMetricsTaskRunner: mockCreateMetricsTaskRunner,
       sortPaths: mockSortPaths,
     });
 

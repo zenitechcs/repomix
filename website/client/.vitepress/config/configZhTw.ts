@@ -22,6 +22,7 @@ export const configZhTw = defineConfig({
             { text: '基本用法', link: '/zh-tw/guide/usage' },
             { text: '提示範例', link: '/zh-tw/guide/prompt-examples' },
             { text: '使用案例', link: '/zh-tw/guide/use-cases' },
+            { text: '常見問題與疑難排解', link: '/zh-tw/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configZhTw = defineConfig({
           items: [
             { text: '輸出格式', link: '/zh-tw/guide/output' },
             { text: '命令行選項', link: '/zh-tw/guide/command-line-options' },
+            { text: '監視模式', link: '/zh-tw/guide/watch-mode' },
             { text: '配置', link: '/zh-tw/guide/configuration' },
             { text: '自定義指令', link: '/zh-tw/guide/custom-instructions' },
             { text: 'GitHub倉庫處理', link: '/zh-tw/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configZhTw = defineConfig({
           text: '高級',
           items: [
             { text: 'MCP 伺服器', link: '/zh-tw/guide/mcp-server' },
+            { text: 'Claude Code 外掛', link: '/zh-tw/guide/claude-code-plugins' },
+            { text: 'Agent Skills 生成', link: '/zh-tw/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/zh-tw/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/zh-tw/guide/github-actions' },
             { text: '作為庫使用 Repomix', link: '/zh-tw/guide/development/using-repomix-as-a-library' },
             { text: 'AI輔助開發技巧', link: '/zh-tw/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configZhTw = defineConfig({
             { text: '社群專案', link: '/zh-tw/guide/community-projects' },
             { text: '為Repomix做貢獻', link: '/zh-tw/guide/development/' },
             { text: '贊助商', link: '/zh-tw/guide/sponsors' },
+            { text: '隱私權政策', link: '/zh-tw/guide/privacy' },
           ],
         },
       ],

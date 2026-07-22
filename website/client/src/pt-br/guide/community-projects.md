@@ -1,3 +1,8 @@
+---
+title: "Projetos da Comunidade"
+description: "Descubra ferramentas da comunidade, extensões de editores, aplicativos desktop, implementações em linguagens e integrações criadas em torno do Repomix."
+---
+
 # Projetos da Comunidade
 
 Descubra projetos incríveis criados pela comunidade Repomix! Estes projetos estendem as capacidades do Repomix, fornecem implementações em outras linguagens ou integram o Repomix em conjuntos de ferramentas maiores.
@@ -9,6 +14,13 @@ Extensão do VSCode que ajuda a agrupar arquivos em uma única saída para proce
 
 **Repositório**: [massdo/repomix-runner](https://github.com/massdo/repomix-runner)  
 **Marketplace**: [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)
+
+## Aplicações Desktop
+
+### Repomix Desktop
+Uma aplicação desktop comunitária que fornece um wrapper GUI para o CLI do Repomix. Construída com Python e CustomTkinter, oferece uma interface amigável sem precisar usar o terminal.
+
+**Repositório**: [KevanMacGee/Repomix-Desktop](https://github.com/KevanMacGee/Repomix-Desktop)
 
 ## Implementações de Linguagem
 
@@ -33,3 +45,9 @@ Servidor de Protocolo de Contexto de Modelo que usa Repomix para ajudar agentes 
 Conjunto de ferramentas CLI para agentes de IA com múltiplas capacidades, incluindo pesquisa na web via Perplexity, análise de repositório com Gemini e Repomix, e automação de navegador com Stagehand.
 
 **Repositório**: [eastlondoner/vibe-tools](https://github.com/eastlondoner/vibe-tools)
+
+## Recursos relacionados
+
+- [Instalação](/pt-br/guide/installation) - Instalar o Repomix CLI ou extensão do navegador
+- [Servidor MCP](/pt-br/guide/mcp-server) - Usar o Repomix como servidor MCP para assistentes de IA
+- [Plugins do Claude Code](/pt-br/guide/claude-code-plugins) - Plugins oficiais para Claude Code

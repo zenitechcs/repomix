@@ -22,6 +22,7 @@ export const configKo = defineConfig({
             { text: '기본 사용법', link: '/ko/guide/usage' },
             { text: '프롬프트 예제', link: '/ko/guide/prompt-examples' },
             { text: '사용 사례', link: '/ko/guide/use-cases' },
+            { text: 'FAQ 및 문제 해결', link: '/ko/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configKo = defineConfig({
           items: [
             { text: '출력 형식', link: '/ko/guide/output' },
             { text: '명령줄 옵션', link: '/ko/guide/command-line-options' },
+            { text: '감시 모드', link: '/ko/guide/watch-mode' },
             { text: '설정', link: '/ko/guide/configuration' },
             { text: '사용자 정의 지침', link: '/ko/guide/custom-instructions' },
             { text: 'GitHub 저장소 처리', link: '/ko/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configKo = defineConfig({
           text: '고급',
           items: [
             { text: 'MCP 서버', link: '/ko/guide/mcp-server' },
+            { text: 'Claude Code 플러그인', link: '/ko/guide/claude-code-plugins' },
+            { text: 'Agent Skills 생성', link: '/ko/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/ko/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/ko/guide/github-actions' },
             { text: 'Repomix를 라이브러리로 사용하기', link: '/ko/guide/development/using-repomix-as-a-library' },
             { text: 'AI 지원 개발 팁', link: '/ko/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configKo = defineConfig({
             { text: '커뮤니티 프로젝트', link: '/ko/guide/community-projects' },
             { text: 'Repomix에 기여하기', link: '/ko/guide/development/' },
             { text: '후원자', link: '/ko/guide/sponsors' },
+            { text: '개인정보 처리방침', link: '/ko/guide/privacy' },
           ],
         },
       ],

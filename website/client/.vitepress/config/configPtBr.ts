@@ -22,6 +22,7 @@ export const configPtBr = defineConfig({
             { text: 'Uso Básico', link: '/pt-br/guide/usage' },
             { text: 'Exemplos de Prompt', link: '/pt-br/guide/prompt-examples' },
             { text: 'Casos de Uso', link: '/pt-br/guide/use-cases' },
+            { text: 'FAQ e solução de problemas', link: '/pt-br/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configPtBr = defineConfig({
           items: [
             { text: 'Formatos de Saída', link: '/pt-br/guide/output' },
             { text: 'Opções de Linha de Comando', link: '/pt-br/guide/command-line-options' },
+            { text: 'Modo de observação', link: '/pt-br/guide/watch-mode' },
             { text: 'Configuração', link: '/pt-br/guide/configuration' },
             { text: 'Instruções Personalizadas', link: '/pt-br/guide/custom-instructions' },
             { text: 'Processamento de Repositório GitHub', link: '/pt-br/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configPtBr = defineConfig({
           text: 'Avançado',
           items: [
             { text: 'Servidor MCP', link: '/pt-br/guide/mcp-server' },
+            { text: 'Plugins do Claude Code', link: '/pt-br/guide/claude-code-plugins' },
+            { text: 'Geração de Agent Skills', link: '/pt-br/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/pt-br/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/pt-br/guide/github-actions' },
             { text: 'Usando Repomix como Biblioteca', link: '/pt-br/guide/development/using-repomix-as-a-library' },
             { text: 'Dicas de Desenvolvimento Assistido por IA', link: '/pt-br/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configPtBr = defineConfig({
             { text: 'Projetos da Comunidade', link: '/pt-br/guide/community-projects' },
             { text: 'Contribuindo para o Repomix', link: '/pt-br/guide/development/' },
             { text: 'Patrocinadores', link: '/pt-br/guide/sponsors' },
+            { text: 'Política de Privacidade', link: '/pt-br/guide/privacy' },
           ],
         },
       ],

@@ -1,3 +1,8 @@
+---
+title: 커뮤니티 프로젝트
+description: "Repomix를 중심으로 만들어진 커뮤니티 도구, 에디터 확장, 데스크톱 앱, 언어 구현체, 통합 기능을 살펴봅니다."
+---
+
 # 커뮤니티 프로젝트
 
 Repomix 커뮤니티에서 제작한 놀라운 프로젝트들을 만나보세요! 이러한 프로젝트들은 Repomix의 기능을 확장하거나, 다른 언어로 구현을 제공하거나, Repomix를 더 큰 툴셋에 통합합니다.
@@ -9,6 +14,13 @@ AI 처리를 위해 파일들을 단일 출력으로 번들링하는 데 도움�
 
 **Repository**: [massdo/repomix-runner](https://github.com/massdo/repomix-runner)  
 **Marketplace**: [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)
+
+## 데스크톱 애플리케이션
+
+### Repomix Desktop
+Repomix CLI를 위한 GUI 래퍼를 제공하는 커뮤니티 데스크톱 애플리케이션입니다. Python과 CustomTkinter로 구축되었으며, 터미널을 사용하지 않고도 사용자 친화적인 인터페이스를 제공합니다.
+
+**Repository**: [KevanMacGee/Repomix-Desktop](https://github.com/KevanMacGee/Repomix-Desktop)
 
 ## 언어 구현
 
@@ -33,3 +45,9 @@ AI 에이전트가 코드베이스를 분석할 수 있도록 Repomix를 사용�
 Perplexity를 통한 웹 검색, Gemini와 Repomix를 사용한 저장소 분석, Stagehand를 통한 브라우저 자동화를 포함한 여러 기능을 가진 AI 에이전트용 CLI 툴셋입니다.
 
 **Repository**: [eastlondoner/vibe-tools](https://github.com/eastlondoner/vibe-tools)
+
+## 관련 리소스
+
+- [설치](/ko/guide/installation) - Repomix CLI 또는 브라우저 확장 프로그램 설치
+- [MCP 서버](/ko/guide/mcp-server) - AI 어시스턴트를 위한 MCP 서버로 Repomix 사용
+- [Claude Code 플러그인](/ko/guide/claude-code-plugins) - 공식 Claude Code 플러그인

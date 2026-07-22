@@ -22,6 +22,7 @@ export const configHi = defineConfig({
             { text: 'बुनियादी उपयोग', link: '/hi/guide/usage' },
             { text: 'प्रॉम्प्ट उदाहरण', link: '/hi/guide/prompt-examples' },
             { text: 'उपयोग के मामले', link: '/hi/guide/use-cases' },
+            { text: 'FAQ और समस्या निवारण', link: '/hi/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configHi = defineConfig({
           items: [
             { text: 'आउटपुट फॉर्मेट', link: '/hi/guide/output' },
             { text: 'कमांड लाइन विकल्प', link: '/hi/guide/command-line-options' },
+            { text: 'वॉच मोड', link: '/hi/guide/watch-mode' },
             { text: 'कॉन्फ़िगरेशन', link: '/hi/guide/configuration' },
             { text: 'कस्टम निर्देश', link: '/hi/guide/custom-instructions' },
             { text: 'GitHub रिपॉजिटरी प्रोसेसिंग', link: '/hi/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configHi = defineConfig({
           text: 'उन्नत',
           items: [
             { text: 'MCP सर्वर', link: '/hi/guide/mcp-server' },
+            { text: 'Claude Code प्लगइन्स', link: '/hi/guide/claude-code-plugins' },
+            { text: 'Agent Skills जनरेशन', link: '/hi/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/hi/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/hi/guide/github-actions' },
             { text: 'Repomix को लाइब्रेरी के रूप में उपयोग', link: '/hi/guide/development/using-repomix-as-a-library' },
             { text: 'AI-सहायक विकास टिप्स', link: '/hi/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configHi = defineConfig({
             { text: 'समुदाय प्रोजेक्ट्स', link: '/hi/guide/community-projects' },
             { text: 'Repomix में योगदान', link: '/hi/guide/development/' },
             { text: 'प्रायोजक', link: '/hi/guide/sponsors' },
+            { text: 'गोपनीयता नीति', link: '/hi/guide/privacy' },
           ],
         },
       ],

@@ -1,6 +1,7 @@
 import gitUrlParse, { type GitUrl } from 'git-url-parse';
 import { RepomixError } from '../../shared/errorHandle.js';
 import { logger } from '../../shared/logger.js';
+import { isValidShorthand } from './gitRemoteUrl.js';
 
 interface IGitUrl extends GitUrl {
   commit: string | undefined;
@@ -12,11 +13,39 @@ export interface GitHubRepoInfo {
   ref?: string; // branch, tag, or commit SHA
 }
 
-// Check the short form of the GitHub URL. e.g. yamadashy/repomix
-const VALID_NAME_PATTERN = '[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?';
-const validShorthandRegex = new RegExp(`^${VALID_NAME_PATTERN}/${VALID_NAME_PATTERN}$`);
-export const isValidShorthand = (remoteValue: string): boolean => {
-  return validShorthandRegex.test(remoteValue);
+// Re-export from lightweight module to preserve public API
+export { isValidShorthand } from './gitRemoteUrl.js';
+
+/**
+ * Check if a URL is an Azure DevOps repository URL by validating the hostname.
+ * This uses proper URL parsing to avoid security issues with substring matching.
+ */
+const isAzureDevOpsUrl = (remoteValue: string): boolean => {
+  // Handle SSH URLs (e.g., git@ssh.dev.azure.com:v3/org/project/repo)
+  if (remoteValue.startsWith('git@ssh.dev.azure.com:')) {
+    return true;
+  }
+
+  // Handle HTTP(S) URLs
+  try {
+    const url = new URL(remoteValue);
+    const hostname = url.hostname.toLowerCase();
+
+    // Check for exact Azure DevOps hostnames
+    if (hostname === 'dev.azure.com' || hostname === 'ssh.dev.azure.com') {
+      return true;
+    }
+
+    // Check for legacy Visual Studio Team Services (*.visualstudio.com)
+    if (hostname.endsWith('.visualstudio.com')) {
+      return true;
+    }
+
+    return false;
+  } catch {
+    // Not a valid URL, let git-url-parse handle it
+    return false;
+  }
 };
 
 export const parseRemoteValue = (
@@ -27,6 +56,17 @@ export const parseRemoteValue = (
     logger.trace(`Formatting GitHub shorthand: ${remoteValue}`);
     return {
       repoUrl: `https://github.com/${remoteValue}.git`,
+      remoteBranch: undefined,
+    };
+  }
+
+  // Check for Azure DevOps URLs before parsing, as git-url-parse may not handle them correctly
+  // - SSH: git@ssh.dev.azure.com:v3/org/project/repo
+  // - HTTPS: https://dev.azure.com/organization/project/_git/repo
+  // - Legacy: https://org.visualstudio.com/project/_git/repo
+  if (isAzureDevOpsUrl(remoteValue)) {
+    return {
+      repoUrl: remoteValue,
       remoteBranch: undefined,
     };
   }
@@ -68,6 +108,9 @@ export const parseRemoteValue = (
     throw new RepomixError('Invalid remote repository URL or repository shorthand (owner/repo)');
   }
 };
+
+// Re-export from lightweight module to preserve public API
+export { isExplicitRemoteUrl } from './gitRemoteUrl.js';
 
 export const isValidRemoteValue = (remoteValue: string, refs: string[] = []): boolean => {
   try {

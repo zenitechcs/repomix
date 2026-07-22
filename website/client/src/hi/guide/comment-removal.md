@@ -1,3 +1,8 @@
+---
+title: टिप्पणी हटाना
+description: Source files और supported language behavior सुरक्षित रखते हुए Repomix output से comments हटाकर noise और token usage कम करें।
+---
+
 # टिप्पणी हटाना
 
 Repomix आपको आउटपुट से कोड टिप्पणियां हटाने की अनुमति देता है। यह सुविधा टोकन उपयोग को कम करने और AI मॉडल के लिए आउटपुट को अधिक संक्षिप्त बनाने में मदद कर सकती है।
@@ -153,8 +158,8 @@ function authenticateUser(username, password) {
 }
 ```
 
-## अगला क्या है?
+## संबंधित संसाधन
 
-- [कोड कम्प्रेशन](code-compress.md) के बारे में जानें
-- [कमांड लाइन विकल्पों](command-line-options.md) का अन्वेषण करें
-- [कॉन्फिगरेशन विकल्पों](configuration.md) के बारे में अधिक जानें
+- [कोड कम्प्रेशन](/hi/guide/code-compress) - कोड संरचना निकालकर टोकन संख्या और कम करें
+- [कॉन्फिगरेशन](/hi/guide/configuration) - अपनी कॉन्फिग फाइल में `output.removeComments` सेट करें
+- [कमांड लाइन विकल्प](/hi/guide/command-line-options) - `--remove-comments` फ्लैग का उपयोग करें

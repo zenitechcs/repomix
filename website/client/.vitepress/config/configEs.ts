@@ -22,6 +22,7 @@ export const configEs = defineConfig({
             { text: 'Uso Básico', link: '/es/guide/usage' },
             { text: 'Ejemplos de Prompts', link: '/es/guide/prompt-examples' },
             { text: 'Casos de Uso', link: '/es/guide/use-cases' },
+            { text: 'FAQ y solución de problemas', link: '/es/guide/faq' },
           ],
         },
         {
@@ -29,6 +30,7 @@ export const configEs = defineConfig({
           items: [
             { text: 'Formatos de Salida', link: '/es/guide/output' },
             { text: 'Opciones de Línea de Comandos', link: '/es/guide/command-line-options' },
+            { text: 'Modo de observación', link: '/es/guide/watch-mode' },
             { text: 'Configuración', link: '/es/guide/configuration' },
             { text: 'Instrucciones Personalizadas', link: '/es/guide/custom-instructions' },
             { text: 'Procesamiento de Repositorios de GitHub', link: '/es/guide/remote-repository-processing' },
@@ -41,6 +43,9 @@ export const configEs = defineConfig({
           text: 'Avanzado',
           items: [
             { text: 'Servidor MCP', link: '/es/guide/mcp-server' },
+            { text: 'Plugins de Claude Code', link: '/es/guide/claude-code-plugins' },
+            { text: 'Generación de Agent Skills', link: '/es/guide/agent-skills-generation' },
+            { text: 'Repomix Explorer Skill', link: '/es/guide/repomix-explorer-skill' },
             { text: 'GitHub Actions', link: '/es/guide/github-actions' },
             { text: 'Usar Repomix como Biblioteca', link: '/es/guide/development/using-repomix-as-a-library' },
             { text: 'Consejos para Desarrollo Asistido por IA', link: '/es/guide/tips/best-practices' },
@@ -52,6 +57,7 @@ export const configEs = defineConfig({
             { text: 'Proyectos de la Comunidad', link: '/es/guide/community-projects' },
             { text: 'Contribuir a Repomix', link: '/es/guide/development/' },
             { text: 'Patrocinadores', link: '/es/guide/sponsors' },
+            { text: 'Política de Privacidad', link: '/es/guide/privacy' },
           ],
         },
       ],

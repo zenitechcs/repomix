@@ -1,3 +1,8 @@
+---
+title: コミュニティプロジェクト
+description: Repomixを中心に構築されたコミュニティツール、エディタ拡張、デスクトップアプリ、言語実装、連携機能を紹介します。
+---
+
 # コミュニティプロジェクト
 
 Repomixコミュニティによって作られた素晴らしいプロジェクトをご紹介します！これらのプロジェクトは、Repomixの機能を拡張したり、他の言語での実装を提供したり、より大きなツールセットに統合したりしています。
@@ -9,6 +14,13 @@ Repomixコミュニティによって作られた素晴らしいプロジェク�
 
 **リポジトリ**: [massdo/repomix-runner](https://github.com/massdo/repomix-runner)  
 **マーケットプレース**: [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=DorianMassoulier.repomix-runner)
+
+## デスクトップアプリケーション
+
+### Repomix Desktop
+Repomix CLIのGUIラッパーを提供するコミュニティデスクトップアプリケーション。PythonとCustomTkinterで構築されており、ターミナルを使わずにユーザーフレンドリーなインターフェースで操作できます。
+
+**リポジトリ**: [KevanMacGee/Repomix-Desktop](https://github.com/KevanMacGee/Repomix-Desktop)
 
 ## 言語実装
 
@@ -33,3 +45,9 @@ Repomixを使用してAIエージェントがコードベースを分析する�
 Perplexityによるウェブ検索、GeminiとRepomixによるリポジトリ分析、Stagehandによるブラウザ自動化など、複数の機能を持つAIエージェント用のCLIツールセットです。
 
 **リポジトリ**: [eastlondoner/vibe-tools](https://github.com/eastlondoner/vibe-tools)
+
+## 関連リソース
+
+- [インストール](/ja/guide/installation) - Repomix CLIやブラウザ拡張機能のインストール
+- [MCPサーバー](/ja/guide/mcp-server) - RepomixをAIアシスタント向けMCPサーバーとして使用
+- [Claude Codeプラグイン](/ja/guide/claude-code-plugins) - Claude Code向けの公式プラグイン

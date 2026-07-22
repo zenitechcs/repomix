@@ -1,3 +1,8 @@
+---
+title: "Instalación"
+description: "Instala Repomix con npx, npm, Yarn, Bun, Homebrew, Docker, extensiones de VS Code o extensiones de navegador y verifica la configuración de la CLI."
+---
+
 # Instalación
 
 ## Usando npx (no requiere instalación)
@@ -8,25 +13,23 @@ npx repomix@latest
 
 ## Instalación global
 
-### npm
-```bash
+::: code-group
+```bash [npm]
 npm install -g repomix
 ```
-
-### Yarn
-```bash
+```bash [yarn]
 yarn global add repomix
 ```
-
-### Bun
-```bash
+```bash [pnpm]
+pnpm add -g repomix
+```
+```bash [bun]
 bun add -g repomix
 ```
-
-### Homebrew (macOS/Linux)
-```bash
+```bash [Homebrew]
 brew install repomix
 ```
+:::
 
 ## Instalación con Docker
 
@@ -71,7 +74,7 @@ Instálala desde el [VSCode Marketplace](https://marketplace.visualstudio.com/it
 
 ## Requisitos del sistema
 
-- Node.js: ≥ 20.0.0
+- Node.js: ≥ 22.0.0
 - Git: Requerido para el procesamiento de repositorios remotos
 
 ## Verificación
@@ -81,3 +84,10 @@ Después de la instalación, verifica que Repomix esté funcionando:
 ```bash
 repomix --version
 repomix --help
+```
+
+## Recursos relacionados
+
+- [Uso básico](/es/guide/usage) - Aprende a usar Repomix
+- [Configuración](/es/guide/configuration) - Personaliza Repomix para tus necesidades
+- [Opciones de línea de comandos](/es/guide/command-line-options) - Referencia completa de CLI
